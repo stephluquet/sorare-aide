@@ -1,0 +1,277 @@
+<title>Mes cartes · maquette A</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+/* Mise en page : liste « feuille de match » — vignette, jauge de probabilité, espérance en chiffres de tableau d'affichage ; fiche en volet bas. */
+:root {
+  --fond: #eef2ee; --surface: #ffffff; --encre: #13201a; --doux: #5b6a61; --trait: #d9e1db;
+  --accent: #1f5fd6; --accent-doux: #e3ebfb;
+  --ok: #1b7f4a; --ok-doux: #e1f2e8; --attention: #a76200; --attention-doux: #fbefd9; --stop: #b3261e; --stop-doux: #fbe4e1;
+  --titulaire: #1f5fd6; --entre: #8fb0ef; --vide: #c9d2cc;
+  --police-titre: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  --police-texte: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fond: #0f1512; --surface: #18201c; --encre: #e7eee9; --doux: #9aa9a0; --trait: #2b3631;
+    --accent: #8db0ff; --accent-doux: #1f2c47;
+    --ok: #6fd39b; --ok-doux: #173326; --attention: #f2b45c; --attention-doux: #3a2b12; --stop: #ff8f86; --stop-doux: #3d1c19;
+    --titulaire: #8db0ff; --entre: #4c6aa6; --vide: #3a4640; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --fond: #0f1512; --surface: #18201c; --encre: #e7eee9; --doux: #9aa9a0; --trait: #2b3631;
+  --accent: #8db0ff; --accent-doux: #1f2c47;
+  --ok: #6fd39b; --ok-doux: #173326; --attention: #f2b45c; --attention-doux: #3a2b12; --stop: #ff8f86; --stop-doux: #3d1c19;
+  --titulaire: #8db0ff; --entre: #4c6aa6; --vide: #3a4640; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--fond); color: var(--encre); font: 15px/1.4 var(--police-texte);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 12px 40px; }
+.cadre { max-width: 760px; margin: 0 auto; display: grid; gap: 12px; }
+h1 { font: 700 1.9rem/1 var(--police-titre); letter-spacing: .01em; margin: 0; text-transform: uppercase; }
+.sous { color: var(--doux); font-size: .85rem; }
+.maquette { font-size: .78rem; color: var(--doux); border: 1px dashed var(--trait); border-radius: 8px; padding: 6px 10px; }
+.bandeau { background: var(--attention-doux); color: var(--attention); border-radius: 8px; padding: 8px 12px; font-weight: 600; font-size: .9rem; }
+.paliers { display: flex; gap: 8px; flex-wrap: wrap; }
+.palier { background: var(--surface); border: 1px solid var(--trait); border-radius: 10px; padding: 6px 10px; font-size: .85rem; }
+.palier b { font: 700 1.15rem/1 var(--police-titre); }
+.commandes { display: grid; gap: 8px; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--fond); padding-block: 8px; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--fond); }
+.rangee { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.seg button, .puce { font: 600 .85rem var(--police-texte); border: 1px solid var(--trait); background: var(--surface); color: var(--encre);
+  border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+.seg button[aria-pressed="true"], .puce[aria-pressed="true"] { background: var(--encre); color: var(--surface); border-color: var(--encre); }
+select, label.case { font: inherit; font-size: .85rem; color: var(--encre); }
+select { background: var(--surface); border: 1px solid var(--trait); border-radius: 8px; padding: 5px 8px; max-width: 100%; }
+button:focus-visible, select:focus-visible, input:focus-visible, .ligne:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.compte { color: var(--doux); font-size: .85rem; margin-left: auto; }
+.liste { display: grid; gap: 6px; }
+.ligne { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 10px; align-items: center; background: var(--surface);
+  border: 1px solid var(--trait); border-radius: 12px; padding: 8px 10px; cursor: pointer; text-align: left; width: 100%; color: inherit; font: inherit; }
+.ligne.bloquee { opacity: .55; }
+.vig { width: 44px; height: 71px; border-radius: 5px; object-fit: cover; background: var(--vide); display: grid; place-items: center;
+  font: 700 .9rem var(--police-titre); color: var(--doux); }
+.nom { font-weight: 600; line-height: 1.2; }
+.meta { color: var(--doux); font-size: .8rem; display: flex; flex-wrap: wrap; gap: 2px 8px; }
+.puces { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 3px; }
+.etiq { font-size: .72rem; font-weight: 600; border-radius: 6px; padding: 1px 6px; }
+.etiq.probable { background: var(--ok-doux); color: var(--ok); }
+.etiq.incertain, .etiq.douteux { background: var(--attention-doux); color: var(--attention); }
+.etiq.exclu { background: var(--stop-doux); color: var(--stop); }
+.etiq.bonus { background: var(--accent-doux); color: var(--accent); }
+.etiq.neutre { background: var(--fond); color: var(--doux); }
+.chiffres { display: grid; justify-items: end; gap: 2px; }
+.esp { font: 700 1.7rem/1 var(--police-titre); font-variant-numeric: tabular-nums; }
+.esp small { font: 500 .7rem var(--police-texte); color: var(--doux); display: block; text-align: right; }
+.jauge { display: flex; align-items: center; gap: 4px; font: 600 .8rem var(--police-texte); font-variant-numeric: tabular-nums; }
+.jauge svg { width: 22px; height: 22px; transform: rotate(-90deg); }
+.vide-liste { color: var(--doux); padding: 24px; text-align: center; }
+/* Volet */
+.voile { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 20; display: flex; align-items: flex-end; justify-content: center; }
+.volet { background: var(--surface); width: min(760px, 100%); max-height: 88%; overflow-y: auto; border-radius: 16px 16px 0 0;
+  padding: 16px max(16px, env(safe-area-inset-right, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); display: grid; gap: 12px; }
+.volet-tete { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 14px; }
+.volet-tete .vig { width: 96px; height: 155px; border-radius: 8px; font-size: 1.4rem; }
+.volet h2 { font: 700 1.6rem/1.05 var(--police-titre); margin: 0; text-transform: uppercase; }
+.grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
+.case-chiffre { background: var(--fond); border-radius: 10px; padding: 8px 10px; }
+.case-chiffre span { display: block; color: var(--doux); font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; }
+.case-chiffre b { font: 700 1.35rem var(--police-titre); font-variant-numeric: tabular-nums; }
+.histo svg { width: 100%; height: auto; display: block; }
+.legende { display: flex; gap: 12px; flex-wrap: wrap; font-size: .78rem; color: var(--doux); }
+.legende i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+.raisons { margin: 0; padding-left: 18px; color: var(--doux); font-size: .88rem; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.bouton { font: 600 .9rem var(--police-texte); border-radius: 10px; padding: 9px 14px; border: 1px solid var(--trait); background: var(--surface); color: var(--encre); cursor: pointer; }
+.bouton.principal { background: var(--encre); color: var(--surface); border-color: var(--encre); }
+@media (prefers-reduced-motion: no-preference) { .volet { animation: monte .18s ease-out; } @keyframes monte { from { transform: translateY(30px); opacity: .6; } } }
+</style>
+
+<div class="cadre">
+  <header>
+    <h1>Mes cartes</h1>
+    <div class="sous" id="age"></div>
+  </header>
+  <div class="maquette">Maquette A (version riche) — vraies données, méthode v2. Les cartes « jouées » ne sont gardées que dans ce navigateur pour l'essai.</div>
+  <div class="bandeau" id="bandeau" hidden></div>
+  <div class="paliers" id="paliers"></div>
+
+  <div class="commandes">
+    <div class="rangee">
+      <div class="seg" id="sports" role="group" aria-label="Sport"></div>
+      <span class="compte" id="compte"></span>
+    </div>
+    <div class="rangee" id="postes" role="group" aria-label="Poste"></div>
+    <div class="rangee">
+      <select id="creneau" aria-label="Créneau"></select>
+      <select id="tri" aria-label="Trier par">
+        <option value="e">Tri : espérance</option>
+        <option value="p">Tri : chances de jouer</option>
+        <option value="d">Tri : coup d'envoi</option>
+      </select>
+      <label class="case"><input type="checkbox" id="dispo" checked> disponibles seulement</label>
+    </div>
+  </div>
+
+  <div class="liste" id="liste"></div>
+</div>
+<div class="voile" id="voile" hidden></div>
+
+<script type="application/json" id="donnees">/*DONNEES*/null</script>
+<script>
+(() => {
+  const D = JSON.parse(document.getElementById('donnees').textContent);
+  const SPORTS = { football: 'Football', nba: 'NBA' };
+  const POSTES = { football: ['GK', 'DF', 'MD', 'FW'], nba: ['G', 'F', 'C'] };
+  const STATUTS = { probable: 'Probable', incertain: 'Incertain', douteux: 'Douteux', exclu: 'Exclu' };
+  const SIT = { titulaire: 'titulaire', entre: 'entré', joue: 'joué', banc: 'banc', absent: 'absent', inconnu: '?' };
+  const tz = { timeZone: 'Europe/Paris' };
+  const fJour = new Intl.DateTimeFormat('fr-FR', { ...tz, weekday: 'short', day: 'numeric', month: 'short' });
+  const fHeure = new Intl.DateTimeFormat('fr-FR', { ...tz, hour: '2-digit', minute: '2-digit' });
+  const fCle = new Intl.DateTimeFormat('fr-FR', { ...tz, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+  const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  const nb = (x, d = 0) => (x == null ? '–' : x.toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d }));
+  const quand = (d) => `${fJour.format(new Date(d))} ${fHeure.format(new Date(d))}`;
+
+  // État de la maquette : cartes jouées (ce navigateur seulement)
+  let jouees = new Set();
+  try { jouees = new Set(JSON.parse(localStorage.getItem('maquette-jouees') || '[]')); } catch (e) {}
+  const sauver = () => { try { localStorage.setItem('maquette-jouees', JSON.stringify([...jouees])); } catch (e) {} };
+  const etat = { sport: 'football', poste: null, creneau: '', tri: 'e', dispo: true };
+
+  // Âge des données
+  function age() {
+    const t = new Date(D.recupereA), min = Math.round((Date.now() - t) / 60000);
+    const txt = min < 60 ? `il y a ${min} min` : `il y a ${Math.floor(min / 60)} h ${String(min % 60).padStart(2, '0')}`;
+    document.getElementById('age').textContent = `Données Sorare de ${fHeure.format(t)} le ${fJour.format(t)} · ${txt} · méthode v${D.methode}`;
+    const b = document.getElementById('bandeau');
+    b.hidden = min < 180;
+    b.textContent = 'Données de plus de 3 h : écris « actualise » à Claude avant de composer.';
+  }
+
+  function paliers() {
+    document.getElementById('paliers').innerHTML = D.paliers.map((p) =>
+      `<div class="palier">${SPORTS[p.sport]} · palier <b>${p.cible}</b> · ${p.etat === 'LINEUP_SET' ? 'composition posée' : 'à jouer'}${p.echecs ? ` · ${p.echecs} échec${p.echecs > 1 ? 's' : ''}` : ''}</div>`).join('');
+  }
+
+  const disponible = (l) => l.st === 'probable' && l.el && !jouees.has(l.id);
+  const cleCreneau = (d) => fCle.format(new Date(d));
+
+  function commandes() {
+    document.getElementById('sports').innerHTML = Object.entries(SPORTS).map(([k, v]) =>
+      `<button type="button" data-sport="${k}" aria-pressed="${k === etat.sport}">${v}</button>`).join('');
+    document.getElementById('postes').innerHTML = [null, ...POSTES[etat.sport]].map((p) =>
+      `<button type="button" class="puce" data-poste="${p ?? ''}" aria-pressed="${p === etat.poste}">${p ?? 'Tous postes'}</button>`).join('');
+    const creneaux = new Map();
+    for (const l of D.lignes) if (l.sp === etat.sport && l.m && disponible(l)) {
+      const k = cleCreneau(l.m.d); creneaux.set(k, [l.m.d, (creneaux.get(k)?.[1] ?? 0) + 1]);
+    }
+    const opts = [...creneaux.entries()].sort((a, b) => a[1][0].localeCompare(b[1][0]));
+    if (etat.creneau && !creneaux.has(etat.creneau)) etat.creneau = '';
+    document.getElementById('creneau').innerHTML = `<option value="">Tous les créneaux</option>` +
+      opts.map(([k, [d, n]]) => `<option value="${k}" ${k === etat.creneau ? 'selected' : ''}>${quand(d)} (${n})</option>`).join('');
+  }
+
+  function vignette(l, grande) {
+    return l.img ? `<img class="vig" src="${l.img}" alt="" loading="lazy">`
+      : `<div class="vig" aria-hidden="true">${esc(l.n.split(' ').map((x) => x[0]).slice(0, 2).join(''))}</div>`;
+  }
+  function jauge(p) {
+    const r = 9, c = 2 * Math.PI * r, v = p ?? 0;
+    const coul = p == null ? 'var(--vide)' : v >= D.seuil ? 'var(--ok)' : v >= 0.5 ? 'var(--attention)' : 'var(--stop)';
+    return `<span class="jauge"><svg viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="${r}" fill="none" stroke="var(--trait)" stroke-width="3"/>
+      <circle cx="11" cy="11" r="${r}" fill="none" stroke="${coul}" stroke-width="3" stroke-dasharray="${c * v} ${c}"/></svg>${p == null ? '?' : Math.round(v * 100) + ' %'}</span>`;
+  }
+
+  function liste() {
+    let L = D.lignes.filter((l) => l.sp === etat.sport && (!etat.poste || l.po.includes(etat.poste)) &&
+      (!etat.dispo || disponible(l)) && (!etat.creneau || (l.m && cleCreneau(l.m.d) === etat.creneau)));
+    const tri = { e: (a, b) => (b.e ?? -1) - (a.e ?? -1), p: (a, b) => (b.p ?? -1) - (a.p ?? -1), d: (a, b) => (a.m?.d ?? '9').localeCompare(b.m?.d ?? '9') }[etat.tri];
+    L.sort(tri);
+    document.getElementById('compte').textContent = `${L.length} carte${L.length > 1 ? 's' : ''}`;
+    const el = document.getElementById('liste');
+    if (!L.length) { el.innerHTML = '<div class="vide-liste">Aucune carte ne correspond. Décoche « disponibles seulement » pour tout voir.</div>'; return; }
+    el.innerHTML = L.slice(0, 200).map((l) => {
+      const m = l.m;
+      const match = m ? `${quand(m.d)} · ${m.lieu === 'ext' ? '@ ' : m.lieu === 'dom' ? 'vs ' : ''}${esc(m.adv ?? '?')}` : 'pas de match connu';
+      return `<button type="button" class="ligne${jouees.has(l.id) ? ' bloquee' : ''}" data-id="${esc(l.id)}">
+        ${vignette(l)}
+        <div style="min-width:0">
+          <div class="nom">${esc(l.n)}</div>
+          <div class="meta"><span>${esc(l.po.join('/'))} · ${esc(l.cl ?? '?')}</span><span>${match}</span></div>
+          <div class="puces">
+            <span class="etiq ${l.st}">${STATUTS[l.st]}</span>
+            ${l.b ? `<span class="etiq bonus">${esc(l.col)} +${nb(l.b)} %</span>` : ''}
+            ${!l.el && m ? '<span class="etiq exclu">hors Arcade</span>' : ''}
+            ${jouees.has(l.id) ? '<span class="etiq neutre">jouée à ce palier</span>' : ''}
+          </div>
+        </div>
+        <div class="chiffres">
+          <div class="esp">${nb(l.e)}<small>espérance</small></div>
+          ${jauge(l.p)}
+        </div>
+      </button>`;
+    }).join('');
+  }
+
+  function histo(l) {
+    const h = l.h; if (!h.length) return '<p class="sous">Pas d’historique.</p>';
+    const W = 320, H = 120, pas = W / h.length, max = Math.max(80, ...h.map((x) => x[1]));
+    const barres = h.map(([sit, sc, mi, d], i) => {
+      const x = i * pas + 2, w = pas - 4;
+      if (!['titulaire', 'entre', 'joue'].includes(sit)) {
+        return `<rect x="${x}" y="${H - 4}" width="${w}" height="3" fill="var(--vide)"/><text x="${x + w / 2}" y="${H - 8}" text-anchor="middle" font-size="9" fill="var(--doux)">${sit === 'banc' ? 'B' : 'A'}</text>`;
+      }
+      const hh = Math.max(2, (sc / max) * (H - 16));
+      return `<rect x="${x}" y="${H - hh}" width="${w}" height="${hh}" rx="2" fill="${sit === 'entre' ? 'var(--entre)' : 'var(--titulaire)'}"><title>${d} : ${sc} pts${mi != null ? `, ${mi} min` : ''} (${SIT[sit]})</title></rect>`;
+    }).join('');
+    return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Scores des ${h.length} derniers matchs, du plus ancien au plus récent">${barres}
+      <line x1="0" x2="${W}" y1="${H}" y2="${H}" stroke="var(--trait)"/></svg>`;
+  }
+
+  function fiche(id) {
+    const l = D.lignes.find((x) => x.id === id); if (!l) return;
+    const m = l.m, v = document.getElementById('voile');
+    const cotes = m && m.v != null ? `${Math.round(m.v * 100)} / ${Math.round(m.nul * 100)} / ${Math.round(m.def * 100)} %` : '–';
+    v.innerHTML = `<div class="volet" role="dialog" aria-modal="true" aria-label="${esc(l.n)}">
+      <div class="volet-tete">${vignette(l)}<div style="min-width:0">
+        <h2>${esc(l.n)}</h2>
+        <div class="sous">${esc(l.po.join('/'))} · ${esc(l.cl ?? '?')} · ${esc((l.t ?? '').replace('_PLUS', '+'))}${l.et != null ? ` · ${nb(l.et, 1)} ★` : ''}</div>
+        <div class="puces" style="margin-top:6px"><span class="etiq ${l.st}">${STATUTS[l.st]}</span>${l.b ? `<span class="etiq bonus">${esc(l.col)} +${nb(l.b)} %</span>` : ''}${l.ss ? `<span class="etiq neutre">Sorare : ${esc(l.ss)}</span>` : ''}</div>
+        <div class="sous" style="margin-top:8px">${m ? `${quand(m.d)} · ${esc(m.comp ?? '')} · ${m.lieu === 'ext' ? 'à l’extérieur contre' : m.lieu === 'dom' ? 'à domicile contre' : ''} ${esc(m.adv ?? '?')}` : 'Pas de match connu'}</div>
+      </div></div>
+      <div class="grille">
+        <div class="case-chiffre"><span>Espérance</span><b>${nb(l.e, 1)}</b></div>
+        <div class="case-chiffre"><span>Chances de jouer</span><b>${l.p == null ? '?' : Math.round(l.p * 100) + ' %'}</b></div>
+        <div class="case-chiffre"><span>S'il joue</span><b>${nb(l.sj)} ± ${nb(l.sg)}</b></div>
+        ${l.sp === 'football' ? `<div class="case-chiffre"><span>Titulaire quand il joue</span><b>${l.q == null ? '–' : Math.round(l.q * 100) + ' %'}</b></div>`
+          : `<div class="case-chiffre"><span>Minutes récentes</span><b>${nb(l.mi)}</b></div>`}
+        ${l.sp === 'football' ? `<div class="case-chiffre"><span>Victoire / nul / défaite</span><b style="font-size:1.05rem">${cotes}</b></div>` : ''}
+      </div>
+      <div class="histo"><div class="sous" style="margin-bottom:4px">${l.h.length} derniers matchs de l'équipe (du plus ancien au plus récent)</div>${histo(l)}
+        <div class="legende"><span><i style="background:var(--titulaire)"></i>${l.sp === 'nba' ? 'joué' : 'titulaire'}</span>${l.sp === 'football' ? '<span><i style="background:var(--entre)"></i>entré en jeu</span>' : ''}<span>B banc · A absent</span></div></div>
+      ${l.r.length ? `<ul class="raisons">${l.r.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+      <div class="actions">
+        <button type="button" class="bouton principal" id="basculer">${jouees.has(l.id) ? 'Remettre disponible' : 'Jouée à ce palier'}</button>
+        <button type="button" class="bouton" id="fermer">Fermer</button>
+      </div></div>`;
+    v.hidden = false;
+    v.querySelector('#fermer').focus();
+    v.querySelector('#basculer').onclick = () => { jouees.has(l.id) ? jouees.delete(l.id) : jouees.add(l.id); sauver(); v.hidden = true; tout(); };
+    v.querySelector('#fermer').onclick = () => { v.hidden = true; };
+    v.onclick = (e) => { if (e.target === v) v.hidden = true; };
+  }
+
+  function tout() { commandes(); liste(); }
+  document.getElementById('sports').onclick = (e) => { const s = e.target.closest('button')?.dataset.sport; if (s) { etat.sport = s; etat.poste = null; etat.creneau = ''; tout(); } };
+  document.getElementById('postes').onclick = (e) => { const b = e.target.closest('button'); if (b) { etat.poste = b.dataset.poste || null; tout(); } };
+  document.getElementById('creneau').onchange = (e) => { etat.creneau = e.target.value; liste(); };
+  document.getElementById('tri').onchange = (e) => { etat.tri = e.target.value; liste(); };
+  document.getElementById('dispo').onchange = (e) => { etat.dispo = e.target.checked; tout(); };
+  document.getElementById('liste').onclick = (e) => { const b = e.target.closest('.ligne'); if (b) fiche(b.dataset.id); };
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') document.getElementById('voile').hidden = true; });
+  age(); setInterval(age, 60000); paliers(); tout();
+})();
+</script>

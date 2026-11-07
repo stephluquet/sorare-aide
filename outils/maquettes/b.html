@@ -1,0 +1,128 @@
+<title>Mes cartes · maquette B</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap">
+<style>
+/* Mise en page : une ligne par carte, comme un relevé ; chiffres alignés, aucun ornement ; le détail se déplie sur place. */
+:root {
+  --fond: #fbfbf9; --encre: #111312; --doux: #6f7470; --trait: #e4e5e1; --repere: #2a5bd7; --alerte: #a65f00; --stop: #b3261e;
+  --police: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --chiffres: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --fond: #111312; --encre: #ecedea; --doux: #959a96; --trait: #262927; --repere: #8eaeff; --alerte: #f0b35a; --stop: #ff8f86; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --fond: #111312; --encre: #ecedea; --doux: #959a96; --trait: #262927; --repere: #8eaeff; --alerte: #f0b35a; --stop: #ff8f86; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--fond); color: var(--encre); font: 15px/1.45 var(--police);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 16px 48px; }
+.cadre { max-width: 640px; margin: 0 auto; display: grid; gap: 14px; }
+h1 { font-size: 1.05rem; font-weight: 600; margin: 0; }
+.doux { color: var(--doux); }
+.petit { font-size: .82rem; }
+.alerte { color: var(--alerte); font-weight: 600; }
+nav { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .9rem; }
+nav button { font: inherit; background: none; border: 0; padding: 2px 0; color: var(--doux); cursor: pointer; border-bottom: 1px solid transparent; }
+nav button[aria-pressed="true"] { color: var(--encre); border-bottom-color: var(--encre); }
+nav label { color: var(--doux); }
+button:focus-visible, input:focus-visible, .l:focus-visible { outline: 2px solid var(--repere); outline-offset: 2px; }
+.entete, .l { display: grid; grid-template-columns: 3.2ch minmax(0, 1fr) 3.6ch 9.5ch; gap: 10px; align-items: baseline; }
+.entete { font-size: .72rem; color: var(--doux); text-transform: uppercase; letter-spacing: .06em; border-bottom: 1px solid var(--trait); padding-bottom: 4px; }
+.liste { display: grid; }
+.l { width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--trait); padding: 9px 0; color: inherit; font: inherit; cursor: pointer; }
+.num { font-family: var(--chiffres); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.p { color: var(--doux); }
+.p.haut { color: var(--encre); }
+.nom { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nom small { color: var(--doux); margin-left: 6px; }
+.l.joue { color: var(--doux); text-decoration: line-through; }
+.detail { padding: 6px 0 14px calc(3.2ch + 10px); border-bottom: 1px solid var(--trait); display: grid; gap: 6px; font-size: .88rem; }
+.detail svg { width: 100%; max-width: 360px; height: 34px; display: block; }
+.detail button { justify-self: start; font: inherit; font-size: .85rem; background: none; border: 1px solid var(--trait); border-radius: 6px; padding: 4px 10px; color: var(--encre); cursor: pointer; }
+.stop { color: var(--stop); }
+</style>
+
+<div class="cadre">
+  <header>
+    <h1>Mes cartes</h1>
+    <div class="doux petit" id="age"></div>
+    <div class="alerte petit" id="bandeau" hidden></div>
+    <div class="doux petit" id="paliers"></div>
+  </header>
+  <div class="doux petit">Maquette B (ultra minimaliste) — vraies données, méthode v2. Appuie sur une ligne pour le détail.</div>
+  <nav id="sports" aria-label="Sport"></nav>
+  <nav id="postes" aria-label="Poste"></nav>
+  <nav><label><input type="checkbox" id="dispo" checked> disponibles seulement</label><span class="doux" id="compte"></span></nav>
+  <div>
+    <div class="entete" aria-hidden="true"><span class="num">%</span><span>joueur</span><span class="num">esp.</span><span class="num">match</span></div>
+    <div class="liste" id="liste"></div>
+  </div>
+</div>
+
+<script type="application/json" id="donnees">/*DONNEES*/null</script>
+<script>
+(() => {
+  const D = JSON.parse(document.getElementById('donnees').textContent);
+  const SPORTS = { football: 'football', nba: 'NBA' };
+  const POSTES = { football: ['GK', 'DF', 'MD', 'FW'], nba: ['G', 'F', 'C'] };
+  const tz = { timeZone: 'Europe/Paris' };
+  const fJour = new Intl.DateTimeFormat('fr-FR', { ...tz, weekday: 'short' });
+  const fHeure = new Intl.DateTimeFormat('fr-FR', { ...tz, hour: '2-digit', minute: '2-digit' });
+  const fDate = new Intl.DateTimeFormat('fr-FR', { ...tz, day: 'numeric', month: 'short' });
+  const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  const nb = (x) => (x == null ? '–' : Math.round(x).toString());
+  let jouees = new Set();
+  try { jouees = new Set(JSON.parse(localStorage.getItem('maquette-jouees') || '[]')); } catch (e) {}
+  const sauver = () => { try { localStorage.setItem('maquette-jouees', JSON.stringify([...jouees])); } catch (e) {} };
+  const etat = { sport: 'football', poste: null, dispo: true, ouvert: null };
+  const disponible = (l) => l.st === 'probable' && l.el && !jouees.has(l.id);
+
+  function age() {
+    const t = new Date(D.recupereA), min = Math.round((Date.now() - t) / 60000);
+    document.getElementById('age').textContent = `données de ${fHeure.format(t)}, ${fDate.format(t)} (${min < 60 ? `${min} min` : `${Math.floor(min / 60)} h ${String(min % 60).padStart(2, '0')}`})`;
+    const b = document.getElementById('bandeau'); b.hidden = min < 180; b.textContent = 'plus de 3 h : demande « actualise » à Claude';
+  }
+  document.getElementById('paliers').textContent = D.paliers.map((p) => `${SPORTS[p.sport]} ${p.cible}${p.echecs ? ` (${p.echecs} échec${p.echecs > 1 ? 's' : ''})` : ''}`).join(' · ');
+
+  function nav() {
+    document.getElementById('sports').innerHTML = Object.entries(SPORTS).map(([k, v]) => `<button type="button" data-sport="${k}" aria-pressed="${k === etat.sport}">${v}</button>`).join('');
+    document.getElementById('postes').innerHTML = [null, ...POSTES[etat.sport]].map((p) => `<button type="button" data-poste="${p ?? ''}" aria-pressed="${p === etat.poste}">${p ?? 'tous'}</button>`).join('');
+  }
+  function etincelle(l) {
+    const h = l.h; if (!h.length) return '';
+    const W = 360, H = 34, pas = W / h.length, max = Math.max(80, ...h.map((x) => x[1]));
+    return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${h.length} derniers matchs">${h.map(([sit, sc], i) => ['titulaire', 'entre', 'joue'].includes(sit)
+      ? `<rect x="${i * pas + 1}" y="${H - Math.max(2, (sc / max) * H)}" width="${pas - 2}" height="${Math.max(2, (sc / max) * H)}" fill="var(--encre)" opacity="${sit === 'entre' ? .4 : .85}"/>`
+      : `<rect x="${i * pas + 1}" y="${H - 1}" width="${pas - 2}" height="1" fill="var(--doux)"/>`).join('')}</svg>`;
+  }
+  function liste() {
+    const L = D.lignes.filter((l) => l.sp === etat.sport && (!etat.poste || l.po.includes(etat.poste)) && (!etat.dispo || disponible(l)))
+      .sort((a, b) => (b.e ?? -1) - (a.e ?? -1));
+    document.getElementById('compte').textContent = `${L.length}`;
+    document.getElementById('liste').innerHTML = L.slice(0, 250).map((l) => {
+      const m = l.m, ouvert = etat.ouvert === l.id;
+      const quand = m ? `${fJour.format(new Date(m.d)).slice(0, 3)} ${fHeure.format(new Date(m.d))}` : '–';
+      const ligne = `<button type="button" class="l${jouees.has(l.id) ? ' joue' : ''}" data-id="${esc(l.id)}" aria-expanded="${ouvert}">
+        <span class="num p${l.p >= D.seuil ? ' haut' : ''}">${l.p == null ? '?' : Math.round(l.p * 100)}</span>
+        <span class="nom">${esc(l.n)}<small>${esc(l.po.join('/'))}${l.b ? ` +${l.b}%` : ''}</small></span>
+        <span class="num">${nb(l.e)}</span><span class="num doux">${quand}</span></button>`;
+      if (!ouvert) return ligne;
+      return ligne + `<div class="detail">
+        <div>${esc(l.cl ?? '?')} · ${m ? `${m.lieu === 'ext' ? '@ ' : m.lieu === 'dom' ? 'vs ' : ''}${esc(m.adv ?? '?')}, ${esc(m.comp ?? '')}` : 'pas de match connu'}</div>
+        <div>s'il joue ${nb(l.sj)} ± ${nb(l.sg)}${l.sp === 'football' && l.q != null ? ` · titulaire ${Math.round(l.q * 100)} % des matchs joués` : ''}${l.sp === 'nba' && l.mi != null ? ` · ${nb(l.mi)} min récentes` : ''}${m && m.v != null ? ` · V/N/D ${Math.round(m.v * 100)}/${Math.round(m.nul * 100)}/${Math.round(m.def * 100)}` : ''}</div>
+        ${etincelle(l)}
+        ${l.r.map((x) => `<div class="${/^(blessé|suspendu)/.test(x) ? 'stop' : 'doux'}">${esc(x)}</div>`).join('')}
+        <button type="button" data-basculer="${esc(l.id)}">${jouees.has(l.id) ? 'remettre disponible' : 'jouée à ce palier'}</button></div>`;
+    }).join('') || '<p class="doux">Rien à afficher.</p>';
+  }
+  document.getElementById('sports').onclick = (e) => { const s = e.target.closest('button')?.dataset.sport; if (s) { etat.sport = s; etat.poste = null; nav(); liste(); } };
+  document.getElementById('postes').onclick = (e) => { const b = e.target.closest('button'); if (b) { etat.poste = b.dataset.poste || null; nav(); liste(); } };
+  document.getElementById('dispo').onchange = (e) => { etat.dispo = e.target.checked; liste(); };
+  document.getElementById('liste').onclick = (e) => {
+    const t = e.target.closest('[data-basculer]');
+    if (t) { const id = t.dataset.basculer; jouees.has(id) ? jouees.delete(id) : jouees.add(id); sauver(); liste(); return; }
+    const l = e.target.closest('.l'); if (l) { etat.ouvert = etat.ouvert === l.dataset.id ? null : l.dataset.id; liste(); }
+  };
+  age(); setInterval(age, 60000); nav(); liste();
+})();
+</script>

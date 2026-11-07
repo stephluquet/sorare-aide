@@ -77,6 +77,10 @@ npm test                                     # rejoue tests/cas/
 
 **En cours (test 3 du récap)** : `Game.homeFormation / awayFormation` relevés le 2026-11-07 à H-4/H-2, puis H-3, H-1 et au coup d'envoi de Leeds–Tottenham (12:30Z), Mainz–Bayern (14:30Z), Arsenal–Hull (15:00Z) avec `node src/releve-compositions.js <slugs>` → `data/releves/compositions-2026-11-07.jsonl`. Premier relevé : `startingLineupAvailable` faux partout, listes vides, probabilités de titularisation `null`. Conclusion à reporter ici.
 
+### Artifacts (vérifié le 2026-11-07)
+- **Un artifact ne peut charger aucune image externe** (CSP : seuls des scripts de quelques CDN et les polices Google sont admis). Les visuels Sorare doivent donc être **intégrés** (data: URI) ou déposés dans le stockage de l'artifact (capacité `assets`). `outils/vignettes.py` fabrique des vignettes WebP de 96 px (environ 4 Ko chacune, 90 vignettes = 349 Ko) depuis `assets.sorare.com` dans `data/vignettes/` (non versionné). Toutes les cartes en vignette ≈ 4 Mo : à éviter ; vignettes seulement pour les cartes utiles (propositions, meilleures espérances).
+- Le fichier publié n'a ni `<!doctype>`, ni `<html>`, ni `<head>`, ni `<body>` (ajoutés à la publication) ; `<title>` et `<style>` en tête. Données de la maquette sans images : environ 0,9 Mo pour 1 029 cartes avec 15 matchs d'historique chacune.
+
 ## Règles absolues
 - Aucune action sur l'argent ou le marché : pas d'enchère, d'achat, de vente, d'offre (l'outil ne fait que lire ; `appelGraphql()` refuse les mutations).
 - Ne jamais inventer une statistique, un statut de joueur ou une règle de compétition. Si c'est inconnu : écrire « à vérifier ».
@@ -164,7 +168,10 @@ Pistes : calibrer les poids sur l'historique ; utiliser les cotes du match (aujo
 - ✅ `src/moteur/` (JavaScript pur, Node et navigateur) : `parametres.js` (lit le bloc JSON de `methode.md` depuis un texte), `jouer.js`, `projection.js` ; `node.js` charge données, méthode et règles côté Node. `node outils/projections.js` résume les projections sur `data/dernier.json`.
 - ✅ 5 cas dans `tests/cas/` (méthode v2, valeurs calculées à part en Python) ; anciens cas dans `tests/cas-v1/`.
 - Sur les données du 2026-11-07 : football 189 cartes proposables (p ≥ 80 %, ni exclues ni douteuses), NBA 156.
-- ⏳ Écran « Mes cartes » : deux maquettes à faire choisir avant de coder (`docs/plan-appli.md`, décision 0 bis).
+- ⏳ Écran « Mes cartes » : **deux maquettes publiées le 2026-11-07, choix de l'utilisateur attendu** avant de coder `app/` :
+  A (riche : vignettes, jauge, fiche en volet avec historique en barres) https://claude.ai/artifact/Ehb1E4gimz47VEJx2urLvw ;
+  B (ultra minimaliste : une ligne par carte, détail déplié) https://claude.ai/artifact/TPHUGSmfbybRq7qSqp1FMj.
+  Générées par `node outils/maquettes.js` (gabarits `outils/maquettes/a.html` et `b.html`, données du moteur v2 ; pages dans `sorties/maquettes/`, non versionnées). Republier au même chemin de fichier pour garder les adresses.
 - Étape 3 ensuite : `simulation.js` (Monte-Carlo, probabilité de franchir le palier, capitaine) et `compositions.js`.
 
 ## Étape 3 (à venir) : conseil avant chaque journée
