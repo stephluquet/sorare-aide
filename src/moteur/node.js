@@ -13,9 +13,10 @@ export function chargerEntrees(fichierDonnees = join(RACINE, 'data', 'dernier.js
   return {
     donnees: JSON.parse(readFileSync(fichierDonnees, 'utf8')),
     P: parametresDepuisMethode(readFileSync(join(RACINE, 'methode.md'), 'utf8')),
+    // Règle complète du mode, plus la liste des compétitions sous le nom attendu par le moteur.
     regles: {
-      football: { competitionsAutorisees: lireJson('regles', 'football-arcade-solo.json').competitions_autorisees.noms_api },
-      nba: { competitionsAutorisees: lireJson('regles', 'nba-arcade-solo.json').competitions_autorisees.liste },
+      football: (({ r }) => ({ ...r, competitionsAutorisees: r.competitions_autorisees.noms_api }))({ r: lireJson('regles', 'football-arcade-solo.json') }),
+      nba: (({ r }) => ({ ...r, competitionsAutorisees: r.competitions_autorisees.liste }))({ r: lireJson('regles', 'nba-arcade-solo.json') }),
     },
   };
 }

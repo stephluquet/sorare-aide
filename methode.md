@@ -1,6 +1,7 @@
-# Méthode v2 : probabilité de jouer et score attendu
+# Méthode v3 : probabilité de jouer, score attendu et compositions
 
-Version 2 (2026-11-07). Ce document **fait foi** : le moteur (`src/moteur/`)
+Version 3 (2026-11-07) : la v2 (probabilité de jouer, score s'il joue) complétée
+de la simulation et du choix des compositions (sections 5 et 6). Ce document **fait foi** : le moteur (`src/moteur/`)
 lit les paramètres dans le bloc JSON ci-dessous et applique les formules
 décrites ici, sans les recopier. Toute modification de la méthode passe par
 ce fichier, et les cas de `tests/cas/` doivent être mis à jour en conséquence.
@@ -16,7 +17,7 @@ ignorent les matchs non joués.
 <!-- parametres:debut -->
 ```json
 {
-  "version": 2,
+  "version": 3,
   "fenetre_matchs": 30,
   "situations_jouees": ["titulaire", "entre", "joue"],
   "statuts_comptes": ["FINAL", "REVIEWING", "DID_NOT_PLAY"],
@@ -40,7 +41,18 @@ ignorent les matchs non joués.
   "poids_saison_precedente": 0.5,
   "min_matchs_historique": 5,
   "seuil_jouer": 0.80,
-  "statuts_sorare_douteux": ["NOT_PLAYING", "RETIRED"]
+  "statuts_sorare_douteux": ["NOT_PLAYING", "RETIRED"],
+  "simulation": {
+    "tirages": 5000,
+    "graine": 20261107,
+    "lissage": { "football": 0.35, "nba": 0.5 },
+    "score_max": { "football": 100, "nba": null },
+    "candidats_par_poste": { "GK": 5, "DF": 8, "MD": 8, "FW": 8 },
+    "candidats_nba": 22,
+    "equipes_simulees": 60,
+    "prudente_ecart_max": 0.05,
+    "ambitieuse_seuil_jouer": 0.6
+  }
 }
 ```
 <!-- parametres:fin -->
@@ -170,7 +182,82 @@ espérance         = p × μ × b               (0 s'il ne joue pas)
 Le capitaine (×1,5, football) et la probabilité de franchir le palier
 relèvent de l'étape 3 (simulation de Monte-Carlo).
 
+## 5. Simulation d'une équipe
+
+On cherche la **probabilité de franchir le palier**, pas le meilleur score
+moyen. Pour une équipe de 5 cartes (et un capitaine en football), on tire
+`tirages` fois au sort le score de chaque joueur, avec un générateur à
+**graine fixe** (`graine`) : les mêmes données donnent toujours les mêmes
+probabilités.
+
+Pour chaque joueur et chaque tirage :
+
+```
+joue ?            tirage de Bernoulli de probabilité p (section 1)
+situation         football : titulaire avec probabilité q, sinon entré en jeu
+score             un de ses scores passés de cette situation, tiré avec les poids de la section 3,
+                  plus un bruit normal d'écart-type lissage × σ ; borné à [0, score_max]
+                  (NBA : scores passés remis à l'échelle de μ = minutes × taux)
+contribution      0 s'il ne joue pas, sinon score × b, × 1,5 pour le capitaine
+```
+
+Score de l'équipe = somme des 5 contributions. Probabilité de passer = part
+des tirages où ce score atteint la cible du palier. **Probabilité « équipe
+complète »** = produit des 5 probabilités de jouer (calcul exact, pas tiré).
+
+**Pourquoi ce tirage.** Rétro-test (`node outils/retro-test-distribution.js
+football|nba`, 10 065 et 4 319 matchs joués) : on regarde où tombe le score
+réel dans la distribution prédite à partir des seuls matchs plus anciens. Le
+rééchantillonnage des scores passés est mieux calibré qu'une loi normale
+(écart total aux centiles 13,7 points contre 20,7 en football), mais un peu
+trop étroit ; le bruit ajouté corrige les extrêmes. Meilleur lissage : 0,35 en
+football (écart 7,8 points), 0,5 en NBA (12,8 points). Reste un léger
+optimisme : 53 à 55 % des scores réels tombent sous la médiane prédite.
+
+## 6. Choix des compositions
+
+**Cartes admissibles** : proposables (section 1 : ni exclues ni douteuses,
+`p ≥ seuil`), éligibles Arcade (section 2), de la rareté autorisée, **non
+jouées à ce palier**, et dont le match **n'a pas commencé**. Un même joueur ne
+peut pas figurer deux fois (deux cartes du même joueur : à vérifier dans le
+jeu). Contraintes de `regles/` : postes (football : GK, DF, MD, FW + un joueur
+de champ ; capitaine obligatoire), plafond d'étoiles (NBA : somme ≤ 16, 16
+inclus, demi-étoiles comptées).
+
+**Recherche en deux temps** (pour tenir en quelques secondes sur téléphone) :
+
+1. *Présélection* : les `candidats_par_poste` meilleures espérances par poste
+   (football ; le joueur de champ libre est pris parmi les candidats DF, MD,
+   FW) ou les `candidats_nba` meilleures (NBA). Toutes les équipes possibles
+   sont évaluées par une **approximation normale** : chaque contribution a
+   pour moyenne `p × m` et pour variance `p × (v + m²) − (p × m)²`, où `m` et
+   `v` sont la moyenne et la variance du score s'il joue (bonus et capitaine
+   compris, lissage inclus) ; probabilité ≈ `1 − Φ((cible − Σ moyennes) / √Σ variances)`.
+   En football, chaque joueur est essayé comme capitaine.
+2. *Simulation* : les `equipes_simulees` meilleures équipes de l'étape 1 sont
+   simulées (section 5) ; c'est cette probabilité qui est affichée.
+
+**Trois propositions** :
+
+| Proposition | Règle |
+|---|---|
+| **Équilibrée** | probabilité de passer maximale |
+| **Prudente** (montrée en premier) | parmi les équipes à moins de `prudente_ecart_max` (5 points) de la meilleure probabilité de passer, celle dont la probabilité « équipe complète » est la plus haute |
+| **Ambitieuse** | probabilité de passer maximale en acceptant des joueurs plus incertains (seuil abaissé à `ambitieuse_seuil_jouer`) ; montrée seulement si elle fait mieux que l'équilibrée |
+
+Pour chacune : les 5 cartes, le capitaine, le score attendu, la probabilité de
+passer, la probabilité « équipe complète » et l'heure du premier coup d'envoi
+(l'équipe est verrouillée à ce moment-là).
+
 ## Limites connues
+
+- **Les joueurs sont tirés indépendamment** : deux joueurs du même club (ou
+  du même match) ont en réalité des scores liés (un match à sens unique
+  profite à tous les attaquants d'une équipe). Les probabilités de passer
+  d'une équipe groupée sont donc un peu trop optimistes ou pessimistes selon
+  le cas. Non mesuré pour l'instant.
+- La présélection peut écarter un joueur utile à une équipe particulière ;
+  la recherche n'est pas exhaustive.
 
 - `p` ne voit ni l'adversaire, ni la rotation annoncée, ni un changement
   d'entraîneur. Les compositions officielles (test 3) et la vérification de

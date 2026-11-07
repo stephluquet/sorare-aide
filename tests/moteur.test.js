@@ -39,7 +39,7 @@ for (const f of readdirSync(DOSSIER).filter((f) => f.endsWith('.json')).sort()) 
 
 test('methode.md v2 : le bloc de paramètres se lit', () => {
   const P = parametresDepuisMethode(readFileSync(join(ICI, '..', 'methode.md'), 'utf8'));
-  assert.equal(P.version, 2);
+  assert.ok(P.version >= 2);
   assert.ok(P.seuil_jouer > 0 && P.seuil_jouer < 1);
   for (const s of ['football', 'nba']) assert.ok(P[s].plancher < P[s].plafond);
 });
