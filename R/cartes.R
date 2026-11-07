@@ -1,9 +1,10 @@
-# Récupère les cartes football Sorare d'un manager et les moyennes L5 / L15
-# de chaque joueur.
+# Récupère les cartes Sorare d'un manager (football ou NBA) et les moyennes
+# L5 / L15 de chaque joueur.
 #
 # Usage :
-#   Rscript R/cartes_football.R <slug-du-manager> [fichier_sortie.csv]
+#   Rscript R/cartes.R <slug-du-manager> [fichier_sortie.csv] [FOOTBALL|NBA]
 #
+# Le sport vaut FOOTBALL par défaut.
 # Le slug est la fin de l'URL du profil : https://sorare.com/football/my-club/<slug>
 # L'en-tête APIKEY est injecté par le proxy de l'environnement ; la valeur
 # envoyée ici n'est qu'un espace réservé.
@@ -20,11 +21,11 @@ API_URL <- "https://api.sorare.com/graphql"
 TAILLE_PAGE <- 50L
 
 requete_cartes <- '
-query CartesFootball($slug: String!, $after: String, $first: Int!) {
+query Cartes($slug: String!, $sport: Sport!, $after: String, $first: Int!) {
   user(slug: $slug) {
     slug
     nickname
-    cards(sport: FOOTBALL, first: $first, after: $after) {
+    cards(sport: $sport, first: $first, after: $after) {
       totalCount
       pageInfo { hasNextPage endCursor }
       nodes {
@@ -57,11 +58,11 @@ appel_graphql <- function(query, variables) {
 
 na_si_null <- function(x) if (is.null(x)) NA else x
 
-recuperer_cartes <- function(slug) {
+recuperer_cartes <- function(slug, sport = "FOOTBALL") {
   lignes <- list()
   curseur <- NULL
   repeat {
-    vars <- list(slug = slug, first = TAILLE_PAGE)
+    vars <- list(slug = slug, sport = sport, first = TAILLE_PAGE)
     if (!is.null(curseur)) vars$after <- curseur
     cartes <- appel_graphql(requete_cartes, vars)$user$cards
     for (c in cartes$nodes) {
@@ -87,11 +88,12 @@ recuperer_cartes <- function(slug) {
 
 if (sys.nframe() == 0L) {
   args <- commandArgs(trailingOnly = TRUE)
-  if (length(args) < 1L) stop("Usage : Rscript R/cartes_football.R <slug> [sortie.csv]")
-  cartes <- recuperer_cartes(args[1])
+  if (length(args) < 1L) stop("Usage : Rscript R/cartes.R <slug> [sortie.csv] [FOOTBALL|NBA]")
+  sport <- if (length(args) >= 3L) toupper(args[3]) else "FOOTBALL"
+  cartes <- recuperer_cartes(args[1], sport)
   rownames(cartes) <- NULL
   print(cartes[, c("joueur", "rarete", "saison", "L5", "L15")], row.names = FALSE)
-  if (length(args) >= 2L) {
+  if (length(args) >= 2L && nzchar(args[2])) {
     write.csv(cartes, args[2], row.names = FALSE)
     message("Écrit : ", args[2])
   }
