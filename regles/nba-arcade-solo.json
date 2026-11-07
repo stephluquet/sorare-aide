@@ -16,7 +16,9 @@
     "max": 16,
     "demi_etoiles_comptees": true,
     "source_etoiles": "gameplayTierStars(gameMode: SET) du joueur (API, vérifié)",
-    "texte_officiel": "Sum of players' stars must remain below 16"
+    "texte_officiel": "Sum of players' stars must remain below 16",
+    "plafond_inclus": true,
+    "decision": "16 inclus (utilisateur, 2026-11-07), malgré le texte officiel « below 16 »"
   },
   "paliers": [
     150,
@@ -33,9 +35,7 @@
     "source": "API, carte par carte",
     "repli": "voir bonus-collections.json"
   },
-  "a_verifier": [
-    "« below 16 » : un total de 16 pile est-il autorisé ? (l'utilisateur indique ≤ 16)"
-  ],
+  "a_verifier": [],
   "rarete_autorisee": [
     "common"
   ],
@@ -45,5 +45,6 @@
       "NBA"
     ]
   },
-  "verrouillage": "équipe verrouillée au premier coup d'envoi d'un de ses joueurs (utilisateur, 2026-11-07)"
+  "verrouillage": "équipe verrouillée au premier coup d'envoi d'un de ses joueurs (utilisateur, 2026-11-07)",
+  "joueur_qui_ne_joue_pas": 0
 }

@@ -9,9 +9,19 @@ Manager : **`yapapir`**. Langue de travail : français. **Le projet est en JavaS
 ## Tenir ce fichier à jour
 Ce fichier est la mémoire du projet entre les sessions. **Mettez-le à jour dans le même commit** chaque fois que vous découvrez quelque chose de durable : une requête qui marche, un champ qui n'existe pas, une limite de l'API, un nouveau script. Indiquez ce qui a été **vérifié** (avec la date) et ce qui est **supposé**. Retirez ce qui devient faux plutôt que de l'empiler.
 
-## Fonctionnement actuel
-- Claude, dans une session cloud, appelle l'API Sorare, écrit les fichiers de données et produit des pages HTML autonomes.
-- Pas de publication pour l'instant (GitLab Pages privé envisagé plus tard).
+## Plan et décisions
+**`docs/plan-appli.md` (v0.1 du 2026-11-07) fait foi pour le plan de développement** : principes, architecture, modèle de données, méthode, écrans, étapes et critères d'acceptation. `docs/recap-brief.md` résume le besoin. Résumé des décisions de l'utilisateur :
+- **Support** : un artifact Claude privé, publié par la session cloud, consulté sur iPhone et PC. **Cible à terme : une appli qui se passe de Claude.** Le moteur (`src/moteur/`) reste du JavaScript pur, la récupération un script Node autonome (clé en variable d'environnement ailleurs), l'interface (`app/`) lit un fichier de données au même format.
+- **Actualisation à la demande seulement** : l'utilisateur écrit « actualise », la session récupère les données et republie l'artifact. Les données sont intégrées à l'artifact, qui ne peut pas appeler l'API Sorare lui-même (clé). Pas d'actualisation automatique. L'artifact affiche l'heure et l'âge des données, avec un bandeau orange au-delà de 3 h.
+- **Usage** : un passage le matin, un en fin d'après-midi pour les matchs du soir.
+- **Risque** : seuil par défaut de 80 % de chances de jouer ; proposition prudente en premier.
+- **Pas** de journal des résultats pour l'instant ; deux maquettes (dont une ultra minimaliste) avant de coder les écrans.
+
+**Réponses aux ❓ du plan** (contrat des artifacts lu le 2026-11-07, runtime 0.2.96 ; pas encore essayé en vrai) :
+- **Garder le palier et les cartes jouées** : capacité `db` de l'artifact. Documents privés par personne (`data/users/<id>/…`), conservés d'une republication à l'autre, **partagés entre iPhone et PC** (même compte), et **lisibles par la session** (`ArtifactData`), qui peut donc en tenir compte. Le `localStorage` survit aussi aux republications, mais reste propre à chaque navigateur. Il faut être connecté à claude.ai (sinon `db` vaut `null` : prévoir un repli `localStorage`).
+- **Bouton qui déclenche l'actualisation** : possible en principe avec la capacité `mcp` et le connecteur « Claude Code Remote ». Le bouton lancerait une tâche programmée (`fire_trigger`) qui récupère les données et republie. La progression peut s'afficher dans l'artifact si la tâche écrit son avancement dans `db` (`onSnapshot`). **Non garanti** : le connecteur peut exposer moins d'outils côté navigateur. À essayer à l'étape 5 bis ; en attendant, « actualise » dans la session. La capacité `sample` (demander à Claude) ne convient pas : elle n'a ni réseau ni outils.
+
+Commandes actuelles (étape 1 du premier plan ; à remplacer par `npm run recuperer` de l'étape 1 du plan v0.1) :
 
 ```bash
 node src/recuperation.js yapapir football    # → data/cartes-football-AAAA-MM-JJ.json (cache du jour ; --force pour rafraîchir)
@@ -79,7 +89,7 @@ src/             recuperation.js (API), projection.js (méthode), page.js (HTML)
 data/            données récupérées, datées : cartes-<football|nba>-AAAA-MM-JJ.json (une carte par ligne) ; releves/ : relevés exploratoires
 src/releve-compositions.js  relevé exploratoire des compositions officielles et des probabilités de titularisation d'un match
 sorties/         pages HTML produites, autonomes, lisibles sur téléphone
-docs/            briefs destinés à l'utilisateur (docs/brief-api-sorare.md : ce que l'API permet ou non)
+docs/            plan-appli.md (plan v0.1, fait foi), recap-brief.md (besoin), brief-api-sorare.md (ce que l'API permet ou non)
 R/cartes.R       ancien script R (liste des cartes + L5/L15 en CSV), antérieur au projet JS
 ```
 
@@ -98,9 +108,9 @@ R/cartes.R       ancien script R (liste des cartes + L5/L15 en CSV), antérieur 
 
 **Équipe verrouillée au premier coup d'envoi** d'un de ses joueurs (utilisateur). Carte bloquée tant qu'on reste sur le même niveau, mais utilisable en Squad.
 
-**Football solo** : 5 joueurs (GK, DF, MD, FW + 1 joueur de champ au choix) ; un capitaine, score majoré de 50 % ; cartes common ; joueurs des compétitions autorisées seulement (liste dans `regles/`).
+**Football solo** : 5 joueurs (GK, DF, MD, FW + 1 joueur de champ au choix) ; un capitaine, score majoré de 50 % ; cartes common ; seuls comptent les **matchs** des compétitions autorisées (liste dans `regles/`, coupes nationales exclues).
 
-**NBA solo** : 5 joueurs, postes libres ; pas de capitaine ; plafond de 16 étoiles par équipe, demi-étoiles comptées (4,5 + 4,5 = 9).
+**NBA solo** : 5 joueurs, postes libres ; pas de capitaine ; plafond de 16 étoiles par équipe, **16 inclus**, demi-étoiles comptées (4,5 + 4,5 = 9).
 
 **Squad (les deux sports)** : le score du squad est la somme des 3 meilleurs scores des membres, mais les partenaires sont inconnus. L'outil propose donc **la meilleure équipe possible du jour** : uniquement des joueurs qui jouent le jour même, cartes bloquées en solo autorisées ; objectif = score attendu maximal. Mêmes règles de composition que le solo du sport, à confirmer.
 
@@ -110,8 +120,8 @@ R/cartes.R       ancien script R (liste des cartes + L5/L15 en CSV), antérieur 
 - correspondance des tiers API (GOAT, DNP, variantes `_PLUS`) avec ceux du centre d'aide ;
 - le bonus « même club » du centre d'aide ;
 - d'éventuelles contraintes de tier selon le niveau (aucune dans les règles lues le 2026-11-07, identiques sur les 6 paliers) ;
-- plafond NBA : texte officiel « must remain below 16 », utilisateur « ≤ 16 » : 16 pile autorisé ou non ?
-- compétitions autorisées (football) : s'appliquent-elles au club du joueur ou au match joué ? (Ligue des nations listée : un match de sélection compte-t-il ?)
+- ~~plafond NBA~~ → **16 inclus** (décision de l'utilisateur, 2026-11-07), malgré le texte officiel « below 16 » ;
+- ~~compétitions autorisées~~ → **la règle porte sur le match joué** (utilisateur, 2026-11-07) : un joueur dont le prochain match est une coupe nationale est exclu pour ce créneau ; les matchs de la Ligue des nations comptent. Comparer `nextGame.competition.name` à `competitions_autorisees.noms_api` dans `regles/`.
 
 **Ce que l'appli fait et ne fait pas** (récap utilisateur du 2026-11-07, remplace le plan initial)
 - État (palier en cours, cartes déjà jouées) **saisi à la main et gardé dans le navigateur**. Le palier, son état et les échecs se lisent aussi dans l'API (voir le tableau).
