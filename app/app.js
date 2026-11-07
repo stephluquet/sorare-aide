@@ -212,8 +212,17 @@ function commandes() {
   if (vue.creneau && !journees.has(vue.creneau)) vue.creneau = '';
   $('creneau').innerHTML = '<option value="">Toutes les journées</option>' + [...journees.entries()].sort((a, b) => a[0].localeCompare(b[0]))
     .map(([k, n]) => `<option value="${k}" ${k === vue.creneau ? 'selected' : ''}>${libelleJournee(vue.sport, k)} (${n})</option>`).join('');
+  const TRIS = [['e', 'Tri : espérance'], ['p', 'Tri : chances de jouer'], ['d', "Tri : coup d'envoi"],
+    ...(vue.sport === 'nba' ? [['et', 'Tri : étoiles (1★ d’abord)'], ['pe', 'Tri : points par étoile']] : [])];
+  if (!TRIS.some(([k]) => k === vue.tri)) vue.tri = 'e';
+  $('tri').innerHTML = TRIS.map(([k, t]) => `<option value="${k}" ${k === vue.tri ? 'selected' : ''}>${t}</option>`).join('');
   $('seuil').value = String(seuil());
 }
+
+// Étoiles du joueur (NBA : plafond de 16 par équipe), bien visibles.
+const badgeEtoiles = (l, grand = false) => (l.c.sport === 'nba' && l.j.etoiles != null
+  ? `<span class="etoiles${grand ? ' grand' : ''}" title="${nb(l.j.etoiles, 1)} étoile(s)">★ ${nb(l.j.etoiles, 1)}</span>` : '');
+const plafondEtoiles = (sport) => D.regles[sport]?.plafond_etoiles?.max ?? null;
 
 function vignette(l) {
   const img = D.vignettes[l.c.id];
@@ -232,8 +241,12 @@ function liste() {
   const J = jouees(vue.sport);
   const L = lignes.filter((l) => l.c.sport === vue.sport && (!vue.poste || l.j.postes.includes(vue.poste)) &&
     (!vue.dispo || disponible(l)) && (!vue.creneau || (l.m && journee(l) === vue.creneau)));
-  const tri = { e: (a, b) => (b.pr.esperance ?? -1) - (a.pr.esperance ?? -1), p: (a, b) => (b.pr.p ?? -1) - (a.pr.p ?? -1),
-    d: (a, b) => (a.m?.debutUTC ?? '9').localeCompare(b.m?.debutUTC ?? '9') }[vue.tri];
+  const esp = (l) => l.pr.esperance ?? -1;
+  const parEtoile = (l) => (l.pr.esperance == null || !l.j.etoiles ? -1 : l.pr.esperance / l.j.etoiles);
+  const tri = { e: (a, b) => esp(b) - esp(a), p: (a, b) => (b.pr.p ?? -1) - (a.pr.p ?? -1),
+    d: (a, b) => (a.m?.debutUTC ?? '9').localeCompare(b.m?.debutUTC ?? '9'),
+    et: (a, b) => ((a.j.etoiles ?? 99) - (b.j.etoiles ?? 99)) || (esp(b) - esp(a)),
+    pe: (a, b) => parEtoile(b) - parEtoile(a) }[vue.tri] ?? ((a, b) => esp(b) - esp(a));
   L.sort(tri);
   $('compte').textContent = `${L.length} carte${L.length > 1 ? 's' : ''}`;
   if (!L.length) { $('liste').innerHTML = '<div class="vide-liste">Aucune carte ne correspond. Décoche « disponibles seulement » pour tout voir.</div>'; return; }
@@ -243,7 +256,7 @@ function liste() {
     return `<button type="button" class="ligne${J.has(c.id) ? ' bloquee' : ''}" data-id="${esc(c.id)}">
       ${vignette(l)}
       <div style="min-width:0">
-        <div class="nom">${esc(l.j.nom)}</div>
+        <div class="nom">${esc(l.j.nom)} ${badgeEtoiles(l)}</div>
         <div class="meta"><span>${esc(l.j.postes.join('/'))} · ${esc(l.j.club?.nom ?? '?')}</span><span>${match}</span></div>
         <div class="puces">
           <span class="etiq ${st}">${LIBELLES[st]}</span>
@@ -253,7 +266,7 @@ function liste() {
         </div>
       </div>
       <div class="chiffres">
-        <div class="esp">${nb(l.pr.esperance)}<small>espérance</small></div>
+        <div class="esp">${nb(l.pr.esperance)}<small>${c.sport === 'nba' && l.j.etoiles && l.pr.esperance != null ? `${nb(l.pr.esperance / l.j.etoiles, 1)} pts/★` : 'espérance'}</small></div>
         ${jauge(l.pr.p)}
       </div>
     </button>`;
@@ -285,7 +298,8 @@ function fiche(id) {
   v.innerHTML = `<div class="volet" role="dialog" aria-modal="true" aria-label="${esc(j.nom)}">
     <div class="volet-tete">${vignette(l)}<div style="min-width:0">
       <h2>${esc(j.nom)}</h2>
-      <div class="sous">${esc(j.postes.join('/'))} · ${esc(j.club?.nom ?? '?')} · ${esc((j.tier ?? '').replace('_PLUS', '+'))}${j.etoiles != null ? ` · ${nb(j.etoiles, 1)} ★` : ''}</div>
+      ${c.sport === 'nba' ? `<div style="margin:4px 0">${badgeEtoiles(l, true)}</div>` : ''}
+      <div class="sous">${esc(j.postes.join('/'))} · ${esc(j.club?.nom ?? '?')} · ${esc((j.tier ?? '').replace('_PLUS', '+'))}${c.sport !== 'nba' && j.etoiles != null ? ` · ${nb(j.etoiles, 1)} ★` : ''}</div>
       <div class="puces" style="margin-top:6px"><span class="etiq ${st}">${LIBELLES[st]}</span>${c.bonusPct ? `<span class="etiq bonus">${esc(c.collection)} +${nb(c.bonusPct)} %</span>` : ''}${j.statutSorare ? `<span class="etiq neutre">Sorare : ${esc(j.statutSorare)}</span>` : ''}</div>
       <div class="sous" style="margin-top:8px">${m ? `${quand(m.debutUTC)} · ${esc(m.competition ?? '')} · ${l.lieu === 'ext' ? 'à l’extérieur contre' : l.lieu === 'dom' ? 'à domicile contre' : ''} ${esc(l.adv ?? '?')}` : 'Pas de match connu'}</div>
     </div></div>
@@ -365,19 +379,20 @@ function carteProposition(nom, e, sport, principale) {
     <div class="chiffres-cle">
       <div class="case-chiffre fort"><span>Chances de passer</span><b>${pct(e.pPasser)}</b></div>
       <div class="case-chiffre"><span>Les 5 jouent</span><b>${pct(e.pComplete)}</b></div>
+      ${sport === 'nba' ? `<div class="case-chiffre etoiles-equipe"><span>Étoiles</span><b>★ ${nb(e.etoiles, 1)} <small>/ ${plafondEtoiles(sport)}</small></b></div>` : ''}
       <div class="case-chiffre"><span>Score moyen</span><b>${nb(e.scoreMoyen)}</b></div>
       <div class="case-chiffre"><span>Verrouillage</span><b style="font-size:1.05rem">${esc(quand(e.verrouillage))}</b></div>
     </div>
     <div class="joueurs">${membres.map((l) => {
       const st = statut(l);
       return `<div class="joueur">${vignette(l)}<div style="min-width:0">
-          <div class="nom">${esc(l.j.nom)}${e.capitaine === l.c.id ? '<span class="capitaine">C</span>' : ''}</div>
-          <div class="meta"><span>${esc(l.j.postes.join('/'))}${sport === 'nba' && l.j.etoiles != null ? ` · ${nb(l.j.etoiles, 1)} ★` : ''}</span><span>${esc(quand(l.m.debutUTC))} · ${l.lieu === 'ext' ? '@ ' : l.lieu === 'dom' ? 'vs ' : ''}${esc(l.adv ?? '?')}</span></div>
+          <div class="nom">${esc(l.j.nom)}${e.capitaine === l.c.id ? '<span class="capitaine">C</span>' : ''} ${badgeEtoiles(l)}</div>
+          <div class="meta"><span>${esc(l.j.postes.join('/'))}</span><span>${esc(quand(l.m.debutUTC))} · ${l.lieu === 'ext' ? '@ ' : l.lieu === 'dom' ? 'vs ' : ''}${esc(l.adv ?? '?')}</span></div>
           <div class="puces"><span class="etiq ${st}">${LIBELLES[st]}</span>${l.c.bonusPct ? `<span class="etiq bonus">${esc(l.c.collection)} +${nb(l.c.bonusPct)} %</span>` : ''}</div>
         </div>
         <div class="droite"><b>${pct(l.pr.p)}</b>joue · ${nb(l.pr.siJoue)} pts</div></div>`;
     }).join('')}</div>
-    <div class="sous">${sport === 'nba' ? `${nb(e.etoiles, 1)} étoiles sur 16 · ` : ''}Résultat connu après le dernier match (${esc(quand(dernier))}).</div>
+    <div class="sous">Résultat connu après le dernier match (${esc(quand(dernier))}).</div>
     <div class="actions"><button type="button" class="bouton" data-jouer="${esc(e.cartes.join(','))}" data-sport="${sport}">J'ai joué cette équipe</button></div>
   </article>`;
 }
@@ -420,8 +435,8 @@ function afficherAutres(sport, equipe, a) {
       const l = parId.get(c.carteId), rem = c.remplace ? parId.get(c.remplace) : null;
       const delta = c.ecart == null ? '' : `<span class="${c.ecart >= 0.005 ? 'plus' : c.ecart <= -0.005 ? 'moins' : 'egal'}">${c.ecart >= 0 ? '+' : '−'}${Math.abs(Math.round(c.ecart * 1000) / 10).toLocaleString('fr-FR')} pt</span>`;
       return `<div class="alt">${vignette(l)}<div style="min-width:0">
-          <div class="nom">${esc(l.j.nom)}${c.capitaine === c.carteId ? '<span class="capitaine">C</span>' : ''}</div>
-          <div class="meta"><span>${esc(l.j.postes.join('/'))}${sport === 'nba' && l.j.etoiles != null ? ` · ${nb(l.j.etoiles, 1)} ★` : ''} · ${pct(c.p)} joue · ${nb(c.siJoue)} pts</span><span>${esc(quand(l.m.debutUTC))}</span></div>
+          <div class="nom">${esc(l.j.nom)}${c.capitaine === c.carteId ? '<span class="capitaine">C</span>' : ''} ${badgeEtoiles(l)}</div>
+          <div class="meta"><span>${esc(l.j.postes.join('/'))} · ${pct(c.p)} joue · ${nb(c.siJoue)} pts</span><span>${esc(quand(l.m.debutUTC))}</span></div>
         </div>
         <div class="droite">${rem ? `à la place de <b class="nom-remplace">${esc(rem.j.nom)}</b>${pct(c.pPasser)} ${delta}` : '<span class="sous">aucun remplacement possible</span>'}</div></div>`;
     }).join('')}</div>`).join('');
@@ -467,14 +482,15 @@ function afficherSquad() {
       <div class="chiffres-cle">
         <div class="case-chiffre fort"><span>Score attendu</span><b>${nb(e.esperance)}</b></div>
         <div class="case-chiffre"><span>Les 5 jouent</span><b>${pct(e.pComplete)}</b></div>
+      ${sport === 'nba' ? `<div class="case-chiffre etoiles-equipe"><span>Étoiles</span><b>★ ${nb(e.etoiles, 1)} <small>/ ${plafondEtoiles(sport)}</small></b></div>` : ''}
         <div class="case-chiffre"><span>Verrouillage</span><b style="font-size:1.05rem">${esc(quand(e.verrouillage))}</b></div>
       </div>
       <div class="joueurs">${membres.map((l) => `<div class="joueur">${vignette(l)}<div style="min-width:0">
-          <div class="nom">${esc(l.j.nom)}${e.capitaine === l.c.id ? '<span class="capitaine">C</span>' : ''}</div>
-          <div class="meta"><span>${esc(l.j.postes.join('/'))}${sport === 'nba' && l.j.etoiles != null ? ` · ${nb(l.j.etoiles, 1)} ★` : ''}</span><span>${esc(quand(l.m.debutUTC))} · ${l.lieu === 'ext' ? '@ ' : l.lieu === 'dom' ? 'vs ' : ''}${esc(l.adv ?? '?')}</span></div>
+          <div class="nom">${esc(l.j.nom)}${e.capitaine === l.c.id ? '<span class="capitaine">C</span>' : ''} ${badgeEtoiles(l)}</div>
+          <div class="meta"><span>${esc(l.j.postes.join('/'))}</span><span>${esc(quand(l.m.debutUTC))} · ${l.lieu === 'ext' ? '@ ' : l.lieu === 'dom' ? 'vs ' : ''}${esc(l.adv ?? '?')}</span></div>
           <div class="puces"><span class="etiq ${statut(l)}">${LIBELLES[statut(l)]}</span>${jouees(sport).has(l.c.id) ? '<span class="etiq neutre">jouée en Arcade</span>' : ''}</div>
         </div><div class="droite"><b>${nb(l.pr.esperance)}</b>espérance</div></div>`).join('')}</div>
-      <div class="sous">${sport === 'nba' ? `${nb(e.etoiles, 1)} étoiles sur 16 · ` : ''}${r.admissibles} cartes du jour retenues, ${r.nbEquipes} équipes comparées. Règles de composition supposées identiques à l'Arcade (à confirmer).</div>
+      <div class="sous">${r.admissibles} cartes du jour retenues, ${r.nbEquipes} équipes comparées. Règles de composition supposées identiques à l'Arcade (à confirmer).</div>
     </article>`;
   });
 }
