@@ -46,7 +46,8 @@ function tirerDans(e, u) {
  * @param projection résultat de projeterCarte (p, score, bonus)
  * @param P paramètres de methode.md
  * @returns null si pas de score exploitable, sinon { p, b, situations: [{part, e}], echelle, bruit, max, m, v }
- *   où m et v sont la moyenne et la variance du score s'il joue (bonus inclus, lissage compris).
+ *   où m et v sont la moyenne et la variance du score s'il joue, SANS bonus (lissage compris) ;
+ *   le multiplicateur de la carte (bonus, capitaine) s'applique ensuite (multiplicateurCarte).
  */
 export function distribution(joueur, projection, P) {
   const sport = joueur.sport, S = P[sport], sim = P.simulation;
@@ -77,7 +78,7 @@ export function distribution(joueur, projection, P) {
   }
   return {
     p: projection.p, b, situations, echelle, bruit, max: sim.score_max[sport],
-    m: m1 * b, v: Math.max(0, m2 - m1 * m1) * b * b,
+    m: m1, v: Math.max(0, m2 - m1 * m1),
   };
 }
 
@@ -88,7 +89,17 @@ function tirerScore(d, rng) {
   let score = tirerDans(sit.e, rng.suivant()) * d.echelle + d.bruit * rng.normal();
   if (score < 0) score = 0;
   if (d.max != null && score > d.max) score = d.max;
-  return score * d.b;
+  return score;
+}
+
+/**
+ * Multiplicateur d'une carte : 1 + bonus de la carte (+ bonus de capitaine).
+ * Cumul par addition (regles/, cumul_bonus) : 1 + 0,2 + 0,5 = 1,7 pour un capitaine Eclipse ;
+ * en mode « multiplication » ce serait 1,2 × 1,5 = 1,8.
+ */
+export function multiplicateurCarte(d, capitaine, multCapitaine, mode = 'addition') {
+  if (!capitaine) return d.b;
+  return mode === 'multiplication' ? d.b * multCapitaine : d.b + (multCapitaine - 1);
 }
 
 /**
@@ -96,18 +107,19 @@ function tirerScore(d, rng) {
  * @param distributions les 5 distributions
  * @param capitaine indice du capitaine dans `distributions`, ou -1 (NBA)
  * @param multiplicateur multiplicateur du capitaine (1,5 en football)
+ * @param mode cumul des bonus : 'addition' (vérifié) ou 'multiplication'
  * @param cible score à atteindre
  * @param sim P.simulation (tirages, graine)
  * @returns { pPasser, scoreMoyen, pComplete }
  */
-export function simulerEquipe(distributions, capitaine, multiplicateur, cible, sim) {
+export function simulerEquipe(distributions, capitaine, multiplicateur, cible, sim, mode = 'addition') {
   const rng = generateur(sim.graine);
+  const facteurs = distributions.map((d, i) => multiplicateurCarte(d, i === capitaine, multiplicateur, mode));
   let passes = 0, somme = 0;
   for (let t = 0; t < sim.tirages; t++) {
     let total = 0;
     for (let i = 0; i < distributions.length; i++) {
-      const x = tirerScore(distributions[i], rng);
-      total += i === capitaine ? x * multiplicateur : x;
+      total += tirerScore(distributions[i], rng) * facteurs[i];
     }
     somme += total;
     if (total >= cible) passes++;
@@ -126,7 +138,8 @@ const phi = (z) => { // fonction de répartition de la loi normale (Abramowitz e
   return z >= 0 ? 0.5 * (1 + y) : 0.5 * (1 - y);
 };
 
-export function moments(d, facteur = 1) {
+// facteur = multiplicateur de la carte (multiplicateurCarte).
+export function moments(d, facteur = d.b) {
   const m = d.m * facteur, v = d.v * facteur * facteur;
   return { moyenne: d.p * m, variance: d.p * (v + m * m) - (d.p * m) ** 2 };
 }

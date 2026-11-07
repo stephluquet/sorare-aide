@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { parametresDepuisMethode } from '../src/moteur/parametres.js';
 import { projeterCarte } from '../src/moteur/projection.js';
 import { proposer, proposerParCreneau, squadDuJour, joursAVenir } from '../src/moteur/compositions.js';
-import { simulerEquipe } from '../src/moteur/simulation.js';
+import { simulerEquipe, multiplicateurCarte } from '../src/moteur/simulation.js';
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), '..');
 const P = parametresDepuisMethode(readFileSync(join(RACINE, 'methode.md'), 'utf8'));
@@ -204,10 +204,27 @@ test('Squad du jour : cartes du jour seulement, cartes jouées en Arcade autoris
   assert.equal(r.equipe.capitaine, 'fw1-carte');
   // Contrôle par force brute sur les mêmes cartes : aucune équipe valide ne fait mieux.
   const adm = L.filter((l) => l.match.debutUTC.startsWith('2026-11-08'));
-  const esp = (ids) => { const e = ids.map((id) => parId(L).get(id).projection.esperance); return e.reduce((a, b) => a + b, 0) + 0.5 * Math.max(...e); };
+  const esp = (ids) => {
+    const pr = ids.map((id) => parId(L).get(id).projection);
+    return pr.reduce((a, x) => a + x.esperance, 0) + 0.5 * Math.max(...pr.map((x) => x.p * x.score.mu));
+  };
   const pos = (po) => adm.filter((l) => l.joueur.postes[0] === po).map((l) => l.carte.id);
   let best = 0;
   for (const g of pos('GK')) for (const d of pos('DF')) for (const m of pos('MD')) for (const f of pos('FW'))
     for (const x of [...pos('DF'), ...pos('MD'), ...pos('FW')]) { if (new Set([d, m, f, x]).size < 4) continue; best = Math.max(best, esp([g, d, m, f, x])); }
   assert.ok(Math.abs(r.equipe.esperance - best) < 1e-9, `${r.equipe.esperance} contre ${best}`);
+});
+
+test('cumul des bonus par addition : capitaine Eclipse × 1,7 ; le brassard va au meilleur score de base', () => {
+  assert.ok(Math.abs(multiplicateurCarte({ b: 1.2 }, true, 1.5, 'addition') - 1.7) < 1e-12);
+  assert.ok(Math.abs(multiplicateurCarte({ b: 1.2 }, true, 1.5, 'multiplication') - 1.8) < 1e-12);
+  assert.equal(multiplicateurCarte({ b: 1.2 }, false, 1.5, 'addition'), 1.2);
+  // Kane-like : base 70, sans bonus ; carte Eclipse : base 58, +20 %. Squad → capitaine = base 70.
+  const fort = ligne('fort', { postes: ['FW'], niveau: 70 });
+  const bonifie = ligne('bonifie', { postes: ['DF'], niveau: 58 });
+  bonifie.carte.bonusPct = 20;
+  bonifie.projection = projeterCarte(bonifie.carte, bonifie.joueur, bonifie.match, P, COMP_FOOT);
+  const L = [ligne('g', { postes: ['GK'], niveau: 40 }), bonifie, ligne('m', { postes: ['MD'], niveau: 45 }), fort, ligne('d2', { postes: ['DF'], niveau: 40 })];
+  const r = squadDuJour(L, P, { sport: 'football', jour: '2026-11-08', regle: REGLE_FOOT, seuil: P.seuil_jouer, maintenant: MAINTENANT });
+  assert.equal(r.equipe.capitaine, 'fort-carte');
 });

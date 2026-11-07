@@ -228,7 +228,7 @@ situation         football : titulaire avec probabilité q, sinon entré en jeu
 score             un de ses scores passés de cette situation, tiré avec les poids de la section 3,
                   plus un bruit normal d'écart-type lissage × σ ; borné à [0, score_max]
                   (NBA : scores passés remis à l'échelle de μ = minutes × taux)
-contribution      0 s'il ne joue pas, sinon score × b, × 1,5 pour le capitaine
+contribution      0 s'il ne joue pas, sinon score × (b + 0,5 pour le capitaine)
 ```
 
 Score de l'équipe = somme des 5 contributions. Probabilité de passer = part
@@ -243,6 +243,15 @@ rééchantillonnage des scores passés est mieux calibré qu'une loi normale
 trop étroit ; le bruit ajouté corrige les extrêmes. Meilleur lissage : 0,35 en
 football (écart 7,8 points), 0,5 en NBA (12,8 points). Reste un léger
 optimisme : 53 à 55 % des scores réels tombent sous la médiane prédite.
+
+**Cumul des bonus : addition** (`regles/`, `cumul_bonus`). Le score d'une
+carte vaut score du joueur × (1 + bonus de la carte + 0,5 s'il est capitaine) :
+un capitaine Eclipse (+20 %) compte × 1,7, pas × 1,8. Vérifié le 2026-11-07
+sur des classements classiques publics (le bonus de capitaine s'ajoute aux
+bonus de collection et d'expérience) ; pour le bonus d'édition en Arcade,
+déduit de l'API, non vérifié directement. Conséquence : le brassard rapporte
+50 % du score **de base** ; il revient au joueur qui marque le plus, pas à la
+carte la plus bonifiée.
 
 ## 6. Choix des compositions
 
@@ -261,8 +270,9 @@ inclus, demi-étoiles comptées).
    FW) ou les `candidats_nba` meilleures (NBA). Toutes les équipes possibles
    sont évaluées par une **approximation normale** : chaque contribution a
    pour moyenne `p × m` et pour variance `p × (v + m²) − (p × m)²`, où `m` et
-   `v` sont la moyenne et la variance du score s'il joue (bonus et capitaine
-   compris, lissage inclus) ; probabilité ≈ `1 − Φ((cible − Σ moyennes) / √Σ variances)`.
+   `v` sont la moyenne et la variance du score s'il joue multipliées par le
+   multiplicateur de la carte (bonus et capitaine, par addition ; lissage
+   inclus) ; probabilité ≈ `1 − Φ((cible − Σ moyennes) / √Σ variances)`.
    En football, chaque joueur est essayé comme capitaine.
 2. *Simulation* : les `equipes_simulees` meilleures équipes de l'étape 1 sont
    simulées (section 5) ; c'est cette probabilité qui est affichée.
@@ -294,8 +304,9 @@ heure, avec leur meilleure chance de passer et l'état des compositions
 
 Le score du squad dépend de partenaires inconnus : l'outil propose la
 **meilleure équipe du jour au sens du score attendu** (somme des
-espérances, + 50 % de l'espérance du capitaine en football, capitaine = le
-joueur de meilleure espérance). Cartes admissibles comme en section 6, sauf
+espérances, plus en football le gain du brassard : 50 % du score de base
+attendu, p × μ ; capitaine = le joueur de plus grand p × μ, bonus de carte
+non compris, voir le cumul des bonus en section 5). Cartes admissibles comme en section 6, sauf
 que les cartes **jouées en Arcade sont autorisées** et que tous les matchs
 doivent avoir lieu **le jour choisi** (heure de Paris). Mêmes règles de
 composition que l'Arcade du sport (à confirmer dans le jeu). Recherche

@@ -54,5 +54,10 @@
   "jours_differents_autorises": {
     "valeur": true,
     "source": "utilisateur, 2026-11-07 : une équipe peut mêler des matchs de jours différents"
+  },
+  "cumul_bonus": {
+    "mode": "addition",
+    "formule": "score de la carte = score du joueur × (1 + bonus de la carte + bonus de capitaine)",
+    "source": "vérifié le 2026-11-07 sur des classements classiques publics (capitaine + collection + XP s'additionnent) ; pour le bonus d'édition en Arcade, déduit de l'API (même famille de bonus), non vérifié directement"
   }
 }

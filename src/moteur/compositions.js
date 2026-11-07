@@ -2,7 +2,7 @@
 // présélection par approximation normale, simulation des meilleures équipes,
 // trois propositions. JavaScript pur, sans accès réseau ni disque.
 
-import { distribution, moments, pPasserApprox, simulerEquipe } from './simulation.js';
+import { distribution, moments, multiplicateurCarte, pPasserApprox, simulerEquipe } from './simulation.js';
 
 /**
  * Cartes admissibles pour une tentative.
@@ -89,7 +89,7 @@ function preselection(adm, sport, regle, cible, sim) {
     const base = equipe.map((x) => moments(x.d));
     const capitaines = avecCapitaine ? [0, 1, 2, 3, 4] : [-1];
     for (const cap of capitaines) {
-      const mts = cap < 0 ? base : base.map((mo, i) => (i === cap ? moments(equipe[i].d, mult) : mo));
+      const mts = cap < 0 ? base : base.map((mo, i) => (i === cap ? moments(equipe[i].d, multiplicateurCarte(equipe[i].d, true, mult, regle.cumul_bonus?.mode)) : mo));
       garde.push({ equipe, capitaine: cap, approx: pPasserApprox(mts, cible) });
     }
     if (garde.length > 20 * sim.equipes_simulees) { // garde la mémoire bornée
@@ -104,7 +104,7 @@ function preselection(adm, sport, regle, cible, sim) {
 function simuler(retenues, regle, cible, sim) {
   const mult = regle.capitaine?.multiplicateur ?? 1;
   return retenues.map((r) => {
-    const res = simulerEquipe(r.equipe.map((x) => x.d), r.capitaine, mult, cible, sim);
+    const res = simulerEquipe(r.equipe.map((x) => x.d), r.capitaine, mult, cible, sim, regle.cumul_bonus?.mode);
     return {
       cartes: r.equipe.map((x) => x.carte.id),
       capitaine: r.capitaine >= 0 ? r.equipe[r.capitaine].carte.id : null,
@@ -190,8 +190,11 @@ export function squadDuJour(lignes, P, o) {
   for (const equipe of generateur) {
     nbEquipes++;
     const esp = equipe.map((x) => x.projection.esperance);
-    const cap = o.regle.capitaine ? esp.indexOf(Math.max(...esp)) : -1;
-    const total = esp.reduce((a, b) => a + b, 0) + (cap >= 0 ? (mult - 1) * esp[cap] : 0);
+    // Gain du brassard : en addition, + (mult − 1) × score de base ; en multiplication, × mult du score bonifié.
+    const gains = equipe.map((x) => (o.regle.cumul_bonus?.mode === 'multiplication' ? (mult - 1) * x.projection.esperance
+      : (mult - 1) * x.projection.p * x.projection.score.mu));
+    const cap = o.regle.capitaine ? gains.indexOf(Math.max(...gains)) : -1;
+    const total = esp.reduce((a, b) => a + b, 0) + (cap >= 0 ? gains[cap] : 0);
     if (!meilleure || total > meilleure.esperance) meilleure = { equipe, cap, esperance: total };
   }
   if (!meilleure) return { equipe: null, admissibles: admissibles.length, ecartees, nbEquipes, message: `Aucune équipe possible ce jour-là : ${admissibles.length} cartes admissibles.` };
