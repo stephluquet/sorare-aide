@@ -342,8 +342,41 @@ const plafondEtoiles = (sport) => D.regles[sport]?.plafond_etoiles?.max ?? null;
 
 function vignette(l) {
   const img = D.vignettes[l.c.id];
+  // Sans vignette intégrée : initiales, remplacées par l'image dès que la carte est à l'écran (lots à la volée).
   return img ? `<img class="vig" src="${img}" alt="" loading="lazy">`
-    : `<div class="vig" aria-hidden="true">${esc(l.j.nom.split(' ').map((x) => x[0]).slice(0, 2).join(''))}</div>`;
+    : `<div class="vig" data-vig="${esc(l.c.id)}" aria-hidden="true">${esc(l.j.nom.split(' ').map((x) => x[0]).slice(0, 2).join(''))}</div>`;
+}
+
+// ---------- Vignettes chargées à la volée ----------
+// Les vignettes non intégrées sont publiées à côté de la page en lots (vignettes/lot-NN.json, construits par
+// npm run app) ; un lot n'est lu qu'une fois, quand une de ses cartes approche de l'écran.
+const indexCarte = new Map(D.cartes.map((c, i) => [c.id, i]));
+const lotsLus = new Map();
+function lireLot(n) {
+  if (!lotsLus.has(n)) {
+    const nom = `vignettes/lot-${String(n).padStart(2, '0')}.json?v=${encodeURIComponent(D.lotsVignettes?.version ?? '')}`;
+    lotsLus.set(n, fetch(nom).then((r) => (r.ok ? r.json() : [])).catch(() => []));
+  }
+  return lotsLus.get(n);
+}
+async function remplirVignette(el) {
+  const id = el.dataset.vig, i = indexCarte.get(id), T = D.lotsVignettes?.taille;
+  if (i == null || !T) return;
+  const src = D.vignettes[id] ?? (await lireLot(Math.floor(i / T)))[i % T];
+  if (!src || !el.isConnected) return;
+  D.vignettes[id] = src; // les rendus suivants l'intègrent directement
+  const img = document.createElement('img');
+  img.className = el.className; img.src = src; img.alt = '';
+  el.replaceWith(img);
+}
+const observateurVignettes = 'IntersectionObserver' in window
+  ? new IntersectionObserver((entrees) => { for (const e of entrees) if (e.isIntersecting) { observateurVignettes.unobserve(e.target); remplirVignette(e.target); } }, { rootMargin: '400px' })
+  : null;
+const suivreVignettes = (racine) => racine.querySelectorAll?.('.vig[data-vig]').forEach((el) => (observateurVignettes ? observateurVignettes.observe(el) : remplirVignette(el)));
+// Toute vignette ajoutée à la page (listes, propositions, fiche…) est suivie, sans toucher aux rendus.
+if (D.lotsVignettes) {
+  new MutationObserver((ms) => { for (const m of ms) for (const n of m.addedNodes) if (n.nodeType === 1) { if (n.matches?.('.vig[data-vig]')) suivreVignettes(n.parentElement); else suivreVignettes(n); } })
+    .observe(document.body, { childList: true, subtree: true });
 }
 
 function jauge(p) {

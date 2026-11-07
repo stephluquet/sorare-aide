@@ -70,7 +70,9 @@ for (const sp of ['football', 'nba']) {
     .sort((a, b) => b.projection.esperance - a.projection.esperance).slice(0, NB_VIGNETTES[sp]).map((x) => x.carte));
 }
 mkdirSync(dossierVignettes, { recursive: true });
-writeFileSync(join(dossierVignettes, 'a-faire.json'), JSON.stringify(choisies.map((c) => ({ id: c.id, url: c.visuelUrl }))));
+// Vignettes de TOUTES les cartes (seules les nouvelles sont téléchargées) : les choisies sont intégrées
+// à la page, les autres rangées en lots chargés à la demande (voir plus bas).
+writeFileSync(join(dossierVignettes, 'a-faire.json'), JSON.stringify(donnees.cartes.filter((c) => c.visuelUrl).map((c) => ({ id: c.id, url: c.visuelUrl }))));
 execFileSync('python3', ['-I', join(RACINE, 'outils', 'vignettes.py'), dossierVignettes], { stdio: 'inherit' });
 for (const c of choisies) {
   const f = join(dossierVignettes, `${c.id}.webp`);
@@ -90,9 +92,28 @@ const script = [
 ].map(([nom, code]) => `// ===== ${nom} =====\n${sansModules(code)}`).join('\n');
 
 const gabarit = lire('app', 'index.html').replace('/*STYLE*/', () => lire('app', 'style.css')).replace('/*SCRIPT*/', () => script);
-const json = JSON.stringify(app);
 const dossier = join(RACINE, 'sorties', 'app');
 mkdirSync(dossier, { recursive: true });
+
+// ---------- Lots de vignettes chargés à la volée ----------
+// Un artifact ne charge aucune image externe : les vignettes des cartes non intégrées sont publiées
+// à côté de la page (fichiers vignettes/lot-NN.json, `files` de l'outil Artifact) et lues par fetch
+// quand la carte apparaît à l'écran. Lot n = cartes d'indice [n × taille, (n + 1) × taille[ dans app.cartes ;
+// chaque lot est un tableau aligné sur ces indices (null : vignette intégrée ou absente).
+const TAILLE_LOT = 100;
+const dossierLots = join(dossier, 'vignettes');
+mkdirSync(dossierLots, { recursive: true });
+const nbLots = Math.ceil(app.cartes.length / TAILLE_LOT);
+for (let n = 0; n < nbLots; n++) {
+  const lot = app.cartes.slice(n * TAILLE_LOT, (n + 1) * TAILLE_LOT).map((c) => {
+    const f = join(dossierVignettes, `${c.id}.webp`);
+    return app.vignettes[c.id] || !existsSync(f) ? null : `data:image/webp;base64,${readFileSync(f).toString('base64')}`;
+  });
+  writeFileSync(join(dossierLots, `lot-${String(n).padStart(2, '0')}.json`), JSON.stringify(lot));
+}
+app.lotsVignettes = { taille: TAILLE_LOT, nombre: nbLots, version: app.meta.construitA };
+// (les lots sont écrits avant la page : app.lotsVignettes doit être dans les données)
+const json = JSON.stringify(app);
 writeFileSync(join(dossier, 'donnees-app.json'), json);
 writeFileSync(join(dossier, 'sorare-aide.html'), gabarit.replace('/*DONNEES*/null', () => json.replace(/</g, '\\u003c')));
 writeFileSync(join(dossier, 'index.html'), '<!doctype html>\n<html lang="fr"><head><meta charset="utf-8">\n' +
