@@ -147,7 +147,7 @@ function parCreneau(sport) {
 }
 function squad(sport, jour) {
   const cle = ['squad', sport, jour, seuil(), Math.floor(Date.now() / 60000)].join('|');
-  if (!cache.has(cle)) cache.set(cle, squadDuJour(lignesMoteur(sport), D.P, { sport, jour, regle: D.regles[sport], seuil: seuil(), maintenant: Date.now() }));
+  if (!cache.has(cle)) cache.set(cle, squadDuJour(lignesMoteur(sport), D.P, { sport, jour, fuseau: D.journees[sport].fuseau, regle: D.regles[sport], seuil: seuil(), maintenant: Date.now() }));
   return cache.get(cle);
 }
 
@@ -412,10 +412,19 @@ function afficherCreneaux(sport) {
 // ---------- Squad du jour ----------
 function afficherSquad() {
   $('squad-sports').innerHTML = Object.entries(SPORTS).map(([k, v]) => `<button type="button" data-sport="${k}" aria-pressed="${k === vue.squadSport}">${v}</button>`).join('');
-  const jours = joursAVenir(lignesMoteur(vue.squadSport), Date.now());
+  // Journée de jeu au sens de Sorare (regles/squad.json) : en NBA, date de New York (soirée + nuit à Paris).
+  const J = D.journees[vue.squadSport];
+  const jours = joursAVenir(lignesMoteur(vue.squadSport), Date.now(), J.fuseau);
   if (!jours.includes(vue.squadJour)) vue.squadJour = jours[0] ?? null;
-  const fJourLong = new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', weekday: 'long', day: 'numeric', month: 'long' });
-  $('squad-jour').innerHTML = jours.map((j) => `<option value="${j}" ${j === vue.squadJour ? 'selected' : ''}>${fJourLong.format(new Date(`${j}T12:00:00Z`))}</option>`).join('');
+  const fLong = new Intl.DateTimeFormat('fr-FR', { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' });
+  const fJourSeul = new Intl.DateTimeFormat('fr-FR', { timeZone: 'UTC', weekday: 'long', day: 'numeric' });
+  const libelle = (j) => {
+    const d = new Date(`${j}T12:00:00Z`);
+    if (!J.decalage_etiquette_paris_jours) return fLong.format(d);
+    const lendemain = new Date(d.getTime() + J.decalage_etiquette_paris_jours * 86400000);
+    return `Nuit du ${fJourSeul.format(d)} au ${fLong.format(lendemain)} (journée Sorare du ${lendemain.getUTCDate()})`;
+  };
+  $('squad-jour').innerHTML = jours.map((j) => `<option value="${j}" ${j === vue.squadJour ? 'selected' : ''}>${libelle(j)}</option>`).join('');
   if (!vue.squadJour) { $('squad').innerHTML = '<p class="attente">Aucun match à venir.</p>'; return; }
   $('squad').innerHTML = '<p class="attente">Recherche de la meilleure équipe…</p>';
   const sport = vue.squadSport, jour = vue.squadJour;

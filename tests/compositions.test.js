@@ -7,7 +7,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parametresDepuisMethode } from '../src/moteur/parametres.js';
 import { projeterCarte } from '../src/moteur/projection.js';
-import { proposer, proposerParCreneau, squadDuJour, joursAVenir } from '../src/moteur/compositions.js';
+import { proposer, proposerParCreneau, squadDuJour, joursAVenir, jourDeJeu } from '../src/moteur/compositions.js';
 import { simulerEquipe, multiplicateurCarte } from '../src/moteur/simulation.js';
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -227,4 +227,16 @@ test('cumul des bonus par addition : capitaine Eclipse × 1,7 ; le brassard va a
   const L = [ligne('g', { postes: ['GK'], niveau: 40 }), bonifie, ligne('m', { postes: ['MD'], niveau: 45 }), fort, ligne('d2', { postes: ['DF'], niveau: 40 })];
   const r = squadDuJour(L, P, { sport: 'football', jour: '2026-11-08', regle: REGLE_FOOT, seuil: P.seuil_jouer, maintenant: MAINTENANT });
   assert.equal(r.equipe.capitaine, 'fort-carte');
+});
+
+test('journée de jeu : NBA à la date de New York (soirée + nuit à Paris), football à la date de Paris', () => {
+  const J = JSON.parse(readFileSync(join(RACINE, 'regles', 'squad.json'), 'utf8')).journee_de_jeu;
+  // Match NBA à 23:00 à Paris le 7 et match à 04:00 à Paris le 8 : même journée (le 7 à New York).
+  assert.equal(jourDeJeu('2026-11-07T22:00:00Z', J.nba.fuseau), '2026-11-07');
+  assert.equal(jourDeJeu('2026-11-08T03:00:00Z', J.nba.fuseau), '2026-11-07');
+  assert.equal(jourDeJeu('2026-11-08T20:30:00Z', J.nba.fuseau), '2026-11-08');
+  // Football : un match à 00:30 à Paris le 8 appartient au 8.
+  assert.equal(jourDeJeu('2026-11-07T23:30:00Z', J.football.fuseau), '2026-11-08');
+  const L = [ligne('a', { sport: 'nba', debut: '2026-11-08T22:00:00Z' }), ligne('b', { sport: 'nba', debut: '2026-11-09T03:00:00Z' })];
+  assert.deepEqual(joursAVenir(L, MAINTENANT, J.nba.fuseau), ['2026-11-08']);
 });

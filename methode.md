@@ -308,7 +308,12 @@ espérances, plus en football le gain du brassard : 50 % du score de base
 attendu, p × μ ; capitaine = le joueur de plus grand p × μ, bonus de carte
 non compris, voir le cumul des bonus en section 5). Cartes admissibles comme en section 6, sauf
 que les cartes **jouées en Arcade sont autorisées** et que tous les matchs
-doivent avoir lieu **le jour choisi** (heure de Paris). Mêmes règles de
+doivent appartenir à **la journée de jeu choisie**, au sens de Sorare
+(`regles/squad.json`, `journee_de_jeu`) : en football, la date du coup
+d'envoi à Paris ; **en NBA, la date du coup d'envoi à New York**, si bien
+que la soirée américaine et la nuit qui suit à Paris forment une seule
+journée (affichée par Sorare, vue de Paris, à la date du lendemain).
+Vérifié sur un mois de calendrier (voir `CLAUDE.md`). Mêmes règles de
 composition que l'Arcade du sport (à confirmer dans le jeu). Recherche
 exhaustive sur les candidats présélectionnés de la section 6.
 

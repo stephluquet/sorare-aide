@@ -24,7 +24,7 @@ export function cartesAdmissibles(lignes, P, o) {
       && (!o.jouees.has(l.carte.id) || ecarter('déjà jouées à ce palier'))
       && ((l.match && Date.parse(l.match.debutUTC) > o.maintenant) || ecarter('match déjà commencé'))
       && (!o.creneau || l.match.debutUTC === o.creneau || ecarter('autre créneau'))
-      && (!o.jour || jourParis(l.match.debutUTC) === o.jour || ecarter('autre jour'));
+      && (!o.jour || jourDeJeu(l.match.debutUTC, o.fuseau) === o.jour || ecarter('autre jour'));
     if (!ok) continue;
     const d = distribution(l.joueur, pr, P);
     if (!d) { ecarter('pas de score exploitable'); continue; }
@@ -35,9 +35,13 @@ export function cartesAdmissibles(lignes, P, o) {
 
 const parEsperance = (a, b) => b.projection.esperance - a.projection.esperance;
 
-// Jour (AAAA-MM-JJ, heure de Paris) d'un instant ISO.
-const FORMAT_JOUR = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Paris' });
-export const jourParis = (iso) => FORMAT_JOUR.format(new Date(iso));
+// Journée de jeu (AAAA-MM-JJ) d'un coup d'envoi : sa date dans le fuseau du sport
+// (regles/squad.json, journee_de_jeu : Paris en football, New York en NBA).
+const FORMATS_JOUR = new Map();
+export function jourDeJeu(iso, fuseau = 'Europe/Paris') {
+  if (!FORMATS_JOUR.has(fuseau)) FORMATS_JOUR.set(fuseau, new Intl.DateTimeFormat('sv-SE', { timeZone: fuseau }));
+  return FORMATS_JOUR.get(fuseau).format(new Date(iso));
+}
 
 // Équipes candidates (ensembles de 5 cartes) respectant postes, doublons et étoiles.
 function* equipesFootball(adm, regle, sim) {
@@ -180,7 +184,7 @@ export function proposerParCreneau(lignes, P, o) {
 /**
  * Meilleure équipe du jour au sens du score attendu (espérance), cartes jouées en Arcade
  * autorisées. Mêmes contraintes de composition que l'Arcade du sport (à confirmer dans le jeu).
- * @param o { sport, jour: 'AAAA-MM-JJ' (Paris), regle, seuil, maintenant }
+ * @param o { sport, jour: 'AAAA-MM-JJ' (journée de jeu), fuseau (journee_de_jeu du sport), regle, seuil, maintenant }
  */
 export function squadDuJour(lignes, P, o) {
   const { admissibles, ecartees } = cartesAdmissibles(lignes, P, { ...o, jouees: new Set() });
@@ -212,7 +216,7 @@ export function squadDuJour(lignes, P, o) {
   };
 }
 
-// Jours (Paris) qui ont au moins un match à venir, dans l'ordre.
-export function joursAVenir(lignes, maintenant) {
-  return [...new Set(lignes.filter((l) => l.match && Date.parse(l.match.debutUTC) > maintenant).map((l) => jourParis(l.match.debutUTC)))].sort();
+// Journées de jeu qui ont au moins un match à venir, dans l'ordre.
+export function joursAVenir(lignes, maintenant, fuseau = 'Europe/Paris') {
+  return [...new Set(lignes.filter((l) => l.match && Date.parse(l.match.debutUTC) > maintenant).map((l) => jourDeJeu(l.match.debutUTC, fuseau)))].sort();
 }

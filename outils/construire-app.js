@@ -33,6 +33,7 @@ const app = {
   P,
   regles,
   paliers: donnees.paliers,
+  journees: JSON.parse(lire('regles', 'squad.json')).journee_de_jeu,
   cartes: donnees.cartes.map(({ id, sport, joueurId, rarete, collection, bonusPct }) => ({ id, sport, joueurId, rarete, collection, bonusPct })),
   joueurs: donnees.joueurs.map((j) => ({
     id: j.id, sport: j.sport, nom: j.nom, postes: j.postes, club: j.club, tier: j.tier, etoiles: j.etoiles,

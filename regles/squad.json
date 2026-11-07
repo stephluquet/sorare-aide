@@ -1,6 +1,9 @@
 {
   "id": "squad",
-  "sport": ["football", "nba"],
+  "sport": [
+    "football",
+    "nba"
+  ],
   "mode": "squad",
   "source": "Précisions de l'utilisateur (2026-11-07)",
   "objectif_outil": "meilleure équipe du jour (score attendu maximal) ; partenaires et paliers collectifs ignorés car inconnus",
@@ -8,5 +11,19 @@
   "contrainte_jour": "tous les joueurs de l'équipe jouent le jour choisi",
   "carte_bloquee_en_solo_utilisable": true,
   "composition": "mêmes règles que le solo du sport (taille, postes, capitaine en football, plafond d'étoiles en NBA), à confirmer",
-  "a_verifier": ["composition identique au solo"]
+  "a_verifier": [
+    "composition identique au solo"
+  ],
+  "journee_de_jeu": {
+    "football": {
+      "fuseau": "Europe/Paris",
+      "decalage_etiquette_paris_jours": 0
+    },
+    "nba": {
+      "fuseau": "America/New_York",
+      "decalage_etiquette_paris_jours": 1
+    },
+    "definition": "un match appartient à la journée = date de son coup d'envoi dans le fuseau du sport ; Sorare affiche à Paris cette date + decalage_etiquette_paris_jours (NBA : la soirée américaine du 7 et la nuit qui suit, à Paris, forment la journée « du 8 »)",
+    "source": "vérifié le 2026-11-07 : so5.gameDaysAfter(sport, timeZone) comparé aux coups d'envoi de competitionGames du 7 novembre au 6 décembre 2026, sans écart (NBA : Thanksgiving absent à New York le 26, à Paris le 27) ; l'API ne donne pas la journée d'un match sans connexion (pickableGames)"
+  }
 }
