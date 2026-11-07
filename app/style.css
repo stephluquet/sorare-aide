@@ -239,3 +239,16 @@ details.filtres .rangee + .rangee { margin-top: 6px; }
 .modes-sport .bouton { white-space: nowrap; padding-inline: 8px; }
 .bloc[data-sport="football"] .bouton.principal { background: var(--foot); border-color: var(--foot); color: #fff; }
 .bloc[data-sport="nba"] .bouton.principal { background: var(--nba); border-color: var(--nba); color: #fff; }
+
+/* En-tête : accueil + mode sombre à gauche, sport à droite, avec leurs icônes */
+.barre-gauche { display: flex; align-items: center; gap: 6px; }
+.bouton-theme { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 999px; border: 1px solid var(--trait);
+  background: var(--surface); color: var(--encre); cursor: pointer; padding: 0; }
+.bouton-theme svg { width: 18px; height: 18px; }
+.bouton-theme:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sport-global a { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; }
+.sport-global a svg { width: 17px; height: 17px; flex: none; }
+.nom-sport { display: inline-flex; align-items: center; gap: 8px; }
+.nom-sport svg { width: 22px; height: 22px; }
+.bloc[data-sport="football"] .nom-sport svg { color: var(--foot); }
+.bloc[data-sport="nba"] .nom-sport svg { color: var(--nba); }

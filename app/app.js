@@ -36,6 +36,15 @@ function deplier(joueur) {
 
 // ---------- Mise en forme ----------
 const SPORTS = { football: 'Football', nba: 'NBA' };
+const SPORTS_COURTS = { football: 'Foot', nba: 'NBA' };
+// Icônes dessinées pour l'appli (ballon de foot, ballon de basket, lune, soleil), en trait, couleur du texte.
+const trait = 'fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"';
+const ICONES = {
+  football: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5" ${trait}/><path d="M12 8.8l3.04 2.21-1.16 3.58h-3.76l-1.16-3.58z" fill="currentColor"/><path d="M12 8.8V2.6M15.04 11.01l5.9-1.9M13.88 14.59l3.65 5.03M10.12 14.59l-3.65 5.03M8.96 11.01l-5.9-1.9" ${trait}/></svg>`,
+  nba: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5" ${trait}/><path d="M12 2.5v19M2.5 12h19M6 4.4c2.4 2.1 3.7 4.7 3.7 7.6s-1.3 5.5-3.7 7.6M18 4.4c-2.4 2.1-3.7 4.7-3.7 7.6s1.3 5.5 3.7 7.6" ${trait}/></svg>`,
+  lune: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" ${trait}/></svg>`,
+  soleil: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" ${trait}/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" ${trait}/></svg>`,
+};
 const POSTES = { football: ['GK', 'DF', 'MD', 'FW'], nba: ['G', 'F', 'C'] };
 const LIBELLES = { confirme: 'Titulaire confirmé', remplacant: 'Remplaçant annoncé', probable: 'Probable', incertain: 'Incertain', douteux: 'Douteux', exclu: 'Exclu' };
 const SIT = { titulaire: 'titulaire', entre: 'entré', joue: 'joué', banc: 'banc', absent: 'absent', inconnu: '?' };
@@ -397,9 +406,9 @@ function afficherAccueil() {
   $('blocs').innerHTML = ['football', 'nba'].map((s) => {
     const p = palierEnCours(s), n = jouees(s).size;
     const liens = `<div class="modes-sport"><a class="bouton principal lien" href="#${s}/solo">Solo</a><a class="bouton lien" href="#${s}/squad">Squad</a><a class="bouton lien" href="#${s}/cartes">Mes cartes</a></div>`;
-    if (!p) return `<div class="bloc" data-sport="${s}"><h2><a href="#${s}/solo">${SPORTS[s]}</a></h2><div class="resume">Tous les paliers de ce plateau sont passés.</div>${liens}</div>`;
+    if (!p) return `<div class="bloc" data-sport="${s}"><h2><a href="#${s}/solo" class="nom-sport">${ICONES[s]}${SPORTS[s]}</a></h2><div class="resume">Tous les paliers de ce plateau sont passés.</div>${liens}</div>`;
     return `<div class="bloc" data-sport="${s}">
-      <h2><a href="#${s}/solo">${SPORTS[s]}</a><span class="sous">solo · palier ${p.niveau + 1} sur ${D.paliers.filter((x) => x.sport === s).length}</span></h2>
+      <h2><a href="#${s}/solo" class="nom-sport">${ICONES[s]}${SPORTS[s]}</a><span class="sous">solo · palier ${p.niveau + 1} sur ${D.paliers.filter((x) => x.sport === s).length}</span></h2>
       <div><span class="cible">${p.cible}</span> <span class="sous">points à atteindre</span></div>
       <div class="resume">${ETATS[p.etat] ?? esc(p.etat)}${p.echecs ? ` · ${p.echecs} échec${p.echecs > 1 ? 's' : ''}` : ''}${n ? ` · ${n} carte${n > 1 ? 's' : ''} marquée${n > 1 ? 's' : ''} jouée${n > 1 ? 's' : ''}` : ''}</div>
       ${alertePalier(s)}
@@ -658,7 +667,7 @@ function tout() {
   accueil ? $('lien-accueil').setAttribute('aria-current', 'page') : $('lien-accueil').removeAttribute('aria-current');
   // Sélecteur de sport, toujours visible : sur l'accueil, aucun n'est choisi ; ailleurs, on garde le mode.
   $('sport-global').innerHTML = Object.entries(SPORTS).map(([k, v]) =>
-    `<a href="#${k}/${accueil ? 'solo' : ecran}" data-sport="${k}" aria-current="${!accueil && k === vue.sport ? 'true' : 'false'}">${v}</a>`).join('');
+    `<a href="#${k}/${accueil ? 'solo' : ecran}" data-sport="${k}" aria-label="${v}" aria-current="${!accueil && k === vue.sport ? 'true' : 'false'}">${ICONES[k]}${SPORTS_COURTS[k]}</a>`).join('');
   // Modes du sport en cours (masqués sur l'accueil).
   $('onglets').hidden = accueil;
   document.querySelectorAll('#onglets a').forEach((a) => {
@@ -700,6 +709,27 @@ $('modes').onclick = (e) => { const b = e.target.closest('[data-mode]'); if (b) 
 $('squad-jour').onchange = (e) => { vue.squadJour = e.target.value; afficherSquad(); };
 window.addEventListener('hashchange', () => { window.scrollTo(0, 0); tout(); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('voile').hidden) { $('voile').hidden = true; tout(); } });
+
+// ---------- Mode sombre ----------
+// Par défaut, celui du système ; le bouton force clair ou sombre, retenu dans ce navigateur (simple confort).
+const CLE_THEME = 'sorare-aide-theme';
+const themeActuel = () => document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+function afficherBoutonTheme() {
+  const sombre = themeActuel() === 'dark', b = $('theme');
+  b.setAttribute('aria-pressed', String(sombre));
+  b.setAttribute('aria-label', sombre ? 'Passer en mode clair' : 'Passer en mode sombre');
+  b.title = b.getAttribute('aria-label');
+  b.innerHTML = sombre ? ICONES.soleil : ICONES.lune;
+}
+try { const t = localStorage.getItem(CLE_THEME); if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t; } catch (e) { /* stockage refusé */ }
+$('theme').onclick = () => {
+  const t = themeActuel() === 'dark' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = t;
+  try { localStorage.setItem(CLE_THEME, t); } catch (e) { /* stockage refusé : le choix vaut pour cette visite */ }
+  afficherBoutonTheme();
+};
+matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', afficherBoutonTheme);
+afficherBoutonTheme();
 
 afficherAge();
 setInterval(afficherAge, 60000);
