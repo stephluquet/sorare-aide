@@ -17,7 +17,7 @@
 | Blessures et suspensions en cours | Ton **palier en cours** de façon directe (on le déduit de l'état des paliers) |
 | Prochain match : date, adversaire, domicile ou extérieur | Les **cotes des matchs NBA** |
 | **Cotes du match en football** (victoire, nul, défaite, clean sheet) | Une projection Sorare pour la plupart de tes joueurs de football |
-| Paliers Arcade, état de chaque palier, nombre de tentatives | Le tableau Squad (revient vide) |
+| Paliers Arcade, état de chaque palier, vies restantes et échecs | Le tableau Squad (revient vide) |
 | Statut de jeu Sorare (titulaire, remplaçant…) et projection Sorare (NBA) | Les compositions probables (piste non testée) |
 
 ## Ce qu'on récupère (vérifié)
@@ -54,7 +54,11 @@
 - **L'état de chaque palier** : passé (`CLAIMED`), composition posée (`LINEUP_SET`), verrouillé (`LOCKED`)… Au 7 novembre :
   - en football, tu as passé le palier 260 et une composition est posée pour le 300 ;
   - en NBA, tu as passé le 150 et une composition est posée pour le 180.
-- **Le nombre de tentatives par palier** : 4 au maximum, ce qui correspond aux 4 vies. Un compteur de tentatives restantes existe ; au palier 300, il indique 1 restante et 1 en attente. **Son sens exact reste à confirmer avec toi.**
+- **Les vies, palier par palier** : 4 tentatives au maximum, et deux compteurs qui suffisent à tout reconstituer.
+  - « restantes » = 4 − tentatives déjà utilisées (réussies, échouées ou en cours) ;
+  - « en cours » = compositions posées et pas encore jouées ;
+  - nombre d'échecs = 4 − restantes − en cours.
+  - Au palier 300 football : 1 restante et 1 en cours, donc **2 échecs, une composition en cours et une dernière vie ensuite**. Confirmé avec toi le 7 novembre.
 - **La liste des règles appliquées à chaque palier** (rareté, capitaine, compétitions, matchs joués). Leur texte détaillé n'a pas encore été lu.
 
 ### Les données « maison » de Sorare (calcul non publié)
@@ -69,7 +73,7 @@
 |---|---|---|
 | Probabilité de titularisation (titulaire, remplaçant, absent) | Le champ existe mais revient vide avec notre clé, même pour Kane ou Mbappé un jour de match. Sans doute réservé aux comptes connectés ou à un abonnement. | On estime la probabilité de jouer à partir des 15 derniers matchs, des blessures et des suspensions. L'étape 3 prévoit une vérification des compositions avec des sources citées. |
 | Tes compositions Arcade et les **cartes bloquées** | Réservé à l'utilisateur connecté : refus explicite « You should log in ». | **Tu devras indiquer** les cartes déjà jouées au palier en cours (ou les cocher dans l'outil). |
-| Ton palier en cours, en direct | Même raison. | On le déduit de l'état des paliers, ce qui suffit en pratique. |
+| Ton palier en cours, en direct | Même raison. | On le déduit de l'état des paliers et des compteurs de tentatives, ce qui suffit en pratique. |
 | Cotes des matchs NBA | Ces champs n'existent pas pour le basket dans l'API. | Rien de prévu. Le contexte NBA se limite au lieu et à la date. |
 | Projection Sorare pour la plupart de tes joueurs de football | Sorare ne la calcule que pour une partie des joueurs (27 sur 635). | Notre projection transparente couvre tous les joueurs qui ont joué. |
 | Tableau Squad de ton profil | La requête revient vide. | La « meilleure équipe du jour » n'en a pas besoin : on la calcule à partir des cartes. |
@@ -82,7 +86,6 @@
 - **Texte détaillé des règles de chaque palier**, pour contrôler les fichiers de `regles/` contre la source officielle.
 - **Minutes projetées en NBA** (champ vide au premier essai).
 - **Autres moyennes** : 10 derniers matchs joués, 40 derniers matchs, saison.
-- **Sens exact du compteur de tentatives restantes.**
 
 ## Contraintes pratiques
 
@@ -94,5 +97,5 @@
 ## Conséquences pour l'outil
 
 1. **La projection repose sur des données solides** : forme, régularité de jeu, blessures, bonus. La probabilité de titularisation fournie par un prestataire manque ; on la remplace par l'historique, et c'est un point faible assumé.
-2. **Pour planifier un palier Arcade, il faudra une saisie de ta part** : les cartes déjà jouées au palier en cours. Le reste (cible, état du palier, nombre de tentatives) se lit dans l'API.
+2. **Pour planifier un palier Arcade, il faudra une saisie de ta part** : les cartes déjà jouées au palier en cours. Le reste (cible, état du palier, vies restantes, échecs) se lit dans l'API.
 3. **Les cotes de match football sont disponibles** : elles sont affichées aujourd'hui, et pourront entrer dans la projection une fois calibrées sur l'historique.
