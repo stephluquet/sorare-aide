@@ -34,7 +34,7 @@ function lireTableBonus() {
   return { Standard: 0, ...t };
 }
 
-async function recupererSport(slug, sport, { sansHistorique, anomalies }) {
+async function recupererSport(slug, sport, { sansHistorique, refaireHistorique, anomalies }) {
   const SPORT = sport.toUpperCase();
   const tag = `[${sport}]`;
 
@@ -106,8 +106,8 @@ async function recupererSport(slug, sport, { sansHistorique, anomalies }) {
     recusParJoueur.set(p.slug, recus);
     const archive = lireArchive(cheminArchive(RACINE, sport, p.slug));
     // Une archive créée sans historique complet (--sans-historique) ne compte pas.
-    if (!besoinHistoriqueComplet(archive, recus)) continue;
-    if (!archive?.dernierHistoriqueComplet) aCompleter.push(p.slug);
+    if (!refaireHistorique && !besoinHistoriqueComplet(archive, recus)) continue;
+    if (refaireHistorique || !archive?.dernierHistoriqueComplet) aCompleter.push(p.slug);
     else if (trou(archive.matchs, recus)) { aCompleter.push(p.slug); anomalies.push(`${tag} trou dans l'historique, 40 matchs refaits : ${p.slug}`); }
   }
   const complets = new Map();
@@ -151,7 +151,7 @@ async function principal() {
   const anomalies = [];
   const tout = { cartes: [], joueurs: [], matchs: [], paliers: [] };
   for (const sport of sports) {
-    const r = await recupererSport(slug, sport, { sansHistorique: args.includes('--sans-historique'), anomalies });
+    const r = await recupererSport(slug, sport, { sansHistorique: args.includes('--sans-historique'), refaireHistorique: args.includes('--refaire-historique'), anomalies });
     for (const k of Object.keys(tout)) tout[k].push(...r[k]);
   }
   // Un sport non récupéré cette fois-ci est repris tel quel de la récupération précédente.

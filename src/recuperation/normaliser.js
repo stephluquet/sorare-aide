@@ -40,6 +40,11 @@ export function matchHistorique(g, sport) {
     score: g.score,
     situation: situation(s, sport),
     minutes: s?.minsPlayed ?? null,
+    // Contexte du match, du point de vue de l'équipe du joueur : buts (ou points) et cotes d'avant-match
+    // (football ; les cotes restent lisibles après le match, vérifié le 2026-11-07).
+    pour: aDomicile === true ? m.homeScore ?? null : aDomicile === false ? m.awayScore ?? null : null,
+    contre: aDomicile === true ? m.awayScore ?? null : aDomicile === false ? m.homeScore ?? null : null,
+    cotes: aDomicile === true ? cotes(m.homeStats) : aDomicile === false ? cotes(m.awayStats) : null,
   };
 }
 

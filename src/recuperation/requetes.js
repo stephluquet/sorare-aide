@@ -5,7 +5,13 @@
 const STATS_MATCH = `
   score
   scoreStatus
-  anyGame { id date competition { name } homeTeam { slug name } awayTeam { slug name } }
+  anyGame {
+    id date competition { name } homeTeam { slug name } awayTeam { slug name } homeScore awayScore
+    ... on Game {
+      homeStats { ... on FootballTeamGameStats { winOddsBasisPoints drawOddsBasisPoints loseOddsBasisPoints cleanSheetOdds } }
+      awayStats { ... on FootballTeamGameStats { winOddsBasisPoints drawOddsBasisPoints loseOddsBasisPoints cleanSheetOdds } }
+    }
+  }
   anyPlayerGameStats {
     anyTeam { slug }
     onGameSheet

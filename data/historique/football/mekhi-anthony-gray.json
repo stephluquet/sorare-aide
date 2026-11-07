@@ -1,15 +1,15 @@
 {
  "joueurId": "mekhi-anthony-gray",
- "misAJour": "2026-11-07T11:58:15.924Z",
- "dernierHistoriqueComplet": "2026-11-07T10:59:02.167Z",
+ "misAJour": "2026-11-07T13:43:31.600Z",
+ "dernierHistoriqueComplet": "2026-11-07T13:43:31.600Z",
  "matchs": [
-  {"matchId":"Game:b6bf9651-1def-41a5-976b-b3ceba3e926c","date":"2026-11-01T14:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"1. FC Köln","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
-  {"matchId":"Game:29a4f331-5be7-4cde-ae05-286c6d9d038b","date":"2026-10-24T13:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"FC Augsburg","statut":"FINAL","score":26.5,"situation":"entre","minutes":45},
-  {"matchId":"Game:bab5179d-2acc-4952-b731-e43038dfc6e6","date":"2026-10-17T13:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"Borussia Dortmund","statut":"FINAL","score":38,"situation":"entre","minutes":20},
-  {"matchId":"Game:076979aa-dd23-4c2e-b0a5-7607bbafa596","date":"2026-10-10T13:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"SV 07 Elversberg","statut":"FINAL","score":39.1,"situation":"entre","minutes":12},
-  {"matchId":"Game:9db2fa54-c6d1-4567-b921-c0158a064514","date":"2026-09-18T18:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"FC Bayern München","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null},
-  {"matchId":"Game:a79702ae-2351-4878-97ed-29fec221e0b8","date":"2026-09-11T18:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"FC Schalke 04","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null},
-  {"matchId":"Game:0ef2b9c3-3b18-405b-bd0a-c7efef539b1e","date":"2026-09-05T13:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"Bayer 04 Leverkusen","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null},
-  {"matchId":"Game:7c88ccae-cad1-40fc-bd48-b4a4eb610aae","date":"2026-08-29T13:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"Eintracht Frankfurt","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null}
+  {"matchId":"Game:b6bf9651-1def-41a5-976b-b3ceba3e926c","date":"2026-11-01T14:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"1. FC Köln","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":1,"contre":1,"cotes":{"victoire":0.35,"nul":0.27,"defaite":0.38,"coteCleanSheet":4}},
+  {"matchId":"Game:29a4f331-5be7-4cde-ae05-286c6d9d038b","date":"2026-10-24T13:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"FC Augsburg","statut":"FINAL","score":26.5,"situation":"entre","minutes":45,"pour":1,"contre":1,"cotes":{"victoire":0.24,"nul":0.23,"defaite":0.53,"coteCleanSheet":6.5}},
+  {"matchId":"Game:bab5179d-2acc-4952-b731-e43038dfc6e6","date":"2026-10-17T13:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"Borussia Dortmund","statut":"FINAL","score":38,"situation":"entre","minutes":20,"pour":0,"contre":0,"cotes":{"victoire":0.19,"nul":0.22,"defaite":0.59,"coteCleanSheet":8}},
+  {"matchId":"Game:076979aa-dd23-4c2e-b0a5-7607bbafa596","date":"2026-10-10T13:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"SV 07 Elversberg","statut":"FINAL","score":39.1,"situation":"entre","minutes":12,"pour":1,"contre":0,"cotes":{"victoire":0.39,"nul":0.27,"defaite":0.34,"coteCleanSheet":4.5}},
+  {"matchId":"Game:9db2fa54-c6d1-4567-b921-c0158a064514","date":"2026-09-18T18:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"FC Bayern München","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":0,"contre":7,"cotes":{"victoire":0.02,"nul":0.06,"defaite":0.92,"coteCleanSheet":41}},
+  {"matchId":"Game:a79702ae-2351-4878-97ed-29fec221e0b8","date":"2026-09-11T18:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"FC Schalke 04","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":1,"contre":3,"cotes":{"victoire":0.4,"nul":0.27,"defaite":0.33,"coteCleanSheet":4}},
+  {"matchId":"Game:0ef2b9c3-3b18-405b-bd0a-c7efef539b1e","date":"2026-09-05T13:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"Bayer 04 Leverkusen","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":0,"contre":4,"cotes":{"victoire":0.14,"nul":0.18,"defaite":0.68,"coteCleanSheet":11}},
+  {"matchId":"Game:7c88ccae-cad1-40fc-bd48-b4a4eb610aae","date":"2026-08-29T13:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"Eintracht Frankfurt","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":3,"contre":3,"cotes":{"victoire":0.37,"nul":0.26,"defaite":0.37,"coteCleanSheet":4}}
  ]
 }

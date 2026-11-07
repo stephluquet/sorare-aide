@@ -1,17 +1,17 @@
 {
  "joueurId": "christ-tape",
- "misAJour": "2026-11-07T11:58:15.743Z",
- "dernierHistoriqueComplet": "2026-11-07T10:59:02.039Z",
+ "misAJour": "2026-11-07T13:43:31.430Z",
+ "dernierHistoriqueComplet": "2026-11-07T13:43:31.430Z",
  "matchs": [
-  {"matchId":"Game:db8c640f-9da9-4aed-9ec4-0b4ec71c94e4","date":"2026-11-06T19:45:00Z","competition":"Ligue 1","domicile":true,"adversaire":"RC Strasbourg Alsace","statut":"REVIEWING","score":19.16,"situation":"titulaire","minutes":90},
-  {"matchId":"Game:a285bcb0-7a25-46cd-8e0c-8efa7c18f7b6","date":"2026-11-01T19:45:00Z","competition":"Ligue 1","domicile":false,"adversaire":"Olympique de Marseille","statut":"FINAL","score":21.32,"situation":"titulaire","minutes":90},
-  {"matchId":"Game:212e6078-ab73-4822-9bdf-2c83f009edb9","date":"2026-10-25T16:15:00Z","competition":"Ligue 1","domicile":true,"adversaire":"ESTAC Troyes","statut":"FINAL","score":42.4,"situation":"titulaire","minutes":90},
-  {"matchId":"Game:5035af6b-6655-42d1-a432-af47c3089c67","date":"2026-10-16T18:45:00Z","competition":"Ligue 1","domicile":false,"adversaire":"Le Mans FC","statut":"FINAL","score":39.46,"situation":"titulaire","minutes":90},
-  {"matchId":"Game:b8e4c516-4f1a-4084-8eef-1de9bb2f42ce","date":"2026-10-10T18:45:00Z","competition":"Ligue 1","domicile":false,"adversaire":"AS Monaco","statut":"FINAL","score":45.9,"situation":"titulaire","minutes":90},
-  {"matchId":"Game:216fd380-7e1e-4627-be74-9210e5dc1e9a","date":"2026-09-19T18:45:00Z","competition":"Ligue 1","domicile":true,"adversaire":"Le Havre AC","statut":"FINAL","score":21.92,"situation":"titulaire","minutes":90},
-  {"matchId":"Game:3c661b4d-4104-452c-a708-45beab800bf3","date":"2026-09-12T18:45:00Z","competition":"Ligue 1","domicile":false,"adversaire":"FC Lorient","statut":"FINAL","score":40.76,"situation":"titulaire","minutes":84},
-  {"matchId":"Game:4cbac3cd-9859-48ba-a1a2-4d0364f230a8","date":"2026-09-03T18:45:00Z","competition":"Ligue 1","domicile":true,"adversaire":"LOSC Lille","statut":"FINAL","score":50.28,"situation":"titulaire","minutes":90},
-  {"matchId":"Game:5b5fe8a2-027a-470a-83b4-f81175f7e4c1","date":"2026-08-29T18:45:00Z","competition":"Ligue 1","domicile":false,"adversaire":"Stade Brestois 29","statut":"FINAL","score":71.48,"situation":"titulaire","minutes":90},
-  {"matchId":"Game:68ae1875-45d2-4aa4-80d4-56f3a1874144","date":"2026-08-22T18:45:00Z","competition":"Ligue 1","domicile":true,"adversaire":"Olympique Lyonnais","statut":"FINAL","score":8.4,"situation":"titulaire","minutes":90}
+  {"matchId":"Game:db8c640f-9da9-4aed-9ec4-0b4ec71c94e4","date":"2026-11-06T19:45:00Z","competition":"Ligue 1","domicile":true,"adversaire":"RC Strasbourg Alsace","statut":"REVIEWING","score":19.16,"situation":"titulaire","minutes":90,"pour":3,"contre":1,"cotes":{"victoire":0.43,"nul":0.27,"defaite":0.3,"coteCleanSheet":3.75}},
+  {"matchId":"Game:a285bcb0-7a25-46cd-8e0c-8efa7c18f7b6","date":"2026-11-01T19:45:00Z","competition":"Ligue 1","domicile":false,"adversaire":"Olympique de Marseille","statut":"FINAL","score":21.32,"situation":"titulaire","minutes":90,"pour":0,"contre":2,"cotes":{"victoire":0.27,"nul":0.24,"defaite":0.49,"coteCleanSheet":6}},
+  {"matchId":"Game:212e6078-ab73-4822-9bdf-2c83f009edb9","date":"2026-10-25T16:15:00Z","competition":"Ligue 1","domicile":true,"adversaire":"ESTAC Troyes","statut":"FINAL","score":42.4,"situation":"titulaire","minutes":90,"pour":0,"contre":0,"cotes":{"victoire":0.61,"nul":0.22,"defaite":0.17,"coteCleanSheet":2.5}},
+  {"matchId":"Game:5035af6b-6655-42d1-a432-af47c3089c67","date":"2026-10-16T18:45:00Z","competition":"Ligue 1","domicile":false,"adversaire":"Le Mans FC","statut":"FINAL","score":39.46,"situation":"titulaire","minutes":90,"pour":3,"contre":0,"cotes":{"victoire":0.42,"nul":0.27,"defaite":0.31,"coteCleanSheet":3.75}},
+  {"matchId":"Game:b8e4c516-4f1a-4084-8eef-1de9bb2f42ce","date":"2026-10-10T18:45:00Z","competition":"Ligue 1","domicile":false,"adversaire":"AS Monaco","statut":"FINAL","score":45.9,"situation":"titulaire","minutes":90,"pour":2,"contre":2,"cotes":{"victoire":0.19,"nul":0.2401,"defaite":0.5699,"coteCleanSheet":7}},
+  {"matchId":"Game:216fd380-7e1e-4627-be74-9210e5dc1e9a","date":"2026-09-19T18:45:00Z","competition":"Ligue 1","domicile":true,"adversaire":"Le Havre AC","statut":"FINAL","score":21.92,"situation":"titulaire","minutes":90,"pour":3,"contre":2,"cotes":{"victoire":0.55,"nul":0.24,"defaite":0.21,"coteCleanSheet":2.75}},
+  {"matchId":"Game:3c661b4d-4104-452c-a708-45beab800bf3","date":"2026-09-12T18:45:00Z","competition":"Ligue 1","domicile":false,"adversaire":"FC Lorient","statut":"FINAL","score":40.76,"situation":"titulaire","minutes":84,"pour":2,"contre":2,"cotes":{"victoire":0.32,"nul":0.28,"defaite":0.4,"coteCleanSheet":3.75}},
+  {"matchId":"Game:4cbac3cd-9859-48ba-a1a2-4d0364f230a8","date":"2026-09-03T18:45:00Z","competition":"Ligue 1","domicile":true,"adversaire":"LOSC Lille","statut":"FINAL","score":50.28,"situation":"titulaire","minutes":90,"pour":0,"contre":1,"cotes":{"victoire":0.25,"nul":0.26,"defaite":0.49,"coteCleanSheet":4.5}},
+  {"matchId":"Game:5b5fe8a2-027a-470a-83b4-f81175f7e4c1","date":"2026-08-29T18:45:00Z","competition":"Ligue 1","domicile":false,"adversaire":"Stade Brestois 29","statut":"FINAL","score":71.48,"situation":"titulaire","minutes":90,"pour":2,"contre":2,"cotes":{"victoire":0.36,"nul":0.28,"defaite":0.36,"coteCleanSheet":3.4}},
+  {"matchId":"Game:68ae1875-45d2-4aa4-80d4-56f3a1874144","date":"2026-08-22T18:45:00Z","competition":"Ligue 1","domicile":true,"adversaire":"Olympique Lyonnais","statut":"FINAL","score":8.4,"situation":"titulaire","minutes":90,"pour":0,"contre":2,"cotes":{"victoire":0.41,"nul":0.28,"defaite":0.31,"coteCleanSheet":3.25}}
  ]
 }
