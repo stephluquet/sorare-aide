@@ -669,9 +669,10 @@ function tout() {
   accueil ? $('lien-accueil').setAttribute('aria-current', 'page') : $('lien-accueil').removeAttribute('aria-current');
   // Sélecteur de sport, toujours visible : sur l'accueil, aucun n'est choisi ; ailleurs, on garde le mode.
   $('sport-global').innerHTML = Object.entries(SPORTS).map(([k, v]) =>
-    `<a href="#${k}/${accueil ? 'solo' : ecran}" data-sport="${k}" aria-label="${v}" aria-current="${!accueil && k === vue.sport ? 'true' : 'false'}">${ICONES[k]}${SPORTS_COURTS[k]}</a>`).join('');
+    `<a href="#${k}/${accueil ? 'solo' : ecran}" data-sport="${k}" aria-label="${v}" aria-current="${!accueil && k === vue.sport ? 'true' : 'false'}">${ICONES[k]}<span>${SPORTS_COURTS[k]}</span></a>`).join('');
   // Modes du sport en cours (masqués sur l'accueil).
-  $('onglets').hidden = accueil; // les outils (mise à jour, aide) restent visibles
+  $('onglets').hidden = accueil;
+  $('onglets').parentElement.hidden = accueil; // pas de ligne vide sur l'accueil
   document.querySelectorAll('#onglets a').forEach((a) => {
     a.href = `#${vue.sport}/${a.dataset.vue}`;
     a.dataset.vue === ecran ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current');

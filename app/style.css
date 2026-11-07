@@ -271,3 +271,19 @@ body[data-sport="nba"] .jauge-maj span { background: var(--nba); }
 .progression.ok .jauge-maj span { background: var(--ok); }
 .ligne-maj { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: .85rem; color: var(--doux); }
 .progression.erreur .ligne-maj { color: var(--attention); font-weight: 600; }
+
+/* Une seule ligne : Accueil + mode sombre à gauche ; sport, mise à jour et aide à droite.
+   Sur un écran étroit (téléphone), « Accueil » se réduit à sa maison pour que tout tienne. */
+.barre-droite { display: flex; align-items: center; gap: 6px; }
+@media (max-width: 430px) {
+  .lien-accueil { width: 36px; height: 36px; padding: 0; justify-content: center; }
+  .lien-accueil .texte-accueil { display: none; }
+  .sport-global a { padding: 6px 10px; }
+}
+/* Très petit écran (iPhone SE, 320 px) : le sélecteur de sport ne garde que ses icônes. */
+@media (max-width: 370px) {
+  .sport-global a { font-size: 0; gap: 0; padding: 6px 9px; }
+  .sport-global a svg { width: 19px; height: 19px; }
+  .barre-gauche, .barre-droite { gap: 4px; }
+  .lien-accueil, .bouton-theme, .bouton-rond { width: 34px; height: 34px; }
+}

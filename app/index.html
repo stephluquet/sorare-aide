@@ -10,10 +10,14 @@
   <header class="entete">
     <div class="barre">
       <div class="barre-gauche">
-        <a href="#accueil" class="lien-accueil" id="lien-accueil"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5M5.5 9.5V20h5v-6h3v6h5V9.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>Accueil</a>
+        <a href="#accueil" class="lien-accueil" id="lien-accueil" aria-label="Accueil"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5M5.5 9.5V20h5v-6h3v6h5V9.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg><span class="texte-accueil">Accueil</span></a>
         <button type="button" class="bouton-theme" id="theme" aria-pressed="false" aria-label="Passer en mode sombre"></button>
       </div>
-      <div class="sport-global" id="sport-global" role="group" aria-label="Sport"></div>
+      <div class="barre-droite">
+        <div class="sport-global" id="sport-global" role="group" aria-label="Sport"></div>
+        <button type="button" class="bouton-rond" id="maj" aria-label="Mettre à jour les données" title="Mettre à jour les données"></button>
+        <button type="button" class="bouton-rond" id="aide" aria-label="Aide" title="Aide"></button>
+      </div>
     </div>
     <div class="barre-modes">
       <nav class="onglets" id="onglets" aria-label="Modes">
@@ -21,10 +25,6 @@
         <a data-vue="squad">Squad</a>
         <a data-vue="cartes">Mes cartes</a>
       </nav>
-      <div class="outils">
-        <button type="button" class="bouton-rond" id="maj" aria-label="Mettre à jour les données" title="Mettre à jour les données"></button>
-        <button type="button" class="bouton-rond" id="aide" aria-label="Aide" title="Aide"></button>
-      </div>
     </div>
     <div class="progression" id="progression" hidden role="status" aria-live="polite">
       <div class="jauge-maj" aria-hidden="true"><span id="prog-remplie"></span></div>
