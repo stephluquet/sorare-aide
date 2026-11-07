@@ -191,3 +191,28 @@ details.ecartees summary { cursor: pointer; }
 .marque[aria-pressed="true"] .case-a-cocher { background: var(--encre); border-color: var(--encre); color: var(--surface); }
 .marque .sous { font-size: .78rem; }
 .alt .avant-apres { white-space: nowrap; }
+
+/* Revue d'ergonomie, points 6 à 15 */
+.joueur .chiffres .esp { font-size: 1.35rem; }
+.par-etoile { font-size: .72rem; color: var(--etoile); font-weight: 600; }
+.alt .droite { display: grid; justify-items: end; }
+.alt .droite small { font-size: .7rem; }
+.alt .avant-apres b { font: 700 1.05rem var(--police-titre); }
+.alt .avant-apres b.plus { color: var(--ok); }
+.alt .avant-apres b.moins { color: var(--attention); }
+.alt .avant-apres b.egal { color: var(--encre); }
+.autres h3 .sous { text-transform: none; letter-spacing: 0; font-family: var(--police-texte); font-weight: 400; }
+.sous-titre { font: 700 1.2rem/1 var(--police-titre); text-transform: uppercase; margin: 4px 0 0; }
+details.variante { background: var(--surface); border: 1px solid var(--trait); border-radius: 14px; margin-bottom: 8px; }
+details.variante > summary { cursor: pointer; padding: 12px 14px; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; list-style: none; }
+details.variante > summary::-webkit-details-marker { display: none; }
+details.variante > summary::after { content: "▾"; margin-left: auto; color: var(--doux); }
+details.variante[open] > summary::after { content: "▴"; }
+.titre-variante { font: 700 1.15rem var(--police-titre); text-transform: uppercase; }
+details.variante .proposition { border: 0; margin: 0; padding-top: 0; }
+.histo svg { max-height: 180px; }
+details.filtres > summary { cursor: pointer; font-size: .85rem; color: var(--doux); padding: 2px 0; }
+details.filtres[open] > summary { margin-bottom: 6px; }
+details.filtres .rangee + .rangee { margin-top: 6px; }
+.rangee select.choix-seuil { flex: 0 0 auto; width: auto; }
+.autres .alt .meta span:first-child { white-space: nowrap; }

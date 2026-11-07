@@ -1,8 +1,9 @@
 {
  "joueurId": "ansgar-knauff",
- "misAJour": "2026-11-07T13:43:31.471Z",
+ "misAJour": "2026-11-07T15:12:22.481Z",
  "dernierHistoriqueComplet": "2026-11-07T13:43:31.471Z",
  "matchs": [
+  {"matchId":"Game:1bfc1835-7521-45bf-bf20-178701be71ef","date":"2026-11-07T14:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"SC Paderborn 07","statut":"REVIEWING","score":49.8,"situation":"titulaire","minutes":42,"pour":1,"contre":0,"cotes":{"victoire":0.41,"nul":0.26,"defaite":0.33,"coteCleanSheet":4.5}},
   {"matchId":"Game:38169f28-df84-4169-afcc-33bec4227c13","date":"2026-11-01T16:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"Hamburger SV","statut":"FINAL","score":35,"situation":"entre","minutes":45,"pour":3,"contre":1,"cotes":{"victoire":0.6,"nul":0.21,"defaite":0.19,"coteCleanSheet":3}},
   {"matchId":"Game:bd8384fc-88fb-4159-ba9e-d6c26edd09d6","date":"2026-10-24T16:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"Borussia Dortmund","statut":"FINAL","score":38.2,"situation":"entre","minutes":13,"pour":0,"contre":1,"cotes":{"victoire":0.18,"nul":0.2,"defaite":0.62,"coteCleanSheet":10}},
   {"matchId":"Game:30ef5c0b-c90c-48ea-bc3d-696d8cb9cd2c","date":"2026-10-16T18:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"1. FC Köln","statut":"FINAL","score":36.3,"situation":"entre","minutes":19,"pour":1,"contre":0,"cotes":{"victoire":0.53,"nul":0.23,"defaite":0.24,"coteCleanSheet":4.33}},

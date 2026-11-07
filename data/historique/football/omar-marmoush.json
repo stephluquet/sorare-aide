@@ -1,9 +1,9 @@
 {
  "joueurId": "omar-marmoush",
- "misAJour": "2026-11-07T13:46:56.387Z",
+ "misAJour": "2026-11-07T15:12:22.506Z",
  "dernierHistoriqueComplet": "2026-11-07T13:43:31.501Z",
  "matchs": [
-  {"matchId":"Game:d7b912a3-75b7-4f2c-9ca7-7dd40863d53c","date":"2026-11-07T12:30:00Z","competition":"Premier League","domicile":false,"adversaire":"Leeds United FC","statut":"REVIEWING","score":34.9,"situation":"titulaire","minutes":54,"pour":0,"contre":0,"cotes":{"victoire":0.37,"nul":0.28,"defaite":0.35,"coteCleanSheet":3.4}},
+  {"matchId":"Game:d7b912a3-75b7-4f2c-9ca7-7dd40863d53c","date":"2026-11-07T12:30:00Z","competition":"Premier League","domicile":false,"adversaire":"Leeds United FC","statut":"REVIEWING","score":35.2,"situation":"titulaire","minutes":65,"pour":0,"contre":1,"cotes":{"victoire":0.37,"nul":0.28,"defaite":0.35,"coteCleanSheet":3.5}},
   {"matchId":"Game:f86f3975-a71d-43f0-b935-8988bd44282b","date":"2026-10-31T17:30:00Z","competition":"Premier League","domicile":true,"adversaire":"Crystal Palace FC","statut":"FINAL","score":48.8,"situation":"titulaire","minutes":77,"pour":2,"contre":0,"cotes":{"victoire":0.56,"nul":0.24,"defaite":0.2,"coteCleanSheet":2.5}},
   {"matchId":"Game:9a241c48-769a-4ba9-b896-aeca1aa677c5","date":"2026-10-24T16:30:00Z","competition":"Premier League","domicile":false,"adversaire":"Chelsea FC","statut":"FINAL","score":35.1,"situation":"titulaire","minutes":65,"pour":2,"contre":0,"cotes":{"victoire":0.25,"nul":0.26,"defaite":0.49,"coteCleanSheet":6}},
   {"matchId":"Game:9989d5d5-d14b-4ce6-8946-4e333f0656a6","date":"2026-10-19T19:00:00Z","competition":"Premier League","domicile":true,"adversaire":"Coventry City FC","statut":"FINAL","score":64.7,"situation":"titulaire","minutes":87,"pour":3,"contre":1,"cotes":{"victoire":0.61,"nul":0.22,"defaite":0.17,"coteCleanSheet":2.5}},

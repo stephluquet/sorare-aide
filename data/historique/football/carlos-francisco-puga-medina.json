@@ -1,9 +1,9 @@
 {
  "joueurId": "carlos-francisco-puga-medina",
- "misAJour": "2026-11-07T13:43:31.509Z",
+ "misAJour": "2026-11-07T15:12:22.513Z",
  "dernierHistoriqueComplet": "2026-11-07T13:43:31.509Z",
  "matchs": [
-  {"matchId":"Game:627423ca-bb85-4d43-977f-6314e92a3014","date":"2026-11-07T13:00:00Z","competition":"Primera División","domicile":true,"adversaire":"Real Racing Club de Santander","statut":"REVIEWING","score":0,"situation":"absent","minutes":null,"pour":1,"contre":0,"cotes":{"victoire":0.4,"nul":0.27,"defaite":0.33,"coteCleanSheet":3.75}},
+  {"matchId":"Game:627423ca-bb85-4d43-977f-6314e92a3014","date":"2026-11-07T13:00:00Z","competition":"Primera División","domicile":true,"adversaire":"Real Racing Club de Santander","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":1,"contre":2,"cotes":{"victoire":0.4,"nul":0.27,"defaite":0.33,"coteCleanSheet":3.75}},
   {"matchId":"Game:8280c6a7-cfaf-490c-b52c-794ef1d39d5e","date":"2026-10-31T17:30:00Z","competition":"Primera División","domicile":false,"adversaire":"Real Betis","statut":"FINAL","score":41.08,"situation":"titulaire","minutes":90,"pour":1,"contre":2,"cotes":{"victoire":0.11,"nul":0.18,"defaite":0.71,"coteCleanSheet":11}},
   {"matchId":"Game:f4da65cb-b8f7-4e2c-a68f-c65664fcf6d4","date":"2026-10-23T19:00:00Z","competition":"Primera División","domicile":false,"adversaire":"D. Alavés","statut":"FINAL","score":91.54,"situation":"titulaire","minutes":77,"pour":1,"contre":1,"cotes":{"victoire":0.17,"nul":0.2601,"defaite":0.5699,"coteCleanSheet":5}},
   {"matchId":"Game:500db6e8-a43c-4c07-99bb-94618d0dcff9","date":"2026-10-18T16:30:00Z","competition":"Primera División","domicile":true,"adversaire":"Real Sociedad","statut":"FINAL","score":31.64,"situation":"entre","minutes":8,"pour":2,"contre":5,"cotes":{"victoire":0.31,"nul":0.27,"defaite":0.42,"coteCleanSheet":4.5}},

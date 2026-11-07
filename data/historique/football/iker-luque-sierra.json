@@ -1,9 +1,9 @@
 {
  "joueurId": "iker-luque-sierra",
- "misAJour": "2026-11-07T13:46:56.407Z",
+ "misAJour": "2026-11-07T15:12:22.521Z",
  "dernierHistoriqueComplet": "2026-11-07T13:43:31.517Z",
  "matchs": [
-  {"matchId":"Game:627423ca-bb85-4d43-977f-6314e92a3014","date":"2026-11-07T13:00:00Z","competition":"Primera División","domicile":false,"adversaire":"Málaga CF","statut":"REVIEWING","score":34.4,"situation":"titulaire","minutes":45,"pour":0,"contre":1,"cotes":{"victoire":0.33,"nul":0.27,"defaite":0.4,"coteCleanSheet":4.33}},
+  {"matchId":"Game:627423ca-bb85-4d43-977f-6314e92a3014","date":"2026-11-07T13:00:00Z","competition":"Primera División","domicile":false,"adversaire":"Málaga CF","statut":"REVIEWING","score":68.4,"situation":"titulaire","minutes":88,"pour":2,"contre":1,"cotes":{"victoire":0.33,"nul":0.27,"defaite":0.4,"coteCleanSheet":4.33}},
   {"matchId":"Game:c55bfc80-23d1-40e4-923c-bd1373f632be","date":"2026-11-01T15:15:00Z","competition":"Primera División","domicile":true,"adversaire":"Real Madrid","statut":"FINAL","score":36.6,"situation":"titulaire","minutes":90,"pour":0,"contre":3,"cotes":{"victoire":0.09,"nul":0.14,"defaite":0.77,"coteCleanSheet":17}},
   {"matchId":"Game:4f6a1354-b4ba-4b57-98fb-a4b7253fcd66","date":"2026-10-24T14:15:00Z","competition":"Primera División","domicile":true,"adversaire":"RCD Espanyol de Barcelona","statut":"FINAL","score":37.7,"situation":"entre","minutes":23,"pour":2,"contre":1,"cotes":{"victoire":0.41,"nul":0.27,"defaite":0.32,"coteCleanSheet":3.75}},
   {"matchId":"Game:6fed6da9-1225-4e9e-a395-7b582ccf04e7","date":"2026-10-18T12:00:00Z","competition":"Primera División","domicile":false,"adversaire":"CA Osasuna","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":0,"contre":2,"cotes":{"victoire":0.26,"nul":0.27,"defaite":0.47,"coteCleanSheet":5}},

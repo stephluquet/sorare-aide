@@ -1,8 +1,9 @@
 {
  "joueurId": "carney-chukwuemeka",
- "misAJour": "2026-11-07T13:43:31.593Z",
+ "misAJour": "2026-11-07T15:12:22.584Z",
  "dernierHistoriqueComplet": "2026-11-07T13:43:31.593Z",
  "matchs": [
+  {"matchId":"Game:645aa306-60ae-4706-bcdf-c0a9b66fcaff","date":"2026-11-07T14:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"SV 07 Elversberg","statut":"REVIEWING","score":38.7,"situation":"titulaire","minutes":34,"pour":0,"contre":0,"cotes":{"victoire":0.7,"nul":0.19,"defaite":0.11,"coteCleanSheet":2.38}},
   {"matchId":"Game:15c4b51d-1c87-4fae-a4d6-84874a904e49","date":"2026-11-04T20:00:00Z","competition":"UEFA Champions League","domicile":true,"adversaire":"Real Betis","statut":"FINAL","score":32.5,"situation":"entre","minutes":15,"pour":2,"contre":1,"cotes":{"victoire":0.55,"nul":0.24,"defaite":0.21,"coteCleanSheet":3.25}},
   {"matchId":"Game:b5868f64-a32f-4817-a39f-1b5bf6ddf04e","date":"2026-10-31T17:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"FC Bayern München","statut":"FINAL","score":64.8,"situation":"titulaire","minutes":67,"pour":2,"contre":2,"cotes":{"victoire":0.12,"nul":0.17,"defaite":0.71,"coteCleanSheet":13}},
   {"matchId":"Game:bd8384fc-88fb-4159-ba9e-d6c26edd09d6","date":"2026-10-24T16:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"Eintracht Frankfurt","statut":"FINAL","score":45.6,"situation":"entre","minutes":22,"pour":1,"contre":0,"cotes":{"victoire":0.62,"nul":0.2,"defaite":0.18,"coteCleanSheet":3}},

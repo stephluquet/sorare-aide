@@ -1,9 +1,9 @@
 {
  "joueurId": "andres-martin-garcia",
- "misAJour": "2026-11-07T13:43:31.512Z",
+ "misAJour": "2026-11-07T15:12:22.515Z",
  "dernierHistoriqueComplet": "2026-11-07T13:43:31.512Z",
  "matchs": [
-  {"matchId":"Game:627423ca-bb85-4d43-977f-6314e92a3014","date":"2026-11-07T13:00:00Z","competition":"Primera División","domicile":false,"adversaire":"Málaga CF","statut":"REVIEWING","score":0,"situation":"absent","minutes":null,"pour":0,"contre":1,"cotes":{"victoire":0.33,"nul":0.27,"defaite":0.4,"coteCleanSheet":4.33}},
+  {"matchId":"Game:627423ca-bb85-4d43-977f-6314e92a3014","date":"2026-11-07T13:00:00Z","competition":"Primera División","domicile":false,"adversaire":"Málaga CF","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":2,"contre":1,"cotes":{"victoire":0.33,"nul":0.27,"defaite":0.4,"coteCleanSheet":4.33}},
   {"matchId":"Game:c55bfc80-23d1-40e4-923c-bd1373f632be","date":"2026-11-01T15:15:00Z","competition":"Primera División","domicile":true,"adversaire":"Real Madrid","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":0,"contre":3,"cotes":{"victoire":0.09,"nul":0.14,"defaite":0.77,"coteCleanSheet":17}},
   {"matchId":"Game:4f6a1354-b4ba-4b57-98fb-a4b7253fcd66","date":"2026-10-24T14:15:00Z","competition":"Primera División","domicile":true,"adversaire":"RCD Espanyol de Barcelona","statut":"FINAL","score":50.5,"situation":"titulaire","minutes":67,"pour":2,"contre":1,"cotes":{"victoire":0.41,"nul":0.27,"defaite":0.32,"coteCleanSheet":3.75}},
   {"matchId":"Game:6fed6da9-1225-4e9e-a395-7b582ccf04e7","date":"2026-10-18T12:00:00Z","competition":"Primera División","domicile":false,"adversaire":"CA Osasuna","statut":"FINAL","score":37.1,"situation":"entre","minutes":45,"pour":0,"contre":2,"cotes":{"victoire":0.26,"nul":0.27,"defaite":0.47,"coteCleanSheet":5}},

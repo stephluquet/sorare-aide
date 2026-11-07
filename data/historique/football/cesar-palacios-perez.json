@@ -1,8 +1,9 @@
 {
  "joueurId": "cesar-palacios-perez",
- "misAJour": "2026-11-07T13:43:31.429Z",
+ "misAJour": "2026-11-07T15:12:22.449Z",
  "dernierHistoriqueComplet": "2026-11-07T13:43:31.429Z",
  "matchs": [
+  {"matchId":"Game:f04f7cb1-72a9-436f-88f1-e58f366d3d5e","date":"2026-11-07T15:00:00Z","competition":"Premier League","domicile":true,"adversaire":"Newcastle United FC","statut":"REVIEWING","score":0,"situation":"banc","minutes":0,"pour":0,"contre":0,"cotes":{"victoire":0.48,"nul":0.25,"defaite":0.27,"coteCleanSheet":3.25}},
   {"matchId":"Game:b9505900-982d-46f8-8164-3580abe8f6cb","date":"2026-10-31T20:00:00Z","competition":"Premier League","domicile":false,"adversaire":"Aston Villa FC","statut":"FINAL","score":34.3,"situation":"entre","minutes":11,"pour":1,"contre":1,"cotes":{"victoire":0.27,"nul":0.28,"defaite":0.45,"coteCleanSheet":4.33}},
   {"matchId":"Game:6ef758b2-70c8-412b-bcb7-b853c5a4d914","date":"2026-10-24T14:00:00Z","competition":"Premier League","domicile":false,"adversaire":"Coventry City FC","statut":"FINAL","score":37.5,"situation":"entre","minutes":16,"pour":1,"contre":0,"cotes":{"victoire":0.42,"nul":0.28,"defaite":0.3,"coteCleanSheet":3.4}},
   {"matchId":"Game:17261839-1e7f-4da8-90aa-2e935b451fdc","date":"2026-10-17T14:00:00Z","competition":"Premier League","domicile":true,"adversaire":"Hull City AFC","statut":"FINAL","score":41,"situation":"entre","minutes":5,"pour":1,"contre":0,"cotes":{"victoire":0.5699,"nul":0.2401,"defaite":0.19,"coteCleanSheet":2.5}},

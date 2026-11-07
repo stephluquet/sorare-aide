@@ -31,9 +31,18 @@
     <h1 id="titre-propositions">Arcade</h1>
     <div id="alerte-arcade"></div>
     <div class="sous" id="contexte-propositions"></div>
-    <div class="seg" id="modes" role="group" aria-label="Mode">
-      <button type="button" data-mode="plusieurs" aria-pressed="true">Plusieurs créneaux</button>
-      <button type="button" data-mode="unique" aria-pressed="false">Créneau unique</button>
+    <div class="rangee">
+      <div class="seg" id="modes" role="group" aria-label="Mode">
+        <button type="button" data-mode="plusieurs" aria-pressed="true">Plusieurs créneaux</button>
+        <button type="button" data-mode="unique" aria-pressed="false">Créneau unique</button>
+      </div>
+      <label class="reglage" for="seuil-arcade">Chances de jouer d'au moins
+        <select id="seuil-arcade" class="choix-seuil">
+          <option value="0.7">70 %</option>
+          <option value="0.8">80 %</option>
+          <option value="0.9">90 %</option>
+        </select>
+      </label>
     </div>
     <div id="propositions"></div>
   </section>
@@ -58,22 +67,23 @@
         <span class="compte" id="compte"></span>
       </div>
       <div class="rangee" id="filtre-etoiles" role="group" aria-label="Étoiles" hidden></div>
-      <div class="rangee">
-        <select id="creneau" aria-label="Journée Sorare"></select>
-        <select id="tri" aria-label="Trier par">
-          <option value="e">Tri : espérance</option>
-          <option value="p">Tri : chances de jouer</option>
-          <option value="d">Tri : coup d'envoi</option>
-        </select>
-        <label class="reglage" for="seuil">Seuil
-          <select id="seuil">
-            <option value="0.7">70 %</option>
-            <option value="0.8">80 %</option>
-            <option value="0.9">90 %</option>
-          </select>
-        </label>
-        <label class="case"><input type="checkbox" id="dispo" checked> disponibles seulement</label>
-      </div>
+      <details class="filtres">
+        <summary id="resume-filtres">Filtres</summary>
+        <div class="rangee">
+          <select id="creneau" aria-label="Journée Sorare"></select>
+          <select id="tri" aria-label="Trier par"></select>
+        </div>
+        <div class="rangee">
+          <label class="reglage" for="seuil">Chances de jouer d'au moins
+            <select id="seuil" class="choix-seuil">
+              <option value="0.7">70 %</option>
+              <option value="0.8">80 %</option>
+              <option value="0.9">90 %</option>
+            </select>
+          </label>
+          <label class="case"><input type="checkbox" id="dispo" checked> disponibles seulement</label>
+        </div>
+      </details>
     </div>
     <div class="liste" id="liste"></div>
   </section>
