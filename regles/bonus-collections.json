@@ -1,0 +1,7 @@
+{
+  "id": "bonus-collections",
+  "source": "Précisions de l'utilisateur (2026-11-07)",
+  "usage": "Repli et contrôle uniquement : le bonus de chaque carte doit être lu dans l'API, car de nouvelles collections sortent régulièrement. Signaler tout écart entre l'API et cette table.",
+  "bonus_pct": { "Shiny": 5, "Holo": 10, "Four Suits": 15, "Eclipse": 20 },
+  "a_verifier": ["nom du champ API du bonus (édition, collection ou bonus de carte)", "bonus « même club » mentionné par le centre d'aide, distinct ou non"]
+}

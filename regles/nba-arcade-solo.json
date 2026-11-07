@@ -1,0 +1,16 @@
+{
+  "id": "nba-arcade-solo",
+  "sport": "nba",
+  "mode": "arcade-solo",
+  "source": "Précisions de l'utilisateur (2026-11-07)",
+  "taille_equipe": 5,
+  "postes": { "obligatoires": [], "libre": { "nombre": 5, "postes_autorises": "tous" } },
+  "capitaine": null,
+  "plafond_etoiles": { "max": 16, "source_etoiles": "donnée de la carte, à lire dans l'API" },
+  "paliers": [150, 180, 210, 240, 270, 290],
+  "vies_par_niveau": 4,
+  "echec_toutes_vies": "retour_niveau_1",
+  "carte_bloquee": "tant_que_meme_niveau",
+  "bonus_collection": { "source": "API, carte par carte", "repli": "voir bonus-collections.json" },
+  "a_verifier": ["nom du champ API des étoiles"]
+}

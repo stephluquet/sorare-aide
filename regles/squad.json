@@ -1,0 +1,12 @@
+{
+  "id": "squad",
+  "sport": ["football", "nba"],
+  "mode": "squad",
+  "source": "Précisions de l'utilisateur (2026-11-07)",
+  "objectif_outil": "meilleure équipe du jour (score attendu maximal) ; partenaires et paliers collectifs ignorés car inconnus",
+  "score_squad_info": "somme des 3 meilleurs scores des membres (information, non utilisée dans le calcul)",
+  "contrainte_jour": "tous les joueurs de l'équipe jouent le jour choisi",
+  "carte_bloquee_en_solo_utilisable": true,
+  "composition": "mêmes règles que le solo du sport (taille, postes, capitaine en football, plafond d'étoiles en NBA), à confirmer",
+  "a_verifier": ["composition identique au solo"]
+}
