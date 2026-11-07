@@ -4,9 +4,11 @@
   "type": "module",
   "description": "Aide à la composition Sorare (lecture seule)",
   "scripts": {
-    "recuperer": "node src/recuperation.js",
+    "recuperer": "node src/recuperation/index.js",
     "projeter": "node src/projection.js",
     "test": "node --test tests/*.test.js"
   },
-  "engines": { "node": ">=22" }
+  "engines": {
+    "node": ">=22"
+  }
 }
