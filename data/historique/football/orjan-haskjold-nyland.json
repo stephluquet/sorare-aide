@@ -1,9 +1,9 @@
 {
  "joueurId": "orjan-haskjold-nyland",
- "misAJour": "2026-11-07T15:12:22.598Z",
+ "misAJour": "2026-11-07T15:39:17.409Z",
  "dernierHistoriqueComplet": "2026-11-07T13:43:31.605Z",
  "matchs": [
-  {"matchId":"Game:949b0842-21d5-4c9e-83c2-76c12ee56c1f","date":"2026-11-07T14:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"FC Augsburg","statut":"REVIEWING","score":0,"situation":"banc","minutes":0,"pour":2,"contre":1,"cotes":{"victoire":0.66,"nul":0.18,"defaite":0.16,"coteCleanSheet":3.4}},
+  {"matchId":"Game:949b0842-21d5-4c9e-83c2-76c12ee56c1f","date":"2026-11-07T14:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"FC Augsburg","statut":"REVIEWING","score":0,"situation":"banc","minutes":0,"pour":3,"contre":1,"cotes":{"victoire":0.66,"nul":0.18,"defaite":0.16,"coteCleanSheet":3.4}},
   {"matchId":"Game:00dbf639-1104-47cd-a09f-573454402068","date":"2026-11-04T20:00:00Z","competition":"UEFA Champions League","domicile":true,"adversaire":"Manchester City FC","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":2,"contre":3,"cotes":{"victoire":0.18,"nul":0.21,"defaite":0.61,"coteCleanSheet":11}},
   {"matchId":"Game:3bd308b9-bb41-40df-b410-47b654e6418b","date":"2026-10-31T14:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"FC Schalke 04","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":2,"contre":0,"cotes":{"victoire":0.51,"nul":0.24,"defaite":0.25,"coteCleanSheet":3.4}},
   {"matchId":"Game:54b0536d-d949-4fad-81ae-1e3c3b717814","date":"2026-10-24T13:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"SV 07 Elversberg","statut":"FINAL","score":73.6,"situation":"titulaire","minutes":90,"pour":4,"contre":0,"cotes":{"victoire":0.66,"nul":0.19,"defaite":0.15,"coteCleanSheet":3}},

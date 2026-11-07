@@ -1,9 +1,9 @@
 {
  "joueurId": "jonah-benedict-sticker",
- "misAJour": "2026-11-07T15:12:22.490Z",
+ "misAJour": "2026-11-07T15:39:17.283Z",
  "dernierHistoriqueComplet": "2026-11-07T13:43:31.484Z",
  "matchs": [
-  {"matchId":"Game:1bfc1835-7521-45bf-bf20-178701be71ef","date":"2026-11-07T14:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"Eintracht Frankfurt","statut":"REVIEWING","score":0,"situation":"banc","minutes":0,"pour":0,"contre":1,"cotes":{"victoire":0.33,"nul":0.26,"defaite":0.41,"coteCleanSheet":5}},
+  {"matchId":"Game:1bfc1835-7521-45bf-bf20-178701be71ef","date":"2026-11-07T14:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"Eintracht Frankfurt","statut":"REVIEWING","score":0,"situation":"banc","minutes":0,"pour":1,"contre":1,"cotes":{"victoire":0.33,"nul":0.26,"defaite":0.41,"coteCleanSheet":5}},
   {"matchId":"Game:5e59ada9-3b40-4262-bfcc-f0bc9f999812","date":"2026-10-31T14:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"Borussia Mönchengladbach","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":0,"contre":0,"cotes":{"victoire":0.31,"nul":0.26,"defaite":0.43,"coteCleanSheet":5.5}},
   {"matchId":"Game:3afd4991-a3ad-47bc-b6bf-7e61017b16c3","date":"2026-10-24T13:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"Hamburger SV","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":1,"contre":0,"cotes":{"victoire":0.4,"nul":0.26,"defaite":0.34,"coteCleanSheet":4}},
   {"matchId":"Game:44651e23-71e0-4eeb-81bc-fd1ff0ac70f3","date":"2026-10-17T13:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"SV Werder Bremen","statut":"FINAL","score":38.4,"situation":"entre","minutes":2,"pour":2,"contre":2,"cotes":{"victoire":0.23,"nul":0.23,"defaite":0.54,"coteCleanSheet":7}},

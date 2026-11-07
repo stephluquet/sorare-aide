@@ -1,9 +1,9 @@
 {
  "joueurId": "steve-mounie",
- "misAJour": "2026-11-07T15:12:22.515Z",
+ "misAJour": "2026-11-07T15:39:17.319Z",
  "dernierHistoriqueComplet": "2026-11-07T13:43:31.511Z",
  "matchs": [
-  {"matchId":"Game:949b0842-21d5-4c9e-83c2-76c12ee56c1f","date":"2026-11-07T14:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"RB Leipzig","statut":"REVIEWING","score":0,"situation":"absent","minutes":null,"pour":1,"contre":2,"cotes":{"victoire":0.16,"nul":0.18,"defaite":0.66,"coteCleanSheet":13}},
+  {"matchId":"Game:949b0842-21d5-4c9e-83c2-76c12ee56c1f","date":"2026-11-07T14:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"RB Leipzig","statut":"REVIEWING","score":0,"situation":"absent","minutes":null,"pour":1,"contre":3,"cotes":{"victoire":0.16,"nul":0.18,"defaite":0.66,"coteCleanSheet":13}},
   {"matchId":"Game:c160dfa6-592a-41df-97db-ed1449158edd","date":"2026-10-31T14:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"Sport-Club Freiburg","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":1,"contre":2,"cotes":{"victoire":0.34,"nul":0.26,"defaite":0.4,"coteCleanSheet":5.5}},
   {"matchId":"Game:29a4f331-5be7-4cde-ae05-286c6d9d038b","date":"2026-10-24T13:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"1. FC Union Berlin","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":1,"contre":1,"cotes":{"victoire":0.53,"nul":0.23,"defaite":0.24,"coteCleanSheet":3.4}},
   {"matchId":"Game:572b9297-b56e-4127-ab74-29ba29677da7","date":"2026-10-17T13:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"SV 07 Elversberg","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":3,"contre":4,"cotes":{"victoire":0.35,"nul":0.27,"defaite":0.38,"coteCleanSheet":5}},
