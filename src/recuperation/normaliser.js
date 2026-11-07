@@ -33,6 +33,7 @@ export function matchHistorique(g, sport) {
   return {
     matchId: m.id ?? null,
     date: m.date ?? null,
+    equipe: equipe, // équipe du joueur ce jour-là (slug) : sert à la forme des équipes
     competition: m.competition?.name ?? null,
     domicile: aDomicile,
     adversaire: aDomicile === true ? ext?.name ?? null : aDomicile === false ? dom?.name ?? null : null,

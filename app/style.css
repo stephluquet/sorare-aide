@@ -287,3 +287,32 @@ body[data-sport="nba"] .jauge-maj span { background: var(--nba); }
   .barre-gauche, .barre-droite { gap: 4px; }
   .lien-accueil, .bouton-theme, .bouton-rond { width: 34px; height: 34px; }
 }
+
+/* Forme (équipe, adversaire, joueur) : affichée, hors calcul */
+.forme-ligne { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 4px; font-size: .75rem; }
+.libelle-forme { color: var(--doux); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; font-size: .68rem; }
+.pastilles { display: inline-flex; gap: 2px; }
+.pastilles i, .forme-resultats i { font-style: normal; font: 700 .68rem/1 var(--police-texte); width: 16px; height: 16px; display: grid; place-items: center; border-radius: 4px; color: #fff; }
+.pastilles.grand i { width: 22px; height: 22px; font-size: .8rem; }
+.res-V { background: var(--ok); } .res-N { background: var(--doux); } .res-D { background: var(--stop); }
+:root[data-theme="dark"] .res-V, :root[data-theme="dark"] .res-D { color: #0f1512; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .res-V, :root:not([data-theme="light"]) .res-D { color: #0f1512; } }
+.serie { font-weight: 700; }
+.serie-bonne { color: var(--ok); } .serie-mauvaise { color: var(--stop); }
+.tendance { font-weight: 700; font-size: .75rem; color: var(--doux); }
+.tendance.hausse { color: var(--ok); } .tendance.baisse { color: var(--attention); }
+.forme-fiche { display: grid; gap: 8px; }
+.titre-forme { font: 700 1.15rem var(--police-titre); text-transform: uppercase; margin: 0; }
+.grille-forme { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; }
+.carte-forme { background: var(--fond); border-radius: 10px; padding: 10px 12px; display: grid; gap: 6px; }
+.carte-forme h3 { font: 700 .95rem var(--police-titre); text-transform: uppercase; letter-spacing: .03em; margin: 0; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.carte-forme h3 .sous { text-transform: none; letter-spacing: 0; font: 400 .8rem var(--police-texte); }
+.forme-resultats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; }
+.res-match { display: grid; justify-items: center; gap: 2px; font-size: .7rem; color: var(--doux); text-align: center; min-width: 0; }
+.res-match i { width: 24px; height: 24px; font-size: .8rem; }
+.res-match b { color: var(--encre); font: 700 .95rem var(--police-titre); }
+.res-match span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+.sit-titulaire { background: var(--titulaire); } .sit-entre { background: var(--entre); } .sit-joue { background: var(--titulaire); }
+.sit-banc, .sit-absent { background: var(--vide); color: var(--encre) !important; }
+.chiffres-forme { margin: 0; font-size: .82rem; color: var(--doux); }
+.chiffres-forme b { color: var(--encre); }

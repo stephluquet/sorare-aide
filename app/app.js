@@ -11,6 +11,7 @@
 
 import { projeterCarte } from '../src/moteur/projection.js';
 import { proposer, proposerParCreneau, squadDuJour, joursAVenir, jourDeJeu, autresChoix } from '../src/moteur/compositions.js';
+import { statsEquipe, serieEnMots, formeJoueur } from '../src/moteur/forme.js';
 
 // ---------- Données ----------
 const STATUTS_CODES = { F: 'FINAL', R: 'REVIEWING', D: 'DID_NOT_PLAY' };
@@ -138,6 +139,60 @@ function ligneMatch(l) {
   return `${esc(quand(l.m.debutUTC))} · ${l.lieu === 'ext' ? '@ ' : l.lieu === 'dom' ? 'vs ' : ''}${esc(l.adv ?? '?')}${v}`;
 }
 
+// ---------- Forme (methode.md 9 bis : affichée, hors calcul) ----------
+const F = D.P.forme;
+const cacheEquipes = new Map();
+function formeEquipe(slug) {
+  if (!slug) return null;
+  if (!cacheEquipes.has(slug)) {
+    const ms = (D.equipes?.[slug] ?? []).map(([date, adversaire, dom, pour, contre]) => ({ date, adversaire, domicile: dom === 1, pour, contre }));
+    cacheEquipes.set(slug, statsEquipe(ms, F));
+  }
+  return cacheEquipes.get(slug);
+}
+const cacheJoueurs = new Map();
+const formeDe = (j) => { if (!cacheJoueurs.has(j.id)) cacheJoueurs.set(j.id, formeJoueur(j, F)); return cacheJoueurs.get(j.id); };
+const slugAdversaire = (l) => (!l.m ? null : l.lieu === 'dom' ? l.m.exterieur?.slug : l.lieu === 'ext' ? l.m.domicile?.slug : null);
+const MOTS_RES = { V: 'victoire', N: 'nul', D: 'défaite' };
+
+// Pastilles des derniers matchs (du plus ancien au plus récent, le dernier à droite).
+function pastilles(s, grand = false) {
+  if (!s) return '';
+  const ms = [...s.derniers].reverse();
+  const titre = `${ms.length} derniers matchs : ${ms.map((m) => `${MOTS_RES[m.res]} ${m.pour}-${m.contre}${m.adversaire ? ` contre ${m.adversaire}` : ''}`).join(', ')}`;
+  return `<span class="pastilles${grand ? ' grand' : ''}" title="${esc(titre)}" aria-label="${esc(titre)}">${ms.map((m) => `<i class="res-${m.res}">${m.res}</i>`).join('')}</span>`;
+}
+
+// Ligne « forme » des listes : l'équipe (pastilles + série) et la tendance du joueur.
+function ligneForme(l) {
+  const s = formeEquipe(l.j.club?.slug), fj = formeDe(l.j), serie = serieEnMots(s, F);
+  const tend = fj?.tendance === 'hausse' ? '<span class="tendance hausse" title="Moyenne de ses 3 derniers matchs nettement au-dessus de ses 15 derniers">▲ en forme</span>'
+    : fj?.tendance === 'baisse' ? '<span class="tendance baisse" title="Moyenne de ses 3 derniers matchs nettement en dessous de ses 15 derniers">▼ en baisse</span>' : '';
+  if (!s && !tend) return '';
+  return `<div class="forme-ligne">${s ? `<span class="libelle-forme">Équipe</span>${pastilles(s)}${serie ? `<span class="serie serie-${s.serie.type === 'D' || /sans victoire/.test(serie) ? 'mauvaise' : 'bonne'}">${esc(serie)}</span>` : ''}` : ''}${tend}</div>`;
+}
+
+// Bloc « Forme » de la fiche : son équipe, l'adversaire, le joueur.
+function blocFormeEquipe(titre, nom, s, sport) {
+  if (!s) return `<div class="carte-forme"><h3>${titre} <span class="sous">${esc(nom ?? '')}</span></h3><p class="sous">Forme inconnue : aucune de tes cartes ne joue dans cette équipe.</p></div>`;
+  const serie = serieEnMots(s, F);
+  const butOuPoint = sport === 'nba' ? 'points' : 'buts';
+  return `<div class="carte-forme"><h3>${titre} <span class="sous">${esc(nom ?? '')}</span></h3>
+    <div class="forme-resultats">${[...s.derniers].reverse().map((m) => `<div class="res-match"><i class="res-${m.res}">${m.res}</i><b>${m.pour}-${m.contre}</b><span>${m.domicile ? 'vs' : '@'} ${esc((m.adversaire ?? '?').replace(/^(FC|AFC|SC|1\. FC|1\. FSV|RC|CF|SV|VfB|VfL|TSG|RCD|CA|AS|OGC|LOSC|Stade) /, '').slice(0, 12))}</span></div>`).join('')}</div>
+    <p class="chiffres-forme"><b>${Math.round(s.pctVictoires * 100)} %</b> de victoires sur ${s.nb} matchs (${s.victoires} V${s.nuls ? `, ${s.nuls} N` : ''}, ${s.defaites} D)${serie ? ` · <b>${esc(serie)}</b>` : ''}<br>${nb(s.pourMoyen, 1)} ${butOuPoint} marqués et ${nb(s.contreMoyen, 1)} encaissés par match</p></div>`;
+}
+function blocFormeJoueur(l) {
+  const fj = formeDe(l.j); if (!fj) return '';
+  const SITU = { titulaire: 'T', entre: 'E', joue: 'J', banc: 'B', absent: 'A' };
+  const tend = fj.tendance === 'hausse' ? '<span class="tendance hausse">▲ en forme</span>' : fj.tendance === 'baisse' ? '<span class="tendance baisse">▼ en baisse</span>' : fj.tendance === 'stable' ? '<span class="tendance">= stable</span>' : '';
+  const pres = l.c.sport === 'football'
+    ? `titulaire ${fj.titulaire} fois et entré ${fj.joue - fj.titulaire} fois sur les ${fj.sur} derniers matchs de l'équipe`
+    : `a joué ${fj.joue} des ${fj.sur} derniers matchs${fj.minutesRecentes != null ? ` · ${nb(fj.minutesRecentes)} min sur ses 3 derniers (${nb(fj.minutesReference)} habituellement)` : ''}`;
+  return `<div class="carte-forme"><h3>Le joueur ${tend}</h3>
+    <div class="forme-resultats">${[...fj.derniers].reverse().map((m) => `<div class="res-match"><i class="sit-${m.situation}">${SITU[m.situation] ?? '?'}</i><b>${m.score == null ? '–' : Math.round(m.score)}</b></div>`).join('')}</div>
+    <p class="chiffres-forme">${fj.moyRecente != null ? `<b>${nb(fj.moyRecente)}</b> pts en moyenne sur ses 3 derniers matchs joués, contre ${nb(fj.moyReference)} sur ses 15 derniers (${fj.ecart >= 0 ? '+' : '−'}${Math.abs(Math.round(fj.ecart * 100))} %)<br>` : ''}${pres}</p></div>`;
+}
+
 // Colonne de droite, la même partout : score s'il joue (bonus compris) et jauge des chances de jouer.
 // L'espérance (chances × score) est dans la fiche.
 function chiffresJoueur(l) {
@@ -261,7 +316,7 @@ function commandes() {
   if (vue.creneau && !journees.has(vue.creneau)) vue.creneau = '';
   $('creneau').innerHTML = '<option value="">Toutes les journées</option>' + [...journees.entries()].sort((a, b) => a[0].localeCompare(b[0]))
     .map(([k, n]) => `<option value="${k}" ${k === vue.creneau ? 'selected' : ''}>${libelleJournee(vue.sport, k)} (${n})</option>`).join('');
-  const TRIS = [['e', 'Tri : les plus utiles (chances × score)'], ['s', "Tri : score s'il joue"], ['p', 'Tri : chances de jouer'], ['d', "Tri : coup d'envoi"]];
+  const TRIS = [['e', 'Tri : les plus utiles (chances × score)'], ['s', "Tri : score s'il joue"], ['p', 'Tri : chances de jouer'], ['f', 'Tri : joueur en forme'], ['q', 'Tri : équipe en forme'], ['d', "Tri : coup d'envoi"]];
   // Filtre par étoiles (NBA) : un bouton par niveau présent, avec le nombre de cartes.
   const filtreEtoiles = $('filtre-etoiles');
   filtreEtoiles.hidden = vue.sport !== 'nba';
@@ -305,6 +360,8 @@ function liste() {
     (!vue.dispo || disponible(l)) && (!vue.creneau || (l.m && journee(l) === vue.creneau)));
   const esp = (l) => l.pr.esperance ?? -1;
   const tri = { e: (a, b) => esp(b) - esp(a), s: (a, b) => (b.pr.siJoue ?? -1) - (a.pr.siJoue ?? -1), p: (a, b) => (b.pr.p ?? -1) - (a.pr.p ?? -1),
+    f: (a, b) => (formeDe(b.j)?.ecart ?? -9) - (formeDe(a.j)?.ecart ?? -9),
+    q: (a, b) => (formeEquipe(b.j.club?.slug)?.pctVictoires ?? -1) - (formeEquipe(a.j.club?.slug)?.pctVictoires ?? -1) || esp(b) - esp(a),
     d: (a, b) => (a.m?.debutUTC ?? '9').localeCompare(b.m?.debutUTC ?? '9') }[vue.tri] ?? ((a, b) => esp(b) - esp(a));
   L.sort(tri);
   $('compte').textContent = `${L.length} carte${L.length > 1 ? 's' : ''}`;
@@ -323,6 +380,7 @@ function liste() {
           ${J.has(c.id) ? '<span class="etiq neutre">jouée à ce palier</span>' : ''}
           ${pucesContexte(l)}
         </div>
+        ${ligneForme(l)}
       </div>
       ${chiffresJoueur(l)}
     </button>`;
@@ -368,6 +426,9 @@ function fiche(id) {
         : `<div class="case-chiffre"><span>Minutes récentes</span><b>${nb(s.minutes)}</b></div>`}
       ${c.sport === 'football' ? `<div class="case-chiffre"><span>Victoire / nul / défaite</span><b style="font-size:1.05rem">${cotes}</b></div>` : ''}
     </div>
+    <section class="forme-fiche"><h3 class="titre-forme">Forme</h3>
+      <div class="grille-forme">${blocFormeEquipe('Son équipe', j.club?.nom, formeEquipe(j.club?.slug), c.sport)}${l.m ? blocFormeEquipe('Adversaire', l.adv, formeEquipe(slugAdversaire(l)), c.sport) : ''}${blocFormeJoueur(l)}</div>
+      <p class="sous">Affiché pour information : la forme de l'équipe ne change pas les chances calculées (elle n'apportait rien de plus que la cote du match sur ton historique).</p></section>
     <div class="histo"><div class="sous" style="margin-bottom:4px">Derniers matchs de l'équipe (du plus ancien au plus récent)</div>${histogramme(l)}
       <div class="legende"><span><i style="background:var(--titulaire)"></i>${c.sport === 'nba' ? 'joué' : 'titulaire'}</span>${c.sport === 'football' ? '<span><i style="background:var(--entre)"></i>entré en jeu</span>' : ''}<span>B banc · A absent</span></div></div>
     ${pr.raisons.length ? `<ul class="raisons">${pr.raisons.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
@@ -456,6 +517,7 @@ function carteProposition(nom, e, sport, principale) {
           <div class="nom">${esc(l.j.nom)}${e.capitaine === l.c.id ? '<span class="capitaine">C</span>' : ''} ${badgeEtoiles(l)}</div>
           <div class="meta"><span>${esc(l.j.postes.join('/'))}</span><span>${ligneMatch(l)}</span></div>
           <div class="puces"><span class="etiq ${st}">${LIBELLES[st]}</span>${l.c.bonusPct ? `<span class="etiq bonus">${esc(l.c.collection)} +${nb(l.c.bonusPct)} %</span>` : ''}${pucesContexte(l)}</div>
+          ${ligneForme(l)}
         </div>
         ${chiffresJoueur(l)}</div>`;
     }).join('')}</div>
@@ -527,6 +589,7 @@ function afficherAutres(sport, equipe, a) {
           <div class="nom">${esc(l.j.nom)}${c.capitaine === c.carteId ? '<span class="capitaine">C</span>' : ''} ${badgeEtoiles(l)}</div>
           <div class="meta"><span>${esc(l.j.postes.join('/'))} · joue à ${pct(c.p)} · ${nb(c.siJoue)} pts s'il joue</span><span>${ligneMatch(l)}</span></div>
           ${tard || pucesContexte(l) ? `<div class="puces">${tard}${pucesContexte(l)}</div>` : ''}
+          ${ligneForme(l)}
         </div>
         <div class="droite"><span class="avant-apres">${pct(equipe.pPasser)} → <b class="${classe}">${pct(c.pPasser)}</b></span><small>chances de passer</small></div></div>`;
       }).join('')}</div>`;
@@ -579,6 +642,7 @@ function afficherSquad() {
           <div class="nom">${esc(l.j.nom)}${e.capitaine === l.c.id ? '<span class="capitaine">C</span>' : ''} ${badgeEtoiles(l)}</div>
           <div class="meta"><span>${esc(l.j.postes.join('/'))}</span><span>${ligneMatch(l)}</span></div>
           <div class="puces"><span class="etiq ${statut(l)}">${LIBELLES[statut(l)]}</span>${l.c.bonusPct ? `<span class="etiq bonus">${esc(l.c.collection)} +${nb(l.c.bonusPct)} %</span>` : ''}${jouees(sport).has(l.c.id) ? '<span class="etiq neutre">jouée en solo</span>' : ''}${pucesContexte(l)}</div>
+          ${ligneForme(l)}
         </div>${chiffresJoueur(l)}</div>`).join('')}</div>
       <div class="sous">${r.admissibles} cartes du jour retenues, ${r.nbEquipes} équipes comparées. Règles de composition supposées identiques au solo (à confirmer).</div>
     </article>`;

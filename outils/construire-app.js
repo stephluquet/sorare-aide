@@ -11,6 +11,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { join } from 'node:path';
 import { chargerEntrees, projeterTout, RACINE } from '../src/moteur/node.js';
+import { matchsParEquipe } from '../src/moteur/forme.js';
 
 const NB_VIGNETTES = { football: 120, nba: 60 };
 const FORMAT = 1;
@@ -42,8 +43,20 @@ const app = {
     h: historiqueCompact(j.historique ?? []),
   })),
   matchs: donnees.matchs,
+  equipes: equipesCompactes(),
   vignettes: {},
 };
+
+// Forme des équipes (affichage, methode.md 9 bis) : derniers matchs terminés des clubs actuels
+// des joueurs et de leurs prochains adversaires, au format [date, adversaire, domicile 1/0, pour, contre].
+function equipesCompactes() {
+  const utiles = new Set();
+  for (const j of donnees.joueurs) if (j.club?.slug) utiles.add(j.club.slug);
+  for (const m of donnees.matchs) for (const e of [m.domicile, m.exterieur]) if (e?.slug) utiles.add(e.slug);
+  const parEquipe = matchsParEquipe(donnees.joueurs);
+  return Object.fromEntries([...parEquipe].filter(([k]) => utiles.has(k)).map(([k, ms]) =>
+    [k, ms.slice(0, P.forme.fenetre_victoires).map((m) => [m.date, m.adversaire, m.domicile ? 1 : 0, m.pour, m.contre])]));
+}
 
 // ---------- Vignettes des cartes susceptibles d'être proposées ----------
 // Cartes ni exclues ni douteuses, éligibles Arcade, au-dessus du seuil de la proposition
@@ -72,6 +85,7 @@ const script = [
   ['src/moteur/projection.js', lire('src', 'moteur', 'projection.js')],
   ['src/moteur/simulation.js', lire('src', 'moteur', 'simulation.js')],
   ['src/moteur/compositions.js', lire('src', 'moteur', 'compositions.js')],
+  ['src/moteur/forme.js', lire('src', 'moteur', 'forme.js')],
   ['app/app.js', lire('app', 'app.js')],
 ].map(([nom, code]) => `// ===== ${nom} =====\n${sansModules(code)}`).join('\n');
 

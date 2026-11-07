@@ -70,6 +70,15 @@ ignorent les matchs non joués.
     },
     "nba_dos_a_dos": { "fuseau": "America/New_York", "facteur_jouer": 0.925 },
     "espn_blessures": { "Out": "exclu", "Doubtful": "exclu", "Questionable": "douteux", "Day-To-Day": "douteux" }
+  },
+  "forme": {
+    "matchs_affiches": 5,
+    "fenetre_victoires": 10,
+    "serie_notable": 3,
+    "joueur_recent": 3,
+    "joueur_reference": 15,
+    "joueur_reference_min": 5,
+    "seuil_tendance": 0.15
   }
 }
 ```
@@ -395,6 +404,30 @@ le texte du commentaire.
 (910 matchs de joueurs réguliers), **aucun effet** mesurable sur le score ou
 les minutes (corrélations −0,03 à 0,07, y compris pour les matchs très
 déséquilibrés) : non utilisées.
+
+### 9 bis. Forme affichée (équipe, adversaire, joueur) : hors calcul
+
+À la demande de l'utilisateur (2026-11-07), l'appli met en avant la forme. Ces
+chiffres sont **affichés seulement** : la forme de l'équipe n'améliore pas la
+prédiction une fois la cote connue (section 9), et la forme récente du joueur
+est déjà dans la pondération de son score (demi-vie de 10 matchs, section 3).
+Définitions (`src/moteur/forme.js`, paramètres `forme`) :
+
+- **Matchs d'une équipe** : reconstitués à partir de l'historique des joueurs
+  du catalogue qui y jouaient ce jour-là (équipe enregistrée match par match),
+  toutes compétitions, dédoublonnés par match. Une équipe sans aucun joueur
+  du catalogue n'a pas de forme connue (fréquent pour l'adversaire).
+- **Résultat** : victoire, nul ou défaite d'après le score final.
+- **Derniers matchs** : les `matchs_affiches` plus récents (5).
+- **% de victoires** : sur les `fenetre_victoires` derniers matchs (10), avec
+  les buts (ou points) marqués et encaissés en moyenne.
+- **Série** : victoires ou défaites d'affilée (à partir de 2), sinon matchs
+  sans défaite ou sans victoire (à partir de `serie_notable` = 3).
+- **Forme du joueur** : moyenne de ses `joueur_recent` (3) derniers matchs
+  joués comparée à celle de ses `joueur_reference` (15) derniers ; « en forme »
+  au-delà de +15 % (`seuil_tendance`), « en baisse » en deçà de −15 %. S'y
+  ajoutent ses titularisations (football) ou ses minutes (NBA) sur les 5
+  derniers matchs de l'équipe.
 
 ## Limites connues
 
