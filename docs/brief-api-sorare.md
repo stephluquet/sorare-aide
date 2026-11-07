@@ -27,6 +27,10 @@
 - **Rareté et saison** : toutes tes cartes sont `common` de 2026.
 - **Bonus de collection, carte par carte**, avec son nom : Standard (+0 %), Shiny (+5 %), Holo (+10 %), Four Suits (+15 %), Eclipse (+20 %). Les cinq ont été vus sur tes cartes, avec des valeurs conformes à la table des règles.
 
+- **Visuels** : l'API donne l'adresse de l'image de chaque carte (PNG), de sa vidéo animée, du dos de carte, de la photo du joueur et du logo du club.
+  - Ces images sont hébergées sur un autre serveur de Sorare, que l'environnement de travail ne peut pas joindre pour l'instant. Le conteneur ne peut donc pas les télécharger.
+  - Une page HTML peut quand même les afficher : c'est ton navigateur qui les charge, à condition que Sorare l'autorise (non vérifié).
+
 ### Le joueur
 - **Poste** : gardien, défenseur, milieu, attaquant en football ; meneur, ailier, pivot en NBA. Un joueur peut en avoir plusieurs.
 - **Club actuel.**
@@ -74,6 +78,7 @@
 | Probabilité de titularisation (titulaire, remplaçant, absent) | Le champ existe mais revient vide avec notre clé, même pour Kane ou Mbappé un jour de match. Sans doute réservé aux comptes connectés ou à un abonnement. | On estime la probabilité de jouer à partir des 15 derniers matchs, des blessures et des suspensions. L'étape 3 prévoit une vérification des compositions avec des sources citées. |
 | Tes compositions Arcade et les **cartes bloquées** | Réservé à l'utilisateur connecté : refus explicite « You should log in ». | **Tu devras indiquer** les cartes déjà jouées au palier en cours (ou les cocher dans l'outil). |
 | Ton palier en cours, en direct | Même raison. | On le déduit de l'état des paliers et des compteurs de tentatives, ce qui suffit en pratique. |
+| Fichiers image des cartes (le contenu, pas l'adresse) | Le serveur d'images `assets.sorare.com` n'est pas autorisé dans l'environnement (refus du proxy). | L'ajouter à l'environnement si on veut intégrer les images dans les pages ou les vérifier ; sinon, laisser le navigateur les charger. |
 | Cotes des matchs NBA | Ces champs n'existent pas pour le basket dans l'API. | Rien de prévu. Le contexte NBA se limite au lieu et à la date. |
 | Projection Sorare pour la plupart de tes joueurs de football | Sorare ne la calcule que pour une partie des joueurs (27 sur 635). | Notre projection transparente couvre tous les joueurs qui ont joué. |
 | Tableau Squad de ton profil | La requête revient vide. | La « meilleure équipe du jour » n'en a pas besoin : on la calcule à partir des cartes. |
