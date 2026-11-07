@@ -393,7 +393,7 @@ function carteProposition(nom, e, sport, principale) {
     </div>
     <div class="joueurs">${membres.map((l) => {
       const st = statut(l);
-      return `<div class="joueur">${vignette(l)}<div style="min-width:0">
+      return `<div class="joueur" data-fiche="${esc(l.c.id)}" role="button" tabindex="0" aria-label="Voir la carte de ${esc(l.j.nom)}">${vignette(l)}<div style="min-width:0">
           <div class="nom">${esc(l.j.nom)}${e.capitaine === l.c.id ? '<span class="capitaine">C</span>' : ''} ${badgeEtoiles(l)}</div>
           <div class="meta"><span>${esc(l.j.postes.join('/'))}</span><span>${esc(quand(l.m.debutUTC))} · ${l.lieu === 'ext' ? '@ ' : l.lieu === 'dom' ? 'vs ' : ''}${esc(l.adv ?? '?')}</span></div>
           <div class="puces"><span class="etiq ${st}">${LIBELLES[st]}</span>${l.c.bonusPct ? `<span class="etiq bonus">${esc(l.c.collection)} +${nb(l.c.bonusPct)} %</span>` : ''}</div>
@@ -442,7 +442,7 @@ function afficherAutres(sport, equipe, a) {
     groupes.map((g) => `<div class="groupe">${g.poste ? `<h3>${NOMS_POSTES[g.poste] ?? g.poste}</h3>` : ''}${g.choix.map((c) => {
       const l = parId.get(c.carteId), rem = c.remplace ? parId.get(c.remplace) : null;
       const delta = c.ecart == null ? '' : `<span class="${c.ecart >= 0.005 ? 'plus' : c.ecart <= -0.005 ? 'moins' : 'egal'}">${c.ecart >= 0 ? '+' : '−'}${Math.abs(Math.round(c.ecart * 1000) / 10).toLocaleString('fr-FR')} pt</span>`;
-      return `<div class="alt">${vignette(l)}<div style="min-width:0">
+      return `<div class="alt" data-fiche="${esc(l.c.id)}" role="button" tabindex="0" aria-label="Voir la carte de ${esc(l.j.nom)}">${vignette(l)}<div style="min-width:0">
           <div class="nom">${esc(l.j.nom)}${c.capitaine === c.carteId ? '<span class="capitaine">C</span>' : ''} ${badgeEtoiles(l)}</div>
           <div class="meta"><span>${esc(l.j.postes.join('/'))} · ${pct(c.p)} joue · ${nb(c.siJoue)} pts</span><span>${esc(quand(l.m.debutUTC))}</span></div>
         </div>
@@ -493,7 +493,7 @@ function afficherSquad() {
       ${sport === 'nba' ? `<div class="case-chiffre etoiles-equipe"><span>Étoiles</span><b>★ ${nb(e.etoiles, 1)} <small>/ ${plafondEtoiles(sport)}</small></b></div>` : ''}
         <div class="case-chiffre"><span>Verrouillage</span><b style="font-size:1.05rem">${esc(quand(e.verrouillage))}</b></div>
       </div>
-      <div class="joueurs">${membres.map((l) => `<div class="joueur">${vignette(l)}<div style="min-width:0">
+      <div class="joueurs">${membres.map((l) => `<div class="joueur" data-fiche="${esc(l.c.id)}" role="button" tabindex="0" aria-label="Voir la carte de ${esc(l.j.nom)}">${vignette(l)}<div style="min-width:0">
           <div class="nom">${esc(l.j.nom)}${e.capitaine === l.c.id ? '<span class="capitaine">C</span>' : ''} ${badgeEtoiles(l)}</div>
           <div class="meta"><span>${esc(l.j.postes.join('/'))}</span><span>${esc(quand(l.m.debutUTC))} · ${l.lieu === 'ext' ? '@ ' : l.lieu === 'dom' ? 'vs ' : ''}${esc(l.adv ?? '?')}</span></div>
           <div class="puces"><span class="etiq ${statut(l)}">${LIBELLES[statut(l)]}</span>${jouees(sport).has(l.c.id) ? '<span class="etiq neutre">jouée en Arcade</span>' : ''}</div>
@@ -538,7 +538,14 @@ $('tri').onchange = (e) => { vue.tri = e.target.value; liste(); };
 $('dispo').onchange = (e) => { vue.dispo = e.target.checked; commandes(); liste(); };
 $('seuil').onchange = (e) => { etatUtilisateur = { ...etatUtilisateur, seuil: Number(e.target.value) }; stockage.enregistrer(etatUtilisateur); tout(); };
 $('liste').onclick = (e) => { const b = e.target.closest('.ligne'); if (b) fiche(b.dataset.id); };
+// Appui sur un joueur (propositions, autres choix, Squad) : sa fiche, avec la carte.
+const ouvrirFiche = (e) => { const j = e.target.closest('[data-fiche]'); if (!j) return false; fiche(j.dataset.fiche); return true; };
+for (const id of ['propositions', 'squad']) {
+  $(id).addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-fiche]')) { e.preventDefault(); fiche(e.target.dataset.fiche); } });
+}
+$('squad').onclick = (e) => { ouvrirFiche(e); };
 $('propositions').onclick = (e) => {
+  if (!e.target.closest('[data-jouer]') && ouvrirFiche(e)) return;
   const c = e.target.closest('[data-creneau]');
   if (c) { vue.creneauOuvert = vue.creneauOuvert === c.dataset.creneau ? null : c.dataset.creneau; afficherCreneaux(vueCourante().split('-')[1]); return; }
   const b = e.target.closest('[data-jouer]'); if (!b) return;

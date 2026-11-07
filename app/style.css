@@ -166,3 +166,8 @@ details.ecartees summary { cursor: pointer; }
 .puce-etoiles small { font-weight: 500; color: var(--doux); }
 .puce-etoiles[aria-pressed="true"] { background: var(--etoile); border-color: var(--etoile); color: var(--surface); }
 .puce-etoiles[aria-pressed="true"] small { color: var(--surface); }
+
+/* Joueurs cliquables : la fiche (avec la carte) s'ouvre au toucher */
+[data-fiche] { cursor: pointer; border-radius: 8px; }
+[data-fiche]:hover { background: var(--fond); }
+[data-fiche]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
