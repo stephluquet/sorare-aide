@@ -7,6 +7,7 @@
   --ok: #1b7f4a; --ok-doux: #e1f2e8; --attention: #a76200; --attention-doux: #fbefd9; --stop: #b3261e; --stop-doux: #fbe4e1;
   --titulaire: #1f5fd6; --entre: #8fb0ef; --vide: #c9d2cc;
   --etoile: #8a5a00; --etoile-doux: #fbecc8;
+  --foot: #1b6e45; --nba: #b8481a;
   --police-titre: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
   --police-texte: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
@@ -15,14 +16,14 @@
     --fond: #0f1512; --surface: #18201c; --encre: #e7eee9; --doux: #9aa9a0; --trait: #2b3631;
     --accent: #8db0ff; --accent-doux: #1f2c47;
     --ok: #6fd39b; --ok-doux: #173326; --attention: #f2b45c; --attention-doux: #3a2b12; --stop: #ff8f86; --stop-doux: #3d1c19;
-    --titulaire: #8db0ff; --entre: #4c6aa6; --vide: #3a4640; --etoile: #f5c451; --etoile-doux: #3b2f12; color-scheme: dark;
+    --titulaire: #8db0ff; --entre: #4c6aa6; --vide: #3a4640; --etoile: #f5c451; --etoile-doux: #3b2f12; --foot: #23744a; --nba: #b04a1c; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --fond: #0f1512; --surface: #18201c; --encre: #e7eee9; --doux: #9aa9a0; --trait: #2b3631;
   --accent: #8db0ff; --accent-doux: #1f2c47;
   --ok: #6fd39b; --ok-doux: #173326; --attention: #f2b45c; --attention-doux: #3a2b12; --stop: #ff8f86; --stop-doux: #3d1c19;
-  --titulaire: #8db0ff; --entre: #4c6aa6; --vide: #3a4640; --etoile: #f5c451; --etoile-doux: #3b2f12; color-scheme: dark;
+  --titulaire: #8db0ff; --entre: #4c6aa6; --vide: #3a4640; --etoile: #f5c451; --etoile-doux: #3b2f12; --foot: #23744a; --nba: #b04a1c; color-scheme: dark;
 }
 * { box-sizing: border-box; }
 body { background: var(--fond); color: var(--encre); font: 15px/1.4 var(--police-texte);
@@ -91,12 +92,22 @@ button:focus-visible, select:focus-visible, input:focus-visible, .ligne:focus-vi
 .note-palier { font-size: .82rem; color: var(--doux); }
 
 /* Navigation entre écrans */
-.entete { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--trait); padding-bottom: 8px; }
+/* En-tête : marque, sélecteur de sport (toujours visible), puis les modes du sport */
+.entete { display: grid; gap: 8px; border-bottom: 1px solid var(--trait); padding-bottom: 8px; }
+.barre { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.logo { font: 700 1.05rem var(--police-titre); white-space: nowrap; text-transform: uppercase; letter-spacing: .04em; color: var(--doux); text-decoration: none; }
+.sport-global { display: inline-flex; background: var(--surface); border: 1px solid var(--trait); border-radius: 999px; padding: 3px; gap: 2px; }
+.sport-global a { font: 700 1rem var(--police-titre); text-transform: uppercase; letter-spacing: .03em; text-decoration: none; color: var(--doux);
+  padding: 6px 16px; border-radius: 999px; }
+.sport-global a[data-sport="football"][aria-current="true"] { background: var(--foot); color: #fff; }
+.sport-global a[data-sport="nba"][aria-current="true"] { background: var(--nba); color: #fff; }
+.sport-global a:focus-visible, .logo:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .onglets { display: flex; gap: 4px; flex-wrap: wrap; }
-.sport-global button { padding: 4px 12px; }
 .onglets a { font: 700 1rem var(--police-titre); text-transform: uppercase; letter-spacing: .02em; color: var(--doux);
   text-decoration: none; padding: 4px 7px; border-radius: 8px; }
 .onglets a[aria-current="page"] { color: var(--surface); background: var(--encre); }
+body[data-sport="football"] .onglets a[aria-current="page"] { background: var(--foot); color: #fff; }
+body[data-sport="nba"] .onglets a[aria-current="page"] { background: var(--nba); color: #fff; }
 .onglets a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .vue { display: grid; gap: 12px; }
 
@@ -216,3 +227,12 @@ details.filtres[open] > summary { margin-bottom: 6px; }
 details.filtres .rangee + .rangee { margin-top: 6px; }
 .rangee select.choix-seuil { flex: 0 0 auto; width: auto; }
 .autres .alt .meta span:first-child { white-space: nowrap; }
+
+/* Accueil : chaque sport est une porte d'entrée vers ses trois modes */
+.bloc h2 a { color: inherit; text-decoration: none; }
+.bloc[data-sport="football"] { border-top: 4px solid var(--foot); }
+.bloc[data-sport="nba"] { border-top: 4px solid var(--nba); }
+.modes-sport { display: grid; grid-template-columns: 1.3fr 1fr 1.2fr; gap: 6px; }
+.modes-sport .bouton { white-space: nowrap; padding-inline: 8px; }
+.bloc[data-sport="football"] .bouton.principal { background: var(--foot); border-color: var(--foot); color: #fff; }
+.bloc[data-sport="nba"] .bouton.principal { background: var(--nba); border-color: var(--nba); color: #fff; }

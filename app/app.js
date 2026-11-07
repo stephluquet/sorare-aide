@@ -1,5 +1,6 @@
-// Interface : Accueil, Arcade (propositions), Squad et Cartes (maquette A retenue le 2026-11-07).
-// Le sport se choisit une fois, en haut (adresse #<écran>-<sport>, revue d'ergonomie du 2026-11-07).
+// Interface (maquette A retenue le 2026-11-07). Navigation demandée par l'utilisateur le 2026-11-07 :
+// un sélecteur Football / NBA toujours en haut (et sur l'accueil), puis, dans chaque sport,
+// Solo (Arcade), Squad et Mes cartes. Adresse : #<sport>/<mode>.
 // Fonctionne dans l'artifact (données intégrées dans #donnees) et hors artifact
 // (données lues dans donnees-app.json à côté de la page). Le moteur v2 tourne ici,
 // dans le navigateur ; méthode et règles viennent des données (methode.md, regles/).
@@ -307,7 +308,7 @@ function liste() {
         <div class="puces">
           <span class="etiq ${st}">${LIBELLES[st]}</span>
           ${c.bonusPct ? `<span class="etiq bonus">${esc(c.collection)} +${nb(c.bonusPct)} %</span>` : ''}
-          ${!l.pr.eligibleArcade && m ? '<span class="etiq exclu">hors Arcade</span>' : ''}
+          ${!l.pr.eligibleArcade && l.m ? '<span class="etiq exclu" title="Compétition non autorisée en solo">hors solo</span>' : ''}
           ${J.has(c.id) ? '<span class="etiq neutre">jouée à ce palier</span>' : ''}
           ${pucesContexte(l)}
         </div>
@@ -395,14 +396,15 @@ const ETATS = { LINEUP_SET: 'composition posée, matchs à venir', PLAYABLE: 'à
 function afficherAccueil() {
   $('blocs').innerHTML = ['football', 'nba'].map((s) => {
     const p = palierEnCours(s), n = jouees(s).size;
-    if (!p) return `<div class="bloc"><h2>${SPORTS[s]}</h2><div class="resume">Tous les paliers de ce plateau sont passés.</div></div>`;
-    return `<div class="bloc">
-      <h2>${SPORTS[s]}<span class="sous">palier ${p.niveau + 1} sur ${D.paliers.filter((x) => x.sport === s).length}</span></h2>
+    const liens = `<div class="modes-sport"><a class="bouton principal lien" href="#${s}/solo">Solo</a><a class="bouton lien" href="#${s}/squad">Squad</a><a class="bouton lien" href="#${s}/cartes">Mes cartes</a></div>`;
+    if (!p) return `<div class="bloc" data-sport="${s}"><h2><a href="#${s}/solo">${SPORTS[s]}</a></h2><div class="resume">Tous les paliers de ce plateau sont passés.</div>${liens}</div>`;
+    return `<div class="bloc" data-sport="${s}">
+      <h2><a href="#${s}/solo">${SPORTS[s]}</a><span class="sous">solo · palier ${p.niveau + 1} sur ${D.paliers.filter((x) => x.sport === s).length}</span></h2>
       <div><span class="cible">${p.cible}</span> <span class="sous">points à atteindre</span></div>
       <div class="resume">${ETATS[p.etat] ?? esc(p.etat)}${p.echecs ? ` · ${p.echecs} échec${p.echecs > 1 ? 's' : ''}` : ''}${n ? ` · ${n} carte${n > 1 ? 's' : ''} marquée${n > 1 ? 's' : ''} jouée${n > 1 ? 's' : ''}` : ''}</div>
       ${alertePalier(s)}
       <div class="resume" id="resume-${s}">Calcul de la meilleure équipe…</div>
-      <a class="bouton principal lien" href="#arcade-${s}">Voir les propositions</a>
+      ${liens}
     </div>`;
   }).join('');
   for (const s of ['football', 'nba']) {
@@ -453,8 +455,8 @@ function carteProposition(nom, e, sport, principale) {
 
 function afficherPropositions(sport) {
   const p = palierEnCours(sport);
-  $('titre-propositions').textContent = `Arcade · palier ${p ? p.cible : '—'}`;
-  $('alerte-arcade').innerHTML = alertePalier(sport);
+  $('titre-propositions').textContent = `Solo · palier ${p ? p.cible : '—'}`;
+  $('alerte-solo').innerHTML = alertePalier(sport);
   if (!p) { $('contexte-propositions').textContent = ''; $('propositions').innerHTML = '<p class="attente">Tous les paliers de ce plateau sont passés.</p>'; return; }
   const n = jouees(sport).size;
   const ep = etatPalier(p);
@@ -462,11 +464,11 @@ function afficherPropositions(sport) {
   $('contexte-propositions').textContent = [ep.enCours && !ep.derniere ? 'Une tentative est en cours : ces propositions servent à la suivante si elle échoue.' : '',
     n ? `${n} carte${n > 1 ? 's' : ''} marquée${n > 1 ? 's' : ''} jouée${n > 1 ? 's' : ''} à ce palier, écartée${n > 1 ? 's' : ''} des propositions.` : ''].filter(Boolean).join(' ');
   document.querySelectorAll('#modes button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mode === vue.mode)));
-  $('seuil-arcade').value = String(seuil());
+  $('seuil-solo').value = String(seuil());
   $('propositions').innerHTML = '<p class="attente">Simulation des meilleures équipes…</p>';
   if (vue.mode === 'unique') { afficherCreneaux(sport); return; }
   plusTard(() => propositions(sport)).then((r) => {
-    if (!surArcade(sport)) return;
+    if (!surSolo(sport)) return;
     if (!r.equilibree) { $('propositions').innerHTML = `<p class="attente">${esc(r.message)}</p>`; return; }
     const memes = r.prudente.cartes.join() === r.equilibree.cartes.join() && r.prudente.capitaine === r.equilibree.capitaine;
     const ecartees = Object.entries(r.ecartees).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<li>${v} ${esc(k)}</li>`).join('');
@@ -491,7 +493,7 @@ function afficherPropositions(sport) {
 // avec la chance de passer avant → après. Un match bien plus tard que l'équipe est signalé.
 const AUTRES_PAR_GROUPE = 5;
 function afficherAutres(sport, equipe, a) {
-  const el = $('autres-choix'); if (!el || !surArcade(sport)) return;
+  const el = $('autres-choix'); if (!el || !surSolo(sport)) return;
   const parId = new Map(lignes.map((l) => [l.c.id, l]));
   const dernier = Math.max(...equipe.cartes.map((id) => Date.parse(parId.get(id).m.debutUTC)));
   const vus = new Set(), parRemplace = new Map();
@@ -523,7 +525,7 @@ function afficherAutres(sport, equipe, a) {
 // Créneau unique : un créneau par coup d'envoi, avec sa meilleure équipe.
 function afficherCreneaux(sport) {
   plusTard(() => parCreneau(sport)).then((r) => {
-    if (!surArcade(sport) || vue.mode !== 'unique') return;
+    if (!surSolo(sport) || vue.mode !== 'unique') return;
     if (!r?.creneaux.length) { $('propositions').innerHTML = '<p class="attente">Aucun créneau ne permet de remplir une équipe avec tes cartes disponibles.</p>'; return; }
     const meilleur = Math.max(...r.creneaux.map((c) => c.equilibree.pPasser));
     $('propositions').innerHTML = `<p class="sous">Les 5 matchs commencent à la même heure : compose juste après la publication des compositions (vers H-1). Meilleure chance : ${pct(meilleur)}.</p>` +
@@ -565,9 +567,9 @@ function afficherSquad() {
       <div class="joueurs">${membres.map((l) => `<div class="joueur" data-fiche="${esc(l.c.id)}" role="button" tabindex="0" aria-label="Voir la carte de ${esc(l.j.nom)}">${vignette(l)}<div style="min-width:0">
           <div class="nom">${esc(l.j.nom)}${e.capitaine === l.c.id ? '<span class="capitaine">C</span>' : ''} ${badgeEtoiles(l)}</div>
           <div class="meta"><span>${esc(l.j.postes.join('/'))}</span><span>${ligneMatch(l)}</span></div>
-          <div class="puces"><span class="etiq ${statut(l)}">${LIBELLES[statut(l)]}</span>${l.c.bonusPct ? `<span class="etiq bonus">${esc(l.c.collection)} +${nb(l.c.bonusPct)} %</span>` : ''}${jouees(sport).has(l.c.id) ? '<span class="etiq neutre">jouée en Arcade</span>' : ''}${pucesContexte(l)}</div>
+          <div class="puces"><span class="etiq ${statut(l)}">${LIBELLES[statut(l)]}</span>${l.c.bonusPct ? `<span class="etiq bonus">${esc(l.c.collection)} +${nb(l.c.bonusPct)} %</span>` : ''}${jouees(sport).has(l.c.id) ? '<span class="etiq neutre">jouée en solo</span>' : ''}${pucesContexte(l)}</div>
         </div>${chiffresJoueur(l)}</div>`).join('')}</div>
-      <div class="sous">${r.admissibles} cartes du jour retenues, ${r.nbEquipes} équipes comparées. Règles de composition supposées identiques à l'Arcade (à confirmer).</div>
+      <div class="sous">${r.admissibles} cartes du jour retenues, ${r.nbEquipes} équipes comparées. Règles de composition supposées identiques au solo (à confirmer).</div>
     </article>`;
   });
 }
@@ -588,7 +590,7 @@ function ouvrirMarquage(sport) {
   const cartes = lignes.filter((l) => l.c.sport === sport);
   const dessiner = () => {
     const J = jouees(sport), q = sansAccents($('recherche-marquage').value.trim());
-    $('compte-marquage').textContent = `${J.size} marquée${J.size > 1 ? 's' : ''}${attendues ? ` sur ${attendues} jouées à ce palier (${etatPalier(p).utilisees} × 5)` : ''}. Les cartes cochées ne seront plus proposées en Arcade.`;
+    $('compte-marquage').textContent = `${J.size} marquée${J.size > 1 ? 's' : ''}${attendues ? ` sur ${attendues} jouées à ce palier (${etatPalier(p).utilisees} × 5)` : ''}. Les cartes cochées ne seront plus proposées en solo.`;
     const L = cartes.filter((l) => !q || sansAccents(l.j.nom).includes(q))
       .sort((a, b) => (J.has(b.c.id) - J.has(a.c.id)) || ((b.pr.esperance ?? -1) - (a.pr.esperance ?? -1)));
     $('liste-marquage').innerHTML = L.slice(0, 40).map((l) => `<button type="button" class="marque" data-carte="${esc(l.c.id)}" aria-pressed="${J.has(l.c.id)}">
@@ -625,14 +627,19 @@ function jouerEquipe(sport, ids) {
 }
 
 // ---------- Navigation ----------
-// Adresse : #<écran> ou #<écran>-<sport> ; anciennes adresses #propositions-<sport> = Arcade.
-const ECRANS = ['accueil', 'arcade', 'squad', 'cartes'];
+// Adresse : #<sport>/<mode> (#football/solo, #nba/cartes…) ou #accueil.
+// Anciennes adresses acceptées : #arcade-nba, #propositions-nba, #squad-football, #cartes…
+const MODES = ['solo', 'squad', 'cartes'];
 function lireAdresse() {
-  const [ecran, sport] = location.hash.slice(1).replace(/^propositions-/, 'arcade-').split('-');
-  return { ecran: ECRANS.includes(ecran) ? ecran : 'accueil', sport: SPORTS[sport] ? sport : null };
+  const h = location.hash.slice(1);
+  let m = h.match(/^(football|nba)\/(solo|squad|cartes)$/);
+  if (m) return { ecran: m[2], sport: m[1] };
+  m = h.match(/^(arcade|propositions|squad|cartes)(?:-(football|nba))?$/);
+  if (m) return { ecran: ['arcade', 'propositions'].includes(m[1]) ? 'solo' : m[1], sport: m[2] ?? null };
+  return { ecran: 'accueil', sport: null };
 }
 const vueCourante = () => lireAdresse().ecran;
-const surArcade = (sport) => vueCourante() === 'arcade' && vue.sport === sport;
+const surSolo = (sport) => vueCourante() === 'solo' && vue.sport === sport;
 
 function changerSport(s) {
   if (s === vue.sport) return;
@@ -642,30 +649,29 @@ function changerSport(s) {
 function tout() {
   const { ecran, sport } = lireAdresse();
   if (sport) changerSport(sport);
-  $('vue-accueil').hidden = ecran !== 'accueil';
-  $('vue-propositions').hidden = ecran !== 'arcade';
+  const accueil = ecran === 'accueil';
+  $('vue-accueil').hidden = !accueil;
+  $('vue-propositions').hidden = ecran !== 'solo';
   $('vue-cartes').hidden = ecran !== 'cartes';
   $('vue-squad').hidden = ecran !== 'squad';
+  document.body.dataset.sport = accueil ? '' : vue.sport; // couleur du sport en cours
+  // Sélecteur de sport, toujours visible : sur l'accueil, aucun n'est choisi ; ailleurs, on garde le mode.
+  $('sport-global').innerHTML = Object.entries(SPORTS).map(([k, v]) =>
+    `<a href="#${k}/${accueil ? 'solo' : ecran}" data-sport="${k}" aria-current="${!accueil && k === vue.sport ? 'true' : 'false'}">${v}</a>`).join('');
+  // Modes du sport en cours (masqués sur l'accueil).
+  $('onglets').hidden = accueil;
   document.querySelectorAll('#onglets a').forEach((a) => {
-    a.href = a.dataset.vue === 'accueil' ? '#accueil' : `#${a.dataset.vue}-${vue.sport}`;
+    a.href = `#${vue.sport}/${a.dataset.vue}`;
     a.dataset.vue === ecran ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current');
   });
-  // Choix du sport, une seule fois pour Arcade, Squad et Cartes (l'Accueil montre les deux).
-  $('sport-global').hidden = ecran === 'accueil';
-  $('sport-global').innerHTML = Object.entries(SPORTS).map(([k, v]) =>
-    `<button type="button" data-sport="${k}" aria-pressed="${k === vue.sport}">${v}</button>`).join('');
   afficherPaliers(); afficherStockage();
-  if (ecran === 'accueil') afficherAccueil();
+  if (accueil) afficherAccueil();
   else if (ecran === 'cartes') { $('titre-cartes').textContent = 'Mes cartes'; $('alerte-cartes').innerHTML = alertePalier(vue.sport); commandes(); liste(); }
   else if (ecran === 'squad') afficherSquad();
   else afficherPropositions(vue.sport);
 }
 
-$('sport-global').onclick = (e) => {
-  const s = e.target.closest('[data-sport]')?.dataset.sport; if (!s) return;
-  location.hash = `${vueCourante()}-${s}`;
-};
-// Bouton « Marquer les cartes jouées » (Accueil, Arcade, Cartes).
+// Bouton « Marquer les cartes jouées » (Accueil, Solo, Mes cartes).
 document.addEventListener('click', (e) => { const b = e.target.closest('[data-marquer]'); if (b) ouvrirMarquage(b.dataset.marquer); });
 
 $('postes').onclick = (e) => { const b = e.target.closest('button'); if (b) { vue.poste = b.dataset.poste || null; tout(); } };
@@ -673,8 +679,8 @@ $('filtre-etoiles').onclick = (e) => { const b = e.target.closest('button'); if 
 $('creneau').onchange = (e) => { vue.creneau = e.target.value; commandes(); liste(); };
 $('tri').onchange = (e) => { vue.tri = e.target.value; commandes(); liste(); };
 $('dispo').onchange = (e) => { vue.dispo = e.target.checked; commandes(); liste(); };
-// Seuil de chances de jouer : un seul réglage, modifiable depuis l'Arcade et depuis Cartes.
-for (const id of ['seuil', 'seuil-arcade']) $(id).onchange = (e) => { etatUtilisateur = { ...etatUtilisateur, seuil: Number(e.target.value) }; stockage.enregistrer(etatUtilisateur); tout(); };
+// Seuil de chances de jouer : un seul réglage, modifiable depuis Solo et depuis Mes cartes.
+for (const id of ['seuil', 'seuil-solo']) $(id).onchange = (e) => { etatUtilisateur = { ...etatUtilisateur, seuil: Number(e.target.value) }; stockage.enregistrer(etatUtilisateur); tout(); };
 $('liste').onclick = (e) => { const b = e.target.closest('.ligne'); if (b) fiche(b.dataset.id); };
 // Appui sur un joueur (propositions, autres choix, Squad) : sa fiche, avec la carte.
 const ouvrirFiche = (e) => { const j = e.target.closest('[data-fiche]'); if (!j) return false; fiche(j.dataset.fiche); return true; };

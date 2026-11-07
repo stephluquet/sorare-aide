@@ -8,13 +8,15 @@
 
 <div class="cadre">
   <header class="entete">
-    <nav class="onglets" id="onglets" aria-label="Écrans">
-      <a href="#accueil" data-vue="accueil">Accueil</a>
-      <a href="#arcade" data-vue="arcade">Arcade</a>
-      <a href="#squad" data-vue="squad">Squad</a>
-      <a href="#cartes" data-vue="cartes">Cartes</a>
+    <div class="barre">
+      <a href="#accueil" class="logo" id="lien-accueil" aria-label="Accueil">Sorare aide</a>
+      <div class="sport-global" id="sport-global" role="group" aria-label="Sport"></div>
+    </div>
+    <nav class="onglets" id="onglets" aria-label="Modes">
+      <a data-vue="solo">Solo</a>
+      <a data-vue="squad">Squad</a>
+      <a data-vue="cartes">Mes cartes</a>
     </nav>
-    <div class="seg sport-global" id="sport-global" role="group" aria-label="Sport"></div>
   </header>
   <div class="sous" id="age">Chargement des données…</div>
   <div class="bandeau" id="bandeau" hidden></div>
@@ -22,22 +24,22 @@
 
   <!-- Accueil -->
   <section id="vue-accueil" class="vue" hidden>
-    <h1>Mes paliers</h1>
+    <h1>Choisis ton sport</h1>
     <div class="blocs" id="blocs"></div>
   </section>
 
   <!-- Propositions -->
   <section id="vue-propositions" class="vue" hidden>
-    <h1 id="titre-propositions">Arcade</h1>
-    <div id="alerte-arcade"></div>
+    <h1 id="titre-propositions">Solo</h1>
+    <div id="alerte-solo"></div>
     <div class="sous" id="contexte-propositions"></div>
     <div class="rangee">
       <div class="seg" id="modes" role="group" aria-label="Mode">
         <button type="button" data-mode="plusieurs" aria-pressed="true">Plusieurs créneaux</button>
         <button type="button" data-mode="unique" aria-pressed="false">Créneau unique</button>
       </div>
-      <label class="reglage" for="seuil-arcade">Chances de jouer d'au moins
-        <select id="seuil-arcade" class="choix-seuil">
+      <label class="reglage" for="seuil-solo">Chances de jouer d'au moins
+        <select id="seuil-solo" class="choix-seuil">
           <option value="0.7">70 %</option>
           <option value="0.8">80 %</option>
           <option value="0.9">90 %</option>
@@ -50,7 +52,7 @@
   <!-- Squad du jour -->
   <section id="vue-squad" class="vue" hidden>
     <h1>Squad du jour</h1>
-    <div class="sous">La meilleure équipe du jour au sens du score attendu. Les cartes jouées en Arcade restent utilisables.</div>
+    <div class="sous">La meilleure équipe du jour au sens du score attendu. Les cartes jouées en solo restent utilisables.</div>
     <div class="rangee">
       <select id="squad-jour" aria-label="Jour"></select>
     </div>
