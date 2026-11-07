@@ -31,7 +31,10 @@ node src/recuperation.js yapapir football    # → data/cartes-football-AAAA-MM-
 node src/recuperation.js yapapir nba         # → data/cartes-nba-AAAA-MM-JJ.json
 node src/projection.js                       # → sorties/projections-AAAA-MM-JJ.html (football + NBA)
 npm test                                     # rejoue tests/cas/
+npm run app                                  # assemble app/ + src/moteur/ + données → sorties/app/sorare-aide.html (artifact), index.html et donnees-app.json (hors artifact)
 ```
+
+**Appli publiée** (artifact privé, capacités `db` et `user`) : https://claude.ai/artifact/WtE8i2L9EovFqyvfnkfM8R — republier avec le même chemin de fichier `sorties/app/sorare-aide.html` pour garder l'adresse (et omettre `capabilities` pour garder la déclaration). **« Actualise »** = `npm run recuperer` puis `npm run app` puis republier. **État de l'utilisateur** (cartes jouées au palier en cours, seuil) : document `data/users/me/etat` de cette base, lisible par la session avec `ArtifactData` (`get`, collection `data/users/me`, doc `etat`) ; forme `{seuil, football: {cible, jouees: [carteId…], misAJour}, nba: {…}}`. Les cartes jouées ne valent que pour la `cible` enregistrée : dès que l'API montre un autre palier en cours, elles sont libérées.
 
 ## Ce qui marche déjà (ne pas redécouvrir)
 
@@ -94,7 +97,8 @@ methode.md       méthode v2 (probabilité de jouer, score s'il joue), en mots e
 tests/cas/       situations figées de la méthode v2 (carte, joueur, match fictifs) + résultat attendu, paramètres inclus ; tests/cas-v1/ : méthode v1
 tests/*.test.js  lanceur des cas (node --test)
 src/moteur/      plan v0.1 : moteur pur (parametres.js, jouer.js, projection.js) + node.js (chargement côté Node)
-outils/          retro-test.js (calibrage de methode.md sur l'historique), projections.js (résumé de contrôle)
+app/             interface (index.html, style.css, app.js) ; assemblée en page unique par outils/construire-app.js
+outils/          retro-test.js (calibrage de methode.md sur l'historique), projections.js (résumé de contrôle), construire-app.js (npm run app), maquettes.js + vignettes.py
 src/recuperation/  plan v0.1 : api.js (débit, proxy, lecture seule), requetes.js, normaliser.js (modèle commun), historique.js (fusion incrémentale), index.js (npm run recuperer)
 src/             recuperation.js, projection.js, page.js : ancienne chaîne de l'étape 1, à remplacer par src/moteur/ et app/
 data/dernier.json   dernière récupération complète (meta, cartes, joueurs avec historique 40 matchs, matchs, paliers), lue par l'interface ; **non versionné** (8 Mo, régénéré en 21 s par `npm run recuperer`). **Trop lourd tel quel pour l'artifact** (objectif : ouverture en moins de 3 s sur iPhone) : à alléger à l'étape 5 bis (clés courtes, joueurs utiles seulement…)
@@ -168,7 +172,8 @@ Pistes : calibrer les poids sur l'historique ; utiliser les cotes du match (aujo
 - ✅ `src/moteur/` (JavaScript pur, Node et navigateur) : `parametres.js` (lit le bloc JSON de `methode.md` depuis un texte), `jouer.js`, `projection.js` ; `node.js` charge données, méthode et règles côté Node. `node outils/projections.js` résume les projections sur `data/dernier.json`.
 - ✅ 5 cas dans `tests/cas/` (méthode v2, valeurs calculées à part en Python) ; anciens cas dans `tests/cas-v1/`.
 - Sur les données du 2026-11-07 : football 189 cartes proposables (p ≥ 80 %, ni exclues ni douteuses), NBA 156.
-- ⏳ Écran « Mes cartes » : **deux maquettes publiées le 2026-11-07, choix de l'utilisateur attendu** avant de coder `app/` :
+- ✅ Écran « Mes cartes » (**maquette A retenue par l'utilisateur le 2026-11-07**) : `app/index.html`, `app/style.css`, `app/app.js` ; le moteur v2 tourne dans le navigateur ; filtres sport, poste, créneau, seuil (70/80/90 %), « disponibles seulement » ; fiche avec historique en barres ; « Jouée au palier N » enregistré dans `db` (repli `localStorage`). Vérifié le 2026-11-07 (Chromium, format iPhone 13) : affichage en 0,8 s, aucune erreur, pas de débordement ; écriture, relecture et suppression d'un document d'essai dans `data/users/me` réussies. Page de 1,9 Mo (données 1,9 Mo dont 90 vignettes). **Pas encore vu sur un vrai iPhone.**
+- Maquettes d'origine (pour mémoire) :
   A (riche : vignettes, jauge, fiche en volet avec historique en barres) https://claude.ai/artifact/Ehb1E4gimz47VEJx2urLvw ;
   B (ultra minimaliste : une ligne par carte, détail déplié) https://claude.ai/artifact/TPHUGSmfbybRq7qSqp1FMj.
   Générées par `node outils/maquettes.js` (gabarits `outils/maquettes/a.html` et `b.html`, données du moteur v2 ; pages dans `sorties/maquettes/`, non versionnées). Republier au même chemin de fichier pour garder les adresses.

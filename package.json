@@ -6,7 +6,8 @@
   "scripts": {
     "recuperer": "node src/recuperation/index.js",
     "projeter": "node src/projection.js",
-    "test": "node --test tests/*.test.js"
+    "test": "node --test tests/*.test.js",
+    "app": "node outils/construire-app.js"
   },
   "engines": {
     "node": ">=22"
