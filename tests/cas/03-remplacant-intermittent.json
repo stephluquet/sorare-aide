@@ -1,0 +1,244 @@
+{
+ "id": "03-remplacant-intermittent",
+ "description": "Joueur qui alterne titulaire, entrée en jeu et banc, statut Sorare SUBSTITUTE : p moyenne (sous le seuil de 80 %, donc non proposé), score en mélange titulaire / entré.",
+ "parametres": {
+  "version": 2,
+  "fenetre_matchs": 30,
+  "situations_jouees": [
+   "titulaire",
+   "entre",
+   "joue"
+  ],
+  "statuts_comptes": [
+   "FINAL",
+   "REVIEWING",
+   "DID_NOT_PLAY"
+  ],
+  "football": {
+   "demi_vie_jouer": 2,
+   "plancher": 0.08,
+   "plafond": 0.93,
+   "demi_vie_titulaire": 3,
+   "demi_vie_score": 10,
+   "min_scores_situation": 3,
+   "debut_saison": "2026-07-01"
+  },
+  "nba": {
+   "demi_vie_jouer": 2,
+   "plancher": 0.1,
+   "plafond": 0.93,
+   "demi_vie_minutes": 5,
+   "demi_vie_score_par_minute": 10,
+   "debut_saison": "2026-10-01"
+  },
+  "poids_saison_precedente": 0.5,
+  "min_matchs_historique": 5,
+  "seuil_jouer": 0.8,
+  "statuts_sorare_douteux": [
+   "NOT_PLAYING",
+   "RETIRED"
+  ]
+ },
+ "competitions_autorisees": [
+  "Bundesliga",
+  "Ligue 1",
+  "Premier League",
+  "Primera División",
+  "UEFA Champions League",
+  "UEFA Europa League",
+  "UEFA Conference League",
+  "UEFA Nations League"
+ ],
+ "carte": {
+  "id": "remplacant-intermittent-carte",
+  "slug": "remplacant-intermittent-carte",
+  "sport": "football",
+  "joueurId": "remplacant-intermittent",
+  "rarete": "common",
+  "saison": 2026,
+  "collection": "Standard",
+  "bonusPct": 0,
+  "visuelUrl": null
+ },
+ "joueur": {
+  "id": "remplacant-intermittent",
+  "sport": "football",
+  "nom": "Remplacant Intermittent",
+  "postes": [
+   "MD"
+  ],
+  "club": {
+   "slug": "fc-fictif",
+   "nom": "FC Fictif"
+  },
+  "tier": "ROSTER",
+  "etoiles": 2,
+  "statutSorare": "SUBSTITUTE",
+  "blessures": [],
+  "suspensions": [],
+  "historique": [
+   {
+    "matchId": "Game:f00",
+    "date": "2026-10-30T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 38,
+    "situation": "entre",
+    "minutes": 25
+   },
+   {
+    "matchId": "Game:f01",
+    "date": "2026-10-26T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "DID_NOT_PLAY",
+    "score": 0,
+    "situation": "banc",
+    "minutes": 0
+   },
+   {
+    "matchId": "Game:f02",
+    "date": "2026-10-22T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 50,
+    "situation": "titulaire",
+    "minutes": 90
+   },
+   {
+    "matchId": "Game:f03",
+    "date": "2026-10-18T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 36,
+    "situation": "entre",
+    "minutes": 20
+   },
+   {
+    "matchId": "Game:f04",
+    "date": "2026-10-14T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "DID_NOT_PLAY",
+    "score": 0,
+    "situation": "banc",
+    "minutes": 0
+   },
+   {
+    "matchId": "Game:f05",
+    "date": "2026-10-10T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "DID_NOT_PLAY",
+    "score": 0,
+    "situation": "absent",
+    "minutes": 0
+   },
+   {
+    "matchId": "Game:f06",
+    "date": "2026-10-06T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 52,
+    "situation": "titulaire",
+    "minutes": 80
+   },
+   {
+    "matchId": "Game:f07",
+    "date": "2026-10-02T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 40,
+    "situation": "entre",
+    "minutes": 30
+   },
+   {
+    "matchId": "Game:f08",
+    "date": "2026-09-28T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 47,
+    "situation": "titulaire",
+    "minutes": 90
+   },
+   {
+    "matchId": "Game:f09",
+    "date": "2026-09-24T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "DID_NOT_PLAY",
+    "score": 0,
+    "situation": "banc",
+    "minutes": 0
+   },
+   {
+    "matchId": "Game:f10",
+    "date": "2026-09-20T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 35,
+    "situation": "entre",
+    "minutes": 15
+   },
+   {
+    "matchId": "Game:f11",
+    "date": "2026-09-16T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 49,
+    "situation": "titulaire",
+    "minutes": 90
+   }
+  ]
+ },
+ "match": {
+  "id": "Game:prochain",
+  "sport": "football",
+  "debutUTC": "2026-11-08T15:00:00Z",
+  "statut": "scheduled",
+  "competition": "Bundesliga",
+  "domicile": {
+   "slug": "fc-fictif",
+   "nom": "FC Fictif"
+  },
+  "exterieur": {
+   "slug": "as-imaginaire",
+   "nom": "AS Imaginaire"
+  },
+  "cotes": null,
+  "compositionsOfficielles": null
+ },
+ "attendu": {
+  "statut": "ok",
+  "eligibleArcade": true,
+  "proposable": false,
+  "p": 0.632,
+  "mu": 42.8,
+  "q": 0.442,
+  "siJoue": 42.8,
+  "esperance": 27.0,
+  "sigma": 1.8,
+  "raisons_contiennent": [],
+  "nb_raisons": 0
+ }
+}

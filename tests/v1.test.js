@@ -1,4 +1,4 @@
-// Rejoue les situations figées de tests/cas/ : chaque cas embarque ses propres
+// Rejoue les situations figées de tests/cas-v1/ (méthode v1, ancienne chaîne) : chaque cas embarque ses propres
 // paramètres pour rester valable si methode.md évolue (mettre alors les cas à jour).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { projeterCarte, lireParametres, lireTableBonus } from '../src/projection.js';
 
 const ICI = dirname(fileURLToPath(import.meta.url));
-const DOSSIER = join(ICI, 'cas');
+const DOSSIER = join(ICI, 'cas-v1');
 const proche = (obtenu, attendu, champ) => {
   if (attendu == null) return assert.equal(obtenu, null, champ);
   assert.ok(Math.abs(obtenu - attendu) < 0.051, `${champ} : obtenu ${obtenu}, attendu ${attendu}`);
@@ -27,7 +27,7 @@ for (const f of readdirSync(DOSSIER).filter((f) => f.endsWith('.json')).sort()) 
   });
 }
 
-test('les paramètres de methode.md se lisent et ont la forme attendue', () => {
+test('les paramètres de docs/methode-v1.md se lisent et ont la forme attendue', () => {
   const P = lireParametres();
   for (const k of ['poids_l5', 'poids_jeu_recent']) assert.ok(P[k] >= 0 && P[k] <= 1, k);
   assert.ok(Array.isArray(P.statuts_joues) && Array.isArray(P.statuts_comptes));

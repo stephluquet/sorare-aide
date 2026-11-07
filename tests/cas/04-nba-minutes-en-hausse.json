@@ -1,0 +1,237 @@
+{
+ "id": "04-nba-minutes-en-hausse",
+ "description": "NBA : temps de jeu en forte hausse (10 → 34 minutes). Score s'il joue = minutes récentes (demi-vie 5) × score par minute (demi-vie 10) : il suit le temps de jeu, avec un temps de retard voulu par le rétro-test.",
+ "parametres": {
+  "version": 2,
+  "fenetre_matchs": 30,
+  "situations_jouees": [
+   "titulaire",
+   "entre",
+   "joue"
+  ],
+  "statuts_comptes": [
+   "FINAL",
+   "REVIEWING",
+   "DID_NOT_PLAY"
+  ],
+  "football": {
+   "demi_vie_jouer": 2,
+   "plancher": 0.08,
+   "plafond": 0.93,
+   "demi_vie_titulaire": 3,
+   "demi_vie_score": 10,
+   "min_scores_situation": 3,
+   "debut_saison": "2026-07-01"
+  },
+  "nba": {
+   "demi_vie_jouer": 2,
+   "plancher": 0.1,
+   "plafond": 0.93,
+   "demi_vie_minutes": 5,
+   "demi_vie_score_par_minute": 10,
+   "debut_saison": "2026-10-01"
+  },
+  "poids_saison_precedente": 0.5,
+  "min_matchs_historique": 5,
+  "seuil_jouer": 0.8,
+  "statuts_sorare_douteux": [
+   "NOT_PLAYING",
+   "RETIRED"
+  ]
+ },
+ "competitions_autorisees": [
+  "NBA"
+ ],
+ "carte": {
+  "id": "nba-minutes-carte",
+  "slug": "nba-minutes-carte",
+  "sport": "nba",
+  "joueurId": "nba-minutes",
+  "rarete": "common",
+  "saison": 2026,
+  "collection": "Standard",
+  "bonusPct": 0,
+  "visuelUrl": null
+ },
+ "joueur": {
+  "id": "nba-minutes",
+  "sport": "nba",
+  "nom": "Nba Minutes",
+  "postes": [
+   "G"
+  ],
+  "club": {
+   "slug": "fc-fictif",
+   "nom": "FC Fictif"
+  },
+  "tier": "ROSTER",
+  "etoiles": 2,
+  "statutSorare": null,
+  "blessures": [],
+  "suspensions": [],
+  "historique": [
+   {
+    "matchId": "Game:f00",
+    "date": "2026-10-30T18:00:00Z",
+    "competition": "NBA",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 42,
+    "situation": "joue",
+    "minutes": 34
+   },
+   {
+    "matchId": "Game:f01",
+    "date": "2026-10-26T18:00:00Z",
+    "competition": "NBA",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 38,
+    "situation": "joue",
+    "minutes": 32
+   },
+   {
+    "matchId": "Game:f02",
+    "date": "2026-10-22T18:00:00Z",
+    "competition": "NBA",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 30,
+    "situation": "joue",
+    "minutes": 28
+   },
+   {
+    "matchId": "Game:f03",
+    "date": "2026-10-18T18:00:00Z",
+    "competition": "NBA",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 22,
+    "situation": "joue",
+    "minutes": 20
+   },
+   {
+    "matchId": "Game:f04",
+    "date": "2026-10-14T18:00:00Z",
+    "competition": "NBA",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 20,
+    "situation": "joue",
+    "minutes": 18
+   },
+   {
+    "matchId": "Game:f05",
+    "date": "2026-10-10T18:00:00Z",
+    "competition": "NBA",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "DID_NOT_PLAY",
+    "score": 0,
+    "situation": "banc",
+    "minutes": 0
+   },
+   {
+    "matchId": "Game:f06",
+    "date": "2026-10-06T18:00:00Z",
+    "competition": "NBA",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 18,
+    "situation": "joue",
+    "minutes": 16
+   },
+   {
+    "matchId": "Game:f07",
+    "date": "2026-10-02T18:00:00Z",
+    "competition": "NBA",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 15,
+    "situation": "joue",
+    "minutes": 14
+   },
+   {
+    "matchId": "Game:f08",
+    "date": "2026-09-28T18:00:00Z",
+    "competition": "NBA",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 16,
+    "situation": "joue",
+    "minutes": 15
+   },
+   {
+    "matchId": "Game:f09",
+    "date": "2026-09-24T18:00:00Z",
+    "competition": "NBA",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "DID_NOT_PLAY",
+    "score": 0,
+    "situation": "absent",
+    "minutes": 0
+   },
+   {
+    "matchId": "Game:f10",
+    "date": "2026-09-20T18:00:00Z",
+    "competition": "NBA",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 14,
+    "situation": "joue",
+    "minutes": 12
+   },
+   {
+    "matchId": "Game:f11",
+    "date": "2026-09-16T18:00:00Z",
+    "competition": "NBA",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 12,
+    "situation": "joue",
+    "minutes": 10
+   }
+  ]
+ },
+ "match": {
+  "id": "Game:prochain",
+  "sport": "nba",
+  "debutUTC": "2026-11-08T15:00:00Z",
+  "statut": "scheduled",
+  "competition": "NBA",
+  "domicile": {
+   "slug": "fc-fictif",
+   "nom": "FC Fictif"
+  },
+  "exterieur": {
+   "slug": "as-imaginaire",
+   "nom": "AS Imaginaire"
+  },
+  "cotes": null,
+  "compositionsOfficielles": null
+ },
+ "attendu": {
+  "statut": "ok",
+  "eligibleArcade": true,
+  "proposable": true,
+  "p": 0.88,
+  "mu": 27.2,
+  "minutes": 24.0,
+  "taux": 1.136,
+  "siJoue": 27.2,
+  "esperance": 23.9,
+  "raisons_contiennent": [],
+  "nb_raisons": 0
+ }
+}

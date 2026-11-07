@@ -1,0 +1,245 @@
+{
+ "id": "05-coupe-nationale-saison-precedente",
+ "description": "Prochain match en coupe nationale (DFB Pokal) : non éligible en Arcade, mais p et score restent calculés (utiles en Squad). Les matchs d'avant le 1er juillet 2026 pèsent moitié moins.",
+ "parametres": {
+  "version": 2,
+  "fenetre_matchs": 30,
+  "situations_jouees": [
+   "titulaire",
+   "entre",
+   "joue"
+  ],
+  "statuts_comptes": [
+   "FINAL",
+   "REVIEWING",
+   "DID_NOT_PLAY"
+  ],
+  "football": {
+   "demi_vie_jouer": 2,
+   "plancher": 0.08,
+   "plafond": 0.93,
+   "demi_vie_titulaire": 3,
+   "demi_vie_score": 10,
+   "min_scores_situation": 3,
+   "debut_saison": "2026-07-01"
+  },
+  "nba": {
+   "demi_vie_jouer": 2,
+   "plancher": 0.1,
+   "plafond": 0.93,
+   "demi_vie_minutes": 5,
+   "demi_vie_score_par_minute": 10,
+   "debut_saison": "2026-10-01"
+  },
+  "poids_saison_precedente": 0.5,
+  "min_matchs_historique": 5,
+  "seuil_jouer": 0.8,
+  "statuts_sorare_douteux": [
+   "NOT_PLAYING",
+   "RETIRED"
+  ]
+ },
+ "competitions_autorisees": [
+  "Bundesliga",
+  "Ligue 1",
+  "Premier League",
+  "Primera División",
+  "UEFA Champions League",
+  "UEFA Europa League",
+  "UEFA Conference League",
+  "UEFA Nations League"
+ ],
+ "carte": {
+  "id": "coupe-nationale-carte",
+  "slug": "coupe-nationale-carte",
+  "sport": "football",
+  "joueurId": "coupe-nationale",
+  "rarete": "common",
+  "saison": 2026,
+  "collection": "Standard",
+  "bonusPct": 0,
+  "visuelUrl": null
+ },
+ "joueur": {
+  "id": "coupe-nationale",
+  "sport": "football",
+  "nom": "Coupe Nationale",
+  "postes": [
+   "MD"
+  ],
+  "club": {
+   "slug": "fc-fictif",
+   "nom": "FC Fictif"
+  },
+  "tier": "ROSTER",
+  "etoiles": 2,
+  "statutSorare": "STARTER",
+  "blessures": [],
+  "suspensions": [],
+  "historique": [
+   {
+    "matchId": "Game:f00",
+    "date": "2026-07-20T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 60,
+    "situation": "titulaire",
+    "minutes": 90
+   },
+   {
+    "matchId": "Game:f01",
+    "date": "2026-07-15T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 60,
+    "situation": "titulaire",
+    "minutes": 90
+   },
+   {
+    "matchId": "Game:f02",
+    "date": "2026-07-10T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 60,
+    "situation": "titulaire",
+    "minutes": 90
+   },
+   {
+    "matchId": "Game:f03",
+    "date": "2026-07-05T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 60,
+    "situation": "titulaire",
+    "minutes": 90
+   },
+   {
+    "matchId": "Game:f04",
+    "date": "2026-06-30T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 40,
+    "situation": "titulaire",
+    "minutes": 90
+   },
+   {
+    "matchId": "Game:f05",
+    "date": "2026-06-25T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 40,
+    "situation": "titulaire",
+    "minutes": 90
+   },
+   {
+    "matchId": "Game:f06",
+    "date": "2026-06-20T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 40,
+    "situation": "titulaire",
+    "minutes": 90
+   },
+   {
+    "matchId": "Game:f07",
+    "date": "2026-06-15T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 40,
+    "situation": "titulaire",
+    "minutes": 90
+   },
+   {
+    "matchId": "Game:f08",
+    "date": "2026-06-10T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 40,
+    "situation": "titulaire",
+    "minutes": 90
+   },
+   {
+    "matchId": "Game:f09",
+    "date": "2026-06-05T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 40,
+    "situation": "titulaire",
+    "minutes": 90
+   },
+   {
+    "matchId": "Game:f10",
+    "date": "2026-05-31T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 40,
+    "situation": "titulaire",
+    "minutes": 90
+   },
+   {
+    "matchId": "Game:f11",
+    "date": "2026-05-26T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 40,
+    "situation": "titulaire",
+    "minutes": 90
+   }
+  ]
+ },
+ "match": {
+  "id": "Game:prochain",
+  "sport": "football",
+  "debutUTC": "2026-11-08T15:00:00Z",
+  "statut": "scheduled",
+  "competition": "DFB Pokal",
+  "domicile": {
+   "slug": "fc-fictif",
+   "nom": "FC Fictif"
+  },
+  "exterieur": {
+   "slug": "as-imaginaire",
+   "nom": "AS Imaginaire"
+  },
+  "cotes": null,
+  "compositionsOfficielles": null
+ },
+ "attendu": {
+  "statut": "ok",
+  "eligibleArcade": false,
+  "proposable": true,
+  "p": 0.93,
+  "mu": 52.0,
+  "q": 1.0,
+  "siJoue": 52.0,
+  "esperance": 48.4,
+  "raisons_contiennent": [
+   "hors compétitions Arcade"
+  ],
+  "nb_raisons": 1
+ }
+}

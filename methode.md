@@ -1,122 +1,181 @@
-# Méthode de projection (étape 1)
+# Méthode v2 : probabilité de jouer et score attendu
 
-Version 1 (2026-11-07). Ce document **fait foi** : `src/projection.js` lit les
-paramètres dans le bloc JSON ci-dessous et applique les formules décrites ici,
-sans les recopier. Toute modification de la méthode passe par ce fichier, et
-les cas de `tests/cas/` doivent être mis à jour en conséquence.
+Version 2 (2026-11-07). Ce document **fait foi** : le moteur (`src/moteur/`)
+lit les paramètres dans le bloc JSON ci-dessous et applique les formules
+décrites ici, sans les recopier. Toute modification de la méthode passe par
+ce fichier, et les cas de `tests/cas/` doivent être mis à jour en conséquence.
+La méthode v1 (moyenne pondérée L5/L15) est archivée dans `docs/methode-v1.md`.
 
-But : estimer, pour chaque carte, le **score attendu au prochain match** du
-joueur, de façon simple et vérifiable à la main. Pas de modèle opaque.
+Principe : **ne jamais aligner un joueur qui ne joue pas**. On estime donc
+séparément (1) la probabilité qu'il joue et (2) ce qu'il marque s'il joue,
+au lieu de mélanger les deux dans une seule moyenne comme L5/L15, qui
+ignorent les matchs non joués.
 
 ## Paramètres
 
 <!-- parametres:debut -->
 ```json
 {
-  "version": 1,
-  "poids_l5": 0.4,
-  "poids_jeu_recent": 0.5,
-  "statuts_joues": ["FINAL", "REVIEWING"],
+  "version": 2,
+  "fenetre_matchs": 30,
+  "situations_jouees": ["titulaire", "entre", "joue"],
   "statuts_comptes": ["FINAL", "REVIEWING", "DID_NOT_PLAY"],
-  "min_scores_dispersion": 3
+  "football": {
+    "demi_vie_jouer": 2,
+    "plancher": 0.08,
+    "plafond": 0.93,
+    "demi_vie_titulaire": 3,
+    "demi_vie_score": 10,
+    "min_scores_situation": 3,
+    "debut_saison": "2026-07-01"
+  },
+  "nba": {
+    "demi_vie_jouer": 2,
+    "plancher": 0.10,
+    "plafond": 0.93,
+    "demi_vie_minutes": 5,
+    "demi_vie_score_par_minute": 10,
+    "debut_saison": "2026-10-01"
+  },
+  "poids_saison_precedente": 0.5,
+  "min_matchs_historique": 5,
+  "seuil_jouer": 0.80,
+  "statuts_sorare_douteux": ["NOT_PLAYING", "RETIRED"]
 }
 ```
 <!-- parametres:fin -->
 
-`poids_l5` et `poids_jeu_recent` sont des **choix initiaux, non calibrés** :
-ils donnent un peu plus de poids à la tendance longue (L15) qu'à la forme
-récente (L5), et autant de poids aux 5 derniers matchs qu'aux 15 derniers pour
-la régularité de jeu. À calibrer quand on aura accumulé des données.
+**D'où viennent ces valeurs.** Elles sont tirées d'un rétro-test sur l'archive
+`data/historique/` du 2026-11-07 (`node outils/retro-test.js football|nba`) :
+pour chaque match passé, on prédit à partir des seuls matchs plus anciens,
+puis on compare au réel. Football : 16 935 matchs prédits (585 joueurs) ;
+NBA : 6 588 (289 joueurs). Sauf mention contraire, chaque valeur est la
+meilleure de celles essayées (score de Brier pour une probabilité, erreur
+absolue moyenne pour un score). Exceptions, qui sont des choix :
+`fenetre_matchs`, `min_matchs_historique`, `poids_saison_precedente` (demandé
+par l'utilisateur, effet non démontré par le rétro-test), `debut_saison`
+(dates approximatives des reprises), `seuil_jouer` (décision de l'utilisateur).
 
-## Données utilisées (par carte)
+## Données utilisées
 
-Toutes viennent de l'API Sorare (voir `CLAUDE.md`) :
+Pour chaque joueur, l'historique match par match de son équipe (jusqu'à 40
+matchs, du plus récent au plus ancien ; voir `CLAUDE.md`) : date, statut du
+score, score, **situation** et minutes. Situations : football `titulaire`,
+`entre` (entré en jeu), `banc`, `absent` ; NBA `joue`, `banc`, `absent` (l'API
+ne dit pas qui débute ; ce sont les minutes qui comptent). S'y ajoutent :
+blessures et suspensions en cours, prochain match (date, compétition),
+statut Sorare (football), bonus de collection de la carte.
 
-- `L5`, `L15` : moyennes Sorare. **Elles ne comptent que les matchs joués** :
-  c'est la moyenne des scores des matchs effectivement joués parmi les 5 (ou
-  15) derniers matchs de l'équipe ; les matchs non joués (DNP) sont exclus,
-  pas comptés comme des 0. Règle déduite et vérifiée sur 48 cartes sur 50
-  (2026-11-07). Elles mesurent donc le niveau **quand le joueur joue**, pas sa
-  probabilité de jouer.
-- les 15 derniers matchs de l'équipe, du plus récent au plus ancien, avec
-  pour chacun le score et le statut (`FINAL` joué, `REVIEWING` joué et en cours
-  de vérification, `DID_NOT_PLAY` non joué) ;
-- blessures et suspensions actives ;
-- prochain match : date, adversaire, domicile ou extérieur, cotes de l'équipe
-  (football) ;
-- multiplicateur de bonus de collection de la carte (`skinEdition.bonus`).
+Matchs **comptés** : ceux dont le statut est dans `statuts_comptes` et la
+situation connue, parmi les `fenetre_matchs` plus récents. Les matchs à venir
+ou sans données sont ignorés.
 
-## Formule
+## 1. Probabilité de jouer `p`
 
-Notations : `M` = derniers matchs comptés (statut dans `statuts_comptes`), du
-plus récent au plus ancien ; `J₅` et `J₁₅` = nombre de matchs joués (statut
-dans `statuts_joues`) parmi les 5 et les 15 premiers de `M` ; `n₅` et `n₁₅` =
-nombre de matchs comptés dans ces fenêtres (au plus 5 et 15).
-
-### 1. Niveau quand il joue : `m`
+Poids d'un match compté de rang `i` (0 = le plus récent) :
 
 ```
-si J₁₅ = 0 ou L15 = 0 : m inconnu (« aucun score sur 15 matchs »)
-si J₅ = 0             : m = L15                      (L5 vaut 0 faute de match joué, pas faute de niveau)
-sinon                 : m = poids_l5 × L5 + (1 − poids_l5) × L15
+w(i) = 0,5^(i / demi_vie_jouer) × (poids_saison_precedente si le match est antérieur à debut_saison, sinon 1)
 ```
 
-### 2. Probabilité de jouer : `p`
-
-Régularité récente, mesurée sur les matchs de l'équipe :
+Part pondérée des matchs joués, puis recalibration :
 
 ```
-t₅  = J₅ / n₅        t₁₅ = J₁₅ / n₁₅
-p   = poids_jeu_recent × t₅ + (1 − poids_jeu_recent) × t₁₅
+p_hist = Σ w(i) × [situation jouée] / Σ w(i)
+p      = plancher + (plafond − plancher) × p_hist
 ```
 
-Puis le statut l'emporte :
+**Pourquoi la recalibration.** Brute, `p_hist` est trop sûre d'elle aux
+extrêmes : un joueur qui a joué tous ses derniers matchs (p_hist ≈ 0,98) n'a
+joué le suivant que dans 88 % des cas en football (90 % en NBA), et un joueur
+qui ne jouait plus est revenu dans 8 à 10 % des cas. La droite ajustée
+améliore le score de Brier (football 0,1480 → 0,1446 ; NBA 0,1515 → 0,1477).
+Le rétro-test ignore les blessures connues : pour un joueur sans blessure
+déclarée, `p` est donc plutôt prudente.
 
-- **blessure active** sans date de retour, ou avec un retour prévu **après**
-  le prochain match → `p = 0`, alerte « blessé » ;
-- blessure active avec un retour prévu **avant** le prochain match → `p`
-  inchangé, alerte « retour de blessure : à vérifier » ;
-- **suspension active** dans la compétition du prochain match (ou dont la
-  compétition n'est pas précisée) → `p = 0`, alerte « suspendu : à vérifier » ;
-- suspension active dans **une autre** compétition → `p` inchangé, alerte ;
-- pas de prochain match connu → projection inconnue, alerte.
+**Ce qui l'emporte sur l'historique** (dans cet ordre) :
 
-### 3. Bonus de collection : `b`
+| Situation | Effet |
+|---|---|
+| Blessure en cours sans date de retour, ou retour prévu après le prochain match | `p = 0`, joueur **exclu** |
+| Suspension en cours dans la compétition du prochain match (ou compétition non précisée) | `p = 0`, joueur **exclu** |
+| Pas de prochain match connu | `p = 0`, joueur **exclu** |
+| Moins de `min_matchs_historique` matchs comptés | `p` inconnue, joueur **exclu** (« à vérifier ») |
+| Blessure avec retour prévu avant le prochain match | `p` inchangée, joueur **douteux** |
+| Suspension dans une autre compétition | `p` inchangée, alerte |
+| Statut Sorare dans `statuts_sorare_douteux` (football) | `p` inchangée, joueur **douteux** (statut cohérent avec l'historique : `NOT_PLAYING` → p_hist médiane 0,02, `STARTER` → 0,98, sur les cartes du 2026-11-07 ; utile pour les quelques joueurs annoncés absents qui jouaient encore) |
+| Club du joueur absent du prochain match (match de sélection) | `p` inchangée, joueur **douteux** |
+| Composition officielle publiée | *à venir* (test 3 du récap en cours) |
 
-`b` = multiplicateur lu sur la carte (1,0 Standard, 1,05 Shiny…). S'il manque :
-`b = 1` et alerte.
+**Filtre dur** : un joueur exclu ou douteux n'est jamais proposé. Seuil :
+seuls les joueurs avec `p ≥ seuil_jouer` sont proposés par défaut (réglable
+dans l'interface). L'écran « Mes cartes » montre tout le monde, avec la raison.
 
-### 4. Projection
+## 2. Éligibilité Arcade (football)
+
+Le prochain match doit appartenir aux compétitions autorisées
+(`regles/football-arcade-solo.json`, `competitions_autorisees.noms_api`) : la
+règle porte sur le **match joué**. Sinon (coupe nationale…), la carte est
+**non éligible** pour ce créneau, quelle que soit `p`. En NBA, toutes les
+rencontres NBA sont éligibles.
+
+## 3. Score s'il joue
+
+### Football : mélange titulaire / entré en jeu
+
+Les titulaires marquent nettement plus : 48,9 en moyenne contre 39,7 pour un
+joueur entré en jeu (9 472 et 3 735 matchs de l'archive).
 
 ```
-score si joue  = m × b
-projection     = p × m × b        (espérance : un joueur qui ne joue pas marque 0)
+q   = part pondérée de « titulaire » parmi les matchs joués, poids 0,5^(i / demi_vie_titulaire)
+μ_T = moyenne pondérée des scores comme titulaire, poids 0,5^(i / demi_vie_score) (× saison précédente)
+μ_E = idem comme entré en jeu
+μ   = q × μ_T + (1 − q) × μ_E
 ```
 
-### 5. Dispersion (pour l'étape 2)
+Si une des deux situations compte moins de `min_scores_situation` scores, on
+prend pour elle la moyenne de tous les matchs joués. `σ` est l'écart-type
+pondéré des scores joués autour de leur moyenne de situation.
 
-`σ` = écart-type (population) des scores des matchs joués parmi les 15
-derniers, calculé seulement s'il y en a au moins `min_scores_dispersion`.
-Affiché, non utilisé dans la projection. Il servira à estimer la probabilité
-de franchir un palier : à moyenne égale, un joueur régulier est plus sûr.
+Le rétro-test montre que pondérer les matchs récents améliore très peu le
+score prédit (erreur absolue moyenne 12,9 quelle que soit la demi-vie ; 12,8
+en séparant titulaire et entré). **L'erreur reste grande (environ 13 points
+par joueur et par match)** : d'où la simulation de l'étape 3, qui raisonne en
+probabilité de franchir le palier plutôt qu'en score moyen.
 
-## Ce qui est affiché sans entrer dans la formule
+### NBA : minutes × score par minute
 
-- **Contexte du match** : domicile ou extérieur, cotes de victoire, nul et
-  défaite de l'équipe (football). Aucun coefficient n'est appliqué : un
-  ajustement inventé serait pire qu'aucun. À calibrer plus tard sur l'historique.
-- **Données Sorare au calcul non publié** : statut de jeu (`STARTER`,
-  `REGULAR`, `SUBSTITUTE`, `SUPER_SUBSTITUTE`, `NOT_PLAYING`) et projection
-  Sorare du prochain match, montrés pour comparaison. Les probabilités de
-  titularisation existent dans le schéma mais reviennent vides avec notre clé.
+En NBA, les minutes expliquent l'essentiel du score (corrélation 0,78 sur
+5 887 matchs joués). Sur les matchs joués avec minutes connues :
+
+```
+minutes = moyenne pondérée des minutes, poids 0,5^(i / demi_vie_minutes)
+taux    = moyenne pondérée du score par minute, poids 0,5^(i / demi_vie_score_par_minute)
+μ       = minutes × taux
+```
+
+C'est le meilleur prédicteur essayé, de peu (erreur absolue moyenne 8,54
+contre 8,56 pour la simple moyenne récente), et il rend visible le levier
+principal : une hausse ou une baisse de temps de jeu. `σ` = écart-type des
+scores joués récents.
+
+## 4. Bonus et espérance
+
+```
+b                 = 1 + bonusPct / 100      (lu sur la carte ; 1 si absent, avec alerte)
+score s'il joue   = μ × b
+espérance         = p × μ × b               (0 s'il ne joue pas)
+```
+
+Le capitaine (×1,5, football) et la probabilité de franchir le palier
+relèvent de l'étape 3 (simulation de Monte-Carlo).
 
 ## Limites connues
 
-- Le niveau `m` ne tient pas compte de l'adversaire ni du lieu.
-- `p` repose sur le passé : un nouveau titulaire, un retour de blessure ou un
-  changement d'entraîneur sont mal captés. L'étape 3 (vérification des
-  compositions probables, sources citées) doit corriger ces cas à la main.
-- `p` traite chaque match comme joué ou non, sans distinguer 10 et 90 minutes.
-- Les matchs de sélection nationale : l'équipe du joueur n'apparaît pas dans
-  le match, donc domicile ou extérieur et cotes sont inconnus (alerte).
-- Les poids n'ont pas été calibrés.
+- `p` ne voit ni l'adversaire, ni la rotation annoncée, ni un changement
+  d'entraîneur. Les compositions officielles (test 3) et la vérification de
+  l'étape « conseil » doivent corriger ces cas.
+- Les joueurs qui changent de club gardent l'historique de l'ancien.
+- `poids_saison_precedente` et `debut_saison` ne sont pas calibrés.
+- Le rétro-test porte sur des joueurs que l'utilisateur possède aujourd'hui
+  (biais de sélection possible) et sur une seule archive (2026-11-07).

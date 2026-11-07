@@ -80,15 +80,17 @@ npm test                                     # rejoue tests/cas/
 ## Règles absolues
 - Aucune action sur l'argent ou le marché : pas d'enchère, d'achat, de vente, d'offre (l'outil ne fait que lire ; `appelGraphql()` refuse les mutations).
 - Ne jamais inventer une statistique, un statut de joueur ou une règle de compétition. Si c'est inconnu : écrire « à vérifier ».
-- Les règles de compétition et les formules ne vivent qu'à un seul endroit (`regles/`, `methode.md`), jamais recopiées dans le code. `src/projection.js` lit ses paramètres dans le bloc JSON de `methode.md`.
+- Les règles de compétition et les formules ne vivent qu'à un seul endroit (`regles/`, `methode.md`), jamais recopiées dans le code. Le moteur lit ses paramètres dans le bloc JSON de `methode.md` (l'ancienne chaîne, dans `docs/methode-v1.md`).
 
 ## Structure du dépôt
 ```
 CLAUDE.md        ce document
 regles/          une description JSON par mode de jeu (fait foi)
-methode.md       formule de projection, en mots et en équations, avec ses limites ; contient le bloc JSON des paramètres
-tests/cas/       situations figées (cartes et stats fictives) + résultat attendu, paramètres inclus
+methode.md       méthode v2 (probabilité de jouer, score s'il joue), en mots et en équations, avec ses limites et l'origine de chaque paramètre ; contient le bloc JSON des paramètres (v1 archivée dans docs/methode-v1.md)
+tests/cas/       situations figées de la méthode v2 (carte, joueur, match fictifs) + résultat attendu, paramètres inclus ; tests/cas-v1/ : méthode v1
 tests/*.test.js  lanceur des cas (node --test)
+src/moteur/      plan v0.1 : moteur pur (parametres.js, jouer.js, projection.js) + node.js (chargement côté Node)
+outils/          retro-test.js (calibrage de methode.md sur l'historique), projections.js (résumé de contrôle)
 src/recuperation/  plan v0.1 : api.js (débit, proxy, lecture seule), requetes.js, normaliser.js (modèle commun), historique.js (fusion incrémentale), index.js (npm run recuperer)
 src/             recuperation.js, projection.js, page.js : ancienne chaîne de l'étape 1, à remplacer par src/moteur/ et app/
 data/dernier.json   dernière récupération complète (meta, cartes, joueurs avec historique 40 matchs, matchs, paliers), lue par l'interface ; **non versionné** (8 Mo, régénéré en 21 s par `npm run recuperer`). **Trop lourd tel quel pour l'artifact** (objectif : ouverture en moins de 3 s sur iPhone) : à alléger à l'étape 5 bis (clés courtes, joueurs utiles seulement…)
@@ -156,8 +158,14 @@ R/cartes.R       ancien script R (liste des cartes + L5/L15 en CSV), antérieur 
 
 Pistes : calibrer les poids sur l'historique ; utiliser les cotes du match (aujourd'hui affichées seulement) ; tester `homeFormation` pour les compositions probables.
 
-## Étape 2 (à venir) : compositions
-Voir « Le moteur » ci-dessus. Écrire la méthode (mélange titulaire/entré/0, simulation, seuils) dans `methode.md` avant le code ; `src/compositions.js` pour l'optimisation (recherche exhaustive si le nombre de cartes filtrées le permet, sinon `javascript-lp-solver`).
+## Étape 2 du plan v0.1 (en cours, 2026-11-07) : méthode et projections
+- ✅ `methode.md` **v2** (la v1 est archivée dans `docs/methode-v1.md`) : probabilité de jouer = part pondérée des matchs joués (demi-vie 2 matchs) **recalibrée** (football 0,08 → 0,93 ; NBA 0,10 → 0,93), filtre dur (blessé, suspendu, sans match → exclu ; retour de blessure, statut Sorare `NOT_PLAYING`, club absent du match → douteux), éligibilité Arcade sur la compétition du match, score s'il joue en mélange titulaire / entré (football) ou minutes × score par minute (NBA), espérance = p × score × bonus.
+- **Paramètres choisis par rétro-test** (`node outils/retro-test.js football|nba`, sur `data/historique/`) : 16 935 matchs football, 6 588 NBA. Constats : la probabilité de jouer dépend surtout des 2 ou 3 derniers matchs ; même un titulaire indiscutable ne joue le match suivant que dans 88 % (football) à 90 % (NBA) des cas d'après l'historique seul ; titulaires 48,9 points en moyenne contre 39,7 pour les entrés en jeu ; l'erreur sur le score d'un joueur reste d'environ 13 points (football) et 8,5 (NBA), d'où l'intérêt de la simulation de l'étape 3 ; NBA : corrélation minutes / score 0,78.
+- ✅ `src/moteur/` (JavaScript pur, Node et navigateur) : `parametres.js` (lit le bloc JSON de `methode.md` depuis un texte), `jouer.js`, `projection.js` ; `node.js` charge données, méthode et règles côté Node. `node outils/projections.js` résume les projections sur `data/dernier.json`.
+- ✅ 5 cas dans `tests/cas/` (méthode v2, valeurs calculées à part en Python) ; anciens cas dans `tests/cas-v1/`.
+- Sur les données du 2026-11-07 : football 189 cartes proposables (p ≥ 80 %, ni exclues ni douteuses), NBA 156.
+- ⏳ Écran « Mes cartes » : deux maquettes à faire choisir avant de coder (`docs/plan-appli.md`, décision 0 bis).
+- Étape 3 ensuite : `simulation.js` (Monte-Carlo, probabilité de franchir le palier, capitaine) et `compositions.js`.
 
 ## Étape 3 (à venir) : conseil avant chaque journée
 Vérifier titulaires et blessures avec des sources citées et datées, signaler les pièges, proposer 2 ou 3 compositions. L'utilisateur valide dans l'appli Sorare.

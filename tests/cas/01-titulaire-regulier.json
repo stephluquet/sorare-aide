@@ -1,168 +1,244 @@
 {
  "id": "01-titulaire-regulier",
- "description": "Titulaire qui a joué ses 15 derniers matchs, carte Standard : projection = 0,4×L5 + 0,6×L15.",
+ "description": "Titulaire à tous ses matchs, prochain match en Bundesliga : p au plafond (0,93), q = 1, score s'il joue = 60, espérance = 0,93 × 60.",
  "parametres": {
-  "version": 1,
-  "poids_l5": 0.4,
-  "poids_jeu_recent": 0.5,
-  "statuts_joues": [
-   "FINAL",
-   "REVIEWING"
+  "version": 2,
+  "fenetre_matchs": 30,
+  "situations_jouees": [
+   "titulaire",
+   "entre",
+   "joue"
   ],
   "statuts_comptes": [
    "FINAL",
    "REVIEWING",
    "DID_NOT_PLAY"
   ],
-  "min_scores_dispersion": 3
+  "football": {
+   "demi_vie_jouer": 2,
+   "plancher": 0.08,
+   "plafond": 0.93,
+   "demi_vie_titulaire": 3,
+   "demi_vie_score": 10,
+   "min_scores_situation": 3,
+   "debut_saison": "2026-07-01"
+  },
+  "nba": {
+   "demi_vie_jouer": 2,
+   "plancher": 0.1,
+   "plafond": 0.93,
+   "demi_vie_minutes": 5,
+   "demi_vie_score_par_minute": 10,
+   "debut_saison": "2026-10-01"
+  },
+  "poids_saison_precedente": 0.5,
+  "min_matchs_historique": 5,
+  "seuil_jouer": 0.8,
+  "statuts_sorare_douteux": [
+   "NOT_PLAYING",
+   "RETIRED"
+  ]
  },
- "bonus_collections_pct": {
-  "Shiny": 5,
-  "Holo": 10,
-  "Four Suits": 15,
-  "Eclipse": 20
- },
+ "competitions_autorisees": [
+  "Bundesliga",
+  "Ligue 1",
+  "Premier League",
+  "Primera División",
+  "UEFA Champions League",
+  "UEFA Europa League",
+  "UEFA Conference League",
+  "UEFA Nations League"
+ ],
  "carte": {
-  "carte": "joueur-regulier-fictif",
+  "id": "titulaire-regulier-carte",
+  "slug": "titulaire-regulier-carte",
+  "sport": "football",
+  "joueurId": "titulaire-regulier",
   "rarete": "common",
   "saison": 2026,
-  "bonus_collection": {
-   "nom": "Standard",
-   "multiplicateur": 1.0
+  "collection": "Standard",
+  "bonusPct": 0,
+  "visuelUrl": null
+ },
+ "joueur": {
+  "id": "titulaire-regulier",
+  "sport": "football",
+  "nom": "Titulaire Regulier",
+  "postes": [
+   "MD"
+  ],
+  "club": {
+   "slug": "fc-fictif",
+   "nom": "FC Fictif"
   },
-  "joueur": {
-   "slug": "joueur-regulier",
-   "nom": "Joueur Regulier",
-   "postes": [
-    "MD"
-   ],
-   "club": "FC Fictif",
-   "tier": "ROSTER",
-   "etoiles": 2,
-   "l5": 60,
-   "l15": 50,
-   "blessures": [],
-   "suspensions": [],
-   "derniers_scores": [
-    {
-     "date": "2026-10-30T15:00:00Z",
-     "score": 60,
-     "statut": "FINAL",
-     "sur_feuille": true
-    },
-    {
-     "date": "2026-10-29T15:00:00Z",
-     "score": 40,
-     "statut": "FINAL",
-     "sur_feuille": true
-    },
-    {
-     "date": "2026-10-28T15:00:00Z",
-     "score": 60,
-     "statut": "FINAL",
-     "sur_feuille": true
-    },
-    {
-     "date": "2026-10-27T15:00:00Z",
-     "score": 40,
-     "statut": "FINAL",
-     "sur_feuille": true
-    },
-    {
-     "date": "2026-10-26T15:00:00Z",
-     "score": 60,
-     "statut": "FINAL",
-     "sur_feuille": true
-    },
-    {
-     "date": "2026-10-25T15:00:00Z",
-     "score": 40,
-     "statut": "FINAL",
-     "sur_feuille": true
-    },
-    {
-     "date": "2026-10-24T15:00:00Z",
-     "score": 60,
-     "statut": "FINAL",
-     "sur_feuille": true
-    },
-    {
-     "date": "2026-10-23T15:00:00Z",
-     "score": 40,
-     "statut": "FINAL",
-     "sur_feuille": true
-    },
-    {
-     "date": "2026-10-22T15:00:00Z",
-     "score": 60,
-     "statut": "FINAL",
-     "sur_feuille": true
-    },
-    {
-     "date": "2026-10-21T15:00:00Z",
-     "score": 40,
-     "statut": "FINAL",
-     "sur_feuille": true
-    },
-    {
-     "date": "2026-10-20T15:00:00Z",
-     "score": 60,
-     "statut": "FINAL",
-     "sur_feuille": true
-    },
-    {
-     "date": "2026-10-19T15:00:00Z",
-     "score": 40,
-     "statut": "FINAL",
-     "sur_feuille": true
-    },
-    {
-     "date": "2026-10-18T15:00:00Z",
-     "score": 60,
-     "statut": "FINAL",
-     "sur_feuille": true
-    },
-    {
-     "date": "2026-10-17T15:00:00Z",
-     "score": 40,
-     "statut": "FINAL",
-     "sur_feuille": true
-    },
-    {
-     "date": "2026-10-16T15:00:00Z",
-     "score": 60,
-     "statut": "FINAL",
-     "sur_feuille": true
-    }
-   ],
-   "prochain_match": {
-    "date": "2026-11-08T15:00:00Z",
-    "statut": "scheduled",
-    "competition": "Ligue Fictive",
+  "tier": "ROSTER",
+  "etoiles": 2,
+  "statutSorare": "STARTER",
+  "blessures": [],
+  "suspensions": [],
+  "historique": [
+   {
+    "matchId": "Game:f00",
+    "date": "2026-10-30T18:00:00Z",
+    "competition": "Bundesliga",
     "domicile": true,
-    "adversaire": "AS Imaginaire",
-    "affiche": "FC Fictif – AS Imaginaire",
-    "cotes_equipe": {
-     "victoire": 0.45,
-     "nul": 0.3,
-     "defaite": 0.25,
-     "cote_clean_sheet": 3.2
-    }
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 60,
+    "situation": "titulaire",
+    "minutes": 90
    },
-   "sorare": {
-    "statut_jeu": null,
-    "probas_titulaire": null,
-    "projection": null
+   {
+    "matchId": "Game:f01",
+    "date": "2026-10-26T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 60,
+    "situation": "titulaire",
+    "minutes": 90
+   },
+   {
+    "matchId": "Game:f02",
+    "date": "2026-10-22T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 60,
+    "situation": "titulaire",
+    "minutes": 90
+   },
+   {
+    "matchId": "Game:f03",
+    "date": "2026-10-18T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 60,
+    "situation": "titulaire",
+    "minutes": 90
+   },
+   {
+    "matchId": "Game:f04",
+    "date": "2026-10-14T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 60,
+    "situation": "titulaire",
+    "minutes": 90
+   },
+   {
+    "matchId": "Game:f05",
+    "date": "2026-10-10T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 60,
+    "situation": "titulaire",
+    "minutes": 90
+   },
+   {
+    "matchId": "Game:f06",
+    "date": "2026-10-06T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 60,
+    "situation": "titulaire",
+    "minutes": 90
+   },
+   {
+    "matchId": "Game:f07",
+    "date": "2026-10-02T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 60,
+    "situation": "titulaire",
+    "minutes": 90
+   },
+   {
+    "matchId": "Game:f08",
+    "date": "2026-09-28T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 60,
+    "situation": "titulaire",
+    "minutes": 90
+   },
+   {
+    "matchId": "Game:f09",
+    "date": "2026-09-24T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 60,
+    "situation": "titulaire",
+    "minutes": 90
+   },
+   {
+    "matchId": "Game:f10",
+    "date": "2026-09-20T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 60,
+    "situation": "titulaire",
+    "minutes": 90
+   },
+   {
+    "matchId": "Game:f11",
+    "date": "2026-09-16T18:00:00Z",
+    "competition": "Bundesliga",
+    "domicile": true,
+    "adversaire": "Fictif",
+    "statut": "FINAL",
+    "score": 60,
+    "situation": "titulaire",
+    "minutes": 90
    }
-  }
+  ]
+ },
+ "match": {
+  "id": "Game:prochain",
+  "sport": "football",
+  "debutUTC": "2026-11-08T15:00:00Z",
+  "statut": "scheduled",
+  "competition": "Bundesliga",
+  "domicile": {
+   "slug": "fc-fictif",
+   "nom": "FC Fictif"
+  },
+  "exterieur": {
+   "slug": "as-imaginaire",
+   "nom": "AS Imaginaire"
+  },
+  "cotes": null,
+  "compositionsOfficielles": null
  },
  "attendu": {
-  "m": 54.0,
-  "p": 1.0,
-  "si_joue": 54.0,
-  "projection": 54.0,
-  "sigma": 10.0,
-  "nb_alertes": 0,
-  "alertes_contiennent": []
+  "statut": "ok",
+  "eligibleArcade": true,
+  "proposable": true,
+  "p": 0.93,
+  "mu": 60.0,
+  "q": 1.0,
+  "siJoue": 60.0,
+  "esperance": 55.8,
+  "sigma": 0.0,
+  "raisons_contiennent": [],
+  "nb_raisons": 0
  }
 }

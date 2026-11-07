@@ -1,5 +1,5 @@
 // Projection du score attendu au prochain match, carte par carte.
-// La méthode et ses paramètres sont dans methode.md (qui fait foi) : ce module
+// ANCIENNE CHAÎNE (étape 1 du premier plan). Méthode v1 : docs/methode-v1.md : ce module
 // lit le bloc JSON de paramètres et applique les formules qui y sont décrites.
 //
 // Usage : node src/projection.js [AAAA-MM-JJ]
@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-export function lireParametres(chemin = join(RACINE, 'methode.md')) {
+export function lireParametres(chemin = join(RACINE, 'docs', 'methode-v1.md')) {
   const texte = readFileSync(chemin, 'utf8');
   const m = texte.match(/<!-- parametres:debut -->\s*```json\s*([\s\S]*?)```\s*<!-- parametres:fin -->/);
   if (!m) throw new Error(`Bloc de paramètres introuvable dans ${chemin}`);
