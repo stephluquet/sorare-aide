@@ -2,19 +2,64 @@
   "id": "football-arcade-solo",
   "sport": "football",
   "mode": "arcade-solo",
-  "source": "Centre d'aide Sorare « Qu'est-ce que Arcade ? » (lu le 2026-11-07) + précisions de l'utilisateur (2026-11-07)",
+  "source": "Centre d'aide Sorare « Qu'est-ce que Arcade ? » (lu le 2026-11-07) + précisions de l'utilisateur (2026-11-07) + règles officielles lues dans l'API (setBoard.steps.displayedTypedRules, 2026-11-07, identiques sur les 6 paliers)",
   "taille_equipe": 5,
   "postes": {
-    "obligatoires": ["GK", "DF", "MD", "FW"],
-    "libre": { "nombre": 1, "postes_autorises": ["DF", "MD", "FW"] }
+    "obligatoires": [
+      "GK",
+      "DF",
+      "MD",
+      "FW"
+    ],
+    "libre": {
+      "nombre": 1,
+      "postes_autorises": [
+        "DF",
+        "MD",
+        "FW"
+      ]
+    }
   },
-  "capitaine": { "obligatoire": true, "multiplicateur": 1.5 },
+  "capitaine": {
+    "obligatoire": true,
+    "multiplicateur": 1.5
+  },
   "plafond_etoiles": null,
-  "paliers": [260, 300, 360, 400, 440, 480],
+  "paliers": [
+    260,
+    300,
+    360,
+    400,
+    440,
+    480
+  ],
   "vies_par_niveau": 4,
   "echec_toutes_vies": "retour_niveau_1",
   "carte_bloquee": "tant_que_meme_niveau",
-  "bonus_collection": { "source": "API, carte par carte", "repli": "voir bonus-collections.json" },
+  "bonus_collection": {
+    "source": "API, carte par carte",
+    "repli": "voir bonus-collections.json"
+  },
   "score_fige_minutes_apres_match": 5,
-  "a_verifier": ["nom du champ API du bonus de collection", "contraintes de tier éventuelles selon le niveau"]
+  "a_verifier": [
+    "compétitions autorisées : club du joueur ou match joué ?",
+    "contraintes de tier éventuelles selon le niveau (aucune dans les règles lues)"
+  ],
+  "rarete_autorisee": [
+    "common"
+  ],
+  "competitions_autorisees": {
+    "source": "API, So5CompetitionsRule « Players permitted from »",
+    "liste": [
+      "Bundesliga",
+      "Ligue 1",
+      "Premier League",
+      "Primera División",
+      "UEFA Champions League",
+      "UEFA Europa League",
+      "UEFA Conference League",
+      "UEFA Nations League"
+    ]
+  },
+  "verrouillage": "équipe verrouillée au premier coup d'envoi d'un de ses joueurs (utilisateur, 2026-11-07)"
 }

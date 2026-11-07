@@ -18,7 +18,7 @@
 | Prochain match : date, adversaire, domicile ou extérieur | Les **cotes des matchs NBA** |
 | **Cotes du match en football** (victoire, nul, défaite, clean sheet) | Une projection Sorare pour la plupart de tes joueurs de football |
 | Paliers Arcade, état de chaque palier, vies restantes et échecs | Le tableau Squad (revient vide) |
-| Statut de jeu Sorare (titulaire, remplaçant…) et projection Sorare (NBA) | Les compositions probables (piste non testée) |
+| Statut de jeu Sorare (titulaire, remplaçant…) et projection Sorare (NBA) | Les compositions officielles : test en cours |
 
 ## Ce qu'on récupère (vérifié)
 
@@ -84,12 +84,18 @@
 | Tout ce qui touche à ton compte (solde, offres, notifications…) | Réservé à l'utilisateur connecté, et hors du périmètre de l'outil. | Rien : ce n'est pas utile ici. |
 | Bonus « même club » du centre d'aide | Le champ existe mais vaut 0 carte par carte. Il dépend sans doute de la composition. | À vérifier. |
 
-## Ce qui reste à tester
+## Testé ensuite (7 novembre, récap)
 
-- **Compositions probables des matchs de football** (`homeFormation` / `awayFormation`) : potentiellement précieux pour la titularisation.
-- **Texte détaillé des règles de chaque palier**, pour contrôler les fichiers de `regles/` contre la source officielle.
-- **Minutes projetées en NBA** (champ vide au premier essai).
-- **Autres moyennes** : 10 derniers matchs joués, 40 derniers matchs, saison.
+- **Pourcentage de matchs joués** sur 5, 10, 15 et 40 matchs : disponible directement (nombre de matchs joués dans la fenêtre).
+- **Moyennes** sur les 10 derniers matchs joués, sur 40 matchs et sur la saison : disponibles.
+- **Situation match par match** : titulaire (et s'il a été remplacé), entré en jeu, resté sur le banc, absent de la feuille, avec les minutes jouées.
+- **Historique sur 40 matchs** : possible, mais **joueur par joueur**. Ça fait une requête par joueur, soit environ 4 minutes pour tout ton football. La liste des cartes s'arrête à 15 matchs.
+- **Heure exacte de chaque match** : oui, à la minute.
+- **Texte officiel des règles de chaque palier** : lu, identique sur les 6 paliers, et conforme à nos fichiers de règles. Il y a deux ajouts :
+  - en football, seuls les joueurs de certaines compétitions sont autorisés : Bundesliga, Ligue 1, Premier League, Liga, les trois coupes d'Europe et la Ligue des nations ;
+  - en NBA, le texte dit « en dessous de 16 étoiles ». Un total de 16 pile est-il autorisé ? À vérifier.
+- **Minutes projetées NBA** : toujours vides, même le jour du match. Les points, rebonds et passes projetés sont disponibles.
+- **Compositions officielles des matchs** (`homeFormation` / `awayFormation`) : relevés en cours le 7 novembre, à H-3, H-1 et au coup d'envoi de trois de tes matchs. C'est décisif pour le mode créneau unique. Au premier relevé, 2 à 4 heures avant les matchs, rien n'était encore publié.
 
 ## Contraintes pratiques
 

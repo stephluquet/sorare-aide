@@ -223,7 +223,7 @@ export const cheminDonnees = (sport, date) => join(RACINE, 'data', `cartes-${spo
 // Le fetch de Node ignore HTTPS_PROXY sauf si NODE_USE_ENV_PROXY=1 : sans
 // proxy, la connexion part en direct et la clé APIKEY n'est pas injectée
 // (vérifié le 2026-11-07). On se relance alors avec la variable positionnée.
-function relancerViaProxySiBesoin() {
+export function relancerViaProxySiBesoin() {
   if (!process.env.HTTPS_PROXY || process.env.NODE_USE_ENV_PROXY === '1') return false;
   const r = spawnSync(process.execPath, ['--disable-warning=UNDICI-EHPA', ...process.argv.slice(1)], {
     stdio: 'inherit', env: { ...process.env, NODE_USE_ENV_PROXY: '1' },

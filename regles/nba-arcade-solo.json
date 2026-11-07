@@ -2,15 +2,48 @@
   "id": "nba-arcade-solo",
   "sport": "nba",
   "mode": "arcade-solo",
-  "source": "Précisions de l'utilisateur (2026-11-07)",
+  "source": "Précisions de l'utilisateur (2026-11-07) + règles officielles lues dans l'API (setBoard.steps.displayedTypedRules, 2026-11-07, identiques sur les 6 paliers)",
   "taille_equipe": 5,
-  "postes": { "obligatoires": [], "libre": { "nombre": 5, "postes_autorises": "tous" } },
+  "postes": {
+    "obligatoires": [],
+    "libre": {
+      "nombre": 5,
+      "postes_autorises": "tous"
+    }
+  },
   "capitaine": null,
-  "plafond_etoiles": { "max": 16, "source_etoiles": "donnée de la carte, à lire dans l'API" },
-  "paliers": [150, 180, 210, 240, 270, 290],
+  "plafond_etoiles": {
+    "max": 16,
+    "demi_etoiles_comptees": true,
+    "source_etoiles": "gameplayTierStars(gameMode: SET) du joueur (API, vérifié)",
+    "texte_officiel": "Sum of players' stars must remain below 16"
+  },
+  "paliers": [
+    150,
+    180,
+    210,
+    240,
+    270,
+    290
+  ],
   "vies_par_niveau": 4,
   "echec_toutes_vies": "retour_niveau_1",
   "carte_bloquee": "tant_que_meme_niveau",
-  "bonus_collection": { "source": "API, carte par carte", "repli": "voir bonus-collections.json" },
-  "a_verifier": ["nom du champ API des étoiles"]
+  "bonus_collection": {
+    "source": "API, carte par carte",
+    "repli": "voir bonus-collections.json"
+  },
+  "a_verifier": [
+    "« below 16 » : un total de 16 pile est-il autorisé ? (l'utilisateur indique ≤ 16)"
+  ],
+  "rarete_autorisee": [
+    "common"
+  ],
+  "competitions_autorisees": {
+    "source": "API, So5CompetitionsRule",
+    "liste": [
+      "NBA"
+    ]
+  },
+  "verrouillage": "équipe verrouillée au premier coup d'envoi d'un de ses joueurs (utilisateur, 2026-11-07)"
 }
