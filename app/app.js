@@ -1,4 +1,5 @@
-// Interface : Accueil, Propositions (football, NBA) et Mes cartes (maquette A retenue le 2026-11-07).
+// Interface : Accueil, Arcade (propositions), Squad et Cartes (maquette A retenue le 2026-11-07).
+// Le sport se choisit une fois, en haut (adresse #<écran>-<sport>, revue d'ergonomie du 2026-11-07).
 // Fonctionne dans l'artifact (données intégrées dans #donnees) et hors artifact
 // (données lues dans donnees-app.json à côté de la page). Le moteur v2 tourne ici,
 // dans le navigateur ; méthode et règles viennent des données (methode.md, regles/).
@@ -126,9 +127,10 @@ function statut(l) {
   if (l.pr.situationConfirmee === 'titulaire') return 'confirme';
   return l.pr.p != null && l.pr.p >= seuil() ? 'probable' : 'incertain';
 }
-const disponible = (l) => ['probable', 'confirme'].includes(statut(l)) && l.pr.eligibleArcade && l.pr.siJoue != null && !jouees(l.c.sport).has(l.c.id);
+// Disponible : jouable, éligible Arcade, non marquée jouée, et match pas encore commencé.
+const disponible = (l) => ['probable', 'confirme'].includes(statut(l)) && l.pr.eligibleArcade && l.pr.siJoue != null && !jouees(l.c.sport).has(l.c.id) && Date.parse(l.m?.debutUTC) > Date.now();
 
-const vue = { sport: 'football', poste: null, etoiles: null, creneau: '', tri: 'e', dispo: true, mode: 'plusieurs', creneauOuvert: null, squadSport: 'football', squadJour: null };
+const vue = { sport: 'football', poste: null, etoiles: null, creneau: '', tri: 'e', dispo: true, mode: 'plusieurs', creneauOuvert: null, squadJour: null };
 
 // ---------- Propositions (calculées dans le navigateur, mises en cache) ----------
 const cache = new Map();
@@ -193,13 +195,27 @@ function afficherAge() {
   $('bandeau').textContent = 'Données de plus de 3 h : écris « actualise » à Claude avant de composer.';
 }
 
+// Tentatives déjà jouées au palier en cours : 5 cartes chacune, bloquées tant qu'on reste sur ce palier.
+function etatPalier(p) {
+  const utilisees = (p.echecs ?? 0) + (p.enCours ?? 0);
+  return { utilisees, enCours: (p.enCours ?? 0) > 0, derniere: (p.enCours ?? 0) > 0 && p.tentativesRestantes === 0 };
+}
+const pluriel = (n, mot, pl = `${mot}s`) => `${n} ${n > 1 ? pl : mot}`;
+
+// Alerte du palier : dernière tentative en cours, ou cartes jouées non marquées (les propositions peuvent les contenir).
+function alertePalier(sport) {
+  const p = palierEnCours(sport); if (!p) return '';
+  const { utilisees, derniere } = etatPalier(p);
+  if (derniere) {
+    return `<div class="alerte" role="status"><p><b>Dernière tentative en cours à ce palier.</b> Si elle passe, tu montes au palier suivant ; sinon, retour au palier 1. Dans les deux cas, toutes tes cartes seront libérées : ces propositions ne servent pas pour l'instant.</p></div>`;
+  }
+  const n = jouees(sport).size, attendues = 5 * utilisees;
+  if (n >= attendues) return '';
+  return `<div class="alerte" role="status"><p><b>${pluriel(utilisees, 'tentative déjà jouée', 'tentatives déjà jouées')} à ce palier : ${attendues} cartes sont bloquées, ${n ? `${n} seulement marquée${n > 1 ? 's' : ''}` : 'aucune n’est marquée'}.</b> Les propositions peuvent contenir des cartes que tu ne peux plus jouer.</p>` +
+    `<button type="button" class="bouton principal" data-marquer="${sport}">Marquer les cartes jouées</button></div>`;
+}
+
 function afficherPaliers() {
-  $('paliers').innerHTML = ['football', 'nba'].map((s) => {
-    const p = palierEnCours(s); if (!p) return '';
-    const n = jouees(s).size;
-    return `<div class="palier">${SPORTS[s]} · palier <b>${p.cible}</b> · ${p.etat === 'LINEUP_SET' ? 'composition posée' : 'à jouer'}` +
-      `${p.echecs ? ` · ${p.echecs} échec${p.echecs > 1 ? 's' : ''}` : ''}${n ? ` · ${n} carte${n > 1 ? 's' : ''} jouée${n > 1 ? 's' : ''}` : ''}</div>`;
-  }).join('');
   const liberees = ['football', 'nba'].filter((s) => { const e = etatUtilisateur[s], p = palierEnCours(s); return e?.jouees?.length && p && e.cible !== p.cible; });
   $('note-palier').hidden = !liberees.length;
   $('note-palier').textContent = liberees.length ? `Palier passé en ${liberees.map((s) => SPORTS[s]).join(' et ')} : les cartes jouées sont de nouveau disponibles.` : '';
@@ -212,8 +228,6 @@ function afficherStockage() {
 }
 
 function commandes() {
-  $('sports').innerHTML = Object.entries(SPORTS).map(([k, v]) =>
-    `<button type="button" data-sport="${k}" aria-pressed="${k === vue.sport}">${v}</button>`).join('');
   $('postes').innerHTML = [null, ...POSTES[vue.sport]].map((p) =>
     `<button type="button" class="puce" data-poste="${p ?? ''}" aria-pressed="${p === vue.poste}">${p ?? 'Tous postes'}</button>`).join('');
   // Filtre par journée Sorare (regles/squad.json : en NBA, date de New York).
@@ -335,15 +349,23 @@ function fiche(id) {
       <div class="legende"><span><i style="background:var(--titulaire)"></i>${c.sport === 'nba' ? 'joué' : 'titulaire'}</span>${c.sport === 'football' ? '<span><i style="background:var(--entre)"></i>entré en jeu</span>' : ''}<span>B banc · A absent</span></div></div>
     ${pr.raisons.length ? `<ul class="raisons">${pr.raisons.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
     <div class="actions">
-      ${palier ? `<button type="button" class="bouton principal" id="basculer">${J.has(c.id) ? 'Remettre disponible' : `Jouée au palier ${palier.cible}`}</button>` : ''}
+      ${palier ? `<button type="button" class="bouton principal" id="basculer">${J.has(c.id) ? 'Remettre disponible' : `Marquer comme jouée (palier ${palier.cible})`}</button>` : ''}
       <button type="button" class="bouton" id="fermer">Fermer</button>
     </div></div>`;
   v.hidden = false;
-  v.querySelector('#fermer').focus();
+  ouvrirVolet(v);
   v.querySelector('#fermer').onclick = () => { v.hidden = true; };
   const b = v.querySelector('#basculer');
   if (b) b.onclick = () => { basculer(c.sport, c.id); v.hidden = true; };
   v.onclick = (e) => { if (e.target === v) v.hidden = true; };
+}
+
+// Le volet s'ouvre en haut (nom et carte visibles) : le focus va au volet lui-même, sans défilement.
+function ouvrirVolet(v) {
+  const volet = v.querySelector('.volet');
+  volet.setAttribute('tabindex', '-1');
+  volet.scrollTop = 0;
+  volet.focus({ preventScroll: true });
 }
 
 function basculer(sport, id) {
@@ -357,7 +379,7 @@ function basculer(sport, id) {
 
 // ---------- Accueil ----------
 const pct = (x) => (x == null ? '–' : `${Math.round(x * 100)} %`);
-const ETATS = { LINEUP_SET: 'composition posée', PLAYABLE: 'à jouer', LIVE: 'en cours', FAILED: 'échoué', LOCKED: 'verrouillé' };
+const ETATS = { LINEUP_SET: 'composition posée, matchs à venir', PLAYABLE: 'à jouer', LIVE: 'tentative en cours', FAILED: 'échoué', LOCKED: 'verrouillé' };
 
 function afficherAccueil() {
   $('blocs').innerHTML = ['football', 'nba'].map((s) => {
@@ -366,9 +388,10 @@ function afficherAccueil() {
     return `<div class="bloc">
       <h2>${SPORTS[s]}<span class="sous">palier ${p.niveau + 1} sur ${D.paliers.filter((x) => x.sport === s).length}</span></h2>
       <div><span class="cible">${p.cible}</span> <span class="sous">points à atteindre</span></div>
-      <div class="resume">${ETATS[p.etat] ?? esc(p.etat)}${p.echecs ? ` · ${p.echecs} échec${p.echecs > 1 ? 's' : ''}` : ''} · ${n ? `${n} carte${n > 1 ? 's' : ''} déjà jouée${n > 1 ? 's' : ''}` : 'aucune carte marquée jouée'}</div>
+      <div class="resume">${ETATS[p.etat] ?? esc(p.etat)}${p.echecs ? ` · ${p.echecs} échec${p.echecs > 1 ? 's' : ''}` : ''}${n ? ` · ${n} carte${n > 1 ? 's' : ''} marquée${n > 1 ? 's' : ''} jouée${n > 1 ? 's' : ''}` : ''}</div>
+      ${alertePalier(s)}
       <div class="resume" id="resume-${s}">Calcul de la meilleure équipe…</div>
-      <a class="bouton principal lien" href="#propositions-${s}">Voir les propositions</a>
+      <a class="bouton principal lien" href="#arcade-${s}">Voir les propositions</a>
     </div>`;
   }).join('');
   for (const s of ['football', 'nba']) {
@@ -419,16 +442,18 @@ function carteProposition(nom, e, sport, principale) {
 
 function afficherPropositions(sport) {
   const p = palierEnCours(sport);
-  $('titre-propositions').textContent = `${SPORTS[sport]} · palier ${p ? p.cible : '—'}`;
+  $('titre-propositions').textContent = `Arcade ${SPORTS[sport]} · palier ${p ? p.cible : '—'}`;
+  $('alerte-arcade').innerHTML = alertePalier(sport);
   if (!p) { $('contexte-propositions').textContent = ''; $('propositions').innerHTML = '<p class="attente">Tous les paliers de ce plateau sont passés.</p>'; return; }
   const n = jouees(sport).size;
-  $('contexte-propositions').textContent = (p.etat === 'LINEUP_SET' ? 'Une composition est déjà posée : ces propositions servent à la tentative suivante si elle échoue. Pense à marquer ses cartes comme jouées. · ' : '') +
-    `Seuil de chances de jouer : ${Math.round(seuil() * 100)} % (réglable dans Mes cartes) · ${n ? `${n} carte${n > 1 ? 's' : ''} déjà jouée${n > 1 ? 's' : ''} à ce palier` : 'aucune carte marquée jouée à ce palier'}.`;
+  const ep = etatPalier(p);
+  $('contexte-propositions').textContent = (ep.enCours && !ep.derniere ? 'Une tentative est en cours : ces propositions servent à la suivante si elle échoue. · ' : '') +
+    `Seuil de chances de jouer : ${Math.round(seuil() * 100)} % (réglable dans Cartes) · ${n ? `${n} carte${n > 1 ? 's' : ''} déjà jouée${n > 1 ? 's' : ''} à ce palier` : 'aucune carte marquée jouée à ce palier'}.`;
   document.querySelectorAll('#modes button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mode === vue.mode)));
   $('propositions').innerHTML = '<p class="attente">Simulation des meilleures équipes…</p>';
   if (vue.mode === 'unique') { afficherCreneaux(sport); return; }
   plusTard(() => propositions(sport)).then((r) => {
-    if (vueCourante() !== `propositions-${sport}`) return;
+    if (!surArcade(sport)) return;
     if (!r.equilibree) { $('propositions').innerHTML = `<p class="attente">${esc(r.message)}</p>`; return; }
     const memes = r.prudente.cartes.join() === r.equilibree.cartes.join() && r.prudente.capitaine === r.equilibree.capitaine;
     const ecartees = Object.entries(r.ecartees).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<li>${v} ${esc(k)}</li>`).join('');
@@ -446,26 +471,28 @@ function afficherPropositions(sport) {
 // Autres choix : par poste, les joueurs qui peuvent aussi performer, et ce que changerait chacun.
 const NOMS_POSTES = { GK: 'Gardiens', DF: 'Défenseurs', MD: 'Milieux', FW: 'Attaquants' };
 function afficherAutres(sport, equipe, a) {
-  const el = $('autres-choix'); if (!el || vueCourante() !== `propositions-${sport}`) return;
+  const el = $('autres-choix'); if (!el || !surArcade(sport)) return;
   const parId = new Map(lignes.map((l) => [l.c.id, l]));
   const groupes = a.groupes.filter((g) => g.choix.length);
   if (!groupes.length) { el.innerHTML = '<h2>Autres choix</h2><p class="sous">Pas d’autre carte admissible.</p>'; return; }
-  el.innerHTML = `<h2>Autres choix</h2><p class="sous">D’autres joueurs qui peuvent performer, si tu préfères ajuster l’équipe prudente (${pct(equipe.pPasser)} de chances de passer). Pour chacun : le joueur qu’il remplace au mieux et la nouvelle chance de passer.</p>` +
+  el.innerHTML = `<h2>Autres choix</h2><p class="sous">D’autres joueurs qui peuvent performer, si tu préfères ajuster l’équipe prudente (${pct(equipe.pPasser)} de chances de passer). Pour chacun : le joueur qu’il remplace au mieux, et la chance de passer avant → après.</p>` +
     groupes.map((g) => `<div class="groupe">${g.poste ? `<h3>${NOMS_POSTES[g.poste] ?? g.poste}</h3>` : ''}${g.choix.map((c) => {
       const l = parId.get(c.carteId), rem = c.remplace ? parId.get(c.remplace) : null;
-      const delta = c.ecart == null ? '' : `<span class="${c.ecart >= 0.005 ? 'plus' : c.ecart <= -0.005 ? 'moins' : 'egal'}">${c.ecart >= 0 ? '+' : '−'}${Math.abs(Math.round(c.ecart * 1000) / 10).toLocaleString('fr-FR')} pt</span>`;
+      // Chance de passer avant → après le remplacement (pas d'écart en « points », confondu avec les scores).
+      const classe = c.ecart == null ? 'egal' : c.ecart >= 0.005 ? 'plus' : c.ecart <= -0.005 ? 'moins' : 'egal';
+      const avantApres = `<span class="avant-apres">${pct(equipe.pPasser)} → <span class="${classe}">${pct(c.pPasser)}</span></span>`;
       return `<div class="alt" data-fiche="${esc(l.c.id)}" role="button" tabindex="0" aria-label="Voir la carte de ${esc(l.j.nom)}">${vignette(l)}<div style="min-width:0">
           <div class="nom">${esc(l.j.nom)}${c.capitaine === c.carteId ? '<span class="capitaine">C</span>' : ''} ${badgeEtoiles(l)}</div>
           <div class="meta"><span>${esc(l.j.postes.join('/'))} · ${pct(c.p)} joue · ${nb(c.siJoue)} pts</span><span>${esc(quand(l.m.debutUTC))}</span></div>
         </div>
-        <div class="droite">${rem ? `à la place de <b class="nom-remplace">${esc(rem.j.nom)}</b>${pct(c.pPasser)} ${delta}` : '<span class="sous">aucun remplacement possible</span>'}</div></div>`;
+        <div class="droite">${rem ? `à la place de <b class="nom-remplace">${esc(rem.j.nom)}</b>${avantApres}` : '<span class="sous">aucun remplacement possible</span>'}</div></div>`;
     }).join('')}</div>`).join('');
 }
 
 // Créneau unique : un créneau par coup d'envoi, avec sa meilleure équipe.
 function afficherCreneaux(sport) {
   plusTard(() => parCreneau(sport)).then((r) => {
-    if (vueCourante() !== `propositions-${sport}` || vue.mode !== 'unique') return;
+    if (!surArcade(sport) || vue.mode !== 'unique') return;
     if (!r?.creneaux.length) { $('propositions').innerHTML = '<p class="attente">Aucun créneau ne permet de remplir une équipe avec tes cartes disponibles.</p>'; return; }
     const meilleur = Math.max(...r.creneaux.map((c) => c.equilibree.pPasser));
     $('propositions').innerHTML = `<p class="sous">Les 5 matchs commencent à la même heure : compose juste après la publication des compositions (vers H-1). Meilleure chance : ${pct(meilleur)}.</p>` +
@@ -483,17 +510,16 @@ function afficherCreneaux(sport) {
 
 // ---------- Squad du jour ----------
 function afficherSquad() {
-  $('squad-sports').innerHTML = Object.entries(SPORTS).map(([k, v]) => `<button type="button" data-sport="${k}" aria-pressed="${k === vue.squadSport}">${v}</button>`).join('');
   // Journée de jeu au sens de Sorare (regles/squad.json) : en NBA, date de New York (soirée + nuit à Paris).
-  const J = D.journees[vue.squadSport];
-  const jours = joursAVenir(lignesMoteur(vue.squadSport), Date.now(), J.fuseau);
+  const J = D.journees[vue.sport];
+  const jours = joursAVenir(lignesMoteur(vue.sport), Date.now(), J.fuseau);
   if (!jours.includes(vue.squadJour)) vue.squadJour = jours[0] ?? null;
-  $('squad-jour').innerHTML = jours.map((j) => `<option value="${j}" ${j === vue.squadJour ? 'selected' : ''}>${libelleJournee(vue.squadSport, j)}</option>`).join('');
+  $('squad-jour').innerHTML = jours.map((j) => `<option value="${j}" ${j === vue.squadJour ? 'selected' : ''}>${libelleJournee(vue.sport, j)}</option>`).join('');
   if (!vue.squadJour) { $('squad').innerHTML = '<p class="attente">Aucun match à venir.</p>'; return; }
   $('squad').innerHTML = '<p class="attente">Recherche de la meilleure équipe…</p>';
-  const sport = vue.squadSport, jour = vue.squadJour;
+  const sport = vue.sport, jour = vue.squadJour;
   plusTard(() => squad(sport, jour)).then((r) => {
-    if (vueCourante() !== 'squad' || vue.squadSport !== sport || vue.squadJour !== jour) return;
+    if (vueCourante() !== 'squad' || vue.sport !== sport || vue.squadJour !== jour) return;
     if (!r.equipe) { $('squad').innerHTML = `<p class="attente">${esc(r.message)}</p>`; return; }
     const e = r.equipe;
     const parId = new Map(lignes.map((l) => [l.c.id, l]));
@@ -515,6 +541,49 @@ function afficherSquad() {
   });
 }
 
+// ---------- Marquage rapide des cartes jouées ----------
+// Recherche par nom ; un appui coche ou décoche. Les propositions ne sont recalculées qu'à la fermeture.
+const sansAccents = (x) => (x ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+function ouvrirMarquage(sport) {
+  const p = palierEnCours(sport); if (!p) return;
+  const attendues = 5 * etatPalier(p).utilisees;
+  const v = $('voile');
+  v.innerHTML = `<div class="volet" role="dialog" aria-modal="true" aria-labelledby="titre-marquage">
+    <h2 id="titre-marquage">Cartes jouées · ${SPORTS[sport]} · palier ${p.cible}</h2>
+    <p class="sous" id="compte-marquage"></p>
+    <input type="search" class="recherche" id="recherche-marquage" placeholder="Chercher un joueur" autocomplete="off" aria-label="Chercher un joueur">
+    <div class="liste-marquage" id="liste-marquage"></div>
+    <div class="actions"><button type="button" class="bouton principal" id="fermer">Terminé</button></div></div>`;
+  const cartes = lignes.filter((l) => l.c.sport === sport);
+  const dessiner = () => {
+    const J = jouees(sport), q = sansAccents($('recherche-marquage').value.trim());
+    $('compte-marquage').textContent = `${J.size} marquée${J.size > 1 ? 's' : ''}${attendues ? ` sur ${attendues} jouées à ce palier (${etatPalier(p).utilisees} × 5)` : ''}. Les cartes cochées ne seront plus proposées en Arcade.`;
+    const L = cartes.filter((l) => !q || sansAccents(l.j.nom).includes(q))
+      .sort((a, b) => (J.has(b.c.id) - J.has(a.c.id)) || ((b.pr.esperance ?? -1) - (a.pr.esperance ?? -1)));
+    $('liste-marquage').innerHTML = L.slice(0, 40).map((l) => `<button type="button" class="marque" data-carte="${esc(l.c.id)}" aria-pressed="${J.has(l.c.id)}">
+        <span class="case-a-cocher" aria-hidden="true">${J.has(l.c.id) ? '✓' : ''}</span>
+        <span style="min-width:0"><span class="nom">${esc(l.j.nom)}</span> ${badgeEtoiles(l)}<br><span class="sous">${esc(l.j.postes.join('/'))} · ${esc(l.j.club?.nom ?? '?')} · ${esc(l.c.collection ?? '')}${l.c.bonusPct ? ` +${nb(l.c.bonusPct)} %` : ''}</span></span>
+        <span class="sous">${nb(l.pr.esperance)}</span></button>`).join('') +
+      (L.length > 40 ? `<p class="sous">${L.length - 40} autres cartes : affine la recherche.</p>` : '') +
+      (!L.length ? '<p class="sous">Aucune carte à ce nom.</p>' : '');
+  };
+  v.hidden = false;
+  dessiner();
+  ouvrirVolet(v);
+  $('recherche-marquage').oninput = dessiner;
+  $('liste-marquage').onclick = (e) => {
+    const b = e.target.closest('[data-carte]'); if (!b) return;
+    const ensemble = jouees(sport), id = b.dataset.carte;
+    ensemble.has(id) ? ensemble.delete(id) : ensemble.add(id);
+    etatUtilisateur = { ...etatUtilisateur, [sport]: { cible: p.cible, jouees: [...ensemble], misAJour: new Date().toISOString() } };
+    stockage.enregistrer(etatUtilisateur);
+    dessiner();
+  };
+  const fermer = () => { v.hidden = true; tout(); };
+  $('fermer').onclick = fermer;
+  v.onclick = (e) => { if (e.target === v) fermer(); };
+}
+
 function jouerEquipe(sport, ids) {
   const p = palierEnCours(sport); if (!p) return;
   const ensemble = jouees(sport);
@@ -525,24 +594,49 @@ function jouerEquipe(sport, ids) {
 }
 
 // ---------- Navigation ----------
-const VUES = ['accueil', 'propositions-football', 'propositions-nba', 'squad', 'cartes'];
-const vueCourante = () => (VUES.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'accueil');
+// Adresse : #<écran> ou #<écran>-<sport> ; anciennes adresses #propositions-<sport> = Arcade.
+const ECRANS = ['accueil', 'arcade', 'squad', 'cartes'];
+function lireAdresse() {
+  const [ecran, sport] = location.hash.slice(1).replace(/^propositions-/, 'arcade-').split('-');
+  return { ecran: ECRANS.includes(ecran) ? ecran : 'accueil', sport: SPORTS[sport] ? sport : null };
+}
+const vueCourante = () => lireAdresse().ecran;
+const surArcade = (sport) => vueCourante() === 'arcade' && vue.sport === sport;
 
-function tout() {
-  const v = vueCourante();
-  $('vue-accueil').hidden = v !== 'accueil';
-  $('vue-propositions').hidden = !v.startsWith('propositions-');
-  $('vue-cartes').hidden = v !== 'cartes';
-  $('vue-squad').hidden = v !== 'squad';
-  document.querySelectorAll('#onglets a').forEach((a) => (a.dataset.vue === v ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')));
-  afficherPaliers(); afficherStockage();
-  if (v === 'accueil') afficherAccueil();
-  else if (v === 'cartes') { commandes(); liste(); }
-  else if (v === 'squad') afficherSquad();
-  else afficherPropositions(v.split('-')[1]);
+function changerSport(s) {
+  if (s === vue.sport) return;
+  vue.sport = s; vue.poste = null; vue.creneau = ''; vue.etoiles = null; vue.creneauOuvert = null;
 }
 
-$('sports').onclick = (e) => { const s = e.target.closest('button')?.dataset.sport; if (s) { vue.sport = s; vue.poste = null; vue.creneau = ''; tout(); } };
+function tout() {
+  const { ecran, sport } = lireAdresse();
+  if (sport) changerSport(sport);
+  $('vue-accueil').hidden = ecran !== 'accueil';
+  $('vue-propositions').hidden = ecran !== 'arcade';
+  $('vue-cartes').hidden = ecran !== 'cartes';
+  $('vue-squad').hidden = ecran !== 'squad';
+  document.querySelectorAll('#onglets a').forEach((a) => {
+    a.href = a.dataset.vue === 'accueil' ? '#accueil' : `#${a.dataset.vue}-${vue.sport}`;
+    a.dataset.vue === ecran ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current');
+  });
+  // Choix du sport, une seule fois pour Arcade, Squad et Cartes (l'Accueil montre les deux).
+  $('sport-global').hidden = ecran === 'accueil';
+  $('sport-global').innerHTML = Object.entries(SPORTS).map(([k, v]) =>
+    `<button type="button" data-sport="${k}" aria-pressed="${k === vue.sport}">${v}</button>`).join('');
+  afficherPaliers(); afficherStockage();
+  if (ecran === 'accueil') afficherAccueil();
+  else if (ecran === 'cartes') { $('titre-cartes').textContent = `Mes cartes ${SPORTS[vue.sport]}`; $('alerte-cartes').innerHTML = alertePalier(vue.sport); commandes(); liste(); }
+  else if (ecran === 'squad') afficherSquad();
+  else afficherPropositions(vue.sport);
+}
+
+$('sport-global').onclick = (e) => {
+  const s = e.target.closest('[data-sport]')?.dataset.sport; if (!s) return;
+  location.hash = `${vueCourante()}-${s}`;
+};
+// Bouton « Marquer les cartes jouées » (Accueil, Arcade, Cartes).
+document.addEventListener('click', (e) => { const b = e.target.closest('[data-marquer]'); if (b) ouvrirMarquage(b.dataset.marquer); });
+
 $('postes').onclick = (e) => { const b = e.target.closest('button'); if (b) { vue.poste = b.dataset.poste || null; tout(); } };
 $('filtre-etoiles').onclick = (e) => { const b = e.target.closest('button'); if (b) { vue.etoiles = b.dataset.etoiles === '' ? null : Number(b.dataset.etoiles); commandes(); liste(); } };
 $('creneau').onchange = (e) => { vue.creneau = e.target.value; liste(); };
@@ -559,15 +653,14 @@ $('squad').onclick = (e) => { ouvrirFiche(e); };
 $('propositions').onclick = (e) => {
   if (!e.target.closest('[data-jouer]') && ouvrirFiche(e)) return;
   const c = e.target.closest('[data-creneau]');
-  if (c) { vue.creneauOuvert = vue.creneauOuvert === c.dataset.creneau ? null : c.dataset.creneau; afficherCreneaux(vueCourante().split('-')[1]); return; }
+  if (c) { vue.creneauOuvert = vue.creneauOuvert === c.dataset.creneau ? null : c.dataset.creneau; afficherCreneaux(vue.sport); return; }
   const b = e.target.closest('[data-jouer]'); if (!b) return;
   jouerEquipe(b.dataset.sport, b.dataset.jouer.split(','));
 };
 $('modes').onclick = (e) => { const b = e.target.closest('[data-mode]'); if (b) { vue.mode = b.dataset.mode; tout(); } };
-$('squad-sports').onclick = (e) => { const b = e.target.closest('[data-sport]'); if (b) { vue.squadSport = b.dataset.sport; afficherSquad(); } };
 $('squad-jour').onchange = (e) => { vue.squadJour = e.target.value; afficherSquad(); };
 window.addEventListener('hashchange', () => { window.scrollTo(0, 0); tout(); });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') $('voile').hidden = true; });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('voile').hidden) { $('voile').hidden = true; tout(); } });
 
 afficherAge();
 setInterval(afficherAge, 60000);

@@ -91,7 +91,9 @@ button:focus-visible, select:focus-visible, input:focus-visible, .ligne:focus-vi
 .note-palier { font-size: .82rem; color: var(--doux); }
 
 /* Navigation entre écrans */
-.onglets { display: flex; gap: 4px; flex-wrap: wrap; border-bottom: 1px solid var(--trait); padding-bottom: 8px; }
+.entete { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--trait); padding-bottom: 8px; }
+.onglets { display: flex; gap: 4px; flex-wrap: wrap; }
+.sport-global button { padding: 4px 12px; }
 .onglets a { font: 700 1rem var(--police-titre); text-transform: uppercase; letter-spacing: .02em; color: var(--doux);
   text-decoration: none; padding: 4px 7px; border-radius: 8px; }
 .onglets a[aria-current="page"] { color: var(--surface); background: var(--encre); }
@@ -172,3 +174,20 @@ details.ecartees summary { cursor: pointer; }
 [data-fiche] { cursor: pointer; border-radius: 8px; }
 [data-fiche]:hover { background: var(--fond); }
 [data-fiche]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Alertes du palier (cartes bloquées non marquées, dernière tentative) */
+.alerte { background: var(--attention-doux); color: var(--encre); border-left: 4px solid var(--attention); border-radius: 10px; padding: 10px 12px; display: grid; gap: 8px; font-size: .9rem; }
+.alerte p { margin: 0; }
+.alerte b { color: var(--attention); }
+.alerte .bouton { justify-self: start; }
+
+/* Marquage des cartes jouées */
+.recherche { font: inherit; font-size: 1rem; padding: 8px 10px; border: 1px solid var(--trait); border-radius: 10px; background: var(--fond); color: var(--encre); width: 100%; }
+.liste-marquage { display: grid; gap: 4px; }
+.marque { display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; gap: 10px; align-items: center; text-align: left; width: 100%;
+  font: inherit; color: inherit; background: var(--surface); border: 1px solid var(--trait); border-radius: 10px; padding: 7px 10px; cursor: pointer; }
+.marque .case-a-cocher { width: 22px; height: 22px; border: 2px solid var(--doux); border-radius: 6px; display: grid; place-items: center; font-weight: 700; }
+.marque[aria-pressed="true"] { border-color: var(--encre); background: var(--fond); }
+.marque[aria-pressed="true"] .case-a-cocher { background: var(--encre); border-color: var(--encre); color: var(--surface); }
+.marque .sous { font-size: .78rem; }
+.alt .avant-apres { white-space: nowrap; }
