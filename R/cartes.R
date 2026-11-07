@@ -92,9 +92,10 @@ if (sys.nframe() == 0L) {
   sport <- if (length(args) >= 3L) toupper(args[3]) else "FOOTBALL"
   cartes <- recuperer_cartes(args[1], sport)
   rownames(cartes) <- NULL
-  print(cartes[, c("joueur", "rarete", "saison", "L5", "L15")], row.names = FALSE)
+  # Écrire avant d'afficher : si la sortie est coupée (| head), le CSV existe déjà.
   if (length(args) >= 2L && nzchar(args[2])) {
     write.csv(cartes, args[2], row.names = FALSE)
     message("Écrit : ", args[2])
   }
+  print(cartes[, c("joueur", "rarete", "saison", "L5", "L15")], row.names = FALSE)
 }
