@@ -340,8 +340,10 @@ const badgeEtoiles = (l, grand = false) => (l.c.sport === 'nba' && l.j.etoiles !
   ? `<span class="etoiles${grand ? ' grand' : ''}" title="${nb(l.j.etoiles, 1)} étoile(s)">★ ${nb(l.j.etoiles, 1)}</span>` : '');
 const plafondEtoiles = (sport) => D.regles[sport]?.plafond_etoiles?.max ?? null;
 
+// Hors de claude.ai (page autonome), les images externes sont permises : lien direct vers l'image Sorare.
+const horsClaude = !window.claude?.use;
 function vignette(l) {
-  const img = D.vignettes[l.c.id];
+  const img = D.vignettes[l.c.id] ?? (horsClaude ? l.c.visuelUrl : null);
   // Sans vignette intégrée : initiales, remplacées par l'image dès que la carte est à l'écran (lots à la volée).
   return img ? `<img class="vig" src="${img}" alt="" loading="lazy">`
     : `<div class="vig" data-vig="${esc(l.c.id)}" aria-hidden="true">${esc(l.j.nom.split(' ').map((x) => x[0]).slice(0, 2).join(''))}</div>`;
@@ -892,7 +894,10 @@ async function brancherMaj() {
   afficherMaj();
   setInterval(afficherMaj, 2000);
   const [mcp, db] = await Promise.all([window.claude?.use?.('mcp') ?? null, window.claude?.use?.('db') ?? null]);
-  if (!mcp) { majIndisponible = 'Mise à jour indisponible ici : écris « actualise » à Claude.'; afficherMaj(); }
+  if (!mcp) {
+    majIndisponible = horsClaude ? 'Page autonome : pour actualiser, relance « npm run recuperer » puis « npm run app ».' : 'Mise à jour indisponible ici : écris « actualise » à Claude.';
+    afficherMaj();
+  }
   else {
     // L'outil peut manquer à ce visiteur : on vérifie sans rien demander (listTools ne demande jamais).
     mcp.listTools(MAJ.serveur).then((r) => {

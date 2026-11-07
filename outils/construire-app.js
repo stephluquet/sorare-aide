@@ -1,7 +1,7 @@
 // Assemble l'interface (app/) et le moteur (src/moteur/) en pages autonomes.
 // Usage : npm run app
 //   → sorties/app/sorare-aide.html   page à publier en artifact (données intégrées, sans <html>/<head>/<body>)
-//   → sorties/app/index.html         même page hors artifact (lit donnees-app.json à côté)
+//   → sorties/app/index.html         page autonome hors claude.ai (données intégrées, images liées chez Sorare)
 //   → sorties/app/donnees-app.json   données au format de l'interface
 // Les données viennent de data/dernier.json (npm run recuperer), la méthode de methode.md,
 // les règles de regles/. Les vignettes (WebP 96 px) sont intégrées car un artifact ne peut
@@ -116,8 +116,14 @@ app.lotsVignettes = { taille: TAILLE_LOT, nombre: nbLots, version: app.meta.cons
 const json = JSON.stringify(app);
 writeFileSync(join(dossier, 'donnees-app.json'), json);
 writeFileSync(join(dossier, 'sorare-aide.html'), gabarit.replace('/*DONNEES*/null', () => json.replace(/</g, '\\u003c')));
+// Page autonome (hors claude.ai) : données intégrées ET adresse de l'image Sorare de chaque carte. Hors d'un
+// artifact, rien n'interdit les images externes : la page les lie directement (assets.sorare.com), au fil du
+// défilement ; elle s'ouvre d'un double-clic, sans serveur. Les lots de vignettes ne servent qu'à l'artifact.
+const visuels = new Map(donnees.cartes.map((c) => [c.id, c.visuelUrl]));
+const jsonAutonome = JSON.stringify({ ...app, cartes: app.cartes.map((c) => ({ ...c, visuelUrl: visuels.get(c.id) ?? null })) });
 writeFileSync(join(dossier, 'index.html'), '<!doctype html>\n<html lang="fr"><head><meta charset="utf-8">\n' +
-  '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n</head><body>\n' + gabarit + '\n</body></html>\n');
+  '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n</head><body>\n' +
+  gabarit.replace('/*DONNEES*/null', () => jsonAutonome.replace(/</g, '\\u003c')) + '\n</body></html>\n');
 
 const ko = (f) => (readFileSync(join(dossier, f)).length / 1024).toFixed(0);
 console.error(`Écrit : sorties/app/sorare-aide.html (${ko('sorare-aide.html')} Ko), index.html, donnees-app.json (${ko('donnees-app.json')} Ko) ; ` +
