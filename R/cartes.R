@@ -20,6 +20,21 @@ if (!l10n_info()$`UTF-8`) invisible(Sys.setlocale("LC_CTYPE", "C.UTF-8"))
 API_URL <- "https://api.sorare.com/graphql"
 TAILLE_PAGE <- 50L
 
+# Plafond : 150 requêtes par minute (l'API en autorise 200). On impose un écart
+# minimal entre deux départs de requête plutôt que req_throttle(), dont le
+# comportement change selon la version de httr2 (rafale initiale autorisée
+# depuis la 1.1.0). Le plafond vaut pour ce processus R uniquement.
+REQUETES_PAR_MINUTE <- 150
+ECART_MIN_S <- 60 / REQUETES_PAR_MINUTE
+.plafond <- new.env()
+.plafond$dernier_depart <- -Inf
+
+attendre_son_tour <- function() {
+  attente <- .plafond$dernier_depart + ECART_MIN_S - as.numeric(Sys.time())
+  if (attente > 0) Sys.sleep(attente)
+  .plafond$dernier_depart <- as.numeric(Sys.time())
+}
+
 requete_cartes <- '
 query Cartes($slug: String!, $sport: Sport!, $after: String, $first: Int!) {
   user(slug: $slug) {
@@ -44,6 +59,7 @@ query Cartes($slug: String!, $sport: Sport!, $after: String, $first: Int!) {
 }'
 
 appel_graphql <- function(query, variables) {
+  attendre_son_tour()
   rep <- request(API_URL) |>
     req_headers(APIKEY = "injecte-par-le-proxy") |>
     req_body_json(list(query = query, variables = variables), auto_unbox = TRUE) |>

@@ -55,10 +55,8 @@ query Cartes($slug: String!, $sport: Sport!, $after: String, $first: Int!) {
 - **Limite : 200 requêtes par minute** (indiquée par l'utilisateur, non vérifiée ;
   les réponses ne renvoient aucun en-tête de quota). Une requête = une page de
   50 cartes. Le catalogue complet de `yapapir` coûte **21 requêtes** (13 pour le
-  football, 8 pour la NBA). Le script n'a pas de pause entre les pages : il va
-  à environ 3 requêtes par seconde (44 pages en 15 s), soit près de 180 par
-  minute sur un gros compte. Ne pas enchaîner plusieurs gros comptes dans la
-  même minute.
+  football, 8 pour la NBA). Sans pause, l'API répond à environ 3 requêtes par
+  seconde, soit près de 180 par minute : d'où le plafond du script (voir plus bas).
 - Les mêmes champs `averageScore` marchent aussi sur `anyPlayer(slug: ...)`.
 - `L5 = 0` avec `L15 > 0` veut dire que le joueur n'a joué aucun des 5 derniers
   matchs (blessé, hors groupe). `L15 = 0` veut dire aucun score sur 15 matchs.
@@ -74,6 +72,13 @@ Rscript R/cartes.R <slug> [sortie.csv] [FOOTBALL|NBA]
 - La fonction `recuperer_cartes(slug, sport)` peut s'utiliser seule via
   `source("R/cartes.R")`.
 - Les relances sur les erreurs 429 et 503 sont gérées par `req_retry`.
+- **Plafond de 150 requêtes par minute** (vérifié) : `attendre_son_tour()` impose
+  0,4 s entre deux départs de requête (`REQUETES_PAR_MINUTE` en tête du script).
+  Toute nouvelle requête doit passer par `appel_graphql()` pour en profiter.
+  Le plafond ne vaut que pour un processus R : deux scripts lancés en parallèle
+  peuvent ensemble dépasser 150. Ne pas utiliser `req_throttle()` : httr2 est en
+  1.0.0 ici, et à partir de la 1.1.0 la fonction autorise une rafale initiale.
+  Le catalogue NBA de `yapapir` (8 requêtes) prend environ 4 s.
 - Le conteneur tourne en locale C : le script passe en `C.UTF-8`, sinon les
   accents sortent sous la forme `<U+00E9>`. Ne pas remettre
   `fileEncoding = "UTF-8"` dans `write.csv` : cela réintroduit le problème.
