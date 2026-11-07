@@ -53,6 +53,8 @@ export function lireArchive(chemin) {
 export function ecrireArchive(chemin, joueurId, matchs, { complet = false } = {}) {
   mkdirSync(dirname(chemin), { recursive: true });
   const ancien = lireArchive(chemin);
+  // Rien de nouveau : on ne réécrit pas le fichier (évite de modifier 874 fichiers à chaque actualisation).
+  if (ancien && !complet && JSON.stringify(ancien.matchs) === JSON.stringify(matchs)) return false;
   const contenu = {
     joueurId,
     misAJour: new Date().toISOString(),
@@ -62,4 +64,5 @@ export function ecrireArchive(chemin, joueurId, matchs, { complet = false } = {}
   // Un match par ligne : fichier compact et diff lisibles.
   const tete = JSON.stringify({ ...contenu, matchs: undefined }, null, 1).replace(/\n}$/, '');
   writeFileSync(chemin, `${tete},\n "matchs": [\n${matchs.map((m) => '  ' + JSON.stringify(m)).join(',\n')}\n ]\n}\n`);
+  return true;
 }
