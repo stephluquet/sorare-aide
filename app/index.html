@@ -7,39 +7,59 @@
 </style>
 
 <div class="cadre">
-  <header>
-    <h1>Mes cartes</h1>
-    <div class="sous" id="age">Chargement des données…</div>
-  </header>
+  <nav class="onglets" id="onglets" aria-label="Écrans">
+    <a href="#accueil" data-vue="accueil">Accueil</a>
+    <a href="#propositions-football" data-vue="propositions-football">Football</a>
+    <a href="#propositions-nba" data-vue="propositions-nba">NBA</a>
+    <a href="#cartes" data-vue="cartes">Mes cartes</a>
+  </nav>
+  <div class="sous" id="age">Chargement des données…</div>
   <div class="bandeau" id="bandeau" hidden></div>
-  <div class="paliers" id="paliers"></div>
   <div class="note-palier" id="note-palier" hidden></div>
 
-  <div class="commandes">
-    <div class="rangee">
-      <div class="seg" id="sports" role="group" aria-label="Sport"></div>
-      <span class="compte" id="compte"></span>
-    </div>
-    <div class="rangee" id="postes" role="group" aria-label="Poste"></div>
-    <div class="rangee">
-      <select id="creneau" aria-label="Créneau"></select>
-      <select id="tri" aria-label="Trier par">
-        <option value="e">Tri : espérance</option>
-        <option value="p">Tri : chances de jouer</option>
-        <option value="d">Tri : coup d'envoi</option>
-      </select>
-      <label class="reglage" for="seuil">Seuil
-        <select id="seuil">
-          <option value="0.7">70 %</option>
-          <option value="0.8">80 %</option>
-          <option value="0.9">90 %</option>
-        </select>
-      </label>
-      <label class="case"><input type="checkbox" id="dispo" checked> disponibles seulement</label>
-    </div>
-  </div>
+  <!-- Accueil -->
+  <section id="vue-accueil" class="vue" hidden>
+    <h1>Mes paliers</h1>
+    <div class="blocs" id="blocs"></div>
+  </section>
 
-  <div class="liste" id="liste"></div>
+  <!-- Propositions -->
+  <section id="vue-propositions" class="vue" hidden>
+    <h1 id="titre-propositions">Propositions</h1>
+    <div class="sous" id="contexte-propositions"></div>
+    <div id="propositions"></div>
+  </section>
+
+  <!-- Mes cartes -->
+  <section id="vue-cartes" class="vue" hidden>
+    <h1>Mes cartes</h1>
+    <div class="paliers" id="paliers"></div>
+    <div class="commandes">
+      <div class="rangee">
+        <div class="seg" id="sports" role="group" aria-label="Sport"></div>
+        <span class="compte" id="compte"></span>
+      </div>
+      <div class="rangee" id="postes" role="group" aria-label="Poste"></div>
+      <div class="rangee">
+        <select id="creneau" aria-label="Créneau"></select>
+        <select id="tri" aria-label="Trier par">
+          <option value="e">Tri : espérance</option>
+          <option value="p">Tri : chances de jouer</option>
+          <option value="d">Tri : coup d'envoi</option>
+        </select>
+        <label class="reglage" for="seuil">Seuil
+          <select id="seuil">
+            <option value="0.7">70 %</option>
+            <option value="0.8">80 %</option>
+            <option value="0.9">90 %</option>
+          </select>
+        </label>
+        <label class="case"><input type="checkbox" id="dispo" checked> disponibles seulement</label>
+      </div>
+    </div>
+    <div class="liste" id="liste"></div>
+  </section>
+
   <div class="stockage" id="stockage"></div>
 </div>
 <div class="voile" id="voile" hidden></div>

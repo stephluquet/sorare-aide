@@ -86,3 +86,38 @@ button:focus-visible, select:focus-visible, input:focus-visible, .ligne:focus-vi
 
 .reglage { display: flex; align-items: center; gap: 6px; font-size: .85rem; }
 .note-palier { font-size: .82rem; color: var(--doux); }
+
+/* Navigation entre écrans */
+.onglets { display: flex; gap: 4px; flex-wrap: wrap; border-bottom: 1px solid var(--trait); padding-bottom: 8px; }
+.onglets a { font: 700 1.05rem var(--police-titre); text-transform: uppercase; letter-spacing: .03em; color: var(--doux);
+  text-decoration: none; padding: 4px 10px; border-radius: 8px; }
+.onglets a[aria-current="page"] { color: var(--surface); background: var(--encre); }
+.onglets a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.vue { display: grid; gap: 12px; }
+
+/* Accueil */
+.blocs { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; }
+.bloc { background: var(--surface); border: 1px solid var(--trait); border-radius: 14px; padding: 14px; display: grid; gap: 8px; }
+.bloc h2 { font: 700 1.3rem/1 var(--police-titre); text-transform: uppercase; margin: 0; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.bloc .cible { font: 700 2.6rem/1 var(--police-titre); font-variant-numeric: tabular-nums; }
+.bloc .resume { font-size: .9rem; }
+.bloc .resume b { font-variant-numeric: tabular-nums; }
+.bouton.lien { text-decoration: none; display: inline-block; text-align: center; }
+
+/* Propositions */
+.proposition { background: var(--surface); border: 1px solid var(--trait); border-radius: 14px; padding: 14px; display: grid; gap: 10px; margin-bottom: 12px; }
+.proposition.principale { border-color: var(--encre); }
+.proposition h2 { font: 700 1.35rem/1 var(--police-titre); text-transform: uppercase; margin: 0; }
+.proposition .pourquoi { color: var(--doux); font-size: .85rem; }
+.chiffres-cle { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
+.chiffres-cle .case-chiffre b { font-size: 1.6rem; }
+.chiffres-cle .fort b { color: var(--ok); }
+.joueurs { display: grid; gap: 6px; }
+.joueur { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 10px; align-items: center; }
+.joueur .vig { width: 34px; height: 55px; font-size: .8rem; }
+.joueur .droite { text-align: right; font-size: .8rem; color: var(--doux); font-variant-numeric: tabular-nums; }
+.joueur .droite b { display: block; color: var(--encre); font: 700 1.2rem var(--police-titre); }
+.capitaine { font: 700 .72rem var(--police-texte); background: var(--encre); color: var(--surface); border-radius: 4px; padding: 0 5px; margin-left: 4px; }
+.attente { color: var(--doux); padding: 20px 0; }
+details.ecartees { font-size: .85rem; color: var(--doux); }
+details.ecartees summary { cursor: pointer; }

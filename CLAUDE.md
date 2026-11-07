@@ -96,9 +96,9 @@ regles/          une description JSON par mode de jeu (fait foi)
 methode.md       méthode v2 (probabilité de jouer, score s'il joue), en mots et en équations, avec ses limites et l'origine de chaque paramètre ; contient le bloc JSON des paramètres (v1 archivée dans docs/methode-v1.md)
 tests/cas/       situations figées de la méthode v2 (carte, joueur, match fictifs) + résultat attendu, paramètres inclus ; tests/cas-v1/ : méthode v1
 tests/*.test.js  lanceur des cas (node --test)
-src/moteur/      plan v0.1 : moteur pur (parametres.js, jouer.js, projection.js) + node.js (chargement côté Node)
-app/             interface (index.html, style.css, app.js) ; assemblée en page unique par outils/construire-app.js
-outils/          retro-test.js (calibrage de methode.md sur l'historique), projections.js (résumé de contrôle), construire-app.js (npm run app), maquettes.js + vignettes.py
+src/moteur/      plan v0.1 : moteur pur (parametres.js, jouer.js, projection.js, simulation.js, compositions.js) + node.js (chargement côté Node)
+app/             interface : Accueil, Propositions, Mes cartes (index.html, style.css, app.js) ; assemblée en page unique par outils/construire-app.js
+outils/          retro-test.js et retro-test-distribution.js (calibrage de methode.md sur l'historique), projections.js et propositions.js (contrôles sur les vraies données), construire-app.js (npm run app), maquettes.js + vignettes.py
 src/recuperation/  plan v0.1 : api.js (débit, proxy, lecture seule), requetes.js, normaliser.js (modèle commun), historique.js (fusion incrémentale), index.js (npm run recuperer)
 src/             recuperation.js, projection.js, page.js : ancienne chaîne de l'étape 1, à remplacer par src/moteur/ et app/
 data/dernier.json   dernière récupération complète (meta, cartes, joueurs avec historique 40 matchs, matchs, paliers), lue par l'interface ; **non versionné** (8 Mo, régénéré en 21 s par `npm run recuperer`). **Trop lourd tel quel pour l'artifact** (objectif : ouverture en moins de 3 s sur iPhone) : à alléger à l'étape 5 bis (clés courtes, joueurs utiles seulement…)
@@ -177,7 +177,15 @@ Pistes : calibrer les poids sur l'historique ; utiliser les cotes du match (aujo
   A (riche : vignettes, jauge, fiche en volet avec historique en barres) https://claude.ai/artifact/Ehb1E4gimz47VEJx2urLvw ;
   B (ultra minimaliste : une ligne par carte, détail déplié) https://claude.ai/artifact/TPHUGSmfbybRq7qSqp1FMj.
   Générées par `node outils/maquettes.js` (gabarits `outils/maquettes/a.html` et `b.html`, données du moteur v2 ; pages dans `sorties/maquettes/`, non versionnées). Republier au même chemin de fichier pour garder les adresses.
-- Étape 3 ensuite : `simulation.js` (Monte-Carlo, probabilité de franchir le palier, capitaine) et `compositions.js`.
+
+## Étape 3 du plan v0.1 (faite le 2026-11-07) : Arcade solo (football, et NBA par la même mécanique)
+- ✅ `methode.md` **v3**, sections 5 et 6. Simulation de Monte-Carlo à graine fixe (5 000 tirages) : joue ou non (p), situation (q), score **rééchantillonné dans ses scores passés avec un léger bruit** (0,35 σ football, 0,5 σ NBA), borné, × bonus, × 1,5 pour le capitaine. Choix confirmé par rétro-test (`node outils/retro-test-distribution.js`) : mieux calibré qu'une loi normale ; léger optimisme restant (53 à 55 % des scores réels sous la médiane prédite).
+- ✅ `src/moteur/simulation.js` et `compositions.js` : cartes admissibles (statut ok, p ≥ seuil, compétition Arcade, rareté, non jouées, **match pas encore commencé**), un joueur une seule fois (**à vérifier dans le jeu**), postes et capitaine (football), étoiles ≤ 16 inclus (NBA) ; présélection par approximation normale (meilleurs candidats par poste) puis simulation des 60 meilleures équipes ; propositions prudente (montrée en premier), équilibrée, ambitieuse (seuil abaissé à 60 %, montrée si elle fait mieux).
+- ✅ 10 situations dans `tests/compositions.test.js` + 2 contrôles de simulation (30 tests au total).
+- ✅ Écrans **Accueil** (paliers, résumé de la proposition prudente) et **Propositions** (football, NBA) dans `app/`, onglets par l'adresse (`#accueil`, `#propositions-football`, `#propositions-nba`, `#cartes`) ; « J'ai joué cette équipe » marque les 5 cartes. Mesuré dans la page (Chromium, format iPhone 13) : Accueil peint en 0,5 s, propositions football prêtes en 1,2 s, NBA en 1,6 s ; avec le processeur ralenti 4 fois : 0,7 s, 3,6 s et 5,3 s. Page de 2,5 Mo (180 vignettes).
+- Sur les données du 2026-11-07 (`node outils/propositions.js football|nba`) : football palier 300, environ 68-70 % de chances de passer (Kane capitaine) ; **NBA palier 180, 26 à 34 %** seulement.
+- **À vérifier dans le jeu** : un même joueur peut-il figurer deux fois (deux cartes) ? Une équipe peut-elle mêler des matchs de jours différents (supposé oui : « jouer tôt permet de valider vite », mais non confirmé) ?
+- Pistes : compositions officielles (test 3 : elles apparaissent vers H-1) pour mettre p à 1 ou 0 et pour le mode créneau unique (étape 4) ; corrélation entre coéquipiers.
 
 ## Étape 3 (à venir) : conseil avant chaque journée
 Vérifier titulaires et blessures avec des sources citées et datées, signaler les pièges, proposer 2 ou 3 compositions. L'utilisateur valide dans l'appli Sorare.

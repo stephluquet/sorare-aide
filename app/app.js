@@ -1,4 +1,4 @@
-// Interface « Mes cartes » (maquette A retenue le 2026-11-07).
+// Interface : Accueil, Propositions (football, NBA) et Mes cartes (maquette A retenue le 2026-11-07).
 // Fonctionne dans l'artifact (données intégrées dans #donnees) et hors artifact
 // (données lues dans donnees-app.json à côté de la page). Le moteur v2 tourne ici,
 // dans le navigateur ; méthode et règles viennent des données (methode.md, regles/).
@@ -8,6 +8,7 @@
 // sinon stockage du navigateur.
 
 import { projeterCarte } from '../src/moteur/projection.js';
+import { proposer } from '../src/moteur/compositions.js';
 
 // ---------- Données ----------
 const STATUTS_CODES = { F: 'FINAL', R: 'REVIEWING', D: 'DID_NOT_PLAY' };
@@ -116,6 +117,27 @@ function statut(l) {
 const disponible = (l) => statut(l) === 'probable' && l.pr.eligibleArcade && l.pr.siJoue != null && !jouees(l.c.sport).has(l.c.id);
 
 const vue = { sport: 'football', poste: null, creneau: '', tri: 'e', dispo: true };
+
+// ---------- Propositions (calculées dans le navigateur, mises en cache) ----------
+const cache = new Map();
+function propositions(sport) {
+  const palier = palierEnCours(sport); if (!palier) return null;
+  const J = jouees(sport);
+  const cle = [sport, palier.cible, seuil(), [...J].sort().join(','), Math.floor(Date.now() / 60000)].join('|');
+  if (!cache.has(cle)) {
+    const t0 = performance.now();
+    const L = lignes.filter((l) => l.c.sport === sport).map((l) => ({ carte: l.c, joueur: l.j, match: l.m, projection: l.pr }));
+    const r = proposer(L, D.P, { sport, cible: palier.cible, regle: D.regles[sport], seuil: seuil(), jouees: J, maintenant: Date.now() });
+    r.dureeMs = performance.now() - t0;
+    cache.set(cle, r);
+  }
+  return cache.get(cle);
+}
+// Calcul différé : attend que la page soit réellement affichée (deux images), puis
+// enchaîne les calculs un par un pour ne jamais bloquer l'affichage longtemps.
+let file = Promise.resolve();
+const apresAffichage = () => new Promise((ok) => requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(ok, 0))));
+const plusTard = (f) => (file = file.then(apresAffichage).then(f));
 const cleCreneau = (d) => fCle.format(new Date(d));
 
 function afficherAge() {
@@ -265,15 +287,126 @@ function basculer(sport, id) {
   tout();
 }
 
-function tout() { afficherPaliers(); commandes(); liste(); afficherStockage(); }
+// ---------- Accueil ----------
+const pct = (x) => (x == null ? '–' : `${Math.round(x * 100)} %`);
+const ETATS = { LINEUP_SET: 'composition posée', PLAYABLE: 'à jouer', LIVE: 'en cours', FAILED: 'échoué', LOCKED: 'verrouillé' };
+
+function afficherAccueil() {
+  $('blocs').innerHTML = ['football', 'nba'].map((s) => {
+    const p = palierEnCours(s), n = jouees(s).size;
+    if (!p) return `<div class="bloc"><h2>${SPORTS[s]}</h2><div class="resume">Tous les paliers de ce plateau sont passés.</div></div>`;
+    return `<div class="bloc">
+      <h2>${SPORTS[s]}<span class="sous">palier ${p.niveau + 1} sur ${D.paliers.filter((x) => x.sport === s).length}</span></h2>
+      <div><span class="cible">${p.cible}</span> <span class="sous">points à atteindre</span></div>
+      <div class="resume">${ETATS[p.etat] ?? esc(p.etat)}${p.echecs ? ` · ${p.echecs} échec${p.echecs > 1 ? 's' : ''}` : ''} · ${n ? `${n} carte${n > 1 ? 's' : ''} déjà jouée${n > 1 ? 's' : ''}` : 'aucune carte marquée jouée'}</div>
+      <div class="resume" id="resume-${s}">Calcul de la meilleure équipe…</div>
+      <a class="bouton principal lien" href="#propositions-${s}">Voir les propositions</a>
+    </div>`;
+  }).join('');
+  for (const s of ['football', 'nba']) {
+    if (!palierEnCours(s)) continue;
+    plusTard(() => propositions(s)).then((r) => {
+      const el = $(`resume-${s}`); if (!el) return;
+      const e = r?.prudente;
+      el.innerHTML = e ? `Prudente : <b>${pct(e.pPasser)}</b> de chances de passer · équipe complète <b>${pct(e.pComplete)}</b> · verrouillée ${esc(quand(e.verrouillage))}`
+        : esc(r?.message ?? 'Pas de proposition.');
+    });
+  }
+}
+
+// ---------- Propositions ----------
+const TITRES = {
+  prudente: ['Prudente', 'Presque aussi bonne que la meilleure, avec le plus de chances que les 5 jouent.'],
+  equilibree: ['Équilibrée', 'La plus grande chance de franchir le palier.'],
+  ambitieuse: ['Ambitieuse', 'Encore plus de chances de passer, en acceptant des joueurs moins sûrs de jouer.'],
+};
+
+function carteProposition(nom, e, sport, principale) {
+  const [titre, pourquoi] = TITRES[nom];
+  const parId = new Map(lignes.map((l) => [l.c.id, l]));
+  const membres = e.cartes.map((id) => parId.get(id)).sort((a, b) => (a.m?.debutUTC ?? '').localeCompare(b.m?.debutUTC ?? ''));
+  const dernier = membres.map((l) => l.m.debutUTC).sort().at(-1);
+  return `<article class="proposition${principale ? ' principale' : ''}">
+    <div><h2>${titre}</h2><div class="pourquoi">${pourquoi}</div></div>
+    <div class="chiffres-cle">
+      <div class="case-chiffre fort"><span>Chances de passer</span><b>${pct(e.pPasser)}</b></div>
+      <div class="case-chiffre"><span>Les 5 jouent</span><b>${pct(e.pComplete)}</b></div>
+      <div class="case-chiffre"><span>Score moyen</span><b>${nb(e.scoreMoyen)}</b></div>
+      <div class="case-chiffre"><span>Verrouillage</span><b style="font-size:1.05rem">${esc(quand(e.verrouillage))}</b></div>
+    </div>
+    <div class="joueurs">${membres.map((l) => {
+      const st = statut(l);
+      return `<div class="joueur">${vignette(l)}<div style="min-width:0">
+          <div class="nom">${esc(l.j.nom)}${e.capitaine === l.c.id ? '<span class="capitaine">C</span>' : ''}</div>
+          <div class="meta"><span>${esc(l.j.postes.join('/'))}${sport === 'nba' && l.j.etoiles != null ? ` · ${nb(l.j.etoiles, 1)} ★` : ''}</span><span>${esc(quand(l.m.debutUTC))} · ${l.lieu === 'ext' ? '@ ' : l.lieu === 'dom' ? 'vs ' : ''}${esc(l.adv ?? '?')}</span></div>
+          <div class="puces"><span class="etiq ${st}">${LIBELLES[st]}</span>${l.c.bonusPct ? `<span class="etiq bonus">${esc(l.c.collection)} +${nb(l.c.bonusPct)} %</span>` : ''}</div>
+        </div>
+        <div class="droite"><b>${pct(l.pr.p)}</b>joue · ${nb(l.pr.siJoue)} pts</div></div>`;
+    }).join('')}</div>
+    <div class="sous">${sport === 'nba' ? `${nb(e.etoiles, 1)} étoiles sur 16 · ` : ''}Résultat connu après le dernier match (${esc(quand(dernier))}).</div>
+    <div class="actions"><button type="button" class="bouton" data-jouer="${esc(e.cartes.join(','))}" data-sport="${sport}">J'ai joué cette équipe</button></div>
+  </article>`;
+}
+
+function afficherPropositions(sport) {
+  const p = palierEnCours(sport);
+  $('titre-propositions').textContent = `${SPORTS[sport]} · palier ${p ? p.cible : '—'}`;
+  if (!p) { $('contexte-propositions').textContent = ''; $('propositions').innerHTML = '<p class="attente">Tous les paliers de ce plateau sont passés.</p>'; return; }
+  const n = jouees(sport).size;
+  $('contexte-propositions').textContent = (p.etat === 'LINEUP_SET' ? 'Une composition est déjà posée : ces propositions servent à la tentative suivante si elle échoue. Pense à marquer ses cartes comme jouées. · ' : '') +
+    `Seuil de chances de jouer : ${Math.round(seuil() * 100)} % (réglable dans Mes cartes) · ${n ? `${n} carte${n > 1 ? 's' : ''} déjà jouée${n > 1 ? 's' : ''} à ce palier` : 'aucune carte marquée jouée à ce palier'}.`;
+  $('propositions').innerHTML = '<p class="attente">Simulation des meilleures équipes…</p>';
+  plusTard(() => propositions(sport)).then((r) => {
+    if (vueCourante() !== `propositions-${sport}`) return;
+    if (!r.equilibree) { $('propositions').innerHTML = `<p class="attente">${esc(r.message)}</p>`; return; }
+    const memes = r.prudente.cartes.join() === r.equilibree.cartes.join() && r.prudente.capitaine === r.equilibree.capitaine;
+    const ecartees = Object.entries(r.ecartees).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<li>${v} ${esc(k)}</li>`).join('');
+    $('propositions').innerHTML =
+      carteProposition('prudente', r.prudente, sport, true) +
+      (memes ? '<p class="sous">L’équipe équilibrée est la même que la prudente.</p>' : carteProposition('equilibree', r.equilibree, sport, false)) +
+      (r.ambitieuse ? carteProposition('ambitieuse', r.ambitieuse, sport, false) : '<p class="sous">Pas de proposition ambitieuse : accepter des joueurs moins sûrs ne fait pas mieux.</p>') +
+      `<details class="ecartees"><summary>${r.admissibles} cartes retenues, ${r.nbEquipes} équipes comparées en ${(r.dureeMs / 1000).toFixed(1)} s</summary><ul>${ecartees}</ul>` +
+      `<p>Chances calculées par ${D.P.simulation.tirages} tirages (méthode v${D.P.version}). Les joueurs sont tirés indépendamment : deux coéquipiers ont en réalité des scores liés.</p></details>`;
+  });
+}
+
+function jouerEquipe(sport, ids) {
+  const p = palierEnCours(sport); if (!p) return;
+  const ensemble = jouees(sport);
+  for (const id of ids) ensemble.add(id);
+  etatUtilisateur = { ...etatUtilisateur, [sport]: { cible: p.cible, jouees: [...ensemble], misAJour: new Date().toISOString() } };
+  stockage.enregistrer(etatUtilisateur);
+  tout();
+}
+
+// ---------- Navigation ----------
+const VUES = ['accueil', 'propositions-football', 'propositions-nba', 'cartes'];
+const vueCourante = () => (VUES.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'accueil');
+
+function tout() {
+  const v = vueCourante();
+  $('vue-accueil').hidden = v !== 'accueil';
+  $('vue-propositions').hidden = !v.startsWith('propositions-');
+  $('vue-cartes').hidden = v !== 'cartes';
+  document.querySelectorAll('#onglets a').forEach((a) => (a.dataset.vue === v ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')));
+  afficherPaliers(); afficherStockage();
+  if (v === 'accueil') afficherAccueil();
+  else if (v === 'cartes') { commandes(); liste(); }
+  else afficherPropositions(v.split('-')[1]);
+}
 
 $('sports').onclick = (e) => { const s = e.target.closest('button')?.dataset.sport; if (s) { vue.sport = s; vue.poste = null; vue.creneau = ''; tout(); } };
 $('postes').onclick = (e) => { const b = e.target.closest('button'); if (b) { vue.poste = b.dataset.poste || null; tout(); } };
 $('creneau').onchange = (e) => { vue.creneau = e.target.value; liste(); };
 $('tri').onchange = (e) => { vue.tri = e.target.value; liste(); };
-$('dispo').onchange = (e) => { vue.dispo = e.target.checked; tout(); };
+$('dispo').onchange = (e) => { vue.dispo = e.target.checked; commandes(); liste(); };
 $('seuil').onchange = (e) => { etatUtilisateur = { ...etatUtilisateur, seuil: Number(e.target.value) }; stockage.enregistrer(etatUtilisateur); tout(); };
 $('liste').onclick = (e) => { const b = e.target.closest('.ligne'); if (b) fiche(b.dataset.id); };
+$('propositions').onclick = (e) => {
+  const b = e.target.closest('[data-jouer]'); if (!b) return;
+  jouerEquipe(b.dataset.sport, b.dataset.jouer.split(','));
+};
+window.addEventListener('hashchange', () => { window.scrollTo(0, 0); tout(); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') $('voile').hidden = true; });
 
 afficherAge();

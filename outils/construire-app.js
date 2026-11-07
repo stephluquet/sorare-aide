@@ -12,7 +12,7 @@ import { execFileSync } from 'node:child_process';
 import { join } from 'node:path';
 import { chargerEntrees, projeterTout, RACINE } from '../src/moteur/node.js';
 
-const NB_VIGNETTES = { football: 60, nba: 30 };
+const NB_VIGNETTES = { football: 120, nba: 60 };
 const FORMAT = 1;
 const lire = (...p) => readFileSync(join(RACINE, ...p), 'utf8');
 
@@ -33,7 +33,7 @@ const app = {
   P,
   regles,
   paliers: donnees.paliers,
-  cartes: donnees.cartes.map(({ id, sport, joueurId, collection, bonusPct }) => ({ id, sport, joueurId, collection, bonusPct })),
+  cartes: donnees.cartes.map(({ id, sport, joueurId, rarete, collection, bonusPct }) => ({ id, sport, joueurId, rarete, collection, bonusPct })),
   joueurs: donnees.joueurs.map((j) => ({
     id: j.id, sport: j.sport, nom: j.nom, postes: j.postes, club: j.club, tier: j.tier, etoiles: j.etoiles,
     statutSorare: j.statutSorare, blessures: j.blessures, suspensions: j.suspensions, prochainMatchId: j.prochainMatchId,
@@ -43,12 +43,15 @@ const app = {
   vignettes: {},
 };
 
-// ---------- Vignettes des meilleures cartes proposables ----------
+// ---------- Vignettes des cartes susceptibles d'être proposées ----------
+// Cartes ni exclues ni douteuses, éligibles Arcade, au-dessus du seuil de la proposition
+// ambitieuse : les meilleures espérances par sport.
 const tout = projeterTout(entrees);
 const dossierVignettes = join(RACINE, 'data', 'vignettes');
 const choisies = [];
 for (const sp of ['football', 'nba']) {
-  choisies.push(...tout.filter((x) => x.carte.sport === sp && x.carte.visuelUrl && x.projection.proposable)
+  choisies.push(...tout.filter((x) => x.carte.sport === sp && x.carte.visuelUrl && x.projection.statut === 'ok' && x.projection.eligibleArcade &&
+      x.projection.esperance != null && x.projection.p >= P.simulation.ambitieuse_seuil_jouer)
     .sort((a, b) => b.projection.esperance - a.projection.esperance).slice(0, NB_VIGNETTES[sp]).map((x) => x.carte));
 }
 mkdirSync(dossierVignettes, { recursive: true });
@@ -65,6 +68,8 @@ const sansModules = (code) => code.replace(/^import .*? from '.*?';\n/gm, '').re
 const script = [
   ['src/moteur/jouer.js', lire('src', 'moteur', 'jouer.js')],
   ['src/moteur/projection.js', lire('src', 'moteur', 'projection.js')],
+  ['src/moteur/simulation.js', lire('src', 'moteur', 'simulation.js')],
+  ['src/moteur/compositions.js', lire('src', 'moteur', 'compositions.js')],
   ['app/app.js', lire('app', 'app.js')],
 ].map(([nom, code]) => `// ===== ${nom} =====\n${sansModules(code)}`).join('\n');
 
