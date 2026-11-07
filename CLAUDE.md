@@ -48,6 +48,7 @@ npm test                                     # rejoue tests/cas/
 | Statut de jeu Sorare (football) | `... on Player { playingStatus }` | Catégorie : `STARTER`, `REGULAR`, `SUBSTITUTE`, `SUPER_SUBSTITUTE`, `NOT_PLAYING`, `RETIRED`. Calcul non publié : affiché, hors formule. |
 | Projection Sorare | `... on Player { nextClassicFixtureProjectedScore }`, `... on NBAPlayer { … }` | Football : seulement 27 cartes sur 635. NBA : toutes. Modèle opaque : affiché pour comparaison, hors formule. |
 | Probabilité de titularisation | `... on Player { nextClassicFixturePlayingStatusOdds { starterOddsBasisPoints substituteOddsBasisPoints nonPlayingOddsBasisPoints } }`, `PlayerGameStats.footballPlayingStatusOdds` | **Toujours `null` avec notre clé**, testé sur 16 joueurs dont Kane et Mbappé, même pour un match du jour. Probablement réservé aux comptes connectés. |
+| Progression Arcade | `user(slug:) { setBoard(mode: CAREER, sport: FOOTBALL) { title steps { level target state ... on CareerStep { maxLineupsCount remainingLineupsCount pendingLineupsCount lockedLineupsCount } displayedTypedRules { __typename } } } }` | **Public.** Paliers et cibles identiques à `regles/` ; `state` : `CLAIMED` (passé), `LINEUP_SET`, `LOCKED`, `PLAYABLE`, `LIVE`, `FAILED`… ; `maxLineupsCount` = 4. Sens de `remainingLineupsCount` à confirmer avec l'utilisateur. **Refusés sans connexion** (« You should log in ») : `myCurrentStep`, `myLineups` → les cartes bloquées doivent être saisies par l'utilisateur. `setBoard(mode: SQUAD)` revient `null`. |
 | À ne pas utiliser pour le bonus | `power`, `powerBreakdown` | `power` vaut 1,000 partout : c'est le mode Pro. |
 | Bonus « même club » | `powerBreakdown { sameActiveClubBasisPoints }` | Vaut 0 carte par carte (dépend sans doute de la composition) : **à vérifier**. |
 
@@ -68,6 +69,7 @@ tests/*.test.js  lanceur des cas (node --test)
 src/             recuperation.js (API), projection.js (méthode), page.js (HTML) ; compositions.js à l'étape 2
 data/            données récupérées, datées : cartes-<football|nba>-AAAA-MM-JJ.json (une carte par ligne)
 sorties/         pages HTML produites, autonomes, lisibles sur téléphone
+docs/            briefs destinés à l'utilisateur (docs/brief-api-sorare.md : ce que l'API permet ou non)
 R/cartes.R       ancien script R (liste des cartes + L5/L15 en CSV), antérieur au projet JS
 ```
 
