@@ -7,12 +7,12 @@
 //   met à jour data/historique/<sport>/<joueurId>.json
 // Lecture seule, au plus 150 requêtes par minute. Progression sur la sortie d'erreur.
 
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { appelGraphql, compteur, relancerViaProxySiBesoin } from './api.js';
-import { CARTES, HISTORIQUE, PALIERS } from './requetes.js';
-import { matchHistorique, normaliserCarte, normaliserJoueur, normaliserMatch, normaliserPaliers } from './normaliser.js';
+import { CARTES, COMPOSITIONS, HISTORIQUE, PALIERS } from './requetes.js';
+import { matchHistorique, normaliserCarte, normaliserCompositions, normaliserJoueur, normaliserMatch, normaliserPaliers } from './normaliser.js';
 import { besoinHistoriqueComplet, cheminArchive, ecrireArchive, fusionner, lireArchive, trou } from './historique.js';
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -80,6 +80,24 @@ async function recupererSport(slug, sport, { sansHistorique, anomalies }) {
     }
   }
 
+  // 3 bis. Compositions officielles des matchs de football proches (publiées vers H-1)
+  if (sport === 'football') {
+    const P = JSON.parse(readFileSync(join(RACINE, 'methode.md'), 'utf8').match(/<!-- parametres:debut -->\s*```json\s*([\s\S]*?)```/)[1]);
+    const horizon = Date.now() + P.compositions_officielles.horizon_heures * 3600_000;
+    const proches = [...matchs.values()].filter((m) => Date.parse(m.debutUTC) > Date.now() - 2 * 3600_000 && Date.parse(m.debutUTC) <= horizon);
+    let publiees = 0;
+    for (const m of proches) {
+      try {
+        const d = await appelGraphql(COMPOSITIONS, { id: m.id.replace(/^Game:/, '') });
+        m.compositionsOfficielles = normaliserCompositions(d.football?.game, new Date().toISOString());
+        if (Object.values(m.compositionsOfficielles?.equipes ?? {}).some(Boolean)) publiees++;
+      } catch (e) {
+        anomalies.push(`${tag} compositions illisibles pour ${m.id} : ${e.message}`);
+      }
+    }
+    progression(`${tag} compositions officielles : ${publiees} publiées sur ${proches.length} matchs dans les ${P.compositions_officielles.horizon_heures} h`);
+  }
+
   // 4. Historique incrémental
   const aCompleter = [];
   const recusParJoueur = new Map();
@@ -136,8 +154,20 @@ async function principal() {
     const r = await recupererSport(slug, sport, { sansHistorique: args.includes('--sans-historique'), anomalies });
     for (const k of Object.keys(tout)) tout[k].push(...r[k]);
   }
+  // Un sport non récupéré cette fois-ci est repris tel quel de la récupération précédente.
+  const recupereParSport = Object.fromEntries(sports.map((s) => [s, debut.toISOString()]));
+  const precedent = join(RACINE, 'data', 'dernier.json');
+  if (existsSync(precedent)) {
+    const ancien = JSON.parse(readFileSync(precedent, 'utf8'));
+    for (const s of ['football', 'nba'].filter((x) => !sports.includes(x))) {
+      if (!ancien.cartes?.some((c) => c.sport === s)) continue;
+      for (const k of Object.keys(tout)) tout[k].push(...ancien[k].filter((x) => x.sport === s));
+      recupereParSport[s] = ancien.meta.recupereParSport?.[s] ?? ancien.meta.recupereA;
+    }
+  }
   const meta = {
     format: FORMAT,
+    recupereParSport,
     slug,
     sports,
     recupereA: debut.toISOString(),

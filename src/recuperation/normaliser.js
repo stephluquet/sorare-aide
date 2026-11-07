@@ -68,6 +68,18 @@ export function normaliserMatch(g, sport) {
   };
 }
 
+// Compositions officielles : par équipe (slug), titulaires et remplaçants (slugs de joueurs).
+export function normaliserCompositions(g, releveA) {
+  if (!g) return null;
+  const cote = (f) => (f?.startingLineupAvailable
+    ? { titulaires: (f.startingLineup ?? []).flat().map((p) => p.slug), remplacants: (f.bench ?? []).map((p) => p.slug) }
+    : null);
+  return {
+    releveA,
+    equipes: Object.fromEntries([[g.homeTeam?.slug, cote(g.homeFormation)], [g.awayTeam?.slug, cote(g.awayFormation)]].filter(([s]) => s)),
+  };
+}
+
 export function normaliserCarte(c, sport) {
   const b = c.skinEdition?.bonus;
   return {

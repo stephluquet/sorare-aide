@@ -100,3 +100,21 @@ if (sport === 'football') {
     console.log(`  part de titulaire quand il joue, demi-vie ${String(h).padStart(8)} : Brier ${(s / n).toFixed(4)}`);
   }
 }
+
+// Remplaçant annoncé (sur la feuille, pas titulaire) : chance d'entrer en jeu (étape 4).
+// p = (Σ w × entré + a × taux global) / (Σ w + a), sur ses matchs passés comme remplaçant (entré ou banc).
+if (sport === 'football') {
+  const ech = echantillons.filter(([c]) => c.situation === 'entre' || c.situation === 'banc');
+  const taux = ech.filter(([c]) => c.situation === 'entre').length / ech.length;
+  console.log(`\nRemplaçant annoncé : ${ech.length} matchs, entrée en jeu ${(taux * 100).toFixed(1)} %`);
+  for (const h of [3, 5, 10, Infinity]) for (const a of [0, 2, 4, 8]) {
+    let s = 0;
+    for (const [c, an] of ech) {
+      const remp = an.filter((m) => m.situation === 'entre' || m.situation === 'banc');
+      let n = 0, d = 0; remp.forEach((m, i) => { const w = poids(i, h); d += w; n += w * (m.situation === 'entre'); });
+      const p = (n + a * taux) / (d + a || 1);
+      s += (p - (c.situation === 'entre')) ** 2;
+    }
+    console.log(`  demi-vie ${String(h).padStart(8)}, a priori ${a} : Brier ${(s / ech.length).toFixed(4)}`);
+  }
+}

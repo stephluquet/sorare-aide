@@ -70,5 +70,13 @@
   "score_fige_minutes_apres_match": 5,
   "rarete_autorisee": [
     "common"
-  ]
+  ],
+  "joueur_unique": {
+    "valeur": true,
+    "source": "utilisateur, 2026-11-07 : deux cartes du même joueur ne peuvent pas être dans la même équipe"
+  },
+  "jours_differents_autorises": {
+    "valeur": true,
+    "source": "utilisateur, 2026-11-07 : une équipe peut mêler des matchs de jours différents"
+  }
 }

@@ -21,7 +21,7 @@ function matchsJoues(joueur, P) {
   return matchsComptes(joueur, P).filter((m) => P.situations_jouees.includes(m.situation) && m.statut !== 'DID_NOT_PLAY');
 }
 
-export function scoreSiJoue(joueur, P) {
+export function scoreSiJoue(joueur, P, { situationConfirmee = null } = {}) {
   const sport = joueur.sport, S = P[sport];
   const joues = matchsJoues(joueur, P);
   if (!joues.length) return { mu: null, sigma: null, nbScores: 0 };
@@ -29,7 +29,9 @@ export function scoreSiJoue(joueur, P) {
   if (sport === 'football') {
     // Part de titulaire parmi les matchs joués
     const wq = joues.map((m, i) => poids(i, S.demi_vie_titulaire, m.date, P, sport));
-    const q = moyennePonderee(joues.map((m) => (m.situation === 'titulaire' ? 1 : 0)), wq);
+    // Composition officielle : titulaire → q = 1 ; remplaçant → q = 0 (methode.md, 1 bis)
+    const q = situationConfirmee === 'titulaire' ? 1 : situationConfirmee === 'remplacant' ? 0
+      : moyennePonderee(joues.map((m) => (m.situation === 'titulaire' ? 1 : 0)), wq);
     // Moyenne par situation, avec repli sur tous les matchs joués si trop peu de scores
     const ws = joues.map((m, i) => poids(i, S.demi_vie_score, m.date, P, sport));
     const tous = moyennePonderee(joues.map((m) => m.score), ws);
@@ -66,7 +68,7 @@ export function scoreSiJoue(joueur, P) {
  */
 export function projeterCarte(carte, joueur, match, P, regles = {}) {
   const jouer = probabiliteJouer(joueur, match, P, regles);
-  const score = scoreSiJoue(joueur, P);
+  const score = scoreSiJoue(joueur, P, { situationConfirmee: jouer.situationConfirmee });
   const raisons = [...jouer.raisons];
   let b = 1;
   if (carte.bonusPct == null) raisons.push('bonus de collection inconnu : 0 % par défaut');

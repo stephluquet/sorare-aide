@@ -82,6 +82,22 @@ query Historique($slug: String!, $first: Int!) {
   }
 }`;
 
+// Compositions officielles d'un match de football (identifiant sans le préfixe « Game: »).
+const FORMATION = 'startingLineupAvailable startingLineup { slug } bench { slug }';
+export const COMPOSITIONS = `
+query Compositions($id: ID!) {
+  football {
+    game(id: $id) {
+      id
+      statusTyped
+      homeTeam { slug }
+      awayTeam { slug }
+      homeFormation { ${FORMATION} }
+      awayFormation { ${FORMATION} }
+    }
+  }
+}`;
+
 export const PALIERS = `
 query Paliers($slug: String!, $sport: Sport!) {
   user(slug: $slug) {

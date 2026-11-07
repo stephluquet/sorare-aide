@@ -71,6 +71,28 @@ export function probabiliteJouer(joueur, match, P, regles = {}) {
   }
   if (statut === 'exclu') p = pHist === null ? null : 0;
 
+  // Composition officielle publiée (football) : elle l'emporte sur tout le reste (methode.md, 1 bis).
+  let situationConfirmee = null;
+  const compo = match?.compositionsOfficielles?.equipes?.[joueur.club?.slug];
+  if (compo && P.compositions_officielles) {
+    const C = P.compositions_officielles;
+    const garder = raisons.filter((r) => !/^(blessé|retour de blessure|statut Sorare|moins de)/.test(r));
+    if (compo.titulaires.includes(joueur.id)) {
+      situationConfirmee = 'titulaire'; p = C.p_titulaire; statut = 'ok';
+      raisons.length = 0; raisons.push(...garder, 'titulaire (composition officielle)');
+    } else if (compo.remplacants.includes(joueur.id)) {
+      situationConfirmee = 'remplacant'; statut = 'ok';
+      const remp = comptes.filter((m) => m.situation === 'entre' || m.situation === 'banc');
+      let n = 0, d = 0;
+      remp.forEach((m, i) => { const w = 0.5 ** (i / C.demi_vie_remplacant); d += w; n += w * (m.situation === 'entre'); });
+      p = (n + C.a_priori_remplacant * C.taux_entree_remplacant) / (d + C.a_priori_remplacant);
+      raisons.length = 0; raisons.push(...garder, 'remplaçant (composition officielle)');
+    } else {
+      situationConfirmee = 'absent'; p = 0; statut = 'exclu';
+      raisons.push('absent de la feuille de match (composition officielle)');
+    }
+  }
+
   // Éligibilité Arcade : la règle de compétition porte sur le match joué
   let eligibleArcade = Boolean(match);
   if (match && regles.competitionsAutorisees) {
@@ -78,5 +100,5 @@ export function probabiliteJouer(joueur, match, P, regles = {}) {
     if (!eligibleArcade) raisons.push(`prochain match hors compétitions Arcade (${match.competition ?? '?'})`);
   }
 
-  return { p, pHist, nbMatchs: comptes.length, statut, raisons, eligibleArcade };
+  return { p, pHist, nbMatchs: comptes.length, statut, raisons, eligibleArcade, situationConfirmee };
 }

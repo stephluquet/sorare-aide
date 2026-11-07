@@ -150,3 +150,28 @@ test('simulation : un joueur à p = 0,5 fait passer une fois sur deux environ', 
   const r = simulerEquipe(d, -1, 1, 100, { tirages: 5000, graine: 7 });
   assert.ok(Math.abs(r.pPasser - 0.5) < 0.03, `${r.pPasser}`);
 });
+
+// ---------- Compositions officielles (methode.md, 1 bis) ----------
+function avecCompo(l, { titulaires = [], remplacants = [] }) {
+  const match = { ...l.match, compositionsOfficielles: { releveA: '2026-11-08T14:00:00Z', equipes: { [l.joueur.club.slug]: { titulaires, remplacants } } } };
+  return { ...l, match, projection: projeterCarte(l.carte, l.joueur, match, P, COMP_FOOT) };
+}
+
+test('compositions officielles : titulaire annoncé → p = 0,99, q = 1, même s’il était déclaré blessé', () => {
+  const l = avecCompo(ligne('x', { blessures: [{ type: 'Knock', retourPrevu: '2026-11-30T00:00:00Z' }] }), { titulaires: ['x'] });
+  assert.equal(l.projection.statut, 'ok');
+  assert.equal(l.projection.p, P.compositions_officielles.p_titulaire);
+  assert.equal(l.projection.score.q, 1);
+  assert.ok(l.projection.raisons.some((r) => r.includes('titulaire (composition officielle)')));
+});
+
+test('compositions officielles : remplaçant → chance d’entrer, q = 0 ; absent de la feuille → exclu', () => {
+  const C = P.compositions_officielles;
+  const remp = avecCompo(ligne('y'), { remplacants: ['y'] });
+  // historique fictif sans match comme remplaçant : seul l'a priori compte
+  assert.ok(Math.abs(remp.projection.p - C.taux_entree_remplacant) < 1e-9);
+  assert.equal(remp.projection.score.q, 0);
+  const abs = avecCompo(ligne('z'), { titulaires: ['autre'] });
+  assert.equal(abs.projection.statut, 'exclu');
+  assert.equal(abs.projection.p, 0);
+});

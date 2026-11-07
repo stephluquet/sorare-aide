@@ -42,6 +42,13 @@ ignorent les matchs non joués.
   "min_matchs_historique": 5,
   "seuil_jouer": 0.80,
   "statuts_sorare_douteux": ["NOT_PLAYING", "RETIRED"],
+  "compositions_officielles": {
+    "horizon_heures": 6,
+    "p_titulaire": 0.99,
+    "taux_entree_remplacant": 0.466,
+    "a_priori_remplacant": 2,
+    "demi_vie_remplacant": 5
+  },
   "simulation": {
     "tirages": 5000,
     "graine": 20261107,
@@ -117,7 +124,30 @@ déclarée, `p` est donc plutôt prudente.
 | Suspension dans une autre compétition | `p` inchangée, alerte |
 | Statut Sorare dans `statuts_sorare_douteux` (football) | `p` inchangée, joueur **douteux** (statut cohérent avec l'historique : `NOT_PLAYING` → p_hist médiane 0,02, `STARTER` → 0,98, sur les cartes du 2026-11-07 ; utile pour les quelques joueurs annoncés absents qui jouaient encore) |
 | Club du joueur absent du prochain match (match de sélection) | `p` inchangée, joueur **douteux** |
-| Composition officielle publiée | *à venir* (test 3 du récap en cours) |
+| **Composition officielle publiée** (football) | **l'emporte sur tout le reste**, voir 1 bis |
+
+### 1 bis. Compositions officielles (football)
+
+Elles apparaissent dans l'API environ une heure avant le coup d'envoi
+(`Game.homeFormation` / `awayFormation`, relevé du 2026-11-07 : rien à H-2,
+publiées à H-57 min pour Leeds–Tottenham). La récupération les lit pour les
+matchs qui commencent dans les `horizon_heures` prochaines heures. Quand
+celle de l'équipe du joueur est publiée, elle remplace l'historique,
+les blessures et les statuts douteux :
+
+| Le joueur est… | p | situation (q) | statut |
+|---|---|---|---|
+| titulaire | `p_titulaire` | titulaire (q = 1) | ok, « confirmé » |
+| remplaçant | `(Σ w × entré + a × taux) / (Σ w + a)` | entré en jeu (q = 0) | ok |
+| absent de la feuille | 0 | — | exclu |
+
+Pour un remplaçant : `w = 0,5^(i / demi_vie_remplacant)` sur ses matchs passés
+comme remplaçant (entré en jeu ou resté sur le banc), `taux` =
+`taux_entree_remplacant`, `a` = `a_priori_remplacant`. Rétro-test (5 974 matchs
+où le joueur était remplaçant) : 46,6 % d'entrées en jeu en moyenne, mais de
+27 % à 75 % selon les joueurs (quartiles) ; la formule retenue fait passer le
+score de Brier de 0,249 (taux moyen pour tous) à 0,187. `p_titulaire` (0,99)
+est un choix : un titulaire annoncé joue presque toujours.
 
 **Filtre dur** : un joueur exclu ou douteux n'est jamais proposé. Seuil :
 seuls les joueurs avec `p ≥ seuil_jouer` sont proposés par défaut (réglable

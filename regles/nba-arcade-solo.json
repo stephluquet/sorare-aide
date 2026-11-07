@@ -46,5 +46,13 @@
     ]
   },
   "verrouillage": "équipe verrouillée au premier coup d'envoi d'un de ses joueurs (utilisateur, 2026-11-07)",
-  "joueur_qui_ne_joue_pas": 0
+  "joueur_qui_ne_joue_pas": 0,
+  "joueur_unique": {
+    "valeur": true,
+    "source": "utilisateur, 2026-11-07 : deux cartes du même joueur ne peuvent pas être dans la même équipe"
+  },
+  "jours_differents_autorises": {
+    "valeur": true,
+    "source": "utilisateur, 2026-11-07 : une équipe peut mêler des matchs de jours différents"
+  }
 }
