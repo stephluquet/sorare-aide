@@ -186,7 +186,7 @@ function blocFormeJoueur(l) {
   const SITU = { titulaire: 'T', entre: 'E', joue: 'J', banc: 'B', absent: 'A' };
   const tend = fj.tendance === 'hausse' ? '<span class="tendance hausse">▲ en forme</span>' : fj.tendance === 'baisse' ? '<span class="tendance baisse">▼ en baisse</span>' : fj.tendance === 'stable' ? '<span class="tendance">= stable</span>' : '';
   const pres = l.c.sport === 'football'
-    ? `titulaire ${fj.titulaire} fois et entré ${fj.joue - fj.titulaire} fois sur les ${fj.sur} derniers matchs de l'équipe`
+    ? `titulaire ${fj.titulaire} fois${fj.joue > fj.titulaire ? `, entré en jeu ${fj.joue - fj.titulaire} fois` : ''} sur les ${fj.sur} derniers matchs de l'équipe`
     : `a joué ${fj.joue} des ${fj.sur} derniers matchs${fj.minutesRecentes != null ? ` · ${nb(fj.minutesRecentes)} min sur ses 3 derniers (${nb(fj.minutesReference)} habituellement)` : ''}`;
   return `<div class="carte-forme"><h3>Le joueur ${tend}</h3>
     <div class="forme-resultats">${[...fj.derniers].reverse().map((m) => `<div class="res-match"><i class="sit-${m.situation}">${SITU[m.situation] ?? '?'}</i><b>${m.score == null ? '–' : Math.round(m.score)}</b></div>`).join('')}</div>
