@@ -116,7 +116,7 @@ function statut(l) {
 }
 const disponible = (l) => ['probable', 'confirme'].includes(statut(l)) && l.pr.eligibleArcade && l.pr.siJoue != null && !jouees(l.c.sport).has(l.c.id);
 
-const vue = { sport: 'football', poste: null, creneau: '', tri: 'e', dispo: true, mode: 'plusieurs', creneauOuvert: null, squadSport: 'football', squadJour: null };
+const vue = { sport: 'football', poste: null, etoiles: null, creneau: '', tri: 'e', dispo: true, mode: 'plusieurs', creneauOuvert: null, squadSport: 'football', squadJour: null };
 
 // ---------- Propositions (calculées dans le navigateur, mises en cache) ----------
 const cache = new Map();
@@ -212,8 +212,18 @@ function commandes() {
   if (vue.creneau && !journees.has(vue.creneau)) vue.creneau = '';
   $('creneau').innerHTML = '<option value="">Toutes les journées</option>' + [...journees.entries()].sort((a, b) => a[0].localeCompare(b[0]))
     .map(([k, n]) => `<option value="${k}" ${k === vue.creneau ? 'selected' : ''}>${libelleJournee(vue.sport, k)} (${n})</option>`).join('');
-  const TRIS = [['e', 'Tri : espérance'], ['p', 'Tri : chances de jouer'], ['d', "Tri : coup d'envoi"],
-    ...(vue.sport === 'nba' ? [['et', 'Tri : étoiles (1★ d’abord)'], ['pe', 'Tri : points par étoile']] : [])];
+  const TRIS = [['e', 'Tri : espérance'], ['p', 'Tri : chances de jouer'], ['d', "Tri : coup d'envoi"]];
+  // Filtre par étoiles (NBA) : un bouton par niveau présent, avec le nombre de cartes.
+  const filtreEtoiles = $('filtre-etoiles');
+  filtreEtoiles.hidden = vue.sport !== 'nba';
+  if (vue.sport === 'nba') {
+    const parNiveau = new Map();
+    for (const l of lignes) if (l.c.sport === 'nba' && l.j.etoiles != null && (!vue.dispo || disponible(l))) parNiveau.set(l.j.etoiles, (parNiveau.get(l.j.etoiles) ?? 0) + 1);
+    if (vue.etoiles != null && !parNiveau.has(vue.etoiles)) vue.etoiles = null;
+    filtreEtoiles.innerHTML = `<button type="button" class="puce" data-etoiles="" aria-pressed="${vue.etoiles == null}">Toutes ★</button>` +
+      [...parNiveau.entries()].sort((a, b) => a[0] - b[0]).map(([e, n]) =>
+        `<button type="button" class="puce puce-etoiles" data-etoiles="${e}" aria-pressed="${e === vue.etoiles}">★ ${nb(e, 1)} <small>(${n})</small></button>`).join('');
+  } else vue.etoiles = null;
   if (!TRIS.some(([k]) => k === vue.tri)) vue.tri = 'e';
   $('tri').innerHTML = TRIS.map(([k, t]) => `<option value="${k}" ${k === vue.tri ? 'selected' : ''}>${t}</option>`).join('');
   $('seuil').value = String(seuil());
@@ -240,13 +250,11 @@ function jauge(p) {
 function liste() {
   const J = jouees(vue.sport);
   const L = lignes.filter((l) => l.c.sport === vue.sport && (!vue.poste || l.j.postes.includes(vue.poste)) &&
+    (vue.etoiles == null || l.j.etoiles === vue.etoiles) &&
     (!vue.dispo || disponible(l)) && (!vue.creneau || (l.m && journee(l) === vue.creneau)));
   const esp = (l) => l.pr.esperance ?? -1;
-  const parEtoile = (l) => (l.pr.esperance == null || !l.j.etoiles ? -1 : l.pr.esperance / l.j.etoiles);
   const tri = { e: (a, b) => esp(b) - esp(a), p: (a, b) => (b.pr.p ?? -1) - (a.pr.p ?? -1),
-    d: (a, b) => (a.m?.debutUTC ?? '9').localeCompare(b.m?.debutUTC ?? '9'),
-    et: (a, b) => ((a.j.etoiles ?? 99) - (b.j.etoiles ?? 99)) || (esp(b) - esp(a)),
-    pe: (a, b) => parEtoile(b) - parEtoile(a) }[vue.tri] ?? ((a, b) => esp(b) - esp(a));
+    d: (a, b) => (a.m?.debutUTC ?? '9').localeCompare(b.m?.debutUTC ?? '9') }[vue.tri] ?? ((a, b) => esp(b) - esp(a));
   L.sort(tri);
   $('compte').textContent = `${L.length} carte${L.length > 1 ? 's' : ''}`;
   if (!L.length) { $('liste').innerHTML = '<div class="vide-liste">Aucune carte ne correspond. Décoche « disponibles seulement » pour tout voir.</div>'; return; }
@@ -524,6 +532,7 @@ function tout() {
 
 $('sports').onclick = (e) => { const s = e.target.closest('button')?.dataset.sport; if (s) { vue.sport = s; vue.poste = null; vue.creneau = ''; tout(); } };
 $('postes').onclick = (e) => { const b = e.target.closest('button'); if (b) { vue.poste = b.dataset.poste || null; tout(); } };
+$('filtre-etoiles').onclick = (e) => { const b = e.target.closest('button'); if (b) { vue.etoiles = b.dataset.etoiles === '' ? null : Number(b.dataset.etoiles); commandes(); liste(); } };
 $('creneau').onchange = (e) => { vue.creneau = e.target.value; liste(); };
 $('tri').onchange = (e) => { vue.tri = e.target.value; liste(); };
 $('dispo').onchange = (e) => { vue.dispo = e.target.checked; commandes(); liste(); };

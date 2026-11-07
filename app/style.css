@@ -161,3 +161,8 @@ details.ecartees summary { cursor: pointer; }
 .rangee select { min-width: 0; max-width: 100%; flex: 1 1 12rem; text-overflow: ellipsis; }
 .vue, .commandes { grid-template-columns: minmax(0, 1fr); }
 .commandes > * { min-width: 0; }
+
+.puce-etoiles { color: var(--etoile); }
+.puce-etoiles small { font-weight: 500; color: var(--doux); }
+.puce-etoiles[aria-pressed="true"] { background: var(--etoile); border-color: var(--etoile); color: var(--surface); }
+.puce-etoiles[aria-pressed="true"] small { color: var(--surface); }
