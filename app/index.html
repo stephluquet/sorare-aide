@@ -15,11 +15,21 @@
       </div>
       <div class="sport-global" id="sport-global" role="group" aria-label="Sport"></div>
     </div>
-    <nav class="onglets" id="onglets" aria-label="Modes">
-      <a data-vue="solo">Solo</a>
-      <a data-vue="squad">Squad</a>
-      <a data-vue="cartes">Mes cartes</a>
-    </nav>
+    <div class="barre-modes">
+      <nav class="onglets" id="onglets" aria-label="Modes">
+        <a data-vue="solo">Solo</a>
+        <a data-vue="squad">Squad</a>
+        <a data-vue="cartes">Mes cartes</a>
+      </nav>
+      <div class="outils">
+        <button type="button" class="bouton-rond" id="maj" aria-label="Mettre à jour les données" title="Mettre à jour les données"></button>
+        <button type="button" class="bouton-rond" id="aide" aria-label="Aide" title="Aide"></button>
+      </div>
+    </div>
+    <div class="progression" id="progression" hidden role="status" aria-live="polite">
+      <div class="jauge-maj" aria-hidden="true"><span id="prog-remplie"></span></div>
+      <div class="ligne-maj"><span id="prog-texte"></span><button type="button" class="bouton principal" id="prog-recharger" hidden>Afficher les nouvelles données</button></div>
+    </div>
   </header>
   <div class="sous" id="age">Chargement des données…</div>
   <div class="bandeau" id="bandeau" hidden></div>

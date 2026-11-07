@@ -43,6 +43,8 @@ const ICONES = {
   football: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5" ${trait}/><path d="M12 8.8l3.04 2.21-1.16 3.58h-3.76l-1.16-3.58z" fill="currentColor"/><path d="M12 8.8V2.6M15.04 11.01l5.9-1.9M13.88 14.59l3.65 5.03M10.12 14.59l-3.65 5.03M8.96 11.01l-5.9-1.9" ${trait}/></svg>`,
   nba: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5" ${trait}/><path d="M12 2.5v19M2.5 12h19M6 4.4c2.4 2.1 3.7 4.7 3.7 7.6s-1.3 5.5-3.7 7.6M18 4.4c-2.4 2.1-3.7 4.7-3.7 7.6s1.3 5.5 3.7 7.6" ${trait}/></svg>`,
   lune: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" ${trait}/></svg>`,
+  maj: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 1-14.2 5M4 12a8 8 0 0 1 14.2-5" ${trait}/><path d="M18.5 3v4.2h-4.2M5.5 21v-4.2h4.2" ${trait}/></svg>`,
+  aide: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5" ${trait}/><path d="M9.4 9.3a2.7 2.7 0 0 1 5.2 1c0 1.8-2.6 2.3-2.6 4" ${trait}/><circle cx="12" cy="17.4" r="1.1" fill="currentColor"/></svg>`,
   soleil: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" ${trait}/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" ${trait}/></svg>`,
 };
 const POSTES = { football: ['GK', 'DF', 'MD', 'FW'], nba: ['G', 'F', 'C'] };
@@ -669,7 +671,7 @@ function tout() {
   $('sport-global').innerHTML = Object.entries(SPORTS).map(([k, v]) =>
     `<a href="#${k}/${accueil ? 'solo' : ecran}" data-sport="${k}" aria-label="${v}" aria-current="${!accueil && k === vue.sport ? 'true' : 'false'}">${ICONES[k]}${SPORTS_COURTS[k]}</a>`).join('');
   // Modes du sport en cours (masqués sur l'accueil).
-  $('onglets').hidden = accueil;
+  $('onglets').hidden = accueil; // les outils (mise à jour, aide) restent visibles
   document.querySelectorAll('#onglets a').forEach((a) => {
     a.href = `#${vue.sport}/${a.dataset.vue}`;
     a.dataset.vue === ecran ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current');
@@ -709,6 +711,115 @@ $('modes').onclick = (e) => { const b = e.target.closest('[data-mode]'); if (b) 
 $('squad-jour').onchange = (e) => { vue.squadJour = e.target.value; afficherSquad(); };
 window.addEventListener('hashchange', () => { window.scrollTo(0, 0); tout(); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('voile').hidden) { $('voile').hidden = true; tout(); } });
+
+// ---------- Mise à jour manuelle ----------
+// Le bouton ↻ lance, par le connecteur « Claude Code Remote » (capacité mcp), la tâche programmée qui
+// récupère les données, reconstruit et republie l'appli. La session écrit son avancement dans le
+// document partagé actualisation/etat (db) : la barre suit ce document. Voir CLAUDE.md.
+const MAJ = { serveur: 'Claude Code Remote', outil: 'fire_trigger', tache: 'trig_01BXGayHMVXjJruFWEyV6TPN', dureeEstimeeS: 120, bloqueeApresMin: 15 };
+let etatMaj = null;          // dernier état lu dans db (null : pas de db ou pas encore lu)
+let demandeMaj = null;       // { t, message } : appui fait ici, en attente de la session
+let messageMaj = null;       // message d'erreur ou d'information hors db
+let majIndisponible = null;  // raison si le bouton ne peut pas marcher dans cette vue
+const plusRecent = (a, b) => (a && b ? Date.parse(a) > Date.parse(b) + 1000 : false);
+
+function afficherMaj() {
+  const e = etatMaj, maintenant = Date.now();
+  const enCours = e?.statut === 'en_cours' && (!e.debut || maintenant - Date.parse(e.debut) < MAJ.bloqueeApresMin * 60000);
+  const bloquee = e?.statut === 'en_cours' && !enCours;
+  const finie = e?.statut === 'termine' && plusRecent(e.donneesDe, D.meta.recupereA);
+  const erreurRecente = e?.statut === 'erreur' && demandeMaj && Date.parse(e.fin) > demandeMaj.t - 60000;
+  if (demandeMaj && (enCours || finie || erreurRecente)) demandeMaj = enCours ? demandeMaj : null;
+  let pourcent = null, texte = '', classe = '';
+  if (enCours) { pourcent = Math.max(5, e.pourcent ?? 5); texte = `${e.etape ?? 'Mise à jour…'} (${pourcent} %)`; }
+  else if (demandeMaj) {
+    const s = (maintenant - demandeMaj.t) / 1000;
+    pourcent = Math.min(8, 2 + s / 10); // en attendant que la session démarre et écrive
+    texte = demandeMaj.message ?? 'Demande envoyée : la mise à jour démarre (environ 2 min)…';
+  } else if (finie) { pourcent = 100; texte = `Nouvelles données publiées (${fHeure.format(new Date(e.donneesDe))}).`; classe = 'ok'; }
+  else if (erreurRecente || (e?.statut === 'erreur' && !demandeMaj && maintenant - Date.parse(e.fin) < 30 * 60000)) { texte = `La mise à jour a échoué : ${e.erreur ?? 'raison inconnue'}.`; classe = 'erreur'; }
+  else if (bloquee) { texte = 'La dernière mise à jour semble bloquée. Tu peux la relancer.'; classe = 'erreur'; }
+  if (messageMaj && !enCours) { texte = messageMaj; classe = 'erreur'; pourcent = null; }
+  const visible = Boolean(texte);
+  $('progression').hidden = !visible;
+  $('progression').className = `progression ${classe}`;
+  $('prog-remplie').style.width = `${pourcent ?? 0}%`;
+  $('progression').querySelector('.jauge-maj').hidden = pourcent == null;
+  $('prog-texte').textContent = texte;
+  $('prog-recharger').hidden = !finie;
+  const occupe = enCours || Boolean(demandeMaj);
+  $('maj').disabled = occupe || Boolean(majIndisponible);
+  $('maj').classList.toggle('tourne', occupe);
+  $('maj').title = majIndisponible ?? (occupe ? 'Mise à jour en cours' : 'Mettre à jour les données');
+}
+
+// Messages selon le code d'erreur du connecteur (jamais un seul message pour tout).
+function messageErreurMaj(err) {
+  switch (err?.code) {
+    case 'approval_required': case 'not_in_manifest': case 'consent_required':
+      return 'La mise à jour a besoin de ton accord pour le connecteur Claude Code Remote. Réappuie sur ↻ et accepte, ou écris « actualise » à Claude.';
+    case 'server_not_connected': case 'server_not_found':
+      return 'Connecteur Claude Code Remote introuvable : ajoute-le dans claude.ai (Réglages, Connecteurs), ou écris « actualise » à Claude.';
+    case 'needs_reauth': return 'Connecteur Claude Code Remote à reconnecter (claude.ai, Réglages, Connecteurs).';
+    case 'selection_required': return 'Choisis quel connecteur Claude Code Remote utiliser quand claude.ai te le demande, puis réappuie sur ↻.';
+    case 'blocked_by_policy': return 'Ton organisation bloque ce lancement : écris « actualise » à Claude.';
+    case 'tool_error': return `La tâche n'a pas pu être lancée : ${err.message ?? 'erreur'}.`;
+    case 'server_unavailable': case 'upstream_error': case 'cancelled':
+      return 'Pas de réponse nette : la mise à jour est peut-être partie. Attends une minute avant de réessayer.';
+    default: return `La mise à jour n'a pas pu être lancée (${err?.code ?? 'erreur inconnue'}). Écris « actualise » à Claude.`;
+  }
+}
+
+async function lancerMaj() {
+  messageMaj = null;
+  const mcp = await window.claude?.use?.('mcp');
+  if (!mcp) { messageMaj = 'Mise à jour impossible depuis cette vue : écris « actualise » à Claude.'; afficherMaj(); return; }
+  demandeMaj = { t: Date.now() };
+  afficherMaj();
+  try {
+    await mcp.callTool(MAJ.serveur, MAJ.outil, { trigger_id: MAJ.tache });
+    demandeMaj.message = etatMaj ? null : 'Mise à jour lancée : l’appli sera republiée dans 2 minutes environ. Recharge la page ensuite.';
+  } catch (err) {
+    const ambigu = ['server_unavailable', 'upstream_error', 'cancelled'].includes(err?.code);
+    if (!ambigu) demandeMaj = null;
+    messageMaj = messageErreurMaj(err);
+  }
+  afficherMaj();
+}
+
+async function brancherMaj() {
+  $('maj').innerHTML = ICONES.maj; $('aide').innerHTML = ICONES.aide;
+  $('maj').onclick = lancerMaj;
+  $('prog-recharger').onclick = () => location.reload();
+  afficherMaj();
+  setInterval(afficherMaj, 2000);
+  const [mcp, db] = await Promise.all([window.claude?.use?.('mcp') ?? null, window.claude?.use?.('db') ?? null]);
+  if (!mcp) { majIndisponible = 'Mise à jour indisponible ici : écris « actualise » à Claude.'; afficherMaj(); }
+  else {
+    // L'outil peut manquer à ce visiteur : on vérifie sans rien demander (listTools ne demande jamais).
+    mcp.listTools(MAJ.serveur).then((r) => {
+      const srv = r.servers.find((x) => x.server === MAJ.serveur);
+      if (srv && srv.authStatus !== 'unknown' && !srv.tools.some((t) => t.name === MAJ.outil)) {
+        majIndisponible = 'Ton connecteur Claude Code Remote ne permet pas de lancer la tâche : écris « actualise » à Claude.'; afficherMaj();
+      }
+    }).catch(() => {});
+  }
+  if (db) db.doc('actualisation/etat').onSnapshot((snap) => { etatMaj = snap.exists ? snap.data() : null; afficherMaj(); }, () => {});
+}
+
+// ---------- Aide (à venir) ----------
+$('aide').onclick = () => {
+  const v = $('voile');
+  v.innerHTML = `<div class="volet" role="dialog" aria-modal="true" aria-labelledby="titre-aide">
+    <h2 id="titre-aide">Aide</h2>
+    <p class="sous">L’aide de l’appli arrive bientôt.</p>
+    <div class="actions"><button type="button" class="bouton principal" id="fermer">Fermer</button></div></div>`;
+  v.hidden = false; ouvrirVolet(v);
+  $('fermer').onclick = () => { v.hidden = true; };
+  v.onclick = (e) => { if (e.target === v) v.hidden = true; };
+};
+
+brancherMaj();
 
 // ---------- Mode sombre ----------
 // Par défaut, celui du système ; le bouton force clair ou sombre, retenu dans ce navigateur (simple confort).

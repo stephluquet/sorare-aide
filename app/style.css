@@ -252,3 +252,22 @@ details.filtres .rangee + .rangee { margin-top: 6px; }
 .nom-sport svg { width: 22px; height: 22px; }
 .bloc[data-sport="football"] .nom-sport svg { color: var(--foot); }
 .bloc[data-sport="nba"] .nom-sport svg { color: var(--nba); }
+
+/* Deuxième ligne de l'en-tête : modes du sport, puis outils (mise à jour, aide) à droite */
+.barre-modes { display: flex; align-items: center; gap: 8px; }
+.outils { margin-left: auto; display: flex; gap: 6px; }
+.bouton-rond { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 999px; border: 1px solid var(--trait);
+  background: var(--surface); color: var(--encre); cursor: pointer; padding: 0; }
+.bouton-rond svg { width: 18px; height: 18px; }
+.bouton-rond:disabled { cursor: default; opacity: .7; }
+.bouton-rond:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: no-preference) { .bouton-rond.tourne svg { animation: tourne 1.2s linear infinite; } @keyframes tourne { to { transform: rotate(360deg); } } }
+/* Barre de chargement de la mise à jour */
+.progression { display: grid; gap: 6px; }
+.jauge-maj { height: 6px; border-radius: 999px; background: var(--trait); overflow: hidden; }
+.jauge-maj span { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 999px; transition: width .6s ease; }
+body[data-sport="football"] .jauge-maj span { background: var(--foot); }
+body[data-sport="nba"] .jauge-maj span { background: var(--nba); }
+.progression.ok .jauge-maj span { background: var(--ok); }
+.ligne-maj { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: .85rem; color: var(--doux); }
+.progression.erreur .ligne-maj { color: var(--attention); font-weight: 600; }
