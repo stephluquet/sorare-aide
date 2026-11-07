@@ -1,0 +1,19 @@
+{
+ "joueurId": "bryce-hopkins-20020907",
+ "misAJour": "2026-11-07T11:01:43.736Z",
+ "dernierHistoriqueComplet": "2026-11-07T11:01:06.790Z",
+ "matchs": [
+  {"matchId":"Game:e16e474c-9cbc-408a-917d-636ec7595eb3","date":"2026-11-05T02:00:00Z","competition":"NBA","domicile":true,"adversaire":"Toronto Raptors","statut":"FINAL","score":27.3,"situation":"joue","minutes":28},
+  {"matchId":"Game:efc03269-0d14-4dfa-8441-fc62b223d36a","date":"2026-11-03T02:00:00Z","competition":"NBA","domicile":true,"adversaire":"Portland Trail Blazers","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:4e983364-a5ce-413c-9dde-11a2564472b8","date":"2026-10-31T02:00:00Z","competition":"NBA","domicile":false,"adversaire":"Phoenix Suns","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:517f7568-317c-4497-82f4-3f135075ce7d","date":"2026-10-29T00:00:00Z","competition":"NBA","domicile":false,"adversaire":"New Orleans Pelicans","statut":"FINAL","score":-3.6,"situation":"joue","minutes":14},
+  {"matchId":"Game:eabd2562-01b3-41de-8210-530be27d03fc","date":"2026-10-27T02:00:00Z","competition":"NBA","domicile":true,"adversaire":"Golden State Warriors","statut":"FINAL","score":19.1,"situation":"joue","minutes":32},
+  {"matchId":"Game:7cdd5d5b-f17b-4060-ba97-241264d8cb62","date":"2026-10-25T01:00:00Z","competition":"NBA","domicile":true,"adversaire":"New Orleans Pelicans","statut":"FINAL","score":5.9,"situation":"joue","minutes":19},
+  {"matchId":"Game:6330c203-77e1-40fa-945b-a00713b4e3f7","date":"2026-10-23T01:30:00Z","competition":"NBA","domicile":false,"adversaire":"Oklahoma City Thunder","statut":"FINAL","score":1.2,"situation":"joue","minutes":2},
+  {"matchId":"Game:c6872b4d-df1e-4baf-a90b-0e5cee4fc5a7","date":"2026-10-17T02:30:00Z","competition":"NBA","domicile":false,"adversaire":"Los Angeles Lakers","statut":"REVIEWING","score":9.8,"situation":"joue","minutes":12},
+  {"matchId":"Game:a518da50-1e8e-4624-8850-06d588461efb","date":"2026-10-15T02:30:00Z","competition":"NBA","domicile":false,"adversaire":"LA Clippers","statut":"REVIEWING","score":4.7,"situation":"joue","minutes":13},
+  {"matchId":"Game:f5118cb7-0ab7-4557-be6a-050b292fc87f","date":"2026-10-12T01:00:00Z","competition":"NBA","domicile":true,"adversaire":"Chicago Bulls","statut":"REVIEWING","score":10.7,"situation":"joue","minutes":17},
+  {"matchId":"Game:ae2634a9-34d8-48f9-8da5-c60e6bd3098c","date":"2026-10-07T01:00:00Z","competition":"NBA","domicile":false,"adversaire":"Utah Jazz","statut":"REVIEWING","score":1.7,"situation":"joue","minutes":11},
+  {"matchId":"Game:ec344a74-6de0-4384-b57f-22f8c3de002e","date":"2026-10-04T23:00:00Z","competition":"NBA","domicile":true,"adversaire":"Utah Jazz","statut":"REVIEWING","score":6.4,"situation":"joue","minutes":12}
+ ]
+}

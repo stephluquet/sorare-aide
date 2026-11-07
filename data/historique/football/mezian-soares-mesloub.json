@@ -1,0 +1,23 @@
+{
+ "joueurId": "mezian-soares-mesloub",
+ "misAJour": "2026-11-07T11:01:36.097Z",
+ "dernierHistoriqueComplet": "2026-11-07T10:59:02.099Z",
+ "matchs": [
+  {"matchId":"Game:c2431665-ef05-4c66-a0b1-93aa8f22ea73","date":"2026-11-04T20:00:00Z","competition":"UEFA Champions League","domicile":true,"adversaire":"Calcio Como","statut":"FINAL","score":30.6,"situation":"entre","minutes":45},
+  {"matchId":"Game:ba9e398a-ca1f-453d-b986-339c3f6ee117","date":"2026-10-30T20:05:00Z","competition":"Ligue 1","domicile":false,"adversaire":"LOSC Lille","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:bf770412-4767-4812-9cef-dbd19f154f02","date":"2026-10-24T18:45:00Z","competition":"Ligue 1","domicile":true,"adversaire":"Paris FC","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:c1811ef9-70df-402d-9914-7fa6042523b3","date":"2026-10-21T19:00:00Z","competition":"UEFA Champions League","domicile":false,"adversaire":"Club Brugge KV","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:c78e02b5-7668-4ec0-ac2c-0632ea637d2f","date":"2026-10-17T18:45:00Z","competition":"Ligue 1","domicile":false,"adversaire":"ESTAC Troyes","statut":"FINAL","score":35.2,"situation":"entre","minutes":23},
+  {"matchId":"Game:7b194928-001c-4b63-8c24-ed90077824fd","date":"2026-10-13T16:45:00Z","competition":"UEFA Champions League","domicile":true,"adversaire":"Sporting Clube de Portugal","statut":"FINAL","score":33.6,"situation":"entre","minutes":22},
+  {"matchId":"Game:01b14933-2579-4857-9cc5-1c50e67981b8","date":"2026-10-09T18:45:00Z","competition":"Ligue 1","domicile":true,"adversaire":"Olympique Lyonnais","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:df8634b0-95aa-41dd-82d4-d4b5854cc690","date":"2026-09-18T18:45:00Z","competition":"Ligue 1","domicile":false,"adversaire":"AS Monaco","statut":"FINAL","score":38.4,"situation":"titulaire","minutes":58},
+  {"matchId":"Game:25047334-25f1-4c52-b22b-d02820b90aa7","date":"2026-09-13T15:15:00Z","competition":"Ligue 1","domicile":false,"adversaire":"Le Mans FC","statut":"FINAL","score":37.2,"situation":"entre","minutes":45},
+  {"matchId":"Game:3b660c0e-63f2-4ac7-8189-6c953be7bb6a","date":"2026-09-10T19:00:00Z","competition":"UEFA Champions League","domicile":false,"adversaire":"SK Slavia Praha","statut":"FINAL","score":75.9,"situation":"entre","minutes":29},
+  {"matchId":"Game:62356dd3-feae-4af0-ad7a-fe761879e06a","date":"2026-09-05T15:15:00Z","competition":"Ligue 1","domicile":true,"adversaire":"FC Lorient","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:5ba26fde-9f9f-444b-b4a7-1c7b235062b9","date":"2026-08-29T15:15:00Z","competition":"Ligue 1","domicile":false,"adversaire":"RC Strasbourg Alsace","statut":"FINAL","score":37.5,"situation":"entre","minutes":1},
+  {"matchId":"Game:97185e14-5988-46c6-8da9-4ed1ba46a353","date":"2026-08-22T15:15:00Z","competition":"Ligue 1","domicile":true,"adversaire":"AJ Auxerre","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:fbbe9ab1-5a93-4212-b56f-e5ec8777e21d","date":"2026-05-17T19:00:00Z","competition":"Ligue 1","domicile":false,"adversaire":"Olympique Lyonnais","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:0d652266-af35-4f1a-826c-28b910effe54","date":"2026-05-13T19:00:00Z","competition":"Ligue 1","domicile":true,"adversaire":"Paris Saint-Germain","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:c6713ebc-2240-400a-b024-25e6eeb4f5d5","date":"2026-05-08T18:45:00Z","competition":"Ligue 1","domicile":true,"adversaire":"FC Nantes","statut":"FINAL","score":67.8,"situation":"entre","minutes":11}
+ ]
+}

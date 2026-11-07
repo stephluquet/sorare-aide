@@ -1,0 +1,21 @@
+{
+ "joueurId": "jayden-quaintance-20070711",
+ "misAJour": "2026-11-07T11:01:43.784Z",
+ "dernierHistoriqueComplet": "2026-11-07T11:01:06.834Z",
+ "matchs": [
+  {"matchId":"Game:02513574-cb5d-42ab-961d-144de8e6ea3f","date":"2026-11-07T03:00:00Z","competition":"NBA","domicile":false,"adversaire":"Sacramento Kings","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:166d5ec6-f180-434b-88cf-c1ec09d8344c","date":"2026-11-05T02:30:00Z","competition":"NBA","domicile":true,"adversaire":"Dallas Mavericks","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:c1dd47f4-3dd8-4b4a-85ca-8e6a7778f85f","date":"2026-11-03T01:30:00Z","competition":"NBA","domicile":true,"adversaire":"Utah Jazz","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:ccafc7bb-0150-4d71-af8b-ea0530ec6fb4","date":"2026-11-01T00:00:00Z","competition":"NBA","domicile":true,"adversaire":"Minnesota Timberwolves","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:9f8b0f12-5524-4230-b41d-bbd9311575dd","date":"2026-10-29T01:00:00Z","competition":"NBA","domicile":false,"adversaire":"Utah Jazz","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:1186c141-2ab0-445e-ba63-4d951fc53b47","date":"2026-10-28T00:00:00Z","competition":"NBA","domicile":true,"adversaire":"Sacramento Kings","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:19887259-5929-4ce4-b6a0-3f1312ceea89","date":"2026-10-25T00:00:00Z","competition":"NBA","domicile":false,"adversaire":"Dallas Mavericks","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:b6e9ccc5-5956-4e43-ade2-03ec80144fb0","date":"2026-10-24T01:30:00Z","competition":"NBA","domicile":true,"adversaire":"Houston Rockets","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:250a8359-95ad-4b49-b10d-0c1c807df9bc","date":"2026-10-21T01:30:00Z","competition":"NBA","domicile":true,"adversaire":"Oklahoma City Thunder","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:d4363037-ce80-4a98-8135-44b812549cdf","date":"2026-10-17T00:00:00Z","competition":"NBA","domicile":true,"adversaire":"Sacramento Kings","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:619accbf-deae-4e10-b436-ee1dd3ecf798","date":"2026-10-15T00:00:00Z","competition":"NBA","domicile":true,"adversaire":"Phoenix Suns","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:b626b55a-8460-42ab-8d1a-d2c168df9bba","date":"2026-10-13T01:00:00Z","competition":"NBA","domicile":false,"adversaire":"Utah Jazz","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:b3b64a92-16b8-48e7-bb8f-9c0b5ff508d7","date":"2026-10-11T02:30:00Z","competition":"NBA","domicile":false,"adversaire":"Phoenix Suns","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:e0c38a0f-56a9-4000-b1cf-c233ab0821d2","date":"2026-10-09T00:00:00Z","competition":"NBA","domicile":true,"adversaire":"Atlanta Hawks","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0}
+ ]
+}

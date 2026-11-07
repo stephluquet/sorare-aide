@@ -1,0 +1,21 @@
+{
+ "joueurId": "michael-ajayi-20030523",
+ "misAJour": "2026-11-07T11:01:43.782Z",
+ "dernierHistoriqueComplet": "2026-11-07T11:01:06.833Z",
+ "matchs": [
+  {"matchId":"Game:3bdb7370-19f3-4dd2-a6e7-ec50074524e6","date":"2026-11-07T00:00:00Z","competition":"NBA","domicile":true,"adversaire":"Boston Celtics","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:a6025895-87a2-430a-871a-2a900195228c","date":"2026-11-05T00:30:00Z","competition":"NBA","domicile":false,"adversaire":"Brooklyn Nets","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:25d97ffd-665b-4f14-8670-2ecb844c1dd5","date":"2026-11-03T00:30:00Z","competition":"NBA","domicile":true,"adversaire":"Detroit Pistons","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:c7613c3c-fccb-4c11-85ac-e5e9fe00dcd6","date":"2026-10-31T22:00:00Z","competition":"NBA","domicile":true,"adversaire":"Philadelphia 76ers","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:2d0c6ffd-8abc-478b-9db6-6e6a961e1add","date":"2026-10-30T23:00:00Z","competition":"NBA","domicile":false,"adversaire":"Washington Wizards","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:e7324410-a1f9-4c60-b809-58fd2642fd01","date":"2026-10-28T23:00:00Z","competition":"NBA","domicile":false,"adversaire":"Detroit Pistons","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:92a20db5-2ed5-4b96-8e5e-c48a119020e5","date":"2026-10-26T23:00:00Z","competition":"NBA","domicile":true,"adversaire":"Washington Wizards","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:5555aefe-2437-4c0d-a76d-94a81462e9e2","date":"2026-10-24T22:00:00Z","competition":"NBA","domicile":true,"adversaire":"Miami Heat","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:d743d92f-6605-44e0-a724-7d9bd39d47bf","date":"2026-10-23T23:00:00Z","competition":"NBA","domicile":true,"adversaire":"Atlanta Hawks","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:9f11321e-b105-40fb-b19b-bf20a3ba5cb6","date":"2026-10-21T23:30:00Z","competition":"NBA","domicile":false,"adversaire":"Brooklyn Nets","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:c0019277-dd16-45c1-9098-074f55537a0a","date":"2026-10-17T00:00:00Z","competition":"NBA","domicile":false,"adversaire":"Memphis Grizzlies","statut":"REVIEWING","score":6.2,"situation":"joue","minutes":6},
+  {"matchId":"Game:0ac3adba-f186-459e-915a-15534f4b39ab","date":"2026-10-14T23:30:00Z","competition":"NBA","domicile":false,"adversaire":"Boston Celtics","statut":"REVIEWING","score":5.1,"situation":"joue","minutes":8},
+  {"matchId":"Game:230118ed-2680-48b5-839b-e93bea9e1407","date":"2026-10-11T23:00:00Z","competition":"NBA","domicile":true,"adversaire":"Milwaukee Bucks","statut":"REVIEWING","score":15.1,"situation":"joue","minutes":12},
+  {"matchId":"Game:a6b9efdd-74d4-40f3-9d17-c2378cf57e79","date":"2026-10-06T23:00:00Z","competition":"NBA","domicile":true,"adversaire":"Brooklyn Nets","statut":"REVIEWING","score":12.3,"situation":"joue","minutes":19}
+ ]
+}

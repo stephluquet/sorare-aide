@@ -1,0 +1,19 @@
+{
+ "joueurId": "marius-funk",
+ "misAJour": "2026-11-07T11:01:36.199Z",
+ "dernierHistoriqueComplet": "2026-11-07T10:59:02.170Z",
+ "matchs": [
+  {"matchId":"Game:261dc25e-ebac-4202-8c01-1c8372524444","date":"2026-11-03T17:45:00Z","competition":"UEFA Champions League","domicile":false,"adversaire":"Galatasaray Spor Kulübü","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:19c59e73-cc29-4e64-b66a-9fd1485b303c","date":"2026-10-31T14:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"Bayer 04 Leverkusen","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null},
+  {"matchId":"Game:293d223f-165f-478e-9603-9060d636dd8f","date":"2026-10-23T18:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"Borussia Mönchengladbach","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null},
+  {"matchId":"Game:861d9f9e-9ebc-4f04-badf-4f7efb69f314","date":"2026-10-20T19:00:00Z","competition":"UEFA Champions League","domicile":true,"adversaire":"Atlético de Madrid","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:d8db0072-bf68-4fe0-b5a7-4c57f80fafe8","date":"2026-10-17T13:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"Hamburger SV","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null},
+  {"matchId":"Game:b84fbfee-5350-40b8-ae43-2c8eb45ef623","date":"2026-10-14T19:00:00Z","competition":"UEFA Champions League","domicile":false,"adversaire":"ŠK Slovan Bratislava","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:6482b37c-c86b-4df7-85fc-6e3144a8d615","date":"2026-10-10T13:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"SC Paderborn 07","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null},
+  {"matchId":"Game:74b1487a-68d9-4361-babe-1ef002e73137","date":"2026-09-19T16:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"Borussia Dortmund","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:83efd695-7944-4b8a-b737-aa40ccb131b1","date":"2026-09-12T13:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"TSG Hoffenheim","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:b13fb105-6c46-4bd8-9c84-fbd33a7279ac","date":"2026-09-09T16:45:00Z","competition":"UEFA Champions League","domicile":true,"adversaire":"Viking FK","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:4a43d5ab-dea0-420f-815d-cd279eda1092","date":"2026-09-04T18:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"1. FC Köln","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:b1c30b29-e38b-49c8-a7ff-74d9ee9e7848","date":"2026-08-28T18:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"FC Bayern München","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0}
+ ]
+}

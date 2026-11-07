@@ -1,0 +1,15 @@
+{
+ "joueurId": "mekhi-anthony-gray",
+ "misAJour": "2026-11-07T11:01:36.196Z",
+ "dernierHistoriqueComplet": "2026-11-07T10:59:02.167Z",
+ "matchs": [
+  {"matchId":"Game:b6bf9651-1def-41a5-976b-b3ceba3e926c","date":"2026-11-01T14:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"1. FC Köln","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:29a4f331-5be7-4cde-ae05-286c6d9d038b","date":"2026-10-24T13:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"FC Augsburg","statut":"FINAL","score":26.5,"situation":"entre","minutes":45},
+  {"matchId":"Game:bab5179d-2acc-4952-b731-e43038dfc6e6","date":"2026-10-17T13:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"Borussia Dortmund","statut":"FINAL","score":38,"situation":"entre","minutes":20},
+  {"matchId":"Game:076979aa-dd23-4c2e-b0a5-7607bbafa596","date":"2026-10-10T13:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"SV 07 Elversberg","statut":"FINAL","score":39.1,"situation":"entre","minutes":12},
+  {"matchId":"Game:9db2fa54-c6d1-4567-b921-c0158a064514","date":"2026-09-18T18:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"FC Bayern München","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null},
+  {"matchId":"Game:a79702ae-2351-4878-97ed-29fec221e0b8","date":"2026-09-11T18:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"FC Schalke 04","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null},
+  {"matchId":"Game:0ef2b9c3-3b18-405b-bd0a-c7efef539b1e","date":"2026-09-05T13:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"Bayer 04 Leverkusen","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null},
+  {"matchId":"Game:7c88ccae-cad1-40fc-bd48-b4a4eb610aae","date":"2026-08-29T13:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"Eintracht Frankfurt","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null}
+ ]
+}

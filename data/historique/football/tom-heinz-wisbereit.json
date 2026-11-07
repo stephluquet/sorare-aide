@@ -1,0 +1,18 @@
+{
+ "joueurId": "tom-heinz-wisbereit",
+ "misAJour": "2026-11-07T11:01:36.032Z",
+ "dernierHistoriqueComplet": "2026-11-07T10:59:02.050Z",
+ "matchs": [
+  {"matchId":"Game:c160dfa6-592a-41df-97db-ed1449158edd","date":"2026-10-31T14:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"Sport-Club Freiburg","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null},
+  {"matchId":"Game:29a4f331-5be7-4cde-ae05-286c6d9d038b","date":"2026-10-24T13:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"1. FC Union Berlin","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null},
+  {"matchId":"Game:572b9297-b56e-4127-ab74-29ba29677da7","date":"2026-10-17T13:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"SV 07 Elversberg","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null},
+  {"matchId":"Game:84879281-129e-46ae-aa99-83d92ec1acf8","date":"2026-10-10T13:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"FC Bayern München","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null},
+  {"matchId":"Game:e6c2bee2-ea93-430f-abec-1d25aed6d000","date":"2026-09-19T13:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"SV Werder Bremen","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null},
+  {"matchId":"Game:d3996f31-1120-4027-9f82-d2bcce226f29","date":"2026-09-12T13:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"Bayer 04 Leverkusen","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null},
+  {"matchId":"Game:97f319d0-a32a-4336-ba5a-0121b2a1040c","date":"2026-09-06T15:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"Eintracht Frankfurt","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null},
+  {"matchId":"Game:bc767ad7-280e-434c-89eb-f2f1b3b028a2","date":"2026-08-30T15:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"FC Schalke 04","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null},
+  {"matchId":"Game:d98a63d5-3909-476c-994a-f4f3021b8d9b","date":"2026-05-16T13:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"FC Augsburg","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:53ef3b9b-7ca5-42f8-94c3-9526a9782758","date":"2026-05-10T17:30:00Z","competition":"Bundesliga","domicile":false,"adversaire":"1. FSV Mainz 05","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
+  {"matchId":"Game:3617068b-cfb0-480d-b3ad-50212173b994","date":"2026-05-02T13:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"1. FC Köln","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0}
+ ]
+}
