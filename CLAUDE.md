@@ -52,6 +52,13 @@ query Cartes($slug: String!, $sport: Sport!, $after: String, $first: Int!) {
 - **Pagination** par curseur : `first: 50`, puis `after: endCursor` tant que
   `hasNextPage` est vrai. 50 par page passe sans problème : 2 151 cartes en
   environ 15 s, sans erreur 429.
+- **Limite : 200 requêtes par minute** (indiquée par l'utilisateur, non vérifiée ;
+  les réponses ne renvoient aucun en-tête de quota). Une requête = une page de
+  50 cartes. Le catalogue complet de `yapapir` coûte **21 requêtes** (13 pour le
+  football, 8 pour la NBA). Le script n'a pas de pause entre les pages : il va
+  à environ 3 requêtes par seconde (44 pages en 15 s), soit près de 180 par
+  minute sur un gros compte. Ne pas enchaîner plusieurs gros comptes dans la
+  même minute.
 - Les mêmes champs `averageScore` marchent aussi sur `anyPlayer(slug: ...)`.
 - `L5 = 0` avec `L15 > 0` veut dire que le joueur n'a joué aucun des 5 derniers
   matchs (blessé, hors groupe). `L15 = 0` veut dire aucun score sur 15 matchs.
