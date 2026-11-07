@@ -655,6 +655,7 @@ function tout() {
   $('vue-cartes').hidden = ecran !== 'cartes';
   $('vue-squad').hidden = ecran !== 'squad';
   document.body.dataset.sport = accueil ? '' : vue.sport; // couleur du sport en cours
+  accueil ? $('lien-accueil').setAttribute('aria-current', 'page') : $('lien-accueil').removeAttribute('aria-current');
   // Sélecteur de sport, toujours visible : sur l'accueil, aucun n'est choisi ; ailleurs, on garde le mode.
   $('sport-global').innerHTML = Object.entries(SPORTS).map(([k, v]) =>
     `<a href="#${k}/${accueil ? 'solo' : ecran}" data-sport="${k}" aria-current="${!accueil && k === vue.sport ? 'true' : 'false'}">${v}</a>`).join('');
