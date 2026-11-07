@@ -52,3 +52,12 @@ test('échecs d’un palier : la réussite d’un palier passé n’est pas un �
   assert.equal(p0.echecs, 2);
   assert.equal(p1.echecs, 3);
 });
+
+test('une archive sans historique complet déclenche la récupération des 40 matchs', async () => {
+  const { besoinHistoriqueComplet } = await import('../src/recuperation/historique.js');
+  const recus = [m('A', '2026-11-01')];
+  assert.equal(besoinHistoriqueComplet(null, recus), true);
+  assert.equal(besoinHistoriqueComplet({ dernierHistoriqueComplet: null, matchs: [m('A', '2026-11-01')] }, recus), true);
+  assert.equal(besoinHistoriqueComplet({ dernierHistoriqueComplet: '2026-11-07T10:00:00Z', matchs: [m('A', '2026-11-01')] }, recus), false);
+  assert.equal(besoinHistoriqueComplet({ dernierHistoriqueComplet: '2026-11-07T10:00:00Z', matchs: [m('Z', '2026-09-01')] }, recus), true);
+});

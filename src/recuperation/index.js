@@ -13,7 +13,7 @@ import { fileURLToPath } from 'node:url';
 import { appelGraphql, compteur, relancerViaProxySiBesoin } from './api.js';
 import { CARTES, HISTORIQUE, PALIERS } from './requetes.js';
 import { matchHistorique, normaliserCarte, normaliserJoueur, normaliserMatch, normaliserPaliers } from './normaliser.js';
-import { cheminArchive, ecrireArchive, fusionner, lireArchive, trou } from './historique.js';
+import { besoinHistoriqueComplet, cheminArchive, ecrireArchive, fusionner, lireArchive, trou } from './historique.js';
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const TAILLE_PAGE = 50;
@@ -87,7 +87,9 @@ async function recupererSport(slug, sport, { sansHistorique, anomalies }) {
     const recus = (p.playerGameScores ?? []).filter(Boolean).map((g) => matchHistorique(g, sport)).filter((m) => m.matchId);
     recusParJoueur.set(p.slug, recus);
     const archive = lireArchive(cheminArchive(RACINE, sport, p.slug));
-    if (!archive) aCompleter.push(p.slug);
+    // Une archive créée sans historique complet (--sans-historique) ne compte pas.
+    if (!besoinHistoriqueComplet(archive, recus)) continue;
+    if (!archive?.dernierHistoriqueComplet) aCompleter.push(p.slug);
     else if (trou(archive.matchs, recus)) { aCompleter.push(p.slug); anomalies.push(`${tag} trou dans l'historique, 40 matchs refaits : ${p.slug}`); }
   }
   const complets = new Map();

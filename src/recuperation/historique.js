@@ -34,6 +34,13 @@ export function trou(archive, recus) {
   return plusAncienRecu > plusRecentArchive;
 }
 
+// Faut-il récupérer les 40 matchs de ce joueur ? Oui s'il n'a jamais eu
+// d'historique complet (archive absente ou créée avec --sans-historique) ou si
+// les matchs reçus ne se raccordent pas à l'archive.
+export function besoinHistoriqueComplet(archive, recus) {
+  return !archive?.dernierHistoriqueComplet || trou(archive.matchs, recus);
+}
+
 export function cheminArchive(racine, sport, joueurId) {
   return join(racine, 'data', 'historique', sport, `${joueurId}.json`);
 }
