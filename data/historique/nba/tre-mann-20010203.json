@@ -1,6 +1,6 @@
 {
  "joueurId": "tre-mann-20010203",
- "misAJour": "2026-11-07T11:01:43.741Z",
+ "misAJour": "2026-11-07T11:57:56.110Z",
  "dernierHistoriqueComplet": "2026-11-07T11:01:06.793Z",
  "matchs": [
   {"matchId":"Game:bf235e89-13fb-40c2-b4e1-aaf793b227b6","date":"2026-11-07T00:00:00Z","competition":"NBA","domicile":false,"adversaire":"Atlanta Hawks","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},

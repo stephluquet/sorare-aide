@@ -1,6 +1,6 @@
 {
  "joueurId": "frank-lehmann",
- "misAJour": "2026-11-07T11:01:36.031Z",
+ "misAJour": "2026-11-07T11:58:15.758Z",
  "dernierHistoriqueComplet": "2026-11-07T10:59:02.049Z",
  "matchs": [
   {"matchId":"Game:586b17c5-f213-4710-bd91-dc9043101e0d","date":"2026-10-30T19:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"1. FSV Mainz 05","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null},

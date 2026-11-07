@@ -1,6 +1,6 @@
 {
  "joueurId": "steve-mounie",
- "misAJour": "2026-11-07T11:01:36.086Z",
+ "misAJour": "2026-11-07T11:58:15.816Z",
  "dernierHistoriqueComplet": "2026-11-07T10:59:02.092Z",
  "matchs": [
   {"matchId":"Game:c160dfa6-592a-41df-97db-ed1449158edd","date":"2026-10-31T14:30:00Z","competition":"Bundesliga","domicile":true,"adversaire":"Sport-Club Freiburg","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null},
