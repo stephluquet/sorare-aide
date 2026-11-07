@@ -18,6 +18,10 @@ export function matchsComptes(joueur, P) {
 
 const dateCourte = (d) => (d ? d.slice(0, 10) : '?');
 
+// Jours entre deux instants, comptés sur les dates d'un fuseau (New York pour la NBA).
+const jourDans = (iso, fuseau) => new Intl.DateTimeFormat('sv-SE', { timeZone: fuseau }).format(new Date(iso));
+export const ecartJours = (a, b, fuseau) => Math.round((Date.parse(jourDans(a, fuseau)) - Date.parse(jourDans(b, fuseau))) / 86400000);
+
 /**
  * @param joueur   joueur normalisé (historique, blessures, suspensions, statutSorare, club…)
  * @param match    prochain match normalisé, ou null
@@ -69,6 +73,28 @@ export function probabiliteJouer(joueur, match, P, regles = {}) {
       ![match.domicile.slug, match.exterieur.slug].includes(joueur.club.slug)) {
     douter('club absent du prochain match (sélection ?) : à vérifier');
   }
+  // Contexte (methode.md, section 9) : blessures annoncées par ESPN, deuxième soir consécutif (NBA).
+  const K = P.contexte ?? {};
+  const contexte = {};
+  if (joueur.espn && K.espn_blessures) {
+    const effet = K.espn_blessures[joueur.espn.statut];
+    contexte.espn = joueur.espn;
+    const texte = `ESPN ${dateCourte(joueur.espn.date)} : ${joueur.espn.statut}${joueur.espn.commentaire ? ` — ${joueur.espn.commentaire}` : ''}`;
+    if (effet === 'exclu') exclure(texte);
+    else if (effet === 'douteux') douter(texte);
+    else raisons.push(texte);
+  }
+  if (sport === 'nba' && match && K.nba_dos_a_dos) {
+    const precedent = (joueur.historique ?? []).find((m) => m.date && m.date < match.debutUTC);
+    if (precedent && ecartJours(match.debutUTC, precedent.date, K.nba_dos_a_dos.fuseau) === 1) {
+      contexte.dosADos = true;
+      if (statut !== 'exclu' && p != null) {
+        p *= K.nba_dos_a_dos.facteur_jouer;
+        raisons.push(`deuxième soir consécutif de l'équipe : chances de jouer × ${String(K.nba_dos_a_dos.facteur_jouer).replace('.', ',')}`);
+      }
+    }
+  }
+
   if (statut === 'exclu') p = pHist === null ? null : 0;
 
   // Composition officielle publiée (football) : elle l'emporte sur tout le reste (methode.md, 1 bis).
@@ -100,5 +126,5 @@ export function probabiliteJouer(joueur, match, P, regles = {}) {
     if (!eligibleArcade) raisons.push(`prochain match hors compétitions Arcade (${match.competition ?? '?'})`);
   }
 
-  return { p, pHist, nbMatchs: comptes.length, statut, raisons, eligibleArcade, situationConfirmee };
+  return { p, pHist, nbMatchs: comptes.length, statut, raisons, eligibleArcade, situationConfirmee, contexte };
 }

@@ -13,6 +13,7 @@ import { fileURLToPath } from 'node:url';
 import { appelGraphql, compteur, relancerViaProxySiBesoin } from './api.js';
 import { CARTES, COMPOSITIONS, HISTORIQUE, PALIERS } from './requetes.js';
 import { matchHistorique, normaliserCarte, normaliserCompositions, normaliserJoueur, normaliserMatch, normaliserPaliers } from './normaliser.js';
+import { lireBlessuresNba, rapprocherBlessures } from './espn.js';
 import { besoinHistoriqueComplet, cheminArchive, ecrireArchive, fusionner, lireArchive, trou } from './historique.js';
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -133,6 +134,17 @@ async function recupererSport(slug, sport, { sansHistorique, refaireHistorique, 
     const matchsJoueur = fusionner(fusionner(archive, complet ?? []), recusParJoueur.get(j.id) ?? []);
     ecrireArchive(chemin, j.id, matchsJoueur, { complet: Boolean(complet) });
     j.historique = matchsJoueur.slice(0, NB_MATCHS_HISTORIQUE);
+  }
+
+  // Blessures annoncées par ESPN (NBA, methode.md section 9) : une requête, hors API Sorare.
+  if (sport === 'nba') {
+    try {
+      const r = rapprocherBlessures(await lireBlessuresNba(), joueurs);
+      progression(`${tag} ESPN : ${r.listes} blessés listés, ${r.rapproches} dans le catalogue`);
+      for (const x of r.ignores) anomalies.push(`${tag} ESPN : même nom, autre équipe : ${x}`);
+    } catch (e) {
+      anomalies.push(`${tag} blessures ESPN illisibles : ${e.message}`);
+    }
   }
 
   return { cartes, joueurs, matchs: [...matchs.values()], paliers, totalCartes: total };

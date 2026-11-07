@@ -1,20 +1,20 @@
 {
  "joueurId": "braden-smith-20030725",
- "misAJour": "2026-11-07T11:57:56.124Z",
+ "misAJour": "2026-11-07T13:50:17.831Z",
  "dernierHistoriqueComplet": "2026-11-07T11:01:06.800Z",
  "matchs": [
-  {"matchId":"Game:3ad5273b-1d46-44f3-9d79-56b5d4424e5f","date":"2026-11-05T01:00:00Z","competition":"NBA","domicile":false,"adversaire":"Memphis Grizzlies","statut":"FINAL","score":24.7,"situation":"joue","minutes":24},
-  {"matchId":"Game:e6483ab2-3365-4e21-9cf4-80dc1cc37115","date":"2026-11-03T00:30:00Z","competition":"NBA","domicile":true,"adversaire":"Atlanta Hawks","statut":"FINAL","score":43.8,"situation":"joue","minutes":43},
-  {"matchId":"Game:c60a77a0-6e46-4adf-90ef-48f0beab6559","date":"2026-11-01T22:00:00Z","competition":"NBA","domicile":true,"adversaire":"Brooklyn Nets","statut":"FINAL","score":0,"situation":"joue","minutes":1},
-  {"matchId":"Game:473e565d-1b1e-4f50-a2b4-40a4192f2bca","date":"2026-10-31T00:00:00Z","competition":"NBA","domicile":false,"adversaire":"Miami Heat","statut":"FINAL","score":5.5,"situation":"joue","minutes":12},
-  {"matchId":"Game:9efedd38-5df3-4d14-ab99-647324969d8c","date":"2026-10-28T23:00:00Z","competition":"NBA","domicile":true,"adversaire":"Philadelphia 76ers","statut":"FINAL","score":1.5,"situation":"joue","minutes":6},
-  {"matchId":"Game:eeec47cf-b3a1-42c1-8208-5ca80ef03b04","date":"2026-10-27T00:00:00Z","competition":"NBA","domicile":false,"adversaire":"Milwaukee Bucks","statut":"FINAL","score":0,"situation":"joue","minutes":1},
-  {"matchId":"Game:10e3d0ee-1296-4f63-9a1d-4149672cb390","date":"2026-10-25T22:00:00Z","competition":"NBA","domicile":false,"adversaire":"Brooklyn Nets","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
-  {"matchId":"Game:c0f5d2cc-56c9-414b-a7af-bb7b8b795b4e","date":"2026-10-23T23:00:00Z","competition":"NBA","domicile":true,"adversaire":"Dallas Mavericks","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
-  {"matchId":"Game:869ecbaa-96d8-4e4d-b6fc-404676576c4d","date":"2026-10-22T00:00:00Z","competition":"NBA","domicile":false,"adversaire":"New Orleans Pelicans","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
-  {"matchId":"Game:6d5fdc52-0c1b-4a99-83f5-ad819588dbeb","date":"2026-10-16T23:00:00Z","competition":"NBA","domicile":true,"adversaire":"Milwaukee Bucks","statut":"REVIEWING","score":7.5,"situation":"joue","minutes":20},
-  {"matchId":"Game:480f68ab-59f1-4017-b325-ed650b86ff87","date":"2026-10-14T00:00:00Z","competition":"NBA","domicile":false,"adversaire":"Oklahoma City Thunder","statut":"REVIEWING","score":11.3,"situation":"joue","minutes":16},
-  {"matchId":"Game:13eebb37-2481-4e5a-b594-70069e438209","date":"2026-10-10T23:00:00Z","competition":"NBA","domicile":true,"adversaire":"Atlanta Hawks","statut":"REVIEWING","score":13.9,"situation":"joue","minutes":14},
-  {"matchId":"Game:2fdf1980-61f5-4c20-8adb-678aec4a45cb","date":"2026-10-07T23:00:00Z","competition":"NBA","domicile":true,"adversaire":"Minnesota Timberwolves","statut":"REVIEWING","score":15.5,"situation":"joue","minutes":15}
+  {"matchId":"Game:3ad5273b-1d46-44f3-9d79-56b5d4424e5f","date":"2026-11-05T01:00:00Z","competition":"NBA","domicile":false,"adversaire":"Memphis Grizzlies","statut":"FINAL","score":24.7,"situation":"joue","minutes":24,"pour":107,"contre":103,"cotes":null},
+  {"matchId":"Game:e6483ab2-3365-4e21-9cf4-80dc1cc37115","date":"2026-11-03T00:30:00Z","competition":"NBA","domicile":true,"adversaire":"Atlanta Hawks","statut":"FINAL","score":43.8,"situation":"joue","minutes":43,"pour":104,"contre":108,"cotes":null},
+  {"matchId":"Game:c60a77a0-6e46-4adf-90ef-48f0beab6559","date":"2026-11-01T22:00:00Z","competition":"NBA","domicile":true,"adversaire":"Brooklyn Nets","statut":"FINAL","score":0,"situation":"joue","minutes":1,"pour":90,"contre":98,"cotes":null},
+  {"matchId":"Game:473e565d-1b1e-4f50-a2b4-40a4192f2bca","date":"2026-10-31T00:00:00Z","competition":"NBA","domicile":false,"adversaire":"Miami Heat","statut":"FINAL","score":5.5,"situation":"joue","minutes":12,"pour":125,"contre":145,"cotes":null},
+  {"matchId":"Game:9efedd38-5df3-4d14-ab99-647324969d8c","date":"2026-10-28T23:00:00Z","competition":"NBA","domicile":true,"adversaire":"Philadelphia 76ers","statut":"FINAL","score":1.5,"situation":"joue","minutes":6,"pour":109,"contre":114,"cotes":null},
+  {"matchId":"Game:eeec47cf-b3a1-42c1-8208-5ca80ef03b04","date":"2026-10-27T00:00:00Z","competition":"NBA","domicile":false,"adversaire":"Milwaukee Bucks","statut":"FINAL","score":0,"situation":"joue","minutes":1,"pour":102,"contre":110,"cotes":null},
+  {"matchId":"Game:10e3d0ee-1296-4f63-9a1d-4149672cb390","date":"2026-10-25T22:00:00Z","competition":"NBA","domicile":false,"adversaire":"Brooklyn Nets","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":136,"contre":109,"cotes":null},
+  {"matchId":"Game:c0f5d2cc-56c9-414b-a7af-bb7b8b795b4e","date":"2026-10-23T23:00:00Z","competition":"NBA","domicile":true,"adversaire":"Dallas Mavericks","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":105,"contre":121,"cotes":null},
+  {"matchId":"Game:869ecbaa-96d8-4e4d-b6fc-404676576c4d","date":"2026-10-22T00:00:00Z","competition":"NBA","domicile":false,"adversaire":"New Orleans Pelicans","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":123,"contre":120,"cotes":null},
+  {"matchId":"Game:6d5fdc52-0c1b-4a99-83f5-ad819588dbeb","date":"2026-10-16T23:00:00Z","competition":"NBA","domicile":true,"adversaire":"Milwaukee Bucks","statut":"REVIEWING","score":7.5,"situation":"joue","minutes":20,"pour":127,"contre":128,"cotes":null},
+  {"matchId":"Game:480f68ab-59f1-4017-b325-ed650b86ff87","date":"2026-10-14T00:00:00Z","competition":"NBA","domicile":false,"adversaire":"Oklahoma City Thunder","statut":"REVIEWING","score":11.3,"situation":"joue","minutes":16,"pour":112,"contre":114,"cotes":null},
+  {"matchId":"Game:13eebb37-2481-4e5a-b594-70069e438209","date":"2026-10-10T23:00:00Z","competition":"NBA","domicile":true,"adversaire":"Atlanta Hawks","statut":"REVIEWING","score":13.9,"situation":"joue","minutes":14,"pour":117,"contre":119,"cotes":null},
+  {"matchId":"Game:2fdf1980-61f5-4c20-8adb-678aec4a45cb","date":"2026-10-07T23:00:00Z","competition":"NBA","domicile":true,"adversaire":"Minnesota Timberwolves","statut":"REVIEWING","score":15.5,"situation":"joue","minutes":15,"pour":123,"contre":112,"cotes":null}
  ]
 }

@@ -1,20 +1,20 @@
 {
  "joueurId": "tarik-biberovic-20010128",
- "misAJour": "2026-11-07T11:57:56.124Z",
+ "misAJour": "2026-11-07T13:50:17.831Z",
  "dernierHistoriqueComplet": "2026-11-07T11:01:06.800Z",
  "matchs": [
-  {"matchId":"Game:69884e17-f09a-429f-9f9f-26d7f819f146","date":"2026-11-07T01:00:00Z","competition":"NBA","domicile":true,"adversaire":"Utah Jazz","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
-  {"matchId":"Game:166d5ec6-f180-434b-88cf-c1ec09d8344c","date":"2026-11-05T02:30:00Z","competition":"NBA","domicile":false,"adversaire":"San Antonio Spurs","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
-  {"matchId":"Game:40ae214c-8aa1-463f-87dc-3eab1b52e7a5","date":"2026-11-03T01:00:00Z","competition":"NBA","domicile":true,"adversaire":"Sacramento Kings","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
-  {"matchId":"Game:c5725d98-20d7-4bb7-9de2-11ce94d1ad54","date":"2026-10-31T00:00:00Z","competition":"NBA","domicile":true,"adversaire":"Houston Rockets","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
-  {"matchId":"Game:87c741d2-5520-4560-ab1b-082e7bd66b8e","date":"2026-10-29T01:30:00Z","competition":"NBA","domicile":true,"adversaire":"Oklahoma City Thunder","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
-  {"matchId":"Game:e99550e2-2940-483d-bb09-58f07da391ab","date":"2026-10-26T23:30:00Z","competition":"NBA","domicile":false,"adversaire":"Miami Heat","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
-  {"matchId":"Game:19887259-5929-4ce4-b6a0-3f1312ceea89","date":"2026-10-25T00:00:00Z","competition":"NBA","domicile":true,"adversaire":"San Antonio Spurs","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
-  {"matchId":"Game:c0f5d2cc-56c9-414b-a7af-bb7b8b795b4e","date":"2026-10-23T23:00:00Z","competition":"NBA","domicile":false,"adversaire":"Indiana Pacers","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
-  {"matchId":"Game:7cd5c26c-20dd-4641-b777-1f74f773226c","date":"2026-10-22T00:30:00Z","competition":"NBA","domicile":false,"adversaire":"Houston Rockets","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
-  {"matchId":"Game:34686703-52fc-4742-b3e5-76670b06cf30","date":"2026-10-17T00:00:00Z","competition":"NBA","domicile":true,"adversaire":"Atlanta Hawks","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
-  {"matchId":"Game:303f0bfb-4641-41f7-99cd-5005095afc51","date":"2026-10-15T00:00:00Z","competition":"NBA","domicile":true,"adversaire":"New Orleans Pelicans","statut":"REVIEWING","score":15.3,"situation":"joue","minutes":27},
-  {"matchId":"Game:39c0e202-a1e9-4173-b652-e3e30496d5a8","date":"2026-10-11T10:00:00Z","competition":"NBA","domicile":false,"adversaire":"Houston Rockets","statut":"REVIEWING","score":17.9,"situation":"joue","minutes":14},
-  {"matchId":"Game:da5e96fc-1f63-40c2-9ad4-ba568d2e76ec","date":"2026-10-09T12:00:00Z","competition":"NBA","domicile":true,"adversaire":"Houston Rockets","statut":"REVIEWING","score":18.6,"situation":"joue","minutes":19}
+  {"matchId":"Game:69884e17-f09a-429f-9f9f-26d7f819f146","date":"2026-11-07T01:00:00Z","competition":"NBA","domicile":true,"adversaire":"Utah Jazz","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":112,"contre":100,"cotes":null},
+  {"matchId":"Game:166d5ec6-f180-434b-88cf-c1ec09d8344c","date":"2026-11-05T02:30:00Z","competition":"NBA","domicile":false,"adversaire":"San Antonio Spurs","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":111,"contre":112,"cotes":null},
+  {"matchId":"Game:40ae214c-8aa1-463f-87dc-3eab1b52e7a5","date":"2026-11-03T01:00:00Z","competition":"NBA","domicile":true,"adversaire":"Sacramento Kings","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":100,"contre":115,"cotes":null},
+  {"matchId":"Game:c5725d98-20d7-4bb7-9de2-11ce94d1ad54","date":"2026-10-31T00:00:00Z","competition":"NBA","domicile":true,"adversaire":"Houston Rockets","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":116,"contre":111,"cotes":null},
+  {"matchId":"Game:87c741d2-5520-4560-ab1b-082e7bd66b8e","date":"2026-10-29T01:30:00Z","competition":"NBA","domicile":true,"adversaire":"Oklahoma City Thunder","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":120,"contre":96,"cotes":null},
+  {"matchId":"Game:e99550e2-2940-483d-bb09-58f07da391ab","date":"2026-10-26T23:30:00Z","competition":"NBA","domicile":false,"adversaire":"Miami Heat","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":113,"contre":109,"cotes":null},
+  {"matchId":"Game:19887259-5929-4ce4-b6a0-3f1312ceea89","date":"2026-10-25T00:00:00Z","competition":"NBA","domicile":true,"adversaire":"San Antonio Spurs","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":106,"contre":122,"cotes":null},
+  {"matchId":"Game:c0f5d2cc-56c9-414b-a7af-bb7b8b795b4e","date":"2026-10-23T23:00:00Z","competition":"NBA","domicile":false,"adversaire":"Indiana Pacers","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":121,"contre":105,"cotes":null},
+  {"matchId":"Game:7cd5c26c-20dd-4641-b777-1f74f773226c","date":"2026-10-22T00:30:00Z","competition":"NBA","domicile":false,"adversaire":"Houston Rockets","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":110,"contre":128,"cotes":null},
+  {"matchId":"Game:34686703-52fc-4742-b3e5-76670b06cf30","date":"2026-10-17T00:00:00Z","competition":"NBA","domicile":true,"adversaire":"Atlanta Hawks","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":111,"contre":135,"cotes":null},
+  {"matchId":"Game:303f0bfb-4641-41f7-99cd-5005095afc51","date":"2026-10-15T00:00:00Z","competition":"NBA","domicile":true,"adversaire":"New Orleans Pelicans","statut":"REVIEWING","score":15.3,"situation":"joue","minutes":27,"pour":97,"contre":101,"cotes":null},
+  {"matchId":"Game:39c0e202-a1e9-4173-b652-e3e30496d5a8","date":"2026-10-11T10:00:00Z","competition":"NBA","domicile":false,"adversaire":"Houston Rockets","statut":"REVIEWING","score":17.9,"situation":"joue","minutes":14,"pour":132,"contre":115,"cotes":null},
+  {"matchId":"Game:da5e96fc-1f63-40c2-9ad4-ba568d2e76ec","date":"2026-10-09T12:00:00Z","competition":"NBA","domicile":true,"adversaire":"Houston Rockets","statut":"REVIEWING","score":18.6,"situation":"joue","minutes":19,"pour":117,"contre":135,"cotes":null}
  ]
 }

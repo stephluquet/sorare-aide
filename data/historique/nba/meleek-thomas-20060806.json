@@ -1,19 +1,19 @@
 {
  "joueurId": "meleek-thomas-20060806",
- "misAJour": "2026-11-07T11:57:56.067Z",
+ "misAJour": "2026-11-07T13:50:17.794Z",
  "dernierHistoriqueComplet": "2026-11-07T11:01:06.762Z",
  "matchs": [
-  {"matchId":"Game:f87889ab-82f5-412c-ab7d-be5efeefe629","date":"2026-11-07T00:30:00Z","competition":"NBA","domicile":true,"adversaire":"Philadelphia 76ers","statut":"REVIEWING","score":21.7,"situation":"joue","minutes":27},
-  {"matchId":"Game:8be8d8ec-5c69-40fd-84db-cecfdb384e1a","date":"2026-11-05T01:00:00Z","competition":"NBA","domicile":false,"adversaire":"Oklahoma City Thunder","statut":"FINAL","score":12.2,"situation":"joue","minutes":19},
-  {"matchId":"Game:9049f90c-ada3-4adf-bbaa-451467190781","date":"2026-11-03T00:00:00Z","competition":"NBA","domicile":true,"adversaire":"Oklahoma City Thunder","statut":"FINAL","score":30.5,"situation":"joue","minutes":27},
-  {"matchId":"Game:3d829014-89ba-45c8-bb1f-9500a465f6a5","date":"2026-11-01T00:00:00Z","competition":"NBA","domicile":false,"adversaire":"Milwaukee Bucks","statut":"FINAL","score":24.2,"situation":"joue","minutes":23},
-  {"matchId":"Game:757649c6-01d8-4ab6-950e-13e60e4fc99d","date":"2026-10-30T00:00:00Z","competition":"NBA","domicile":false,"adversaire":"Atlanta Hawks","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
-  {"matchId":"Game:a7bb5985-7156-4baf-a631-ba7d9605ae67","date":"2026-10-28T23:00:00Z","competition":"NBA","domicile":true,"adversaire":"Washington Wizards","statut":"FINAL","score":19.3,"situation":"joue","minutes":21},
-  {"matchId":"Game:2af6e37b-f0d7-4401-aeee-20fcb053d1d3","date":"2026-10-26T23:00:00Z","competition":"NBA","domicile":true,"adversaire":"Minnesota Timberwolves","statut":"FINAL","score":21.4,"situation":"joue","minutes":20},
-  {"matchId":"Game:a5356752-988f-439a-ab8b-d56dfe3ad08e","date":"2026-10-24T23:30:00Z","competition":"NBA","domicile":true,"adversaire":"Brooklyn Nets","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
-  {"matchId":"Game:3b376f6b-a53e-428a-a7d1-3620fc510cea","date":"2026-10-22T23:00:00Z","competition":"NBA","domicile":false,"adversaire":"Philadelphia 76ers","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0},
-  {"matchId":"Game:5e7bfd85-0ca7-4071-a0a2-cd6cb3b83ac5","date":"2026-10-13T23:00:00Z","competition":"NBA","domicile":false,"adversaire":"Orlando Magic","statut":"REVIEWING","score":22.6,"situation":"joue","minutes":13},
-  {"matchId":"Game:695257fc-e8d9-4dd7-a7a2-4403b1780bf1","date":"2026-10-11T22:30:00Z","competition":"NBA","domicile":true,"adversaire":"Orlando Magic","statut":"REVIEWING","score":15.2,"situation":"joue","minutes":19},
-  {"matchId":"Game:43528c79-3aed-4edc-99bc-d5127289158e","date":"2026-10-08T23:00:00Z","competition":"NBA","domicile":true,"adversaire":"Boston Celtics","statut":"REVIEWING","score":24.4,"situation":"joue","minutes":24}
+  {"matchId":"Game:f87889ab-82f5-412c-ab7d-be5efeefe629","date":"2026-11-07T00:30:00Z","competition":"NBA","domicile":true,"adversaire":"Philadelphia 76ers","statut":"REVIEWING","score":21.7,"situation":"joue","minutes":27,"pour":119,"contre":95,"cotes":null},
+  {"matchId":"Game:8be8d8ec-5c69-40fd-84db-cecfdb384e1a","date":"2026-11-05T01:00:00Z","competition":"NBA","domicile":false,"adversaire":"Oklahoma City Thunder","statut":"FINAL","score":12.2,"situation":"joue","minutes":19,"pour":116,"contre":124,"cotes":null},
+  {"matchId":"Game:9049f90c-ada3-4adf-bbaa-451467190781","date":"2026-11-03T00:00:00Z","competition":"NBA","domicile":true,"adversaire":"Oklahoma City Thunder","statut":"FINAL","score":30.5,"situation":"joue","minutes":27,"pour":112,"contre":117,"cotes":null},
+  {"matchId":"Game:3d829014-89ba-45c8-bb1f-9500a465f6a5","date":"2026-11-01T00:00:00Z","competition":"NBA","domicile":false,"adversaire":"Milwaukee Bucks","statut":"FINAL","score":24.2,"situation":"joue","minutes":23,"pour":136,"contre":111,"cotes":null},
+  {"matchId":"Game:757649c6-01d8-4ab6-950e-13e60e4fc99d","date":"2026-10-30T00:00:00Z","competition":"NBA","domicile":false,"adversaire":"Atlanta Hawks","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":111,"contre":114,"cotes":null},
+  {"matchId":"Game:a7bb5985-7156-4baf-a631-ba7d9605ae67","date":"2026-10-28T23:00:00Z","competition":"NBA","domicile":true,"adversaire":"Washington Wizards","statut":"FINAL","score":19.3,"situation":"joue","minutes":21,"pour":121,"contre":111,"cotes":null},
+  {"matchId":"Game:2af6e37b-f0d7-4401-aeee-20fcb053d1d3","date":"2026-10-26T23:00:00Z","competition":"NBA","domicile":true,"adversaire":"Minnesota Timberwolves","statut":"FINAL","score":21.4,"situation":"joue","minutes":20,"pour":127,"contre":125,"cotes":null},
+  {"matchId":"Game:a5356752-988f-439a-ab8b-d56dfe3ad08e","date":"2026-10-24T23:30:00Z","competition":"NBA","domicile":true,"adversaire":"Brooklyn Nets","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":125,"contre":121,"cotes":null},
+  {"matchId":"Game:3b376f6b-a53e-428a-a7d1-3620fc510cea","date":"2026-10-22T23:00:00Z","competition":"NBA","domicile":false,"adversaire":"Philadelphia 76ers","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":106,"contre":114,"cotes":null},
+  {"matchId":"Game:5e7bfd85-0ca7-4071-a0a2-cd6cb3b83ac5","date":"2026-10-13T23:00:00Z","competition":"NBA","domicile":false,"adversaire":"Orlando Magic","statut":"REVIEWING","score":22.6,"situation":"joue","minutes":13,"pour":116,"contre":132,"cotes":null},
+  {"matchId":"Game:695257fc-e8d9-4dd7-a7a2-4403b1780bf1","date":"2026-10-11T22:30:00Z","competition":"NBA","domicile":true,"adversaire":"Orlando Magic","statut":"REVIEWING","score":15.2,"situation":"joue","minutes":19,"pour":119,"contre":105,"cotes":null},
+  {"matchId":"Game:43528c79-3aed-4edc-99bc-d5127289158e","date":"2026-10-08T23:00:00Z","competition":"NBA","domicile":true,"adversaire":"Boston Celtics","statut":"REVIEWING","score":24.4,"situation":"joue","minutes":24,"pour":113,"contre":124,"cotes":null}
  ]
 }

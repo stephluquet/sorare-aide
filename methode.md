@@ -1,7 +1,8 @@
 # Méthode v3 : probabilité de jouer, score attendu et compositions
 
 Version 3 (2026-11-07) : la v2 (probabilité de jouer, score s'il joue) complétée
-de la simulation et du choix des compositions (sections 5 et 6). Ce document **fait foi** : le moteur (`src/moteur/`)
+de la simulation et du choix des compositions (sections 5 et 6), puis du
+contexte du match (section 9 : cotes en football, dos-à-dos et blessures ESPN en NBA). Ce document **fait foi** : le moteur (`src/moteur/`)
 lit les paramètres dans le bloc JSON ci-dessous et applique les formules
 décrites ici, sans les recopier. Toute modification de la méthode passe par
 ce fichier, et les cas de `tests/cas/` doivent être mis à jour en conséquence.
@@ -61,6 +62,14 @@ ignorent les matchs non joués.
     "alternatives_par_poste": 4,
     "alternatives_nba": 8,
     "ambitieuse_seuil_jouer": 0.6
+  },
+  "contexte": {
+    "football_cotes": {
+      "pente": { "GK": 12.9, "DF": 22.9, "MD": 19.0, "FW": 11.4 },
+      "victoire_moyenne": { "GK": 0.372, "DF": 0.380, "MD": 0.383, "FW": 0.398 }
+    },
+    "nba_dos_a_dos": { "fuseau": "America/New_York", "facteur_jouer": 0.925 },
+    "espn_blessures": { "Out": "exclu", "Doubtful": "exclu", "Questionable": "douteux", "Day-To-Day": "douteux" }
   }
 }
 ```
@@ -331,6 +340,62 @@ Vérifié sur un mois de calendrier (voir `CLAUDE.md`). Mêmes règles de
 composition que l'Arcade du sport (à confirmer dans le jeu). Recherche
 exhaustive sur les candidats présélectionnés de la section 6.
 
+## 9. Contexte du match
+
+Rétro-tests du 2026-11-07 (`node outils/retro-test-contexte.js football|nba`)
+sur l'archive complétée avec les cotes et les résultats. On compare le score
+réel au niveau habituel du joueur, estimé sur ses seuls matchs plus anciens.
+
+**Football : cotes du match.** Pour un **titulaire**, l'écart au score
+habituel suit la probabilité de victoire de son équipe (cote d'avant-match de
+Sorare, `winOddsBasisPoints`). Sur 6 700 matchs comme titulaire, la pente
+estimée sur une moitié des joueurs réduit l'erreur sur l'autre moitié :
+défenseurs 14,91 → 14,80, milieux 12,31 → 12,11, gardiens 15,57 → 15,33,
+attaquants 14,32 → 14,24 (corrélations 0,20 ; 0,19 ; 0,11 ; 0,11). Gain
+modeste mais constant. Quand les cotes du prochain match sont connues :
+
+  décalage = pente[poste] × (P(victoire) − victoire_moyenne[poste])
+
+ajouté au score **de titulaire** (μ titulaire et, dans la simulation, chaque
+tirage de la situation titulaire), pas à celui d'un entré en jeu (non
+mesuré). Pentes et moyennes sur tout l'échantillon (`contexte.football_cotes`) ;
+exemple : un défenseur dont l'équipe a 75 % de chances de gagner prend
+22,9 × (0,75 − 0,38) ≈ +8,5 points s'il est titulaire ; à 20 %, −4,1. Le poste
+est le premier poste du joueur. La chance de clean sheet (1 / cote) donne à
+peu près la même chose et n'est pas ajoutée (les deux sont très liées).
+**La forme de l'équipe** (points pris sur les 5 derniers matchs) **n'apporte
+rien** une fois la cote connue (corrélation partielle −0,07 à −0,10) : non utilisée.
+
+**NBA : deuxième soir consécutif (dos-à-dos).** Joueurs qui jouaient
+régulièrement (au moins 4 des 5 matchs précédents), selon les jours depuis le
+match précédent de l'équipe (dates de New York) : 1 jour → joue 81,3 % (551
+matchs) ; 2 jours → 87,6 % ; 3 jours → 89,3 % ; 4 jours ou plus → 59,4 %
+(surtout des retours de blessure, déjà signalés par ailleurs). Le score s'il
+joue ne baisse pas. Si le prochain match a lieu le lendemain (New York) du
+dernier match de l'équipe connu dans l'historique :
+
+  p ← p × facteur_jouer, avec facteur_jouer = 0,813 / 0,879 ≈ 0,925
+
+(0,879 = taux des matchs à 2 ou 3 jours de repos). Ne s'applique pas à un
+joueur exclu. Le dernier match de l'équipe est le plus récent de
+l'historique du joueur antérieur au prochain match (l'historique compte les
+matchs de l'équipe où il n'a pas joué).
+
+**NBA : blessures annoncées par ESPN.** `site.api.espn.com`, liste des
+blessures de la ligue (statut, commentaire en anglais, date). Rapprochement
+par nom (sans accents ni ponctuation) **et** équipe. Effet
+(`contexte.espn_blessures`) : `Out` et `Doubtful` → exclu, `Questionable` et
+`Day-To-Day` → douteux ; le commentaire court est affiché avec sa date. Une
+composition officielle (football seulement) l'emporterait. Le 2026-11-07, sur
+92 joueurs listés, 53 sont dans le catalogue ; Sorare signalait déjà une
+blessure pour 50 d'entre eux : ESPN ajoute surtout les incertains du jour et
+le texte du commentaire.
+
+**NBA : cotes ESPN (écart prévu, total de points).** Sur 169 matchs passés
+(910 matchs de joueurs réguliers), **aucun effet** mesurable sur le score ou
+les minutes (corrélations −0,03 à 0,07, y compris pour les matchs très
+déséquilibrés) : non utilisées.
+
 ## Limites connues
 
 - **Les joueurs sont tirés indépendamment** : deux joueurs du même club (ou
@@ -341,7 +406,7 @@ exhaustive sur les candidats présélectionnés de la section 6.
 - La présélection peut écarter un joueur utile à une équipe particulière ;
   la recherche n'est pas exhaustive.
 
-- `p` ne voit ni l'adversaire, ni la rotation annoncée, ni un changement
+- `p` ne voit ni l'adversaire (sauf les cotes de la section 9, et sur le score seulement), ni la rotation annoncée, ni un changement
   d'entraîneur. Les compositions officielles (test 3) et la vérification de
   l'étape « conseil » doivent corriger ces cas.
 - Les joueurs qui changent de club gardent l'historique de l'ancien.

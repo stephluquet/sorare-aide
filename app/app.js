@@ -109,6 +109,18 @@ const lignes = D.cartes.map((c) => {
     cotes: m?.cotes ? (lieu === 'dom' ? m.cotes.domicile : lieu === 'ext' ? m.cotes.exterieur : null) : null };
 });
 
+// Étiquettes du contexte du match (methode.md, section 9).
+function pucesContexte(l) {
+  const k = l.pr.contexte ?? {}, out = [];
+  if (l.c.sport === 'football' && l.cotes?.victoire != null) {
+    const v = Math.round(l.cotes.victoire * 100);
+    out.push(`<span class="etiq neutre" title="Probabilité de victoire de son équipe (cotes Sorare)">${v >= 60 ? 'Favori' : v <= 30 ? 'Outsider' : 'Victoire'} ${v} %</span>`);
+  }
+  if (k.dosADos) out.push('<span class="etiq incertain" title="Deuxième soir consécutif de son équipe">2e soir de suite</span>');
+  if (k.espn) out.push(`<span class="etiq ${l.pr.statut === 'ok' ? 'neutre' : l.pr.statut}" title="${esc(k.espn.commentaire ?? '')}">ESPN : ${esc(k.espn.statut)}</span>`);
+  return out.join('');
+}
+
 function statut(l) {
   if (l.pr.statut !== 'ok') return l.pr.statut;
   if (l.pr.situationConfirmee === 'titulaire') return 'confirme';
@@ -308,7 +320,7 @@ function fiche(id) {
       <h2>${esc(j.nom)}</h2>
       ${c.sport === 'nba' ? `<div style="margin:4px 0">${badgeEtoiles(l, true)}</div>` : ''}
       <div class="sous">${esc(j.postes.join('/'))} · ${esc(j.club?.nom ?? '?')} · ${esc((j.tier ?? '').replace('_PLUS', '+'))}${c.sport !== 'nba' && j.etoiles != null ? ` · ${nb(j.etoiles, 1)} ★` : ''}</div>
-      <div class="puces" style="margin-top:6px"><span class="etiq ${st}">${LIBELLES[st]}</span>${c.bonusPct ? `<span class="etiq bonus">${esc(c.collection)} +${nb(c.bonusPct)} %</span>` : ''}${j.statutSorare ? `<span class="etiq neutre">Sorare : ${esc(j.statutSorare)}</span>` : ''}</div>
+      <div class="puces" style="margin-top:6px"><span class="etiq ${st}">${LIBELLES[st]}</span>${c.bonusPct ? `<span class="etiq bonus">${esc(c.collection)} +${nb(c.bonusPct)} %</span>` : ''}${j.statutSorare ? `<span class="etiq neutre">Sorare : ${esc(j.statutSorare)}</span>` : ''}${pucesContexte(l)}</div>
       <div class="sous" style="margin-top:8px">${m ? `${quand(m.debutUTC)} · ${esc(m.competition ?? '')} · ${l.lieu === 'ext' ? 'à l’extérieur contre' : l.lieu === 'dom' ? 'à domicile contre' : ''} ${esc(l.adv ?? '?')}` : 'Pas de match connu'}</div>
     </div></div>
     <div class="grille">
@@ -396,7 +408,7 @@ function carteProposition(nom, e, sport, principale) {
       return `<div class="joueur" data-fiche="${esc(l.c.id)}" role="button" tabindex="0" aria-label="Voir la carte de ${esc(l.j.nom)}">${vignette(l)}<div style="min-width:0">
           <div class="nom">${esc(l.j.nom)}${e.capitaine === l.c.id ? '<span class="capitaine">C</span>' : ''} ${badgeEtoiles(l)}</div>
           <div class="meta"><span>${esc(l.j.postes.join('/'))}</span><span>${esc(quand(l.m.debutUTC))} · ${l.lieu === 'ext' ? '@ ' : l.lieu === 'dom' ? 'vs ' : ''}${esc(l.adv ?? '?')}</span></div>
-          <div class="puces"><span class="etiq ${st}">${LIBELLES[st]}</span>${l.c.bonusPct ? `<span class="etiq bonus">${esc(l.c.collection)} +${nb(l.c.bonusPct)} %</span>` : ''}</div>
+          <div class="puces"><span class="etiq ${st}">${LIBELLES[st]}</span>${l.c.bonusPct ? `<span class="etiq bonus">${esc(l.c.collection)} +${nb(l.c.bonusPct)} %</span>` : ''}${pucesContexte(l)}</div>
         </div>
         <div class="droite"><b>${pct(l.pr.p)}</b>joue · ${nb(l.pr.siJoue)} pts</div></div>`;
     }).join('')}</div>
@@ -496,7 +508,7 @@ function afficherSquad() {
       <div class="joueurs">${membres.map((l) => `<div class="joueur" data-fiche="${esc(l.c.id)}" role="button" tabindex="0" aria-label="Voir la carte de ${esc(l.j.nom)}">${vignette(l)}<div style="min-width:0">
           <div class="nom">${esc(l.j.nom)}${e.capitaine === l.c.id ? '<span class="capitaine">C</span>' : ''} ${badgeEtoiles(l)}</div>
           <div class="meta"><span>${esc(l.j.postes.join('/'))}</span><span>${esc(quand(l.m.debutUTC))} · ${l.lieu === 'ext' ? '@ ' : l.lieu === 'dom' ? 'vs ' : ''}${esc(l.adv ?? '?')}</span></div>
-          <div class="puces"><span class="etiq ${statut(l)}">${LIBELLES[statut(l)]}</span>${jouees(sport).has(l.c.id) ? '<span class="etiq neutre">jouée en Arcade</span>' : ''}</div>
+          <div class="puces"><span class="etiq ${statut(l)}">${LIBELLES[statut(l)]}</span>${jouees(sport).has(l.c.id) ? '<span class="etiq neutre">jouée en Arcade</span>' : ''}${pucesContexte(l)}</div>
         </div><div class="droite"><b>${nb(l.pr.esperance)}</b>espérance</div></div>`).join('')}</div>
       <div class="sous">${r.admissibles} cartes du jour retenues, ${r.nbEquipes} équipes comparées. Règles de composition supposées identiques à l'Arcade (à confirmer).</div>
     </article>`;

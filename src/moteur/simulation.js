@@ -63,7 +63,7 @@ export function distribution(joueur, projection, P) {
       const idx = joues.map((m, i) => (m.situation === sit ? i : -1)).filter((i) => i >= 0);
       return idx.length < S.min_scores_situation ? tous : echantillon(idx.map((i) => joues[i].score), idx.map((i) => ws[i]));
     };
-    situations = [{ part: s.q, e: parSit('titulaire') }, { part: 1 - s.q, e: parSit('entre') }];
+    situations = [{ part: s.q, e: parSit('titulaire'), decalage: s.decalageTitulaire ?? 0 }, { part: 1 - s.q, e: parSit('entre') }];
   } else {
     situations = [{ part: 1, e: tous }];
     echelle = tous.moyenne > 0 ? s.mu / tous.moyenne : 1; // remise à l'échelle de μ = minutes × taux
@@ -72,8 +72,8 @@ export function distribution(joueur, projection, P) {
   const b = projection.bonus;
   // Moments du score s'il joue (avant bornage), bonus inclus
   let m1 = 0, m2 = 0;
-  for (const { part, e } of situations) {
-    const mu = e.moyenne * echelle, va = e.variance * echelle ** 2 + bruit ** 2;
+  for (const { part, e, decalage = 0 } of situations) {
+    const mu = e.moyenne * echelle + decalage, va = e.variance * echelle ** 2 + bruit ** 2;
     m1 += part * mu; m2 += part * (va + mu * mu);
   }
   return {
@@ -86,7 +86,7 @@ function tirerScore(d, rng) {
   if (rng.suivant() >= d.p) return 0;
   let u = rng.suivant(), sit = d.situations[0];
   for (const x of d.situations) { if (u < x.part) { sit = x; break; } u -= x.part; }
-  let score = tirerDans(sit.e, rng.suivant()) * d.echelle + d.bruit * rng.normal();
+  let score = tirerDans(sit.e, rng.suivant()) * d.echelle + (sit.decalage ?? 0) + d.bruit * rng.normal();
   if (score < 0) score = 0;
   if (d.max != null && score > d.max) score = d.max;
   return score;

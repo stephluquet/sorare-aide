@@ -38,6 +38,7 @@ const app = {
   joueurs: donnees.joueurs.map((j) => ({
     id: j.id, sport: j.sport, nom: j.nom, postes: j.postes, club: j.club, tier: j.tier, etoiles: j.etoiles,
     statutSorare: j.statutSorare, blessures: j.blessures, suspensions: j.suspensions, prochainMatchId: j.prochainMatchId,
+    ...(j.espn ? { espn: j.espn } : {}),
     h: historiqueCompact(j.historique ?? []),
   })),
   matchs: donnees.matchs,

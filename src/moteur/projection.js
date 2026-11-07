@@ -21,7 +21,7 @@ function matchsJoues(joueur, P) {
   return matchsComptes(joueur, P).filter((m) => P.situations_jouees.includes(m.situation) && m.statut !== 'DID_NOT_PLAY');
 }
 
-export function scoreSiJoue(joueur, P, { situationConfirmee = null } = {}) {
+export function scoreSiJoue(joueur, P, { situationConfirmee = null, victoire = null } = {}) {
   const sport = joueur.sport, S = P[sport];
   const joues = matchsJoues(joueur, P);
   if (!joues.length) return { mu: null, sigma: null, nbScores: 0 };
@@ -41,9 +41,14 @@ export function scoreSiJoue(joueur, P, { situationConfirmee = null } = {}) {
       return { mu: moyennePonderee(idx.map((i) => joues[i].score), idx.map((i) => ws[i])), n: idx.length, repli: false };
     };
     const T = parSituation('titulaire'), E = parSituation('entre');
-    const mu = q * T.mu + (1 - q) * E.mu;
     const sigma = ecartTypePondere(joues.map((m) => m.score - (m.situation === 'titulaire' ? T.mu : E.mu)), ws);
-    return { mu, sigma, q, muTitulaire: T.mu, muEntre: E.mu, nbTitulaire: T.n, nbEntre: E.n, nbScores: joues.length };
+    // Cotes du match (methode.md, section 9) : décalage du score de titulaire selon la chance de victoire.
+    const C = P.contexte?.football_cotes, poste = joueur.postes?.[0];
+    const decalageTitulaire = C && victoire != null && C.pente[poste] != null
+      ? C.pente[poste] * (victoire - C.victoire_moyenne[poste]) : 0;
+    const muTitulaire = Math.max(0, T.mu + decalageTitulaire);
+    const mu = q * muTitulaire + (1 - q) * E.mu;
+    return { mu, sigma, q, muTitulaire, muEntre: E.mu, decalageTitulaire, nbTitulaire: T.n, nbEntre: E.n, nbScores: joues.length };
   }
 
   // NBA : minutes × score par minute
@@ -68,8 +73,14 @@ export function scoreSiJoue(joueur, P, { situationConfirmee = null } = {}) {
  */
 export function projeterCarte(carte, joueur, match, P, regles = {}) {
   const jouer = probabiliteJouer(joueur, match, P, regles);
-  const score = scoreSiJoue(joueur, P, { situationConfirmee: jouer.situationConfirmee });
+  const club = joueur.club?.slug;
+  const cotes = match?.cotes ? (match.domicile?.slug === club ? match.cotes.domicile : match.exterieur?.slug === club ? match.cotes.exterieur : null) : null;
+  const score = scoreSiJoue(joueur, P, { situationConfirmee: jouer.situationConfirmee, victoire: cotes?.victoire ?? null });
   const raisons = [...jouer.raisons];
+  if (score.decalageTitulaire) {
+    const d = score.decalageTitulaire;
+    raisons.push(`équipe à ${Math.round(cotes.victoire * 100)} % de chances de gagner : ${d > 0 ? '+' : '−'}${Math.abs(d).toFixed(1).replace('.', ',')} pts s'il est titulaire`);
+  }
   let b = 1;
   if (carte.bonusPct == null) raisons.push('bonus de collection inconnu : 0 % par défaut');
   else b = 1 + carte.bonusPct / 100;
