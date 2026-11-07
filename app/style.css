@@ -53,7 +53,8 @@ button:focus-visible, select:focus-visible, input:focus-visible, .ligne:focus-vi
 .meta { color: var(--doux); font-size: .8rem; display: flex; flex-wrap: wrap; gap: 2px 8px; }
 .puces { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 3px; }
 .etiq { font-size: .72rem; font-weight: 600; border-radius: 6px; padding: 1px 6px; }
-.etiq.probable { background: var(--ok-doux); color: var(--ok); }
+.etiq.probable, .etiq.confirme { background: var(--ok-doux); color: var(--ok); }
+.etiq.confirme { font-weight: 700; }
 .etiq.incertain, .etiq.douteux { background: var(--attention-doux); color: var(--attention); }
 .etiq.exclu { background: var(--stop-doux); color: var(--stop); }
 .etiq.bonus { background: var(--accent-doux); color: var(--accent); }
@@ -89,8 +90,8 @@ button:focus-visible, select:focus-visible, input:focus-visible, .ligne:focus-vi
 
 /* Navigation entre écrans */
 .onglets { display: flex; gap: 4px; flex-wrap: wrap; border-bottom: 1px solid var(--trait); padding-bottom: 8px; }
-.onglets a { font: 700 1.05rem var(--police-titre); text-transform: uppercase; letter-spacing: .03em; color: var(--doux);
-  text-decoration: none; padding: 4px 10px; border-radius: 8px; }
+.onglets a { font: 700 1rem var(--police-titre); text-transform: uppercase; letter-spacing: .02em; color: var(--doux);
+  text-decoration: none; padding: 4px 7px; border-radius: 8px; }
 .onglets a[aria-current="page"] { color: var(--surface); background: var(--encre); }
 .onglets a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .vue { display: grid; gap: 12px; }
@@ -121,3 +122,13 @@ button:focus-visible, select:focus-visible, input:focus-visible, .ligne:focus-vi
 .attente { color: var(--doux); padding: 20px 0; }
 details.ecartees { font-size: .85rem; color: var(--doux); }
 details.ecartees summary { cursor: pointer; }
+
+/* Créneau unique */
+.creneaux { display: grid; gap: 8px; }
+.creneau { background: var(--surface); border: 1px solid var(--trait); border-radius: 12px; padding: 10px 12px; display: grid;
+  grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; align-items: center; cursor: pointer; width: 100%; text-align: left; color: inherit; font: inherit; }
+.creneau .heure { font: 700 1.25rem var(--police-titre); }
+.creneau .chance { font: 700 1.6rem var(--police-titre); font-variant-numeric: tabular-nums; text-align: right; }
+.creneau .chance small { display: block; font: 500 .7rem var(--police-texte); color: var(--doux); }
+.creneau[aria-expanded="true"] { border-color: var(--encre); }
+.creneau-detail { margin-top: -2px; }

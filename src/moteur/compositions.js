@@ -22,7 +22,9 @@ export function cartesAdmissibles(lignes, P, o) {
       && (pr.eligibleArcade || ecarter('match hors compétitions Arcade'))
       && (!raretes || raretes.includes(l.carte.rarete) || ecarter('rareté non autorisée'))
       && (!o.jouees.has(l.carte.id) || ecarter('déjà jouées à ce palier'))
-      && ((l.match && Date.parse(l.match.debutUTC) > o.maintenant) || ecarter('match déjà commencé'));
+      && ((l.match && Date.parse(l.match.debutUTC) > o.maintenant) || ecarter('match déjà commencé'))
+      && (!o.creneau || l.match.debutUTC === o.creneau || ecarter('autre créneau'))
+      && (!o.jour || jourParis(l.match.debutUTC) === o.jour || ecarter('autre jour'));
     if (!ok) continue;
     const d = distribution(l.joueur, pr, P);
     if (!d) { ecarter('pas de score exploitable'); continue; }
@@ -32,6 +34,10 @@ export function cartesAdmissibles(lignes, P, o) {
 }
 
 const parEsperance = (a, b) => b.projection.esperance - a.projection.esperance;
+
+// Jour (AAAA-MM-JJ, heure de Paris) d'un instant ISO.
+const FORMAT_JOUR = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Paris' });
+export const jourParis = (iso) => FORMAT_JOUR.format(new Date(iso));
 
 // Équipes candidates (ensembles de 5 cartes) respectant postes, doublons et étoiles.
 function* equipesFootball(adm, regle, sim) {
@@ -47,6 +53,7 @@ function* equipesFootball(adm, regle, sim) {
     for (const f of libres) {
       const equipe = [a, b, c, e, f];
       if (new Set(equipe.map((x) => x.joueur.id)).size < 5) continue; // un joueur une seule fois
+      if (equipe.some((x, i) => equipe.indexOf(x) !== i)) continue;
       const cle = equipe.map((x) => x.carte.id).sort().join('|');
       if (vues.has(cle)) continue;
       vues.add(cle);
@@ -134,9 +141,75 @@ export function proposer(lignes, P, o) {
   res.equilibree = meilleure(principale.simulees, 'pPasser', 'pComplete');
   const proches = principale.simulees.filter((x) => x.pPasser >= res.equilibree.pPasser - sim.prudente_ecart_max);
   res.prudente = meilleure(proches, 'pComplete', 'pPasser');
-  if (sim.ambitieuse_seuil_jouer < o.seuil) {
+  if (!o.sansAmbitieuse && sim.ambitieuse_seuil_jouer < o.seuil) {
     const amb = meilleure(passe(sim.ambitieuse_seuil_jouer).simulees, 'pPasser', 'pComplete');
     if (amb && amb.pPasser > res.equilibree.pPasser + 0.005) res.ambitieuse = amb;
   }
   return res;
+}
+
+// ---------- Créneau unique (methode.md, section 7) ----------
+
+/**
+ * Propositions par créneau : pour chaque coup d'envoi à venir, la meilleure équipe dont
+ * les 5 matchs commencent à cette heure-là.
+ * @returns [{ creneau, compositionsPubliees, matchs, admissibles, equilibree, prudente }] par heure croissante
+ */
+export function proposerParCreneau(lignes, P, o) {
+  const parCreneau = new Map();
+  for (const l of lignes) {
+    if (!l.match || Date.parse(l.match.debutUTC) <= o.maintenant) continue;
+    const c = l.match.debutUTC;
+    if (!parCreneau.has(c)) parCreneau.set(c, { lignes: [], matchs: new Map() });
+    parCreneau.get(c).lignes.push(l);
+    parCreneau.get(c).matchs.set(l.match.id, l.match);
+  }
+  const res = [];
+  for (const [creneau, { lignes: L, matchs }] of [...parCreneau.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
+    const publiees = [...matchs.values()].filter((m) => Object.values(m.compositionsOfficielles?.equipes ?? {}).some(Boolean)).length;
+    if (L.length < 5) continue; // impossible de remplir 5 places
+    const r = proposer(L, P, { ...o, creneau, sansAmbitieuse: true });
+    if (!r.equilibree) continue;
+    res.push({ creneau, compositionsPubliees: publiees, matchs: matchs.size, admissibles: r.admissibles, equilibree: r.equilibree, prudente: r.prudente });
+  }
+  return res;
+}
+
+// ---------- Squad du jour (methode.md, section 8) ----------
+
+/**
+ * Meilleure équipe du jour au sens du score attendu (espérance), cartes jouées en Arcade
+ * autorisées. Mêmes contraintes de composition que l'Arcade du sport (à confirmer dans le jeu).
+ * @param o { sport, jour: 'AAAA-MM-JJ' (Paris), regle, seuil, maintenant }
+ */
+export function squadDuJour(lignes, P, o) {
+  const { admissibles, ecartees } = cartesAdmissibles(lignes, P, { ...o, jouees: new Set() });
+  const mult = o.regle.capitaine?.multiplicateur ?? 1;
+  const generateur = o.sport === 'football' ? equipesFootball(admissibles, o.regle, P.simulation) : equipesNba(admissibles, o.regle, P.simulation);
+  let meilleure = null, nbEquipes = 0;
+  for (const equipe of generateur) {
+    nbEquipes++;
+    const esp = equipe.map((x) => x.projection.esperance);
+    const cap = o.regle.capitaine ? esp.indexOf(Math.max(...esp)) : -1;
+    const total = esp.reduce((a, b) => a + b, 0) + (cap >= 0 ? (mult - 1) * esp[cap] : 0);
+    if (!meilleure || total > meilleure.esperance) meilleure = { equipe, cap, esperance: total };
+  }
+  if (!meilleure) return { equipe: null, admissibles: admissibles.length, ecartees, nbEquipes, message: `Aucune équipe possible ce jour-là : ${admissibles.length} cartes admissibles.` };
+  const e = meilleure.equipe;
+  return {
+    equipe: {
+      cartes: e.map((x) => x.carte.id),
+      capitaine: meilleure.cap >= 0 ? e[meilleure.cap].carte.id : null,
+      esperance: meilleure.esperance,
+      pComplete: e.reduce((a, x) => a * x.projection.p, 1),
+      verrouillage: e.map((x) => x.match.debutUTC).sort()[0],
+      etoiles: e.reduce((s, x) => s + (x.joueur.etoiles ?? 0), 0),
+    },
+    admissibles: admissibles.length, ecartees, nbEquipes,
+  };
+}
+
+// Jours (Paris) qui ont au moins un match à venir, dans l'ordre.
+export function joursAVenir(lignes, maintenant) {
+  return [...new Set(lignes.filter((l) => l.match && Date.parse(l.match.debutUTC) > maintenant).map((l) => jourParis(l.match.debutUTC)))].sort();
 }

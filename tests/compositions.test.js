@@ -7,7 +7,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parametresDepuisMethode } from '../src/moteur/parametres.js';
 import { projeterCarte } from '../src/moteur/projection.js';
-import { proposer } from '../src/moteur/compositions.js';
+import { proposer, proposerParCreneau, squadDuJour, joursAVenir } from '../src/moteur/compositions.js';
 import { simulerEquipe } from '../src/moteur/simulation.js';
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -174,4 +174,40 @@ test('compositions officielles : remplaçant → chance d’entrer, q = 0 ; abse
   const abs = avecCompo(ligne('z'), { titulaires: ['autre'] });
   assert.equal(abs.projection.statut, 'exclu');
   assert.equal(abs.projection.p, 0);
+});
+
+// ---------- Créneau unique et Squad du jour (methode.md, sections 7 et 8) ----------
+
+test('créneau unique : les 5 matchs commencent à la même heure', () => {
+  // Deux créneaux complets : 15:00 (effectif de base) et 18:00 (un second effectif plus faible)
+  const tard = '2026-11-08T18:00:00Z';
+  const L = effectif([
+    ligne('gk9', { postes: ['GK'], niveau: 45, debut: tard }), ligne('df9', { postes: ['DF'], niveau: 45, debut: tard }),
+    ligne('md9', { postes: ['MD'], niveau: 45, debut: tard }), ligne('fw9', { postes: ['FW'], niveau: 45, debut: tard }),
+    ligne('fw8', { postes: ['FW'], niveau: 44, debut: tard }),
+  ]);
+  const res = proposerParCreneau(L, P, optFoot());
+  assert.deepEqual(res.map((r) => r.creneau), ['2026-11-08T15:00:00Z', tard]);
+  const parIdL = parId(L);
+  for (const r of res) for (const e of [r.equilibree, r.prudente]) {
+    assert.ok(e.cartes.every((id) => parIdL.get(id).match.debutUTC === r.creneau), `créneau ${r.creneau}`);
+  }
+});
+
+test('Squad du jour : cartes du jour seulement, cartes jouées en Arcade autorisées, meilleure espérance', () => {
+  const autreJour = '2026-11-09T15:00:00Z';
+  const L = effectif([ligne('fw-lundi', { postes: ['FW'], niveau: 99, debut: autreJour })]);
+  assert.deepEqual(joursAVenir(L, MAINTENANT), ['2026-11-08', '2026-11-09']);
+  const r = squadDuJour(L, P, { sport: 'football', jour: '2026-11-08', regle: REGLE_FOOT, seuil: P.seuil_jouer, maintenant: MAINTENANT, jouees: new Set(['fw1-carte']) });
+  assert.ok(!r.equipe.cartes.includes('fw-lundi-carte'), 'joueur d’un autre jour exclu');
+  assert.ok(r.equipe.cartes.includes('fw1-carte'), 'une carte jouée en Arcade reste utilisable en Squad');
+  assert.equal(r.equipe.capitaine, 'fw1-carte');
+  // Contrôle par force brute sur les mêmes cartes : aucune équipe valide ne fait mieux.
+  const adm = L.filter((l) => l.match.debutUTC.startsWith('2026-11-08'));
+  const esp = (ids) => { const e = ids.map((id) => parId(L).get(id).projection.esperance); return e.reduce((a, b) => a + b, 0) + 0.5 * Math.max(...e); };
+  const pos = (po) => adm.filter((l) => l.joueur.postes[0] === po).map((l) => l.carte.id);
+  let best = 0;
+  for (const g of pos('GK')) for (const d of pos('DF')) for (const m of pos('MD')) for (const f of pos('FW'))
+    for (const x of [...pos('DF'), ...pos('MD'), ...pos('FW')]) { if (new Set([d, m, f, x]).size < 4) continue; best = Math.max(best, esp([g, d, m, f, x])); }
+  assert.ok(Math.abs(r.equipe.esperance - best) < 1e-9, `${r.equipe.esperance} contre ${best}`);
 });

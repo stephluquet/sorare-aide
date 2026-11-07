@@ -93,12 +93,12 @@ npm run app                                  # assemble app/ + src/moteur/ + don
 ```
 CLAUDE.md        ce document
 regles/          une description JSON par mode de jeu (fait foi)
-methode.md       méthode v2 (probabilité de jouer, score s'il joue), en mots et en équations, avec ses limites et l'origine de chaque paramètre ; contient le bloc JSON des paramètres (v1 archivée dans docs/methode-v1.md)
+methode.md       méthode v3 (probabilité de jouer, compositions officielles, score s'il joue, simulation, compositions, créneau unique, Squad), en mots et en équations, avec ses limites et l'origine de chaque paramètre ; contient le bloc JSON des paramètres (v1 archivée dans docs/methode-v1.md)
 tests/cas/       situations figées de la méthode v2 (carte, joueur, match fictifs) + résultat attendu, paramètres inclus ; tests/cas-v1/ : méthode v1
 tests/*.test.js  lanceur des cas (node --test)
 src/moteur/      plan v0.1 : moteur pur (parametres.js, jouer.js, projection.js, simulation.js, compositions.js) + node.js (chargement côté Node)
 app/             interface : Accueil, Propositions, Mes cartes (index.html, style.css, app.js) ; assemblée en page unique par outils/construire-app.js
-outils/          retro-test.js et retro-test-distribution.js (calibrage de methode.md sur l'historique), projections.js et propositions.js (contrôles sur les vraies données), construire-app.js (npm run app), maquettes.js + vignettes.py
+outils/          retro-test.js et retro-test-distribution.js (calibrage de methode.md sur l'historique), projections.js, propositions.js et creneaux.js (contrôles sur les vraies données), construire-app.js (npm run app), maquettes.js + vignettes.py
 src/recuperation/  plan v0.1 : api.js (débit, proxy, lecture seule), requetes.js, normaliser.js (modèle commun), historique.js (fusion incrémentale), index.js (npm run recuperer)
 src/             recuperation.js, projection.js, page.js : ancienne chaîne de l'étape 1, à remplacer par src/moteur/ et app/
 data/dernier.json   dernière récupération complète (meta, cartes, joueurs avec historique 40 matchs, matchs, paliers), lue par l'interface ; **non versionné** (8 Mo, régénéré en 21 s par `npm run recuperer`). **Trop lourd tel quel pour l'artifact** (objectif : ouverture en moins de 3 s sur iPhone) : à alléger à l'étape 5 bis (clés courtes, joueurs utiles seulement…)
@@ -184,8 +184,16 @@ Pistes : calibrer les poids sur l'historique ; utiliser les cotes du match (aujo
 - ✅ 10 situations dans `tests/compositions.test.js` + 2 contrôles de simulation (30 tests au total).
 - ✅ Écrans **Accueil** (paliers, résumé de la proposition prudente) et **Propositions** (football, NBA) dans `app/`, onglets par l'adresse (`#accueil`, `#propositions-football`, `#propositions-nba`, `#cartes`) ; « J'ai joué cette équipe » marque les 5 cartes. Mesuré dans la page (Chromium, format iPhone 13) : Accueil peint en 0,5 s, propositions football prêtes en 1,2 s, NBA en 1,6 s ; avec le processeur ralenti 4 fois : 0,7 s, 3,6 s et 5,3 s. Page de 2,5 Mo (180 vignettes).
 - Sur les données du 2026-11-07 (`node outils/propositions.js football|nba`) : football palier 300, environ 68-70 % de chances de passer (Kane capitaine) ; **NBA palier 180, 26 à 34 %** seulement.
-- **À vérifier dans le jeu** : un même joueur peut-il figurer deux fois (deux cartes) ? Une équipe peut-elle mêler des matchs de jours différents (supposé oui : « jouer tôt permet de valider vite », mais non confirmé) ?
-- Pistes : compositions officielles (test 3 : elles apparaissent vers H-1) pour mettre p à 1 ou 0 et pour le mode créneau unique (étape 4) ; corrélation entre coéquipiers.
+- **Réponses de l'utilisateur (2026-11-07)** : deux cartes du même joueur ne peuvent pas être dans la même équipe ; une équipe peut mêler des matchs de jours différents. Reporté dans `regles/` (`joueur_unique`, `jours_differents_autorises`).
+
+## Étape 4 du plan v0.1 (en cours, 2026-11-07) : compositions officielles, créneau unique, Squad, NBA
+- ✅ **Compositions officielles** (`methode.md` 1 bis) : `npm run recuperer` lit `homeFormation`/`awayFormation` des matchs de football qui commencent dans les 6 h (`match.compositionsOfficielles = { releveA, equipes: { <slug club>: { titulaires, remplacants } | null } }`). Titulaire → p 0,99, q 1, statut « confirmé » ; remplaçant → chance d'entrer estimée sur son passé de remplaçant (rétro-test : 46,6 % en moyenne, Brier 0,249 → 0,187) ; absent de la feuille → exclu. La composition l'emporte sur l'historique, les blessures et les doutes. Vérifié sur Leeds–Tottenham. Pas d'équivalent en NBA.
+- ✅ `npm run recuperer -- --sport football` **garde les données de l'autre sport** de la récupération précédente (`meta.recupereParSport`).
+- ✅ **Créneau unique** (`methode.md` 7, `proposerParCreneau`) : par coup d'envoi, la meilleure équipe dont les 5 matchs commencent à la même heure, avec l'état des compositions. Sur les données du 2026-11-07 : football, meilleur créneau sam. 15:30 (Bundesliga : Noll, Caci, Sano, Kane, Scheller), 63-64 % avant les compositions ; **NBA : sans intérêt** (au plus 6 %, trop peu de joueurs par match).
+- ✅ **Squad du jour** (`methode.md` 8, `squadDuJour`) : meilleure espérance du jour (Paris), cartes jouées en Arcade autorisées, mêmes règles de composition que l'Arcade (à confirmer). Contrôlé par force brute dans les tests.
+- ✅ NBA : contrainte d'étoiles avec demi-étoiles (déjà en place à l'étape 3).
+- ✅ Interface : onglet **Squad** (sport, jour), bascule **Plusieurs créneaux / Créneau unique** sur les propositions, étiquettes « Titulaire confirmé » et « Remplaçant annoncé ». 34 tests. `node outils/creneaux.js football|nba` : contrôle sur les vraies données.
+- ⏳ Critère du plan « créneau unique testé un vrai samedi » : essai prévu le 2026-11-07 après la publication des compositions de Bundesliga (coup d'envoi 14:30Z).
 
 ## Étape 3 (à venir) : conseil avant chaque journée
 Vérifier titulaires et blessures avec des sources citées et datées, signaler les pièges, proposer 2 ou 3 compositions. L'utilisateur valide dans l'appli Sorare.

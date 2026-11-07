@@ -8,7 +8,7 @@
 // sinon stockage du navigateur.
 
 import { projeterCarte } from '../src/moteur/projection.js';
-import { proposer } from '../src/moteur/compositions.js';
+import { proposer, proposerParCreneau, squadDuJour, joursAVenir } from '../src/moteur/compositions.js';
 
 // ---------- Données ----------
 const STATUTS_CODES = { F: 'FINAL', R: 'REVIEWING', D: 'DID_NOT_PLAY' };
@@ -35,7 +35,7 @@ function deplier(joueur) {
 // ---------- Mise en forme ----------
 const SPORTS = { football: 'Football', nba: 'NBA' };
 const POSTES = { football: ['GK', 'DF', 'MD', 'FW'], nba: ['G', 'F', 'C'] };
-const LIBELLES = { probable: 'Probable', incertain: 'Incertain', douteux: 'Douteux', exclu: 'Exclu' };
+const LIBELLES = { confirme: 'Titulaire confirmé', remplacant: 'Remplaçant annoncé', probable: 'Probable', incertain: 'Incertain', douteux: 'Douteux', exclu: 'Exclu' };
 const SIT = { titulaire: 'titulaire', entre: 'entré', joue: 'joué', banc: 'banc', absent: 'absent', inconnu: '?' };
 const tz = { timeZone: 'Europe/Paris' };
 const fJour = new Intl.DateTimeFormat('fr-FR', { ...tz, weekday: 'short', day: 'numeric', month: 'short' });
@@ -112,11 +112,12 @@ const lignes = D.cartes.map((c) => {
 
 function statut(l) {
   if (l.pr.statut !== 'ok') return l.pr.statut;
+  if (l.pr.situationConfirmee === 'titulaire') return 'confirme';
   return l.pr.p != null && l.pr.p >= seuil() ? 'probable' : 'incertain';
 }
-const disponible = (l) => statut(l) === 'probable' && l.pr.eligibleArcade && l.pr.siJoue != null && !jouees(l.c.sport).has(l.c.id);
+const disponible = (l) => ['probable', 'confirme'].includes(statut(l)) && l.pr.eligibleArcade && l.pr.siJoue != null && !jouees(l.c.sport).has(l.c.id);
 
-const vue = { sport: 'football', poste: null, creneau: '', tri: 'e', dispo: true };
+const vue = { sport: 'football', poste: null, creneau: '', tri: 'e', dispo: true, mode: 'plusieurs', creneauOuvert: null, squadSport: 'football', squadJour: null };
 
 // ---------- Propositions (calculées dans le navigateur, mises en cache) ----------
 const cache = new Map();
@@ -133,6 +134,23 @@ function propositions(sport) {
   }
   return cache.get(cle);
 }
+const lignesMoteur = (sport) => lignes.filter((l) => l.c.sport === sport).map((l) => ({ carte: l.c, joueur: l.j, match: l.m, projection: l.pr }));
+function parCreneau(sport) {
+  const palier = palierEnCours(sport); if (!palier) return null;
+  const cle = ['creneaux', sport, palier.cible, seuil(), [...jouees(sport)].sort().join(','), Math.floor(Date.now() / 60000)].join('|');
+  if (!cache.has(cle)) {
+    const t0 = performance.now();
+    const r = proposerParCreneau(lignesMoteur(sport), D.P, { sport, cible: palier.cible, regle: D.regles[sport], seuil: seuil(), jouees: jouees(sport), maintenant: Date.now() });
+    cache.set(cle, { creneaux: r, dureeMs: performance.now() - t0 });
+  }
+  return cache.get(cle);
+}
+function squad(sport, jour) {
+  const cle = ['squad', sport, jour, seuil(), Math.floor(Date.now() / 60000)].join('|');
+  if (!cache.has(cle)) cache.set(cle, squadDuJour(lignesMoteur(sport), D.P, { sport, jour, regle: D.regles[sport], seuil: seuil(), maintenant: Date.now() }));
+  return cache.get(cle);
+}
+
 // Calcul différé : attend que la page soit réellement affichée (deux images), puis
 // enchaîne les calculs un par un pour ne jamais bloquer l'affichage longtemps.
 let file = Promise.resolve();
@@ -322,7 +340,7 @@ const TITRES = {
 };
 
 function carteProposition(nom, e, sport, principale) {
-  const [titre, pourquoi] = TITRES[nom];
+  const [titre, pourquoi] = Array.isArray(nom) ? nom : TITRES[nom];
   const parId = new Map(lignes.map((l) => [l.c.id, l]));
   const membres = e.cartes.map((id) => parId.get(id)).sort((a, b) => (a.m?.debutUTC ?? '').localeCompare(b.m?.debutUTC ?? ''));
   const dernier = membres.map((l) => l.m.debutUTC).sort().at(-1);
@@ -355,7 +373,9 @@ function afficherPropositions(sport) {
   const n = jouees(sport).size;
   $('contexte-propositions').textContent = (p.etat === 'LINEUP_SET' ? 'Une composition est déjà posée : ces propositions servent à la tentative suivante si elle échoue. Pense à marquer ses cartes comme jouées. · ' : '') +
     `Seuil de chances de jouer : ${Math.round(seuil() * 100)} % (réglable dans Mes cartes) · ${n ? `${n} carte${n > 1 ? 's' : ''} déjà jouée${n > 1 ? 's' : ''} à ce palier` : 'aucune carte marquée jouée à ce palier'}.`;
+  document.querySelectorAll('#modes button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mode === vue.mode)));
   $('propositions').innerHTML = '<p class="attente">Simulation des meilleures équipes…</p>';
+  if (vue.mode === 'unique') { afficherCreneaux(sport); return; }
   plusTard(() => propositions(sport)).then((r) => {
     if (vueCourante() !== `propositions-${sport}`) return;
     if (!r.equilibree) { $('propositions').innerHTML = `<p class="attente">${esc(r.message)}</p>`; return; }
@@ -370,6 +390,57 @@ function afficherPropositions(sport) {
   });
 }
 
+// Créneau unique : un créneau par coup d'envoi, avec sa meilleure équipe.
+function afficherCreneaux(sport) {
+  plusTard(() => parCreneau(sport)).then((r) => {
+    if (vueCourante() !== `propositions-${sport}` || vue.mode !== 'unique') return;
+    if (!r?.creneaux.length) { $('propositions').innerHTML = '<p class="attente">Aucun créneau ne permet de remplir une équipe avec tes cartes disponibles.</p>'; return; }
+    const meilleur = Math.max(...r.creneaux.map((c) => c.equilibree.pPasser));
+    $('propositions').innerHTML = `<p class="sous">Les 5 matchs commencent à la même heure : compose juste après la publication des compositions (vers H-1). Meilleure chance : ${pct(meilleur)}.</p>` +
+      '<div class="creneaux">' + r.creneaux.map((c) => {
+        const ouvert = vue.creneauOuvert === c.creneau;
+        return `<button type="button" class="creneau" data-creneau="${esc(c.creneau)}" aria-expanded="${ouvert}">
+          <div><div class="heure">${esc(quand(c.creneau))}</div>
+            <div class="sous">${c.matchs} match${c.matchs > 1 ? 's' : ''} · compositions ${c.compositionsPubliees ? `publiées (${c.compositionsPubliees}/${c.matchs})` : 'pas encore publiées'} · ${c.admissibles} cartes</div></div>
+          <div class="chance">${pct(c.equilibree.pPasser)}<small>chances de passer</small></div></button>` +
+          (ouvert ? `<div class="creneau-detail">${carteProposition([`Créneau ${quand(c.creneau)}`, 'La meilleure équipe de ce créneau.'], c.equilibree, sport, true)}</div>` : '');
+      }).join('') + '</div>' +
+      `<p class="sous">${r.creneaux.length} créneaux comparés en ${(r.dureeMs / 1000).toFixed(1)} s.</p>`;
+  });
+}
+
+// ---------- Squad du jour ----------
+function afficherSquad() {
+  $('squad-sports').innerHTML = Object.entries(SPORTS).map(([k, v]) => `<button type="button" data-sport="${k}" aria-pressed="${k === vue.squadSport}">${v}</button>`).join('');
+  const jours = joursAVenir(lignesMoteur(vue.squadSport), Date.now());
+  if (!jours.includes(vue.squadJour)) vue.squadJour = jours[0] ?? null;
+  const fJourLong = new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', weekday: 'long', day: 'numeric', month: 'long' });
+  $('squad-jour').innerHTML = jours.map((j) => `<option value="${j}" ${j === vue.squadJour ? 'selected' : ''}>${fJourLong.format(new Date(`${j}T12:00:00Z`))}</option>`).join('');
+  if (!vue.squadJour) { $('squad').innerHTML = '<p class="attente">Aucun match à venir.</p>'; return; }
+  $('squad').innerHTML = '<p class="attente">Recherche de la meilleure équipe…</p>';
+  const sport = vue.squadSport, jour = vue.squadJour;
+  plusTard(() => squad(sport, jour)).then((r) => {
+    if (vueCourante() !== 'squad' || vue.squadSport !== sport || vue.squadJour !== jour) return;
+    if (!r.equipe) { $('squad').innerHTML = `<p class="attente">${esc(r.message)}</p>`; return; }
+    const e = r.equipe;
+    const parId = new Map(lignes.map((l) => [l.c.id, l]));
+    const membres = e.cartes.map((id) => parId.get(id)).sort((a, b) => a.m.debutUTC.localeCompare(b.m.debutUTC));
+    $('squad').innerHTML = `<article class="proposition principale">
+      <div class="chiffres-cle">
+        <div class="case-chiffre fort"><span>Score attendu</span><b>${nb(e.esperance)}</b></div>
+        <div class="case-chiffre"><span>Les 5 jouent</span><b>${pct(e.pComplete)}</b></div>
+        <div class="case-chiffre"><span>Verrouillage</span><b style="font-size:1.05rem">${esc(quand(e.verrouillage))}</b></div>
+      </div>
+      <div class="joueurs">${membres.map((l) => `<div class="joueur">${vignette(l)}<div style="min-width:0">
+          <div class="nom">${esc(l.j.nom)}${e.capitaine === l.c.id ? '<span class="capitaine">C</span>' : ''}</div>
+          <div class="meta"><span>${esc(l.j.postes.join('/'))}${sport === 'nba' && l.j.etoiles != null ? ` · ${nb(l.j.etoiles, 1)} ★` : ''}</span><span>${esc(quand(l.m.debutUTC))} · ${l.lieu === 'ext' ? '@ ' : l.lieu === 'dom' ? 'vs ' : ''}${esc(l.adv ?? '?')}</span></div>
+          <div class="puces"><span class="etiq ${statut(l)}">${LIBELLES[statut(l)]}</span>${jouees(sport).has(l.c.id) ? '<span class="etiq neutre">jouée en Arcade</span>' : ''}</div>
+        </div><div class="droite"><b>${nb(l.pr.esperance)}</b>espérance</div></div>`).join('')}</div>
+      <div class="sous">${sport === 'nba' ? `${nb(e.etoiles, 1)} étoiles sur 16 · ` : ''}${r.admissibles} cartes du jour retenues, ${r.nbEquipes} équipes comparées. Règles de composition supposées identiques à l'Arcade (à confirmer).</div>
+    </article>`;
+  });
+}
+
 function jouerEquipe(sport, ids) {
   const p = palierEnCours(sport); if (!p) return;
   const ensemble = jouees(sport);
@@ -380,7 +451,7 @@ function jouerEquipe(sport, ids) {
 }
 
 // ---------- Navigation ----------
-const VUES = ['accueil', 'propositions-football', 'propositions-nba', 'cartes'];
+const VUES = ['accueil', 'propositions-football', 'propositions-nba', 'squad', 'cartes'];
 const vueCourante = () => (VUES.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'accueil');
 
 function tout() {
@@ -388,10 +459,12 @@ function tout() {
   $('vue-accueil').hidden = v !== 'accueil';
   $('vue-propositions').hidden = !v.startsWith('propositions-');
   $('vue-cartes').hidden = v !== 'cartes';
+  $('vue-squad').hidden = v !== 'squad';
   document.querySelectorAll('#onglets a').forEach((a) => (a.dataset.vue === v ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')));
   afficherPaliers(); afficherStockage();
   if (v === 'accueil') afficherAccueil();
   else if (v === 'cartes') { commandes(); liste(); }
+  else if (v === 'squad') afficherSquad();
   else afficherPropositions(v.split('-')[1]);
 }
 
@@ -403,9 +476,14 @@ $('dispo').onchange = (e) => { vue.dispo = e.target.checked; commandes(); liste(
 $('seuil').onchange = (e) => { etatUtilisateur = { ...etatUtilisateur, seuil: Number(e.target.value) }; stockage.enregistrer(etatUtilisateur); tout(); };
 $('liste').onclick = (e) => { const b = e.target.closest('.ligne'); if (b) fiche(b.dataset.id); };
 $('propositions').onclick = (e) => {
+  const c = e.target.closest('[data-creneau]');
+  if (c) { vue.creneauOuvert = vue.creneauOuvert === c.dataset.creneau ? null : c.dataset.creneau; afficherCreneaux(vueCourante().split('-')[1]); return; }
   const b = e.target.closest('[data-jouer]'); if (!b) return;
   jouerEquipe(b.dataset.sport, b.dataset.jouer.split(','));
 };
+$('modes').onclick = (e) => { const b = e.target.closest('[data-mode]'); if (b) { vue.mode = b.dataset.mode; tout(); } };
+$('squad-sports').onclick = (e) => { const b = e.target.closest('[data-sport]'); if (b) { vue.squadSport = b.dataset.sport; afficherSquad(); } };
+$('squad-jour').onchange = (e) => { vue.squadJour = e.target.value; afficherSquad(); };
 window.addEventListener('hashchange', () => { window.scrollTo(0, 0); tout(); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') $('voile').hidden = true; });
 

@@ -279,6 +279,28 @@ Pour chacune : les 5 cartes, le capitaine, le score attendu, la probabilité de
 passer, la probabilité « équipe complète » et l'heure du premier coup d'envoi
 (l'équipe est verrouillée à ce moment-là).
 
+## 7. Créneau unique
+
+Variante des propositions où **les 5 matchs commencent à la même heure**
+(même `debutUTC`). Intérêt : composer juste après la publication des
+compositions officielles de ce créneau (vers H-1), quand les titulaires sont
+connus (section 1 bis), au lieu de parier sur l'historique. Pour chaque
+coup d'envoi à venir, on applique la section 6 aux seules cartes de ce
+créneau (sans proposition ambitieuse) ; l'interface affiche les créneaux par
+heure, avec leur meilleure chance de passer et l'état des compositions
+(publiées ou non), à comparer avec le mode « plusieurs créneaux ».
+
+## 8. Squad du jour
+
+Le score du squad dépend de partenaires inconnus : l'outil propose la
+**meilleure équipe du jour au sens du score attendu** (somme des
+espérances, + 50 % de l'espérance du capitaine en football, capitaine = le
+joueur de meilleure espérance). Cartes admissibles comme en section 6, sauf
+que les cartes **jouées en Arcade sont autorisées** et que tous les matchs
+doivent avoir lieu **le jour choisi** (heure de Paris). Mêmes règles de
+composition que l'Arcade du sport (à confirmer dans le jeu). Recherche
+exhaustive sur les candidats présélectionnés de la section 6.
+
 ## Limites connues
 
 - **Les joueurs sont tirés indépendamment** : deux joueurs du même club (ou
