@@ -1,0 +1,176 @@
+{
+ "id": "02-blesse-shiny",
+ "description": "Joueur blessé avec retour prévu après le prochain match : p = 0 et projection nulle, mais le score « si joue » garde le bonus Shiny (+5 %).",
+ "parametres": {
+  "version": 1,
+  "poids_l5": 0.4,
+  "poids_jeu_recent": 0.5,
+  "statuts_joues": [
+   "FINAL",
+   "REVIEWING"
+  ],
+  "statuts_comptes": [
+   "FINAL",
+   "REVIEWING",
+   "DID_NOT_PLAY"
+  ],
+  "min_scores_dispersion": 3
+ },
+ "bonus_collections_pct": {
+  "Shiny": 5,
+  "Holo": 10,
+  "Four Suits": 15,
+  "Eclipse": 20
+ },
+ "carte": {
+  "carte": "joueur-blesse-fictif",
+  "rarete": "common",
+  "saison": 2026,
+  "bonus_collection": {
+   "nom": "Shiny",
+   "multiplicateur": 1.05
+  },
+  "joueur": {
+   "slug": "joueur-blesse",
+   "nom": "Joueur Blesse",
+   "postes": [
+    "MD"
+   ],
+   "club": "FC Fictif",
+   "tier": "ROSTER",
+   "etoiles": 2,
+   "l5": 45,
+   "l15": 48,
+   "blessures": [
+    {
+     "kind": "Knock",
+     "status": null,
+     "expectedEndDate": "2026-11-24T00:00:00Z"
+    }
+   ],
+   "suspensions": [],
+   "derniers_scores": [
+    {
+     "date": "2026-10-30T15:00:00Z",
+     "score": 50,
+     "statut": "FINAL",
+     "sur_feuille": true
+    },
+    {
+     "date": "2026-10-29T15:00:00Z",
+     "score": 42,
+     "statut": "FINAL",
+     "sur_feuille": true
+    },
+    {
+     "date": "2026-10-28T15:00:00Z",
+     "score": 0,
+     "statut": "DID_NOT_PLAY",
+     "sur_feuille": false
+    },
+    {
+     "date": "2026-10-27T15:00:00Z",
+     "score": 47,
+     "statut": "FINAL",
+     "sur_feuille": true
+    },
+    {
+     "date": "2026-10-26T15:00:00Z",
+     "score": 44,
+     "statut": "FINAL",
+     "sur_feuille": true
+    },
+    {
+     "date": "2026-10-25T15:00:00Z",
+     "score": 51,
+     "statut": "FINAL",
+     "sur_feuille": true
+    },
+    {
+     "date": "2026-10-24T15:00:00Z",
+     "score": 0,
+     "statut": "DID_NOT_PLAY",
+     "sur_feuille": false
+    },
+    {
+     "date": "2026-10-23T15:00:00Z",
+     "score": 46,
+     "statut": "FINAL",
+     "sur_feuille": true
+    },
+    {
+     "date": "2026-10-22T15:00:00Z",
+     "score": 49,
+     "statut": "FINAL",
+     "sur_feuille": true
+    },
+    {
+     "date": "2026-10-21T15:00:00Z",
+     "score": 0,
+     "statut": "DID_NOT_PLAY",
+     "sur_feuille": false
+    },
+    {
+     "date": "2026-10-20T15:00:00Z",
+     "score": 52,
+     "statut": "FINAL",
+     "sur_feuille": true
+    },
+    {
+     "date": "2026-10-19T15:00:00Z",
+     "score": 45,
+     "statut": "FINAL",
+     "sur_feuille": true
+    },
+    {
+     "date": "2026-10-18T15:00:00Z",
+     "score": 48,
+     "statut": "FINAL",
+     "sur_feuille": true
+    },
+    {
+     "date": "2026-10-17T15:00:00Z",
+     "score": 50,
+     "statut": "FINAL",
+     "sur_feuille": true
+    },
+    {
+     "date": "2026-10-16T15:00:00Z",
+     "score": 43,
+     "statut": "FINAL",
+     "sur_feuille": true
+    }
+   ],
+   "prochain_match": {
+    "date": "2026-11-08T15:00:00Z",
+    "statut": "scheduled",
+    "competition": "Ligue Fictive",
+    "domicile": true,
+    "adversaire": "AS Imaginaire",
+    "affiche": "FC Fictif – AS Imaginaire",
+    "cotes_equipe": {
+     "victoire": 0.45,
+     "nul": 0.3,
+     "defaite": 0.25,
+     "cote_clean_sheet": 3.2
+    }
+   },
+   "sorare": {
+    "statut_jeu": null,
+    "probas_titulaire": null,
+    "projection": null
+   }
+  }
+ },
+ "attendu": {
+  "m": 46.8,
+  "p": 0,
+  "si_joue": 49.1,
+  "projection": 0,
+  "sigma": 3.1,
+  "nb_alertes": 1,
+  "alertes_contiennent": [
+   "blessé"
+  ]
+ }
+}
