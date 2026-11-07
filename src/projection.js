@@ -97,6 +97,7 @@ export function projeterCarte(carte, P, tableBonus = {}) {
 
   return {
     carte: carte.carte,
+    image: carte.image ?? null,
     nom: j.nom,
     postes: j.postes,
     club: j.club,

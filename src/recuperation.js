@@ -73,6 +73,7 @@ query Cartes($slug: String!, $sport: Sport!, $first: Int!, $after: String, $nbMa
         slug
         rarityTyped
         seasonYear
+        pictureUrl
         skinEdition { skinName variantName bonus }
         anyPlayer {
           slug
@@ -158,6 +159,8 @@ export function normaliserCarte(c) {
     carte: c.slug,
     rarete: c.rarityTyped,
     saison: c.seasonYear,
+    // Image de la carte (PNG 771 × 1248, environ 360 Ko) sur assets.sorare.com.
+    image: c.pictureUrl ?? null,
     bonus_collection: c.skinEdition
       // Le nom de collection est dans variantName (Four Suits, Eclipse) quand il existe,
       // sinon dans skinName (Standard, Shiny, Holo). Vérifié le 2026-11-07.

@@ -50,7 +50,13 @@ th { position: sticky; top: 0; background: var(--surface); font-weight: 600; cur
 th[data-tri]::after { content: " ▾"; color: var(--doux); }
 th.asc::after { content: " ▴"; }
 th:first-child, td:first-child { position: sticky; left: 0; background: var(--surface); text-align: left;
-  z-index: 1; max-width: 46vw; white-space: normal; min-width: 130px; }
+  z-index: 1; max-width: 52vw; white-space: normal; min-width: 170px; }
+.joueur { display: flex; gap: 8px; align-items: flex-start; }
+.vignette { flex: none; width: 40px; height: 65px; border-radius: 4px; background: var(--ligne); cursor: zoom-in; object-fit: cover; }
+#loupe { position: fixed; inset: 0; z-index: 10; display: none; align-items: center; justify-content: center;
+  background: rgba(0,0,0,.8); cursor: zoom-out; padding: 16px; }
+#loupe.ouverte { display: flex; }
+#loupe img { max-width: 100%; max-height: 100%; border-radius: 12px; }
 td.g, th.g { text-align: left; }
 .nom { font-weight: 600; }
 .sous { color: var(--doux); font-size: .8rem; }
@@ -100,6 +106,7 @@ footer code { font-size: .8rem; }
 </table>
 </div>
 <footer id="pied"></footer>
+<div id="loupe" role="dialog" aria-label="Carte en grand"><img alt=""></div>
 <script type="application/json" id="donnees">${donnees}</script>
 <script>
 (() => {
@@ -151,7 +158,8 @@ footer code { font-size: .8rem; }
       const so = l.sorare ? [l.sorare.statut_jeu, l.sorare.projection != null ? nb(l.sorare.projection, 0) : null].filter(Boolean).join(' · ') : '';
       const badges = l.alertes.map((a) => '<span class="badge' + (/^(blessé|suspendu)/.test(a) ? ' danger' : '') + '">' + esc(a) + '</span>').join(' ');
       return '<tr>' +
-        '<td><div class="nom">' + esc(l.nom) + '</div><div class="sous">' + esc(l.postes.join('/')) + ' · ' + esc(l.club ?? '?') + '</div></td>' +
+        '<td><div class="joueur">' + (l.image ? '<img class="vignette" loading="lazy" decoding="async" src="' + esc(l.image) + '" alt="Carte ' + esc(l.nom) + '" onerror="this.remove()">' : '') +
+        '<div><div class="nom">' + esc(l.nom) + '</div><div class="sous">' + esc(l.postes.join('/')) + ' · ' + esc(l.club ?? '?') + '</div></div></div></td>' +
         '<td class="proj">' + nb(l.projection, 1) + '</td>' +
         '<td>' + nb(l.si_joue, 1) + '</td>' +
         '<td title="joués : ' + l.joues_5 + ' sur 5, ' + l.joues_15 + ' sur 15">' + (l.p == null ? nb(null) : Math.round(l.p * 100) + ' %') + '<div class="sous">' + l.joues_15 + '</div></td>' +
@@ -179,6 +187,13 @@ footer code { font-size: .8rem; }
     if (etat.tri === col) etat.asc = !etat.asc; else { etat.tri = col; etat.asc = col === 'nom' || col === 'date'; }
     lignes();
   };
+  const loupe = document.getElementById('loupe');
+  document.getElementById('corps').addEventListener('click', (e) => {
+    if (!e.target.classList.contains('vignette')) return;
+    loupe.querySelector('img').src = e.target.src; loupe.querySelector('img').alt = e.target.alt; loupe.classList.add('ouverte');
+  });
+  loupe.onclick = () => loupe.classList.remove('ouverte');
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') loupe.classList.remove('ouverte'); });
   ['recherche', 'dispo', 'avecAlertes'].forEach((id) => document.getElementById(id).addEventListener('input', lignes));
   const P = D.parametres;
   document.getElementById('pied').innerHTML =
@@ -187,7 +202,7 @@ footer code { font-size: .8rem; }
     '<em>p jeu</em> = part des matchs joués, ' + P.poids_jeu_recent + ' × (5 derniers) + ' + (1 - P.poids_jeu_recent).toFixed(1) + ' × (15 derniers), mise à 0 si blessé ou suspendu. ' +
     '<em>σ</em> = écart-type des scores joués sur 15 matchs. ' +
     'Cotes V / N / D et colonne <em>Sorare</em> (statut et projection de Sorare) : affichées pour information, hors calcul.</p>' +
-    '<p>Méthode complète et limites : <code>methode.md</code>. Poids initiaux non calibrés. L’outil propose, tu décides dans l’appli Sorare.</p>';
+    '<p>Images des cartes chargées depuis Sorare (connexion nécessaire) ; appuyer sur une vignette pour l’agrandir. Méthode complète et limites : <code>methode.md</code>. Poids initiaux non calibrés. L’outil propose, tu décides dans l’appli Sorare.</p>';
   tout();
 })();
 </script>
