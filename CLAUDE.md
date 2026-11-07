@@ -195,6 +195,8 @@ Pistes : calibrer les poids sur l'historique ; utiliser les cotes du match (aujo
 - ✅ **Squad du jour** (`methode.md` 8, `squadDuJour`) : meilleure espérance du jour (Paris), cartes jouées en Arcade autorisées, mêmes règles de composition que l'Arcade (à confirmer). Contrôlé par force brute dans les tests.
 - ✅ NBA : contrainte d'étoiles avec demi-étoiles (déjà en place à l'étape 3).
 - ✅ Interface : onglet **Squad** (sport, jour), bascule **Plusieurs créneaux / Créneau unique** sur les propositions, étiquettes « Titulaire confirmé » et « Remplaçant annoncé ». 34 tests. `node outils/creneaux.js football|nba` : contrôle sur les vraies données.
+- ✅ **Autres choix** (demande de l'utilisateur, 2026-11-07 : « garder du choix ») : `methode.md` 6 bis, `autresChoix` ; sous la proposition prudente, par poste (football) ou en tout (NBA), les meilleures autres cartes admissibles, avec pour chacune le joueur qu'elle remplacerait au mieux (postes, joueur unique, étoiles) et la nouvelle chance de passer simulée. Calcul en 0,1 s environ (football).
+- ✅ **Mes cartes** : le filtre par heure de match est remplacé par un filtre par **journée Sorare** (même libellé que le Squad ; en NBA « Nuit du samedi 7 au dimanche 8 novembre (journée Sorare du 8) »).
 - ⏳ Critère du plan « créneau unique testé un vrai samedi » : essai prévu le 2026-11-07 après la publication des compositions de Bundesliga (coup d'envoi 14:30Z).
 
 ## Étape 3 (à venir) : conseil avant chaque journée

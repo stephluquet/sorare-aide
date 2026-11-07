@@ -220,3 +220,71 @@ export function squadDuJour(lignes, P, o) {
 export function joursAVenir(lignes, maintenant, fuseau = 'Europe/Paris') {
   return [...new Set(lignes.filter((l) => l.match && Date.parse(l.match.debutUTC) > maintenant).map((l) => jourDeJeu(l.match.debutUTC, fuseau)))].sort();
 }
+
+// ---------- Autres choix (methode.md, section 6 bis) ----------
+
+// Les 5 cartes peuvent-elles occuper les places du mode (postes obligatoires + place libre) ?
+function postesValides(equipe, regle) {
+  if (!regle.postes?.obligatoires?.length) return true;
+  const places = [...regle.postes.obligatoires.map((p) => [p]), ...Array(regle.postes.libre?.nombre ?? 0).fill(regle.postes.libre.postes_autorises)];
+  if (places.length !== equipe.length) return false;
+  const pris = new Array(equipe.length).fill(false);
+  const placer = (k) => {
+    if (k === places.length) return true;
+    for (let i = 0; i < equipe.length; i++) {
+      if (pris[i] || !equipe[i].joueur.postes.some((p) => places[k].includes(p))) continue;
+      pris[i] = true;
+      if (placer(k + 1)) return true;
+      pris[i] = false;
+    }
+    return false;
+  };
+  return placer(0);
+}
+
+function etoilesValides(equipe, regle) {
+  const max = regle.plafond_etoiles?.max; if (max == null) return true;
+  const t = equipe.reduce((s, x) => s + (x.joueur.etoiles ?? 0), 0);
+  return regle.plafond_etoiles.plafond_inclus === false ? t < max : t <= max;
+}
+
+/**
+ * Autres joueurs à considérer pour une équipe proposée.
+ * @param equipeProposee résultat de proposer (cartes, capitaine, pPasser)
+ * @returns { groupes: [{ poste, choix: [{ carteId, esperance, p, siJoue, remplace, capitaine, pPasser, ecart }] }] }
+ */
+export function autresChoix(lignes, P, o, equipeProposee) {
+  const sim = P.simulation, regle = o.regle, mult = regle.capitaine?.multiplicateur ?? 1;
+  const { admissibles } = cartesAdmissibles(lignes, P, o);
+  const parId = new Map(admissibles.map((x) => [x.carte.id, x]));
+  const equipe = equipeProposee.cartes.map((id) => parId.get(id));
+  if (equipe.some((x) => !x)) return { groupes: [] }; // une carte n'est plus admissible (match commencé…)
+  const joueursEquipe = new Set(equipe.map((x) => x.joueur.id));
+  const libres = admissibles.filter((x) => !joueursEquipe.has(x.joueur.id)).sort(parEsperance);
+  const groupes = o.sport === 'football'
+    ? regle.postes.obligatoires.map((poste) => ({ poste, candidats: libres.filter((x) => x.joueur.postes.includes(poste)).slice(0, sim.alternatives_par_poste) }))
+    : [{ poste: null, candidats: libres.slice(0, sim.alternatives_nba) }];
+  const capIndex = equipeProposee.capitaine ? equipe.findIndex((x) => x.carte.id === equipeProposee.capitaine) : -1;
+  return {
+    groupes: groupes.map(({ poste, candidats }) => ({
+      poste,
+      choix: candidats.map((c) => {
+        let meilleur = null;
+        for (let i = 0; i < equipe.length; i++) {
+          const essai = equipe.map((x, k) => (k === i ? c : x));
+          if (new Set(essai.map((x) => x.joueur.id)).size < essai.length) continue;
+          if (!postesValides(essai, regle) || !etoilesValides(essai, regle)) continue;
+          let cap = capIndex;
+          if (regle.capitaine && cap === i) { // brassard au plus grand p × μ
+            const v = essai.map((x) => x.projection.p * x.projection.score.mu);
+            cap = v.indexOf(Math.max(...v));
+          }
+          const r = simulerEquipe(essai.map((x) => x.d), cap, mult, o.cible, sim, regle.cumul_bonus?.mode);
+          if (!meilleur || r.pPasser > meilleur.pPasser) meilleur = { remplace: equipe[i].carte.id, capitaine: cap >= 0 ? essai[cap].carte.id : null, pPasser: r.pPasser, pComplete: r.pComplete };
+        }
+        return { carteId: c.carte.id, esperance: c.projection.esperance, p: c.projection.p, siJoue: c.projection.siJoue,
+          ...(meilleur ?? { remplace: null, pPasser: null }), ecart: meilleur ? meilleur.pPasser - equipeProposee.pPasser : null };
+      }),
+    })),
+  };
+}

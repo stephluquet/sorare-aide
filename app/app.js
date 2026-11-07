@@ -8,7 +8,7 @@
 // sinon stockage du navigateur.
 
 import { projeterCarte } from '../src/moteur/projection.js';
-import { proposer, proposerParCreneau, squadDuJour, joursAVenir } from '../src/moteur/compositions.js';
+import { proposer, proposerParCreneau, squadDuJour, joursAVenir, jourDeJeu, autresChoix } from '../src/moteur/compositions.js';
 
 // ---------- Données ----------
 const STATUTS_CODES = { F: 'FINAL', R: 'REVIEWING', D: 'DID_NOT_PLAY' };
@@ -40,7 +40,6 @@ const SIT = { titulaire: 'titulaire', entre: 'entré', joue: 'joué', banc: 'ban
 const tz = { timeZone: 'Europe/Paris' };
 const fJour = new Intl.DateTimeFormat('fr-FR', { ...tz, weekday: 'short', day: 'numeric', month: 'short' });
 const fHeure = new Intl.DateTimeFormat('fr-FR', { ...tz, hour: '2-digit', minute: '2-digit' });
-const fCle = new Intl.DateTimeFormat('fr-FR', { ...tz, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 const nb = (x, d = 0) => (x == null ? '–' : x.toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d }));
 const quand = (d) => `${fJour.format(new Date(d))} ${fHeure.format(new Date(d))}`;
@@ -151,12 +150,28 @@ function squad(sport, jour) {
   return cache.get(cle);
 }
 
+function autres(sport, equipe) {
+  const palier = palierEnCours(sport);
+  const cle = ['autres', sport, palier.cible, seuil(), [...jouees(sport)].sort().join(','), equipe.cartes.join(','), Math.floor(Date.now() / 60000)].join('|');
+  if (!cache.has(cle)) cache.set(cle, autresChoix(lignesMoteur(sport), D.P, { sport, cible: palier.cible, regle: D.regles[sport], seuil: seuil(), jouees: jouees(sport), maintenant: Date.now() }, equipe));
+  return cache.get(cle);
+}
+
 // Calcul différé : attend que la page soit réellement affichée (deux images), puis
 // enchaîne les calculs un par un pour ne jamais bloquer l'affichage longtemps.
 let file = Promise.resolve();
 const apresAffichage = () => new Promise((ok) => requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(ok, 0))));
 const plusTard = (f) => (file = file.then(apresAffichage).then(f));
-const cleCreneau = (d) => fCle.format(new Date(d));
+// Journée Sorare d'une carte et son libellé (football : date de Paris ; NBA : date de New York, nuit à Paris).
+const journee = (l) => jourDeJeu(l.m.debutUTC, D.journees[l.c.sport].fuseau);
+const fLongUTC = new Intl.DateTimeFormat('fr-FR', { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' });
+const fJourUTC = new Intl.DateTimeFormat('fr-FR', { timeZone: 'UTC', weekday: 'long', day: 'numeric' });
+function libelleJournee(sport, j) {
+  const d = new Date(`${j}T12:00:00Z`), decal = D.journees[sport].decalage_etiquette_paris_jours;
+  if (!decal) return fLongUTC.format(d);
+  const lendemain = new Date(d.getTime() + decal * 86400000);
+  return `Nuit du ${fJourUTC.format(d)} au ${fLongUTC.format(lendemain)} (journée Sorare du ${lendemain.getUTCDate()})`;
+}
 
 function afficherAge() {
   const t = new Date(D.meta.recupereA), min = Math.round((Date.now() - t) / 60000);
@@ -189,13 +204,14 @@ function commandes() {
     `<button type="button" data-sport="${k}" aria-pressed="${k === vue.sport}">${v}</button>`).join('');
   $('postes').innerHTML = [null, ...POSTES[vue.sport]].map((p) =>
     `<button type="button" class="puce" data-poste="${p ?? ''}" aria-pressed="${p === vue.poste}">${p ?? 'Tous postes'}</button>`).join('');
-  const creneaux = new Map();
-  for (const l of lignes) if (l.c.sport === vue.sport && l.m && disponible(l)) {
-    const k = cleCreneau(l.m.debutUTC); creneaux.set(k, [l.m.debutUTC, (creneaux.get(k)?.[1] ?? 0) + 1]);
+  // Filtre par journée Sorare (regles/squad.json : en NBA, date de New York).
+  const journees = new Map();
+  for (const l of lignes) if (l.c.sport === vue.sport && l.m && (!vue.dispo || disponible(l))) {
+    const k = journee(l); journees.set(k, (journees.get(k) ?? 0) + 1);
   }
-  if (vue.creneau && !creneaux.has(vue.creneau)) vue.creneau = '';
-  $('creneau').innerHTML = '<option value="">Tous les créneaux</option>' + [...creneaux.entries()].sort((a, b) => a[1][0].localeCompare(b[1][0]))
-    .map(([k, [d, n]]) => `<option value="${k}" ${k === vue.creneau ? 'selected' : ''}>${quand(d)} (${n})</option>`).join('');
+  if (vue.creneau && !journees.has(vue.creneau)) vue.creneau = '';
+  $('creneau').innerHTML = '<option value="">Toutes les journées</option>' + [...journees.entries()].sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([k, n]) => `<option value="${k}" ${k === vue.creneau ? 'selected' : ''}>${libelleJournee(vue.sport, k)} (${n})</option>`).join('');
   $('seuil').value = String(seuil());
 }
 
@@ -215,7 +231,7 @@ function jauge(p) {
 function liste() {
   const J = jouees(vue.sport);
   const L = lignes.filter((l) => l.c.sport === vue.sport && (!vue.poste || l.j.postes.includes(vue.poste)) &&
-    (!vue.dispo || disponible(l)) && (!vue.creneau || (l.m && cleCreneau(l.m.debutUTC) === vue.creneau)));
+    (!vue.dispo || disponible(l)) && (!vue.creneau || (l.m && journee(l) === vue.creneau)));
   const tri = { e: (a, b) => (b.pr.esperance ?? -1) - (a.pr.esperance ?? -1), p: (a, b) => (b.pr.p ?? -1) - (a.pr.p ?? -1),
     d: (a, b) => (a.m?.debutUTC ?? '9').localeCompare(b.m?.debutUTC ?? '9') }[vue.tri];
   L.sort(tri);
@@ -383,11 +399,32 @@ function afficherPropositions(sport) {
     const ecartees = Object.entries(r.ecartees).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<li>${v} ${esc(k)}</li>`).join('');
     $('propositions').innerHTML =
       carteProposition('prudente', r.prudente, sport, true) +
+      '<section class="autres" id="autres-choix"><h2>Autres choix</h2><p class="attente">Recherche des autres joueurs…</p></section>' +
       (memes ? '<p class="sous">L’équipe équilibrée est la même que la prudente.</p>' : carteProposition('equilibree', r.equilibree, sport, false)) +
       (r.ambitieuse ? carteProposition('ambitieuse', r.ambitieuse, sport, false) : '<p class="sous">Pas de proposition ambitieuse : accepter des joueurs moins sûrs ne fait pas mieux.</p>') +
       `<details class="ecartees"><summary>${r.admissibles} cartes retenues, ${r.nbEquipes} équipes comparées en ${(r.dureeMs / 1000).toFixed(1)} s</summary><ul>${ecartees}</ul>` +
       `<p>Chances calculées par ${D.P.simulation.tirages} tirages (méthode v${D.P.version}). Les joueurs sont tirés indépendamment : deux coéquipiers ont en réalité des scores liés.</p></details>`;
+    plusTard(() => autres(sport, r.prudente)).then((a) => afficherAutres(sport, r.prudente, a));
   });
+}
+
+// Autres choix : par poste, les joueurs qui peuvent aussi performer, et ce que changerait chacun.
+const NOMS_POSTES = { GK: 'Gardiens', DF: 'Défenseurs', MD: 'Milieux', FW: 'Attaquants' };
+function afficherAutres(sport, equipe, a) {
+  const el = $('autres-choix'); if (!el || vueCourante() !== `propositions-${sport}`) return;
+  const parId = new Map(lignes.map((l) => [l.c.id, l]));
+  const groupes = a.groupes.filter((g) => g.choix.length);
+  if (!groupes.length) { el.innerHTML = '<h2>Autres choix</h2><p class="sous">Pas d’autre carte admissible.</p>'; return; }
+  el.innerHTML = `<h2>Autres choix</h2><p class="sous">D’autres joueurs qui peuvent performer, si tu préfères ajuster l’équipe prudente (${pct(equipe.pPasser)} de chances de passer). Pour chacun : le joueur qu’il remplace au mieux et la nouvelle chance de passer.</p>` +
+    groupes.map((g) => `<div class="groupe">${g.poste ? `<h3>${NOMS_POSTES[g.poste] ?? g.poste}</h3>` : ''}${g.choix.map((c) => {
+      const l = parId.get(c.carteId), rem = c.remplace ? parId.get(c.remplace) : null;
+      const delta = c.ecart == null ? '' : `<span class="${c.ecart >= 0.005 ? 'plus' : c.ecart <= -0.005 ? 'moins' : 'egal'}">${c.ecart >= 0 ? '+' : '−'}${Math.abs(Math.round(c.ecart * 1000) / 10).toLocaleString('fr-FR')} pt</span>`;
+      return `<div class="alt">${vignette(l)}<div style="min-width:0">
+          <div class="nom">${esc(l.j.nom)}${c.capitaine === c.carteId ? '<span class="capitaine">C</span>' : ''}</div>
+          <div class="meta"><span>${esc(l.j.postes.join('/'))}${sport === 'nba' && l.j.etoiles != null ? ` · ${nb(l.j.etoiles, 1)} ★` : ''} · ${pct(c.p)} joue · ${nb(c.siJoue)} pts</span><span>${esc(quand(l.m.debutUTC))}</span></div>
+        </div>
+        <div class="droite">${rem ? `à la place de <b class="nom-remplace">${esc(rem.j.nom)}</b>${pct(c.pPasser)} ${delta}` : '<span class="sous">aucun remplacement possible</span>'}</div></div>`;
+    }).join('')}</div>`).join('');
 }
 
 // Créneau unique : un créneau par coup d'envoi, avec sa meilleure équipe.
@@ -416,15 +453,7 @@ function afficherSquad() {
   const J = D.journees[vue.squadSport];
   const jours = joursAVenir(lignesMoteur(vue.squadSport), Date.now(), J.fuseau);
   if (!jours.includes(vue.squadJour)) vue.squadJour = jours[0] ?? null;
-  const fLong = new Intl.DateTimeFormat('fr-FR', { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' });
-  const fJourSeul = new Intl.DateTimeFormat('fr-FR', { timeZone: 'UTC', weekday: 'long', day: 'numeric' });
-  const libelle = (j) => {
-    const d = new Date(`${j}T12:00:00Z`);
-    if (!J.decalage_etiquette_paris_jours) return fLong.format(d);
-    const lendemain = new Date(d.getTime() + J.decalage_etiquette_paris_jours * 86400000);
-    return `Nuit du ${fJourSeul.format(d)} au ${fLong.format(lendemain)} (journée Sorare du ${lendemain.getUTCDate()})`;
-  };
-  $('squad-jour').innerHTML = jours.map((j) => `<option value="${j}" ${j === vue.squadJour ? 'selected' : ''}>${libelle(j)}</option>`).join('');
+  $('squad-jour').innerHTML = jours.map((j) => `<option value="${j}" ${j === vue.squadJour ? 'selected' : ''}>${libelleJournee(vue.squadSport, j)}</option>`).join('');
   if (!vue.squadJour) { $('squad').innerHTML = '<p class="attente">Aucun match à venir.</p>'; return; }
   $('squad').innerHTML = '<p class="attente">Recherche de la meilleure équipe…</p>';
   const sport = vue.squadSport, jour = vue.squadJour;

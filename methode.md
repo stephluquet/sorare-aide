@@ -58,6 +58,8 @@ ignorent les matchs non joués.
     "candidats_nba": 22,
     "equipes_simulees": 60,
     "prudente_ecart_max": 0.05,
+    "alternatives_par_poste": 4,
+    "alternatives_nba": 8,
     "ambitieuse_seuil_jouer": 0.6
   }
 }
@@ -288,6 +290,18 @@ inclus, demi-étoiles comptées).
 Pour chacune : les 5 cartes, le capitaine, le score attendu, la probabilité de
 passer, la probabilité « équipe complète » et l'heure du premier coup d'envoi
 (l'équipe est verrouillée à ce moment-là).
+
+## 6 bis. Autres choix
+
+L'outil propose, mais l'utilisateur garde la main : sous l'équipe proposée,
+il montre d'autres joueurs qui peuvent performer. Pour chaque poste
+(football : GK, DF, MD, FW) les `alternatives_par_poste` meilleures
+espérances parmi les cartes admissibles (section 6) hors de l'équipe ; en
+NBA, les `alternatives_nba` meilleures. Pour chacune, on simule (section 5)
+l'équipe où elle remplace un joueur, en essayant chaque remplacement
+permis (postes, joueur unique, étoiles ≤ 16), et on affiche le meilleur :
+le joueur remplacé et la nouvelle chance de passer. Si le capitaine est
+remplacé, le brassard passe au joueur de plus grand p × μ.
 
 ## 7. Créneau unique
 

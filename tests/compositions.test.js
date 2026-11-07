@@ -7,7 +7,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parametresDepuisMethode } from '../src/moteur/parametres.js';
 import { projeterCarte } from '../src/moteur/projection.js';
-import { proposer, proposerParCreneau, squadDuJour, joursAVenir, jourDeJeu } from '../src/moteur/compositions.js';
+import { proposer, proposerParCreneau, squadDuJour, joursAVenir, jourDeJeu, autresChoix } from '../src/moteur/compositions.js';
 import { simulerEquipe, multiplicateurCarte } from '../src/moteur/simulation.js';
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -239,4 +239,23 @@ test('journée de jeu : NBA à la date de New York (soirée + nuit à Paris), fo
   assert.equal(jourDeJeu('2026-11-07T23:30:00Z', J.football.fuseau), '2026-11-08');
   const L = [ligne('a', { sport: 'nba', debut: '2026-11-08T22:00:00Z' }), ligne('b', { sport: 'nba', debut: '2026-11-09T03:00:00Z' })];
   assert.deepEqual(joursAVenir(L, MAINTENANT, J.nba.fuseau), ['2026-11-08']);
+});
+
+test('autres choix : par poste, hors équipe, remplacements valides, chance de passer recalculée', () => {
+  const L = effectif();
+  const o = optFoot();
+  const r = proposer(L, P, o);
+  const a = autresChoix(L, P, o, r.prudente);
+  assert.deepEqual(a.groupes.map((g) => g.poste), ['GK', 'DF', 'MD', 'FW']);
+  const Lp = parId(L);
+  for (const g of a.groupes) for (const c of g.choix) {
+    assert.ok(!r.prudente.cartes.includes(c.carteId), 'hors de l’équipe');
+    assert.ok(Lp.get(c.carteId).joueur.postes.includes(g.poste));
+    // Remplacement valide : un gardien ne remplace qu'un gardien
+    if (g.poste === 'GK') assert.equal(Lp.get(c.remplace).joueur.postes[0], 'GK');
+    assert.ok(c.pPasser >= 0 && c.pPasser <= 1);
+    assert.ok(Math.abs(c.ecart - (c.pPasser - r.prudente.pPasser)) < 1e-12);
+  }
+  // le second gardien remplace forcément le premier
+  assert.equal(a.groupes[0].choix[0].remplace, r.prudente.cartes.find((id) => Lp.get(id).joueur.postes[0] === 'GK'));
 });
