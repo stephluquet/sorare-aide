@@ -18,7 +18,7 @@
 | Prochain match : date, adversaire, domicile ou extérieur | Les **cotes des matchs NBA** |
 | **Cotes du match en football** (victoire, nul, défaite, clean sheet) | Une projection Sorare pour la plupart de tes joueurs de football |
 | Paliers Arcade, état de chaque palier, vies restantes et échecs | Le tableau Squad (revient vide) |
-| Statut de jeu Sorare (titulaire, remplaçant…) et projection Sorare (NBA) | Les compositions officielles : test en cours |
+| Statut de jeu Sorare (titulaire, remplaçant…) et projection Sorare (NBA) | Les compositions officielles **avant H-1 h** (elles n'apparaissent qu'environ une heure avant le match) |
 
 ## Ce qu'on récupère (vérifié)
 
@@ -95,7 +95,7 @@
   - en football, seuls les joueurs de certaines compétitions sont autorisés : Bundesliga, Ligue 1, Premier League, Liga, les trois coupes d'Europe et la Ligue des nations ;
   - en NBA, le texte dit « en dessous de 16 étoiles ». Un total de 16 pile est-il autorisé ? À vérifier.
 - **Minutes projetées NBA** : toujours vides, même le jour du match. Les points, rebonds et passes projetés sont disponibles.
-- **Compositions officielles des matchs** (`homeFormation` / `awayFormation`) : relevés en cours le 7 novembre, à H-3, H-1 et au coup d'envoi de trois de tes matchs. C'est décisif pour le mode créneau unique. Au premier relevé, 2 à 4 heures avant les matchs, rien n'était encore publié.
+- **Compositions officielles des matchs** (`homeFormation` / `awayFormation`), vérifié le 7 novembre sur trois matchs (8 relevés) : relevés des 7 novembre (8 relevés de 10:37Z à 15:00Z, `data/releves/compositions-2026-11-07.jsonl`) : les compositions apparaissent **environ 1 h avant le coup d'envoi**, pour les deux équipes à la fois, avec 11 titulaires et 8 ou 9 remplaçants : Leeds–Tottenham entre H-1 h 52 et H-57 min ; Mainz–Bayern entre H-59 et H-44 min (vue par `npm run recuperer` à 13:46Z, comme les 3 autres matchs de Bundesliga du créneau) ; Arsenal–Hull entre H-1 h 29 et H-59 min. Rien avant (listes vides, `startingLineupAvailable` faux). Elles restent lisibles pendant et après le match. **Les probabilités de titularisation restent `null` du début à la fin** (0 sur 40 lectures, même avec les compositions publiées). **Conséquence pour le mode créneau unique** : composer entre H-1 h et le coup d'envoi, après avoir actualisé ; c'est là que la chance de passer bondit (Bundesliga du 7 novembre : 63-64 % avant, 79 % avec les compositions).
 
 ## Contraintes pratiques
 
