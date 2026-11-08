@@ -1,8 +1,9 @@
 {
  "joueurId": "lucas-antonio-cepeda-barturen",
- "misAJour": "2026-11-07T16:29:51.868Z",
+ "misAJour": "2026-11-08T17:51:06.942Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.869Z",
  "matchs": [
+  {"matchId":"Game:62595a00-3258-4908-a69f-2a7878815c26","date":"2026-11-08T13:00:00Z","equipe":"elche-elche","competition":"Primera División","domicile":true,"adversaire":"Real Betis","statut":"REVIEWING","score":48.7,"situation":"titulaire","minutes":70,"pour":0,"contre":2,"cotes":{"victoire":0.26,"nul":0.26,"defaite":0.48,"coteCleanSheet":6}},
   {"matchId":"Game:fce5d8ab-b45a-4027-b9cb-37e9759a6c0b","date":"2026-11-01T17:30:00Z","equipe":"elche-elche","competition":"Primera División","domicile":true,"adversaire":"Valencia CF","statut":"FINAL","score":39.3,"situation":"titulaire","minutes":68,"pour":0,"contre":1,"cotes":{"victoire":0.41,"nul":0.29,"defaite":0.3,"coteCleanSheet":3.25}},
   {"matchId":"Game:a4780b0c-4e0e-4188-99ab-3bc86b3d91ee","date":"2026-10-24T12:00:00Z","equipe":"elche-elche","competition":"Primera División","domicile":false,"adversaire":"Rayo Vallecano","statut":"FINAL","score":61.7,"situation":"titulaire","minutes":72,"pour":3,"contre":0,"cotes":{"victoire":0.21,"nul":0.26,"defaite":0.53,"coteCleanSheet":5.5}},
   {"matchId":"Game:b7bf4d69-98a8-4d4c-8129-c1084a0721f5","date":"2026-10-17T14:15:00Z","equipe":"elche-elche","competition":"Primera División","domicile":false,"adversaire":"Villarreal CF","statut":"FINAL","score":41,"situation":"titulaire","minutes":65,"pour":0,"contre":0,"cotes":{"victoire":0.15,"nul":0.19,"defaite":0.66,"coteCleanSheet":10}},

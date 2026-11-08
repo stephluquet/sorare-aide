@@ -1,8 +1,9 @@
 {
  "joueurId": "antoine-rabillard",
- "misAJour": "2026-11-07T16:29:51.851Z",
+ "misAJour": "2026-11-08T17:51:06.921Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.851Z",
  "matchs": [
+  {"matchId":"Game:b64bdf96-91a6-4b44-ac33-d703bbc9d0d2","date":"2026-11-08T16:15:00Z","equipe":"le-mans-le-mans","competition":"Ligue 1","domicile":true,"adversaire":"AS Monaco","statut":"REVIEWING","score":35.1,"situation":"entre","minutes":3,"pour":0,"contre":1,"cotes":{"victoire":0.19,"nul":0.2401,"defaite":0.5699,"coteCleanSheet":5.5}},
   {"matchId":"Game:dece48ff-347a-49b8-bf36-95ac69111381","date":"2026-10-31T19:45:00Z","equipe":"le-mans-le-mans","competition":"Ligue 1","domicile":false,"adversaire":"ESTAC Troyes","statut":"FINAL","score":38.3,"situation":"titulaire","minutes":45,"pour":0,"contre":2,"cotes":{"victoire":0.28,"nul":0.29,"defaite":0.43,"coteCleanSheet":4}},
   {"matchId":"Game:32a12b94-4328-420d-a29a-87dc7b37e903","date":"2026-10-25T16:15:00Z","equipe":"le-mans-le-mans","competition":"Ligue 1","domicile":false,"adversaire":"AJ Auxerre","statut":"FINAL","score":30.7,"situation":"titulaire","minutes":86,"pour":1,"contre":1,"cotes":{"victoire":0.28,"nul":0.27,"defaite":0.45,"coteCleanSheet":4.5}},
   {"matchId":"Game:5035af6b-6655-42d1-a432-af47c3089c67","date":"2026-10-16T18:45:00Z","equipe":"le-mans-le-mans","competition":"Ligue 1","domicile":true,"adversaire":"Toulouse FC","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":0,"contre":3,"cotes":{"victoire":0.31,"nul":0.27,"defaite":0.42,"coteCleanSheet":5}},

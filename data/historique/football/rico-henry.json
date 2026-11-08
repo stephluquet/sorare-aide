@@ -1,8 +1,9 @@
 {
  "joueurId": "rico-henry",
- "misAJour": "2026-11-07T16:29:51.964Z",
+ "misAJour": "2026-11-08T17:51:07.062Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.964Z",
  "matchs": [
+  {"matchId":"Game:d74ebce4-532c-4c7b-933d-33da4775c0bf","date":"2026-11-08T14:00:00Z","equipe":"brentford-brentford-middlesex","competition":"Premier League","domicile":false,"adversaire":"Brighton & Hove Albion FC","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":0,"contre":2,"cotes":{"victoire":0.25,"nul":0.24,"defaite":0.51,"coteCleanSheet":6}},
   {"matchId":"Game:27fbe9e9-3904-4f26-b5ec-2088aa642463","date":"2026-10-31T15:00:00Z","equipe":"brentford-brentford-middlesex","competition":"Premier League","domicile":true,"adversaire":"Nottingham Forest FC","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":2,"contre":0,"cotes":{"victoire":0.45,"nul":0.27,"defaite":0.28,"coteCleanSheet":3.25}},
   {"matchId":"Game:5b013386-7ef7-48d6-866b-f8ec3a09ee8e","date":"2026-10-25T14:00:00Z","equipe":"brentford-brentford-middlesex","competition":"Premier League","domicile":false,"adversaire":"Hull City AFC","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":1,"contre":1,"cotes":{"victoire":0.56,"nul":0.24,"defaite":0.2,"coteCleanSheet":2.62}},
   {"matchId":"Game:22958680-f2dc-478c-8ec9-ab82e4ebb62f","date":"2026-10-17T14:00:00Z","equipe":"brentford-brentford-middlesex","competition":"Premier League","domicile":true,"adversaire":"Liverpool FC","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":1,"contre":2,"cotes":{"victoire":0.35,"nul":0.27,"defaite":0.38,"coteCleanSheet":4}},

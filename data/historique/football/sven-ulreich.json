@@ -1,9 +1,9 @@
 {
  "joueurId": "sven-ulreich",
- "misAJour": "2026-11-07T16:29:51.887Z",
+ "misAJour": "2026-11-08T17:51:06.960Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.887Z",
  "matchs": [
-  {"matchId":"Game:c1394874-56b6-401c-97f9-f5e89f93e07b","date":"2026-11-07T14:30:00Z","equipe":"bayern-munchen-munchen","competition":"Bundesliga","domicile":false,"adversaire":"1. FSV Mainz 05","statut":"REVIEWING","score":0,"situation":"banc","minutes":0,"pour":2,"contre":0,"cotes":{"victoire":0.73,"nul":0.16,"defaite":0.11,"coteCleanSheet":2.75}},
+  {"matchId":"Game:c1394874-56b6-401c-97f9-f5e89f93e07b","date":"2026-11-07T14:30:00Z","equipe":"bayern-munchen-munchen","competition":"Bundesliga","domicile":false,"adversaire":"1. FSV Mainz 05","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":2,"contre":1,"cotes":{"victoire":0.74,"nul":0.15,"defaite":0.11,"coteCleanSheet":2.75}},
   {"matchId":"Game:ba340b8d-1b44-4bb0-9f71-83db41a2093e","date":"2026-11-03T20:00:00Z","equipe":"bayern-munchen-munchen","competition":"UEFA Champions League","domicile":false,"adversaire":"Atlético de Madrid","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":2,"contre":0,"cotes":{"victoire":0.42,"nul":0.26,"defaite":0.32,"coteCleanSheet":4}},
   {"matchId":"Game:b5868f64-a32f-4817-a39f-1b5bf6ddf04e","date":"2026-10-31T17:30:00Z","equipe":"bayern-munchen-munchen","competition":"Bundesliga","domicile":true,"adversaire":"Borussia Dortmund","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":2,"contre":2,"cotes":{"victoire":0.71,"nul":0.17,"defaite":0.12,"coteCleanSheet":2.62}},
   {"matchId":"Game:46291250-7816-4f88-b175-8739660dfb22","date":"2026-10-25T16:30:00Z","equipe":"bayern-munchen-munchen","competition":"Bundesliga","domicile":false,"adversaire":"Sport-Club Freiburg","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":3,"contre":1,"cotes":{"victoire":0.63,"nul":0.19,"defaite":0.18,"coteCleanSheet":3.25}},

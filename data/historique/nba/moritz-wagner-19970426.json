@@ -1,8 +1,9 @@
 {
  "joueurId": "moritz-wagner-19970426",
- "misAJour": "2026-11-07T16:31:59.122Z",
+ "misAJour": "2026-11-08T17:51:22.900Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.122Z",
  "matchs": [
+  {"matchId":"Game:435a2d31-2610-44e2-b250-a217c4579482","date":"2026-11-08T00:30:00Z","equipe":"brooklyn-nets","competition":"NBA","domicile":false,"adversaire":"Atlanta Hawks","statut":"REVIEWING","score":18.4,"situation":"joue","minutes":16,"pour":121,"contre":124,"cotes":null},
   {"matchId":"Game:a6025895-87a2-430a-871a-2a900195228c","date":"2026-11-05T00:30:00Z","equipe":"brooklyn-nets","competition":"NBA","domicile":true,"adversaire":"Charlotte Hornets","statut":"FINAL","score":7.2,"situation":"joue","minutes":21,"pour":114,"contre":104,"cotes":null},
   {"matchId":"Game:41aa1697-7248-4c23-a27f-d035dd514579","date":"2026-11-03T00:30:00Z","equipe":"brooklyn-nets","competition":"NBA","domicile":false,"adversaire":"New York Knicks","statut":"FINAL","score":14.2,"situation":"joue","minutes":21,"pour":90,"contre":103,"cotes":null},
   {"matchId":"Game:c60a77a0-6e46-4adf-90ef-48f0beab6559","date":"2026-11-01T22:00:00Z","equipe":"brooklyn-nets","competition":"NBA","domicile":false,"adversaire":"Indiana Pacers","statut":"FINAL","score":21.2,"situation":"joue","minutes":21,"pour":98,"contre":90,"cotes":null},

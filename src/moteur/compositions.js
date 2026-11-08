@@ -35,6 +35,9 @@ export function cartesAdmissibles(lignes, P, o) {
 
 const parEsperance = (a, b) => b.projection.esperance - a.projection.esperance;
 
+// Paramètres de simulation du sport, avec sa table de calibrage final des chances de passer (methode.md, 5 bis).
+const simulationDuSport = (P, sport) => ({ ...P.simulation, calibration: P.simulation.calibration_passer?.[sport] ?? null });
+
 // Journée de jeu (AAAA-MM-JJ) d'un coup d'envoi : sa date dans le fuseau du sport
 // (regles/squad.json, journee_de_jeu : Paris en football, New York en NBA).
 const FORMATS_JOUR = new Map();
@@ -129,7 +132,7 @@ const meilleure = (liste, cle, departage) => liste.slice().sort((a, b) => (b[cle
  * @returns { prudente, equilibree, ambitieuse, admissibles, ecartees, nbEquipes, message? }
  */
 export function proposer(lignes, P, o) {
-  const sim = P.simulation;
+  const sim = simulationDuSport(P, o.sport);
   const passe = (seuil) => {
     const { admissibles, ecartees } = cartesAdmissibles(lignes, P, { ...o, seuil });
     const { retenues, nbEquipes } = preselection(admissibles, o.sport, o.regle, o.cible, sim);
@@ -254,7 +257,7 @@ function etoilesValides(equipe, regle) {
  * @returns { groupes: [{ poste, choix: [{ carteId, esperance, p, siJoue, remplace, capitaine, pPasser, ecart }] }] }
  */
 export function autresChoix(lignes, P, o, equipeProposee) {
-  const sim = P.simulation, regle = o.regle, mult = regle.capitaine?.multiplicateur ?? 1;
+  const sim = simulationDuSport(P, o.sport), regle = o.regle, mult = regle.capitaine?.multiplicateur ?? 1;
   const { admissibles } = cartesAdmissibles(lignes, P, o);
   const parId = new Map(admissibles.map((x) => [x.carte.id, x]));
   const equipe = equipeProposee.cartes.map((id) => parId.get(id));

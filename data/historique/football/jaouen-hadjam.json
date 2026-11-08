@@ -1,8 +1,9 @@
 {
  "joueurId": "jaouen-hadjam",
- "misAJour": "2026-11-07T16:29:51.807Z",
+ "misAJour": "2026-11-08T17:51:06.865Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.807Z",
  "matchs": [
+  {"matchId":"Game:d74ebce4-532c-4c7b-933d-33da4775c0bf","date":"2026-11-08T14:00:00Z","equipe":"brighton-hove-albion-brighton-east-sussex","competition":"Premier League","domicile":true,"adversaire":"Brentford FC","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":2,"contre":0,"cotes":{"victoire":0.51,"nul":0.24,"defaite":0.25,"coteCleanSheet":3.4}},
   {"matchId":"Game:3f8f8a24-62b7-443c-af3f-caa39a3a6dce","date":"2026-11-05T20:00:00Z","equipe":"brighton-hove-albion-brighton-east-sussex","competition":"UEFA Conference League","domicile":false,"adversaire":"Getafe CF","statut":"FINAL","score":44.3,"situation":"titulaire","minutes":71,"pour":1,"contre":0,"cotes":{"victoire":0.58,"nul":0.25,"defaite":0.17,"coteCleanSheet":2}},
   {"matchId":"Game:5af9ffac-0980-4383-9c68-f95c4ba2a85a","date":"2026-10-31T15:00:00Z","equipe":"brighton-hove-albion-brighton-east-sussex","competition":"Premier League","domicile":false,"adversaire":"Manchester City FC","statut":"FINAL","score":42.22,"situation":"entre","minutes":26,"pour":1,"contre":0,"cotes":{"victoire":0.21,"nul":0.23,"defaite":0.56,"coteCleanSheet":8}},
   {"matchId":"Game:66d90a57-090d-47ef-b8e1-68d0826e4db5","date":"2026-10-25T14:00:00Z","equipe":"brighton-hove-albion-brighton-east-sussex","competition":"Premier League","domicile":false,"adversaire":"Liverpool FC","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":0,"contre":2,"cotes":{"victoire":0.29,"nul":0.25,"defaite":0.46,"coteCleanSheet":5.5}},

@@ -1,8 +1,9 @@
 {
  "joueurId": "benat-gerenabarrena-zendoia",
- "misAJour": "2026-11-07T16:29:51.873Z",
+ "misAJour": "2026-11-08T17:51:06.948Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.873Z",
  "matchs": [
+  {"matchId":"Game:79eabeb2-e131-405f-b532-cf75fe76305c","date":"2026-11-07T17:30:00Z","equipe":"athletic-club-bilbao","competition":"Primera División","domicile":false,"adversaire":"CA Osasuna","statut":"REVIEWING","score":50.6,"situation":"titulaire","minutes":65,"pour":1,"contre":1,"cotes":{"victoire":0.45,"nul":0.29,"defaite":0.26,"coteCleanSheet":2.5}},
   {"matchId":"Game:d70d9e68-9b3e-4e0d-bb8b-1f0e2bda49b1","date":"2026-11-01T20:00:00Z","equipe":"athletic-club-bilbao","competition":"Primera División","domicile":true,"adversaire":"Real Sociedad","statut":"FINAL","score":45.6,"situation":"titulaire","minutes":90,"pour":2,"contre":1,"cotes":{"victoire":0.47,"nul":0.27,"defaite":0.26,"coteCleanSheet":3}},
   {"matchId":"Game:517bf270-85ae-489c-b24f-498ac79c8531","date":"2026-10-25T13:00:00Z","equipe":"athletic-club-bilbao","competition":"Primera División","domicile":true,"adversaire":"Getafe CF","statut":"FINAL","score":45.2,"situation":"entre","minutes":72,"pour":4,"contre":0,"cotes":{"victoire":0.6,"nul":0.24,"defaite":0.16,"coteCleanSheet":1.8}},
   {"matchId":"Game:3ce0556b-0db7-4306-9296-cb18cf7a9f32","date":"2026-10-21T18:00:00Z","equipe":"athletic-club-bilbao","competition":"Primera División","domicile":false,"adversaire":"Levante UD","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":1,"contre":3,"cotes":{"victoire":0.44,"nul":0.29,"defaite":0.27,"coteCleanSheet":2.62}},

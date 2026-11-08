@@ -1,8 +1,9 @@
 {
  "joueurId": "kelly-oubre-jr-19951209",
- "misAJour": "2026-11-07T16:31:59.150Z",
+ "misAJour": "2026-11-08T17:51:22.939Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.150Z",
  "matchs": [
+  {"matchId":"Game:e79d72e0-455c-44c7-a43a-6f35487f266b","date":"2026-11-07T22:00:00Z","equipe":"indiana-pacers","competition":"NBA","domicile":true,"adversaire":"Denver Nuggets","statut":"REVIEWING","score":9.2,"situation":"joue","minutes":16,"pour":102,"contre":114,"cotes":null},
   {"matchId":"Game:3ad5273b-1d46-44f3-9d79-56b5d4424e5f","date":"2026-11-05T01:00:00Z","equipe":"indiana-pacers","competition":"NBA","domicile":false,"adversaire":"Memphis Grizzlies","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":107,"contre":103,"cotes":null},
   {"matchId":"Game:e6483ab2-3365-4e21-9cf4-80dc1cc37115","date":"2026-11-03T00:30:00Z","equipe":"indiana-pacers","competition":"NBA","domicile":true,"adversaire":"Atlanta Hawks","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":104,"contre":108,"cotes":null},
   {"matchId":"Game:c60a77a0-6e46-4adf-90ef-48f0beab6559","date":"2026-11-01T22:00:00Z","equipe":"indiana-pacers","competition":"NBA","domicile":true,"adversaire":"Brooklyn Nets","statut":"FINAL","score":19.9,"situation":"joue","minutes":21,"pour":90,"contre":98,"cotes":null},

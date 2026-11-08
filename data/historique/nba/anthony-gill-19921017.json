@@ -1,8 +1,9 @@
 {
  "joueurId": "anthony-gill-19921017",
- "misAJour": "2026-11-07T16:31:59.126Z",
+ "misAJour": "2026-11-08T17:51:22.904Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.126Z",
  "matchs": [
+  {"matchId":"Game:76776088-14f8-42e4-9f60-cc26350900a6","date":"2026-11-08T01:00:00Z","equipe":"washington-wizards","competition":"NBA","domicile":false,"adversaire":"Oklahoma City Thunder","statut":"REVIEWING","score":2.2,"situation":"joue","minutes":10,"pour":75,"contre":114,"cotes":null},
   {"matchId":"Game:bf235e89-13fb-40c2-b4e1-aaf793b227b6","date":"2026-11-07T00:00:00Z","equipe":"washington-wizards","competition":"NBA","domicile":false,"adversaire":"Atlanta Hawks","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":132,"contre":139,"cotes":null},
   {"matchId":"Game:612750b3-f88e-4db3-85c0-25e6fc466f4b","date":"2026-11-05T00:00:00Z","equipe":"washington-wizards","competition":"NBA","domicile":true,"adversaire":"Atlanta Hawks","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":105,"contre":120,"cotes":null},
   {"matchId":"Game:258a8b5c-4781-4d34-80c6-2959ea1e765d","date":"2026-11-03T00:30:00Z","equipe":"washington-wizards","competition":"NBA","domicile":false,"adversaire":"Orlando Magic","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":103,"contre":94,"cotes":null},

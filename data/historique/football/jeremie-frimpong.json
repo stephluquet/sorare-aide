@@ -1,8 +1,9 @@
 {
  "joueurId": "jeremie-frimpong",
- "misAJour": "2026-11-07T16:29:51.852Z",
+ "misAJour": "2026-11-08T17:51:06.922Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.852Z",
  "matchs": [
+  {"matchId":"Game:01c2cfcf-480c-42bb-b357-dc1ff4c64b6d","date":"2026-11-08T14:00:00Z","equipe":"liverpool-liverpool","competition":"Premier League","domicile":false,"adversaire":"Crystal Palace FC","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":3,"contre":1,"cotes":{"victoire":0.6,"nul":0.22,"defaite":0.18,"coteCleanSheet":2.75}},
   {"matchId":"Game:aec5f7a9-2cec-4f12-9c2b-7c95f44c42a3","date":"2026-11-04T17:45:00Z","equipe":"liverpool-liverpool","competition":"UEFA Champions League","domicile":false,"adversaire":"Fenerbahçe Spor Kulübü","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":2,"contre":3,"cotes":{"victoire":0.63,"nul":0.19,"defaite":0.18,"coteCleanSheet":3}},
   {"matchId":"Game:2f58daab-a7fa-4874-b865-bf1e632f81a9","date":"2026-11-01T16:30:00Z","equipe":"liverpool-liverpool","competition":"Premier League","domicile":true,"adversaire":"Arsenal FC","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":0,"contre":1,"cotes":{"victoire":0.35,"nul":0.28,"defaite":0.37,"coteCleanSheet":3.75}},
   {"matchId":"Game:66d90a57-090d-47ef-b8e1-68d0826e4db5","date":"2026-10-25T14:00:00Z","equipe":"liverpool-liverpool","competition":"Premier League","domicile":true,"adversaire":"Brighton & Hove Albion FC","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":2,"contre":0,"cotes":{"victoire":0.46,"nul":0.25,"defaite":0.29,"coteCleanSheet":3.75}},

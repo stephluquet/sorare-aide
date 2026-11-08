@@ -1,8 +1,9 @@
 {
  "joueurId": "pedro-fernandez-sarmiento",
- "misAJour": "2026-11-07T16:29:52.001Z",
+ "misAJour": "2026-11-08T17:51:07.099Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:52.001Z",
  "matchs": [
+  {"matchId":"Game:b0b4da9b-1789-4b4c-bd51-54eef22ccd4a","date":"2026-11-07T20:05:00Z","equipe":"psg-paris","competition":"Ligue 1","domicile":true,"adversaire":"ESTAC Troyes","statut":"REVIEWING","score":38,"situation":"entre","minutes":4,"pour":1,"contre":0,"cotes":{"victoire":0.8,"nul":0.13,"defaite":0.07,"coteCleanSheet":1.83}},
   {"matchId":"Game:2d3f85ed-2644-42a6-aebf-e3e9daee6a10","date":"2026-11-03T20:00:00Z","equipe":"psg-paris","competition":"UEFA Champions League","domicile":false,"adversaire":"Villarreal CF","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":6,"contre":0,"cotes":{"victoire":0.54,"nul":0.23,"defaite":0.23,"coteCleanSheet":3.5}},
   {"matchId":"Game:83c68f04-85b4-4b39-8a6b-77ef96f836e7","date":"2026-10-30T18:00:00Z","equipe":"psg-paris","competition":"Ligue 1","domicile":false,"adversaire":"Le Havre AC","statut":"FINAL","score":44.1,"situation":"titulaire","minutes":90,"pour":5,"contre":1,"cotes":{"victoire":0.7,"nul":0.18,"defaite":0.12,"coteCleanSheet":2.2}},
   {"matchId":"Game:04a1c88f-ff82-4bed-88c6-6d7407512ec7","date":"2026-10-26T19:30:00Z","equipe":"psg-paris","competition":"Ligue 1","domicile":true,"adversaire":"Olympique Lyonnais","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":2,"contre":0,"cotes":{"victoire":0.7,"nul":0.18,"defaite":0.12,"coteCleanSheet":2.5}},

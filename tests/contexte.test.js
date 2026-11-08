@@ -8,7 +8,9 @@ import { rapprocherBlessures, cleNom } from '../src/recuperation/espn.js';
 import { readFileSync } from 'node:fs';
 import { parametresDepuisMethode } from '../src/moteur/parametres.js';
 
-const P = parametresDepuisMethode(readFileSync(new URL('../methode.md', import.meta.url), 'utf8'));
+const PM = parametresDepuisMethode(readFileSync(new URL('../methode.md', import.meta.url), 'utf8'));
+// Les effets du contexte sont testés isolément, sans le retrait vers la moyenne du poste (testé à part, plus bas).
+const P = { ...PM, retrait: null };
 const carte = { id: 'c', bonusPct: 0 };
 
 // 10 matchs, tous titulaire, 50 points (football) ; tous joués, 30 min, 40 points (NBA) ; un par semaine / un tous les 2 jours.
@@ -80,4 +82,20 @@ test('ESPN : rapprochement par nom sans accents ET par équipe', () => {
   assert.deepEqual([r.listes, r.rapproches, r.ignores.length], [2, 1, 1]);
   assert.equal(joueurs[0].espn.statut, 'Out');
   assert.equal(joueurs[1].espn, undefined);
+});
+
+test('retrait vers la moyenne du poste (methode.md 3 bis) : football par situation, NBA sur le score par minute', () => {
+  const R = PM.retrait;
+  // défenseur : 10 matchs titulaire à 50, sans cotes → a + (50 − a) × 10 / (10 + k)
+  const f = projeterCarte(carte, joueurFoot('DF'), matchFoot(null), PM);
+  const a = R.football.moyennes.DF.titulaire, attendu = a + (50 - a) * 10 / (10 + R.football.k);
+  assert.ok(Math.abs(f.score.mu - attendu) < 1e-9, `${f.score.mu} / ${attendu}`);
+  assert.ok(Math.abs(f.score.retraitTitulaire - (attendu - 50)) < 1e-9);
+  // la simulation est décalée d'autant
+  const d = distribution(joueurFoot('DF'), f, PM);
+  assert.ok(Math.abs(d.m - attendu) < 1e-9, String(d.m));
+  // NBA : 10 matchs, 30 min, 40 pts → taux 4/3 retiré vers taux_moyen
+  const n = projeterCarte(carte, joueurNba('2026-11-05T00:00:00Z'), matchNba, PM);
+  const t = R.nba.taux_moyen + (40 / 30 - R.nba.taux_moyen) * 10 / (10 + R.nba.k);
+  assert.ok(Math.abs(n.score.mu - 30 * t) < 1e-9, `${n.score.mu} / ${30 * t}`);
 });

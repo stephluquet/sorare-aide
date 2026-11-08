@@ -1,8 +1,9 @@
 {
  "joueurId": "liam-delap",
- "misAJour": "2026-11-07T16:29:51.852Z",
+ "misAJour": "2026-11-08T17:51:06.922Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.852Z",
  "matchs": [
+  {"matchId":"Game:fcb34f43-5c6d-40bc-9904-465cf76fdabb","date":"2026-11-07T17:30:00Z","equipe":"nottingham-forest-nottingham","competition":"Premier League","domicile":true,"adversaire":"Manchester City FC","statut":"REVIEWING","score":74.3,"situation":"titulaire","minutes":87,"pour":3,"contre":1,"cotes":{"victoire":0.2,"nul":0.24,"defaite":0.56,"coteCleanSheet":6}},
   {"matchId":"Game:27fbe9e9-3904-4f26-b5ec-2088aa642463","date":"2026-10-31T15:00:00Z","equipe":"nottingham-forest-nottingham","competition":"Premier League","domicile":false,"adversaire":"Brentford FC","statut":"FINAL","score":25.9,"situation":"titulaire","minutes":65,"pour":0,"contre":2,"cotes":{"victoire":0.28,"nul":0.27,"defaite":0.45,"coteCleanSheet":5}},
   {"matchId":"Game:5e446143-0dd7-4537-9589-434c3b4e643f","date":"2026-10-23T19:00:00Z","equipe":"nottingham-forest-nottingham","competition":"Premier League","domicile":false,"adversaire":"Ipswich Town FC","statut":"FINAL","score":26.4,"situation":"titulaire","minutes":89,"pour":1,"contre":1,"cotes":{"victoire":0.42,"nul":0.28,"defaite":0.3,"coteCleanSheet":3.5}},
   {"matchId":"Game:83eb87b5-cb4e-4f54-9980-2d9d8eb0bfef","date":"2026-10-18T15:30:00Z","equipe":"nottingham-forest-nottingham","competition":"Premier League","domicile":true,"adversaire":"Arsenal FC","statut":"FINAL","score":38.3,"situation":"titulaire","minutes":90,"pour":0,"contre":1,"cotes":{"victoire":0.18,"nul":0.2501,"defaite":0.5699,"coteCleanSheet":6}},

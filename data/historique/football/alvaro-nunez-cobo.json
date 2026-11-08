@@ -1,8 +1,9 @@
 {
  "joueurId": "alvaro-nunez-cobo",
- "misAJour": "2026-11-07T16:29:51.870Z",
+ "misAJour": "2026-11-08T17:51:06.944Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.870Z",
  "matchs": [
+  {"matchId":"Game:b7e970ad-6f92-4e1c-87e3-d1dbbe90802a","date":"2026-11-08T17:30:00Z","equipe":"celta-de-vigo-vigo","competition":"Primera División","domicile":true,"adversaire":"Levante UD","statut":"REVIEWING","score":0,"situation":"absent","minutes":null,"pour":0,"contre":0,"cotes":{"victoire":0.51,"nul":0.27,"defaite":0.22,"coteCleanSheet":2.5}},
   {"matchId":"Game:25e0adbb-97a1-4172-9acd-a195dca12819","date":"2026-11-05T20:00:00Z","equipe":"celta-de-vigo-vigo","competition":"UEFA Europa League","domicile":true,"adversaire":"Royal Union Saint-Gilloise","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":1,"contre":2,"cotes":{"victoire":0.4,"nul":0.28,"defaite":0.32,"coteCleanSheet":3.4}},
   {"matchId":"Game:0962d891-189b-487e-a661-5ad4de7694f9","date":"2026-10-31T15:15:00Z","equipe":"celta-de-vigo-vigo","competition":"Primera División","domicile":false,"adversaire":"Rayo Vallecano","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":0,"contre":3,"cotes":{"victoire":0.32,"nul":0.3,"defaite":0.38,"coteCleanSheet":3.4}},
   {"matchId":"Game:309e24aa-12e8-492e-a368-5be141cabb10","date":"2026-10-25T15:15:00Z","equipe":"celta-de-vigo-vigo","competition":"Primera División","domicile":true,"adversaire":"Real Betis","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":0,"contre":0,"cotes":{"victoire":0.3,"nul":0.29,"defaite":0.41,"coteCleanSheet":4.33}},

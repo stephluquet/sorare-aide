@@ -1,8 +1,9 @@
 {
  "joueurId": "malevy-leons-19990923",
- "misAJour": "2026-11-07T16:31:59.110Z",
+ "misAJour": "2026-11-08T17:51:22.881Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.110Z",
  "matchs": [
+  {"matchId":"Game:0a10fd6f-31c6-4402-b4aa-2c9aa89128a6","date":"2026-11-08T01:30:00Z","equipe":"golden-state-warriors","competition":"NBA","domicile":true,"adversaire":"Orlando Magic","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":126,"contre":119,"cotes":null},
   {"matchId":"Game:a3e90603-4cdf-4520-8959-a974f283e5e3","date":"2026-11-06T03:00:00Z","equipe":"golden-state-warriors","competition":"NBA","domicile":true,"adversaire":"Miami Heat","statut":"FINAL","score":0,"situation":"joue","minutes":2,"pour":120,"contre":100,"cotes":null},
   {"matchId":"Game:a0f6992b-eb9e-47a6-baaf-bcb12036f5a0","date":"2026-11-03T03:00:00Z","equipe":"golden-state-warriors","competition":"NBA","domicile":true,"adversaire":"Phoenix Suns","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":116,"contre":113,"cotes":null},
   {"matchId":"Game:fa494f86-4b42-4b01-981b-d25c299a8cb4","date":"2026-11-02T01:30:00Z","equipe":"golden-state-warriors","competition":"NBA","domicile":true,"adversaire":"LA Clippers","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":124,"contre":112,"cotes":null},

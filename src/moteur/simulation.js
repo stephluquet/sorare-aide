@@ -2,7 +2,7 @@
 // JavaScript pur, sans accès réseau ni disque ; générateur à graine fixe pour
 // des probabilités reproductibles.
 
-import { matchsComptes, poids } from './jouer.js';
+import { matchsComptes, poids, interpoler } from './jouer.js';
 
 // Générateur pseudo-aléatoire mulberry32 : rapide, déterministe, suffisant ici.
 export function generateur(graine) {
@@ -63,7 +63,9 @@ export function distribution(joueur, projection, P) {
       const idx = joues.map((m, i) => (m.situation === sit ? i : -1)).filter((i) => i >= 0);
       return idx.length < S.min_scores_situation ? tous : echantillon(idx.map((i) => joues[i].score), idx.map((i) => ws[i]));
     };
-    situations = [{ part: s.q, e: parSit('titulaire'), decalage: s.decalageTitulaire ?? 0 }, { part: 1 - s.q, e: parSit('entre') }];
+    // décalages : cotes du match (section 9) et retrait vers la moyenne du poste (section 3 bis)
+    situations = [{ part: s.q, e: parSit('titulaire'), decalage: (s.decalageTitulaire ?? 0) + (s.retraitTitulaire ?? 0) },
+      { part: 1 - s.q, e: parSit('entre'), decalage: s.retraitEntre ?? 0 }];
   } else {
     situations = [{ part: 1, e: tous }];
     echelle = tous.moyenne > 0 ? s.mu / tous.moyenne : 1; // remise à l'échelle de μ = minutes × taux
@@ -113,22 +115,33 @@ export function multiplicateurCarte(d, capitaine, multCapitaine, mode = 'additio
  * @returns { pPasser, scoreMoyen, pComplete }
  */
 export function simulerEquipe(distributions, capitaine, multiplicateur, cible, sim, mode = 'addition') {
-  const rng = generateur(sim.graine);
-  const facteurs = distributions.map((d, i) => multiplicateurCarte(d, i === capitaine, multiplicateur, mode));
+  const totaux = tirerTotaux(distributions, capitaine, multiplicateur, sim, mode);
   let passes = 0, somme = 0;
-  for (let t = 0; t < sim.tirages; t++) {
-    let total = 0;
-    for (let i = 0; i < distributions.length; i++) {
-      total += tirerScore(distributions[i], rng) * facteurs[i];
-    }
-    somme += total;
-    if (total >= cible) passes++;
-  }
+  for (const total of totaux) { somme += total; if (total >= cible) passes++; }
+  const brut = passes / totaux.length;
   return {
-    pPasser: passes / sim.tirages,
-    scoreMoyen: somme / sim.tirages,
+    // chances calibrées sur le rétro-test des équipes (methode.md, 5 bis) ; brut = part des tirages au-dessus de la cible
+    pPasser: sim.calibration ? interpoler(sim.calibration, brut) : brut,
+    pPasserBrut: brut,
+    scoreMoyen: somme / totaux.length,
     pComplete: distributions.reduce((a, d) => a * d.p, 1),
   };
+}
+
+/**
+ * Les totaux simulés d'une équipe (sim.tirages valeurs, graine fixe) : base de simulerEquipe,
+ * du rétro-test de l'équipe et de la distribution affichée face à la cible.
+ */
+export function tirerTotaux(distributions, capitaine, multiplicateur, sim, mode = 'addition') {
+  const rng = generateur(sim.graine);
+  const facteurs = distributions.map((d, i) => multiplicateurCarte(d, i === capitaine, multiplicateur, mode));
+  const totaux = new Float64Array(sim.tirages);
+  for (let t = 0; t < sim.tirages; t++) {
+    let total = 0;
+    for (let i = 0; i < distributions.length; i++) total += tirerScore(distributions[i], rng) * facteurs[i];
+    totaux[t] = total;
+  }
+  return totaux;
 }
 
 // Approximation normale de la probabilité de passer (présélection, methode.md section 6).

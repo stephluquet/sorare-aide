@@ -1,8 +1,9 @@
 {
  "joueurId": "ivan-san-jose-cantalejo",
- "misAJour": "2026-11-07T16:29:51.925Z",
+ "misAJour": "2026-11-08T17:51:07.013Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.925Z",
  "matchs": [
+  {"matchId":"Game:4a9e7270-7ce1-416b-93cb-c132e06543fa","date":"2026-11-07T17:30:00Z","equipe":"werder-bremen-bremen","competition":"Bundesliga","domicile":false,"adversaire":"VfB Stuttgart","statut":"REVIEWING","score":40.2,"situation":"entre","minutes":23,"pour":0,"contre":1,"cotes":{"victoire":0.27,"nul":0.23,"defaite":0.5,"coteCleanSheet":8}},
   {"matchId":"Game:cb2f910a-f794-4632-9228-65183a3fc4e4","date":"2026-10-31T14:30:00Z","equipe":"werder-bremen-bremen","competition":"Bundesliga","domicile":true,"adversaire":"TSG Hoffenheim","statut":"FINAL","score":33,"situation":"titulaire","minutes":73,"pour":2,"contre":0,"cotes":{"victoire":0.4,"nul":0.24,"defaite":0.36,"coteCleanSheet":5.5}},
   {"matchId":"Game:c4844100-19df-4b75-9dd9-669ef5cf56a9","date":"2026-10-24T13:30:00Z","equipe":"werder-bremen-bremen","competition":"Bundesliga","domicile":false,"adversaire":"1. FSV Mainz 05","statut":"FINAL","score":44.6,"situation":"titulaire","minutes":72,"pour":3,"contre":2,"cotes":{"victoire":0.23,"nul":0.23,"defaite":0.54,"coteCleanSheet":6.5}},
   {"matchId":"Game:44651e23-71e0-4eeb-81bc-fd1ff0ac70f3","date":"2026-10-17T13:30:00Z","equipe":"werder-bremen-bremen","competition":"Bundesliga","domicile":true,"adversaire":"SC Paderborn 07","statut":"FINAL","score":33.8,"situation":"titulaire","minutes":45,"pour":2,"contre":2,"cotes":{"victoire":0.54,"nul":0.23,"defaite":0.23,"coteCleanSheet":3.25}},

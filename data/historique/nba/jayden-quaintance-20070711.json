@@ -1,8 +1,9 @@
 {
  "joueurId": "jayden-quaintance-20070711",
- "misAJour": "2026-11-07T16:31:59.188Z",
+ "misAJour": "2026-11-08T17:51:22.995Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.188Z",
  "matchs": [
+  {"matchId":"Game:9db043e4-855f-450e-8073-6c9a61e3cf0f","date":"2026-11-08T03:00:00Z","equipe":"san-antonio-spurs","competition":"NBA","domicile":false,"adversaire":"Portland Trail Blazers","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":125,"contre":103,"cotes":null},
   {"matchId":"Game:02513574-cb5d-42ab-961d-144de8e6ea3f","date":"2026-11-07T03:00:00Z","equipe":"san-antonio-spurs","competition":"NBA","domicile":false,"adversaire":"Sacramento Kings","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":124,"contre":109,"cotes":null},
   {"matchId":"Game:166d5ec6-f180-434b-88cf-c1ec09d8344c","date":"2026-11-05T02:30:00Z","equipe":"san-antonio-spurs","competition":"NBA","domicile":true,"adversaire":"Dallas Mavericks","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":112,"contre":111,"cotes":null},
   {"matchId":"Game:c1dd47f4-3dd8-4b4a-85ca-8e6a7778f85f","date":"2026-11-03T01:30:00Z","equipe":"san-antonio-spurs","competition":"NBA","domicile":true,"adversaire":"Utah Jazz","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":119,"contre":97,"cotes":null},

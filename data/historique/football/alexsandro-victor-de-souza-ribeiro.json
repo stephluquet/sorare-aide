@@ -1,8 +1,9 @@
 {
  "joueurId": "alexsandro-victor-de-souza-ribeiro",
- "misAJour": "2026-11-07T16:29:51.991Z",
+ "misAJour": "2026-11-08T17:51:07.089Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.991Z",
  "matchs": [
+  {"matchId":"Game:396f852e-c3d2-48ba-b916-fe0815714f52","date":"2026-11-08T14:00:00Z","equipe":"lille-villeneuve-d-ascq","competition":"Ligue 1","domicile":false,"adversaire":"Stade Rennais F.C.","statut":"REVIEWING","score":50.68,"situation":"titulaire","minutes":90,"pour":2,"contre":1,"cotes":{"victoire":0.33,"nul":0.27,"defaite":0.4,"coteCleanSheet":4.33}},
   {"matchId":"Game:dff5e14a-bd80-4c48-9f11-0b2e8dc17314","date":"2026-11-03T20:00:00Z","equipe":"lille-villeneuve-d-ascq","competition":"UEFA Champions League","domicile":false,"adversaire":"FK Bodø / Glimt","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":0,"contre":0,"cotes":{"victoire":0.21,"nul":0.23,"defaite":0.56,"coteCleanSheet":8}},
   {"matchId":"Game:ba9e398a-ca1f-453d-b986-339c3f6ee117","date":"2026-10-30T20:05:00Z","equipe":"lille-villeneuve-d-ascq","competition":"Ligue 1","domicile":true,"adversaire":"RC Lens","statut":"FINAL","score":72.06,"situation":"titulaire","minutes":90,"pour":1,"contre":0,"cotes":{"victoire":0.35,"nul":0.3,"defaite":0.35,"coteCleanSheet":3.4}},
   {"matchId":"Game:9e794c0b-130a-419d-8714-5718ab803dd7","date":"2026-10-25T14:00:00Z","equipe":"lille-villeneuve-d-ascq","competition":"Ligue 1","domicile":false,"adversaire":"AS Monaco","statut":"FINAL","score":54.44,"situation":"titulaire","minutes":90,"pour":1,"contre":1,"cotes":{"victoire":0.25,"nul":0.28,"defaite":0.47,"coteCleanSheet":5}},

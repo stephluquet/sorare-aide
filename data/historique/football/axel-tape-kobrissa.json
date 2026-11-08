@@ -1,8 +1,9 @@
 {
  "joueurId": "axel-tape-kobrissa",
- "misAJour": "2026-11-07T16:29:51.939Z",
+ "misAJour": "2026-11-08T17:51:07.033Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.939Z",
  "matchs": [
+  {"matchId":"Game:b7e970ad-6f92-4e1c-87e3-d1dbbe90802a","date":"2026-11-08T17:30:00Z","equipe":"levante-valencia","competition":"Primera División","domicile":false,"adversaire":"RC Celta","statut":"REVIEWING","score":0,"situation":"absent","minutes":null,"pour":0,"contre":0,"cotes":{"victoire":0.22,"nul":0.27,"defaite":0.51,"coteCleanSheet":5}},
   {"matchId":"Game:98807703-57fc-4338-a387-e79a52dc4235","date":"2026-10-31T13:00:00Z","equipe":"levante-valencia","competition":"Primera División","domicile":true,"adversaire":"Atlético de Madrid","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":0,"contre":2,"cotes":{"victoire":0.19,"nul":0.2,"defaite":0.61,"coteCleanSheet":8}},
   {"matchId":"Game:e5124109-de39-4c97-89db-f67c0ea4399c","date":"2026-10-25T17:30:00Z","equipe":"levante-valencia","competition":"Primera División","domicile":false,"adversaire":"Real Sociedad","statut":"FINAL","score":29.44,"situation":"entre","minutes":28,"pour":1,"contre":2,"cotes":{"victoire":0.19,"nul":0.22,"defaite":0.59,"coteCleanSheet":8}},
   {"matchId":"Game:3ce0556b-0db7-4306-9296-cb18cf7a9f32","date":"2026-10-21T18:00:00Z","equipe":"levante-valencia","competition":"Primera División","domicile":true,"adversaire":"Athletic Club","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":3,"contre":1,"cotes":{"victoire":0.27,"nul":0.29,"defaite":0.44,"coteCleanSheet":4}},

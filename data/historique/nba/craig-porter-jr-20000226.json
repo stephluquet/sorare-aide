@@ -1,8 +1,9 @@
 {
  "joueurId": "craig-porter-jr-20000226",
- "misAJour": "2026-11-07T16:31:59.161Z",
+ "misAJour": "2026-11-08T17:51:22.957Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.161Z",
  "matchs": [
+  {"matchId":"Game:85e570d1-fb5c-43bb-a01c-5faf47ef052d","date":"2026-11-08T01:00:00Z","equipe":"cleveland-cavaliers","competition":"NBA","domicile":true,"adversaire":"New York Knicks","statut":"REVIEWING","score":2.7,"situation":"joue","minutes":16,"pour":97,"contre":109,"cotes":null},
   {"matchId":"Game:f87889ab-82f5-412c-ab7d-be5efeefe629","date":"2026-11-07T00:30:00Z","equipe":"cleveland-cavaliers","competition":"NBA","domicile":true,"adversaire":"Philadelphia 76ers","statut":"REVIEWING","score":3,"situation":"joue","minutes":4,"pour":119,"contre":95,"cotes":null},
   {"matchId":"Game:8be8d8ec-5c69-40fd-84db-cecfdb384e1a","date":"2026-11-05T01:00:00Z","equipe":"cleveland-cavaliers","competition":"NBA","domicile":false,"adversaire":"Oklahoma City Thunder","statut":"FINAL","score":3.7,"situation":"joue","minutes":14,"pour":116,"contre":124,"cotes":null},
   {"matchId":"Game:9049f90c-ada3-4adf-bbaa-451467190781","date":"2026-11-03T00:00:00Z","equipe":"cleveland-cavaliers","competition":"NBA","domicile":true,"adversaire":"Oklahoma City Thunder","statut":"FINAL","score":6.3,"situation":"joue","minutes":8,"pour":112,"contre":117,"cotes":null},

@@ -1,8 +1,9 @@
 {
  "joueurId": "teddy-boulhendi",
- "misAJour": "2026-11-07T16:29:51.835Z",
+ "misAJour": "2026-11-08T17:51:06.899Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.835Z",
  "matchs": [
+  {"matchId":"Game:1544c86b-d482-4e36-b319-ee613eed4f3e","date":"2026-11-08T16:15:00Z","equipe":"nice-nice","competition":"Ligue 1","domicile":false,"adversaire":"Angers SCO","statut":"REVIEWING","score":0,"situation":"banc","minutes":0,"pour":1,"contre":0,"cotes":{"victoire":0.47,"nul":0.26,"defaite":0.27,"coteCleanSheet":3}},
   {"matchId":"Game:3ab4f7f1-a27d-4288-8808-33cfe27ec045","date":"2026-10-30T18:00:00Z","equipe":"nice-nice","competition":"Ligue 1","domicile":true,"adversaire":"Stade Rennais F.C.","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":5,"contre":2,"cotes":{"victoire":0.37,"nul":0.26,"defaite":0.37,"coteCleanSheet":4}},
   {"matchId":"Game:99e4777f-e270-4126-847d-1361b3350618","date":"2026-10-23T18:45:00Z","equipe":"nice-nice","competition":"Ligue 1","domicile":false,"adversaire":"Stade Brestois 29","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":2,"contre":1,"cotes":{"victoire":0.31,"nul":0.28,"defaite":0.41,"coteCleanSheet":4.33}},
   {"matchId":"Game:c5b00a1a-9ba0-4654-8947-bab6a5e533ef","date":"2026-10-18T18:45:00Z","equipe":"nice-nice","competition":"Ligue 1","domicile":false,"adversaire":"Olympique Lyonnais","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":1,"contre":2,"cotes":{"victoire":0.23,"nul":0.25,"defaite":0.52,"coteCleanSheet":5.5}},

@@ -1,8 +1,9 @@
 {
  "joueurId": "randy-ntekja",
- "misAJour": "2026-11-07T16:29:51.952Z",
+ "misAJour": "2026-11-08T17:51:07.049Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.952Z",
  "matchs": [
+  {"matchId":"Game:5807c965-5fbf-4284-93a2-bb6629fc4467","date":"2026-11-08T15:15:00Z","equipe":"rayo-vallecano-madrid","competition":"Primera División","domicile":false,"adversaire":"Real Sociedad","statut":"REVIEWING","score":37,"situation":"entre","minutes":10,"pour":0,"contre":1,"cotes":{"victoire":0.23,"nul":0.24,"defaite":0.53,"coteCleanSheet":6.5}},
   {"matchId":"Game:0962d891-189b-487e-a661-5ad4de7694f9","date":"2026-10-31T15:15:00Z","equipe":"rayo-vallecano-madrid","competition":"Primera División","domicile":true,"adversaire":"RC Celta","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":3,"contre":0,"cotes":{"victoire":0.38,"nul":0.3,"defaite":0.32,"coteCleanSheet":2.75}},
   {"matchId":"Game:a4780b0c-4e0e-4188-99ab-3bc86b3d91ee","date":"2026-10-24T12:00:00Z","equipe":"rayo-vallecano-madrid","competition":"Primera División","domicile":true,"adversaire":"Elche CF","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":0,"contre":3,"cotes":{"victoire":0.53,"nul":0.26,"defaite":0.21,"coteCleanSheet":2.5}},
   {"matchId":"Game:9e1658be-f1fc-4e0c-aab6-aa9cfd03523c","date":"2026-10-19T19:00:00Z","equipe":"rayo-vallecano-madrid","competition":"Primera División","domicile":false,"adversaire":"Getafe CF","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":1,"contre":1,"cotes":{"victoire":0.36,"nul":0.32,"defaite":0.32,"coteCleanSheet":2.38}},

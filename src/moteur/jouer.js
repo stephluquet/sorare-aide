@@ -18,6 +18,15 @@ export function matchsComptes(joueur, P) {
 
 const dateCourte = (d) => (d ? d.slice(0, 10) : '?');
 
+// Interpolation linéaire dans une table [[x, y], …] triée sur x ; valeurs extrêmes prolongées.
+export function interpoler(table, x) {
+  if (x <= table[0][0]) return table[0][1];
+  for (let i = 1; i < table.length; i++) {
+    if (x <= table[i][0]) { const [x0, y0] = table[i - 1], [x1, y1] = table[i]; return y0 + (y1 - y0) * (x - x0) / (x1 - x0); }
+  }
+  return table.at(-1)[1];
+}
+
 // Jours entre deux instants, comptés sur les dates d'un fuseau (New York pour la NBA).
 const jourDans = (iso, fuseau) => new Intl.DateTimeFormat('sv-SE', { timeZone: fuseau }).format(new Date(iso));
 export const ecartJours = (a, b, fuseau) => Math.round((Date.parse(jourDans(a, fuseau)) - Date.parse(jourDans(b, fuseau))) / 86400000);
@@ -48,7 +57,8 @@ export function probabiliteJouer(joueur, match, P, regles = {}) {
       n += w * P.situations_jouees.includes(m.situation);
     });
     pHist = n / d;
-    p = S.plancher + (S.plafond - S.plancher) * pHist;
+    // Table de calibrage par tranches (methode.md, 1 ter), sinon droite plancher → plafond (section 1).
+    p = S.calibration_jouer ? interpoler(S.calibration_jouer, pHist) : S.plancher + (S.plafond - S.plancher) * pHist;
   }
 
   // Ce qui l'emporte sur l'historique

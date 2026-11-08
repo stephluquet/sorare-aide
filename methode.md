@@ -26,6 +26,7 @@ ignorent les matchs non joués.
     "demi_vie_jouer": 2,
     "plancher": 0.08,
     "plafond": 0.93,
+    "calibration_jouer": [[0.016, 0.078], [0.174, 0.215], [0.326, 0.415], [0.48, 0.515], [0.635, 0.647], [0.751, 0.781], [0.855, 0.827], [0.928, 0.859], [0.967, 0.863], [0.997, 0.896]],
     "demi_vie_titulaire": 3,
     "demi_vie_score": 10,
     "min_scores_situation": 3,
@@ -35,6 +36,7 @@ ignorent les matchs non joués.
     "demi_vie_jouer": 2,
     "plancher": 0.10,
     "plafond": 0.93,
+    "calibration_jouer": [[0.018, 0.101], [0.175, 0.24], [0.326, 0.412], [0.479, 0.571], [0.636, 0.643], [0.751, 0.768], [0.855, 0.822], [0.947, 0.872], [0.998, 0.916]],
     "demi_vie_minutes": 5,
     "demi_vie_score_par_minute": 10,
     "debut_saison": "2026-10-01"
@@ -61,7 +63,11 @@ ignorent les matchs non joués.
     "prudente_ecart_max": 0.05,
     "alternatives_par_poste": 4,
     "alternatives_nba": 8,
-    "ambitieuse_seuil_jouer": 0.6
+    "ambitieuse_seuil_jouer": 0.6,
+    "calibration_passer": {
+      "football": [[0, 0], [0.2, 0.178], [0.35, 0.332], [0.5, 0.48], [0.65, 0.642], [0.8, 0.782], [1, 1]],
+      "nba": [[0, 0], [0.2, 0.118], [0.35, 0.261], [0.5, 0.398], [0.65, 0.527], [0.8, 0.655], [1, 1]]
+    }
   },
   "contexte": {
     "football_cotes": {
@@ -70,6 +76,10 @@ ignorent les matchs non joués.
     },
     "nba_dos_a_dos": { "fuseau": "America/New_York", "facteur_jouer": 0.925 },
     "espn_blessures": { "Out": "exclu", "Doubtful": "exclu", "Questionable": "douteux", "Day-To-Day": "douteux" }
+  },
+  "retrait": {
+    "football": { "k": 20, "moyennes": { "GK": { "titulaire": 48, "entre": 37.7 }, "DF": { "titulaire": 48.7, "entre": 37.9 }, "MD": { "titulaire": 49.2, "entre": 40 }, "FW": { "titulaire": 49.4, "entre": 40.4 } } },
+    "nba": { "k": 8, "taux_moyen": 0.898 }
   },
   "forme": {
     "matchs_affiches": 5,
@@ -273,6 +283,19 @@ déduit de l'API, non vérifié directement. Conséquence : le brassard rapporte
 50 % du score **de base** ; il revient au joueur qui marque le plus, pas à la
 carte la plus bonifiée.
 
+## 5 bis. Calibrage final des chances de passer (2026-11-08)
+
+Après le retrait (3 bis) et le calibrage des chances de jouer (1 ter), le rétro-test des équipes
+(`node outils/retro-test-equipe.js`) donne, chances simulées → part d'équipes qui ont réellement
+atteint la cible : football 20 % → 17,8 % ; 35 % → 33,2 % ; 50 % → 48,0 % ; 65 % → 64,2 % ;
+80 % → 78,2 % (1 000 équipes, 26 journées) ; NBA 20 % → 11,8 % ; 35 % → 26,1 % ; 50 % → 39,8 % ;
+65 % → 52,7 % ; 80 % → 65,5 % (440 équipes). En NBA il reste un optimisme d'une dizaine de points
+qu'un retrait plus fort ne corrige pas (essayé k = 12, 16, 24). Les chances de passer affichées
+passent donc par la table `simulation.calibration_passer` du sport (interpolation linéaire,
+0 → 0 et 1 → 1 aux bouts) : la valeur simulée reste disponible (`pPasserBrut`) et l'ordre des
+équipes ne change pas (table croissante). Limite : tables estimées sur 26 journées ; à refaire
+quand l'archive grandit (même commande).
+
 ## 6. Choix des compositions
 
 **Cartes admissibles** : proposables (section 1 : ni exclues ni douteuses,
@@ -404,6 +427,48 @@ le texte du commentaire.
 (910 matchs de joueurs réguliers), **aucun effet** mesurable sur le score ou
 les minutes (corrélations −0,03 à 0,07, y compris pour les matchs très
 déséquilibrés) : non utilisées.
+
+## 1 ter. Calibrage par tranches des chances de jouer (2026-11-08)
+
+La droite plancher → plafond de la section 1 était un peu trop confiante en haut de l'échelle
+(football : 92,9 % annoncés, 89,7 % réalisés dans la tranche la plus haute). Elle est remplacée
+par une **table de calibrage** (`calibration_jouer`, couples [part pondérée des matchs joués,
+part réellement jouée au match suivant], interpolation linéaire entre les points, valeurs
+extrêmes prolongées) estimée par tranches sur toute l'archive (football 20 142 matchs, NBA
+9 030 ; tranches voisines fusionnées quand l'ordre n'était pas respecté). Validée sur une
+moitié des joueurs estimée sur l'autre : Brier 0,1393 → 0,1387 (football), inchangé en NBA
+(0,1484 → 0,1487). Un joueur qui a tout joué récemment est à 90 % (football) et 92 % (NBA).
+`plancher` et `plafond` restent le repli si la table manque.
+
+## 3 bis. Retrait vers la moyenne du poste (effet de sélection)
+
+**Constat** (rétro-test au niveau de l'équipe, `node outils/retro-test-equipe.js`, 2026-11-08 :
+1 000 équipes composées comme le moteur sur 26 journées passées, chaque joueur reconstruit
+avec ses seuls matchs antérieurs) : **le moteur était trop optimiste**. Annoncé 50 % de chances
+de passer → réalisé 32 % ; annoncé 80 % → 66 % ; 68 % des scores réels d'équipe sous la
+médiane annoncée. Cause principale : en retenant les meilleures moyennes récentes, le moteur
+retient aussi celles que la chance a gonflées. Pour les 10 % de joueurs à la meilleure
+espérance, le score s'il joue annoncé valait 60,3 contre 52,5 réalisés (football) et 32,4
+contre 26,0 (NBA). Les chances de jouer, elles, sont à peu près justes (92,9 % annoncés pour
+89,7 % réalisés dans la tranche la plus haute en football ; le plafond optimal reste 0,93).
+
+**Correction** : la moyenne du joueur est rapprochée de celle de son poste, d'autant plus qu'il
+a peu de matchs (retrait bayésien empirique) :
+
+  μ' = a + (μ − a) × n / (n + k)
+
+- football : séparément pour la moyenne de titulaire et celle d'entré en jeu, `a` = moyenne du
+  poste dans cette situation sur toute l'archive (`retrait.football.moyennes`), n = nombre de
+  scores du joueur dans cette situation, **k = 20** ; le décalage des cotes (section 9)
+  s'ajoute ensuite ;
+- NBA : sur le score par minute, `a` = score par minute de la ligue (0,898), n = nombre de
+  matchs avec minutes, **k = 8** ; μ = minutes × taux retiré.
+
+La simulation (section 5) décale chaque tirage d'autant (football) ou remet à l'échelle de μ'
+(NBA). Choix de k par `node outils/retro-test-retrait.js football|nba` (11 607 et 5 907 matchs
+joués prédits) : l'erreur quadratique baisse un peu (football 16,65 → 16,01 ; NBA 10,70 →
+10,58) et le biais des 10 % meilleurs tombe de +6,9 à +0,5 point (football, k = 20) et de +2,8
+à +0,6 (NBA, k = 8).
 
 ### 9 bis. Forme affichée (équipe, adversaire, joueur) : hors calcul
 

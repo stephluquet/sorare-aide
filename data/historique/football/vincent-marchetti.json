@@ -1,8 +1,9 @@
 {
  "joueurId": "vincent-marchetti",
- "misAJour": "2026-11-07T16:29:51.881Z",
+ "misAJour": "2026-11-08T17:51:06.954Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.881Z",
  "matchs": [
+  {"matchId":"Game:86296c04-5a11-473d-92cf-d77c0634ef47","date":"2026-11-07T18:00:00Z","equipe":"paris-paris","competition":"Ligue 1","domicile":false,"adversaire":"AJ Auxerre","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":1,"contre":0,"cotes":{"victoire":0.55,"nul":0.25,"defaite":0.2,"coteCleanSheet":2.62}},
   {"matchId":"Game:58e66ab7-e95e-4dd4-a72a-d13a3b726696","date":"2026-11-01T16:15:00Z","equipe":"paris-paris","competition":"Ligue 1","domicile":true,"adversaire":"AS Monaco","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":3,"contre":1,"cotes":{"victoire":0.38,"nul":0.27,"defaite":0.35,"coteCleanSheet":3.75}},
   {"matchId":"Game:bf770412-4767-4812-9cef-dbd19f154f02","date":"2026-10-24T18:45:00Z","equipe":"paris-paris","competition":"Ligue 1","domicile":false,"adversaire":"RC Lens","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":1,"contre":2,"cotes":{"victoire":0.35,"nul":0.28,"defaite":0.37,"coteCleanSheet":4}},
   {"matchId":"Game:c46f7b43-8f6e-44f6-8cf6-0d4902fd421d","date":"2026-10-18T15:15:00Z","equipe":"paris-paris","competition":"Ligue 1","domicile":true,"adversaire":"Stade Rennais F.C.","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":4,"contre":3,"cotes":{"victoire":0.43,"nul":0.28,"defaite":0.29,"coteCleanSheet":3.5}},

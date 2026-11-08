@@ -1,8 +1,9 @@
 {
  "joueurId": "panos-katseris",
- "misAJour": "2026-11-07T16:29:51.966Z",
+ "misAJour": "2026-11-08T17:51:07.065Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.966Z",
  "matchs": [
+  {"matchId":"Game:6ecddd69-59df-4d79-9779-d6cab77f6e62","date":"2026-11-08T16:15:00Z","equipe":"lorient-ploemeur","competition":"Ligue 1","domicile":false,"adversaire":"Le Havre AC","statut":"REVIEWING","score":0,"situation":"absent","minutes":null,"pour":1,"contre":0,"cotes":{"victoire":0.39,"nul":0.28,"defaite":0.33,"coteCleanSheet":3}},
   {"matchId":"Game:3f8fde65-ef45-47a7-9114-447e01461dff","date":"2026-11-02T19:45:00Z","equipe":"lorient-ploemeur","competition":"Ligue 1","domicile":true,"adversaire":"Stade Brestois 29","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":0,"contre":2,"cotes":{"victoire":0.37,"nul":0.31,"defaite":0.32,"coteCleanSheet":3}},
   {"matchId":"Game:1038dc4a-ca15-454a-b30a-dc7748e8be75","date":"2026-10-25T16:15:00Z","equipe":"lorient-ploemeur","competition":"Ligue 1","domicile":false,"adversaire":"Angers SCO","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":0,"contre":0,"cotes":{"victoire":0.39,"nul":0.29,"defaite":0.32,"coteCleanSheet":3}},
   {"matchId":"Game:c2b6b8ff-8e2c-4a5a-801c-72711c3cb391","date":"2026-10-18T15:15:00Z","equipe":"lorient-ploemeur","competition":"Ligue 1","domicile":true,"adversaire":"AS Monaco","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":1,"contre":0,"cotes":{"victoire":0.26,"nul":0.28,"defaite":0.46,"coteCleanSheet":4}},

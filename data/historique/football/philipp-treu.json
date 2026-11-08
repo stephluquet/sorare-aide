@@ -1,8 +1,9 @@
 {
  "joueurId": "philipp-treu",
- "misAJour": "2026-11-07T16:29:51.995Z",
+ "misAJour": "2026-11-08T17:51:07.094Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.995Z",
  "matchs": [
+  {"matchId":"Game:4e362698-138b-424e-bb3b-d3dffe248048","date":"2026-11-08T16:30:00Z","equipe":"freiburg-freiburg-im-breisgau","competition":"Bundesliga","domicile":true,"adversaire":"1. FC Union Berlin","statut":"REVIEWING","score":74.44,"situation":"titulaire","minutes":62,"pour":1,"contre":0,"cotes":{"victoire":0.65,"nul":0.21,"defaite":0.14,"coteCleanSheet":2.2}},
   {"matchId":"Game:fafcba13-eabf-46f2-9efd-4cbd584a7cba","date":"2026-11-05T17:45:00Z","equipe":"freiburg-freiburg-im-breisgau","competition":"UEFA Conference League","domicile":false,"adversaire":"Trabzonspor Kulübü","statut":"FINAL","score":34.4,"situation":"entre","minutes":3,"pour":1,"contre":0,"cotes":{"victoire":0.35,"nul":0.27,"defaite":0.38,"coteCleanSheet":4.5}},
   {"matchId":"Game:c160dfa6-592a-41df-97db-ed1449158edd","date":"2026-10-31T14:30:00Z","equipe":"freiburg-freiburg-im-breisgau","competition":"Bundesliga","domicile":false,"adversaire":"FC Augsburg","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":2,"contre":1,"cotes":{"victoire":0.4,"nul":0.26,"defaite":0.34,"coteCleanSheet":4}},
   {"matchId":"Game:46291250-7816-4f88-b175-8739660dfb22","date":"2026-10-25T16:30:00Z","equipe":"freiburg-freiburg-im-breisgau","competition":"Bundesliga","domicile":true,"adversaire":"FC Bayern München","statut":"FINAL","score":37.62,"situation":"titulaire","minutes":90,"pour":1,"contre":3,"cotes":{"victoire":0.18,"nul":0.19,"defaite":0.63,"coteCleanSheet":11}},

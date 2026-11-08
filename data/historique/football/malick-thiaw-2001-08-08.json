@@ -1,9 +1,9 @@
 {
  "joueurId": "malick-thiaw-2001-08-08",
- "misAJour": "2026-11-07T16:29:51.996Z",
+ "misAJour": "2026-11-08T17:51:07.095Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.996Z",
  "matchs": [
-  {"matchId":"Game:f04f7cb1-72a9-436f-88f1-e58f366d3d5e","date":"2026-11-07T15:00:00Z","equipe":"newcastle-united-newcastle-upon-tyne","competition":"Premier League","domicile":false,"adversaire":"Fulham FC","statut":"REVIEWING","score":49.94,"situation":"titulaire","minutes":67,"pour":0,"contre":0,"cotes":{"victoire":0.27,"nul":0.25,"defaite":0.48,"coteCleanSheet":5}},
+  {"matchId":"Game:f04f7cb1-72a9-436f-88f1-e58f366d3d5e","date":"2026-11-07T15:00:00Z","equipe":"newcastle-united-newcastle-upon-tyne","competition":"Premier League","domicile":false,"adversaire":"Fulham FC","statut":"REVIEWING","score":49.76,"situation":"titulaire","minutes":85,"pour":1,"contre":1,"cotes":{"victoire":0.27,"nul":0.25,"defaite":0.48,"coteCleanSheet":5}},
   {"matchId":"Game:b2dcee25-00d8-474f-a791-5bfe3ab8b08d","date":"2026-11-02T20:00:00Z","equipe":"newcastle-united-newcastle-upon-tyne","competition":"Premier League","domicile":true,"adversaire":"Everton FC","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":0,"contre":1,"cotes":{"victoire":0.43,"nul":0.28,"defaite":0.29,"coteCleanSheet":3.5}},
   {"matchId":"Game:33f3e1a6-c3ba-4b4f-bde6-071450cd06c7","date":"2026-10-25T14:00:00Z","equipe":"newcastle-united-newcastle-upon-tyne","competition":"Premier League","domicile":false,"adversaire":"Crystal Palace FC","statut":"FINAL","score":36.5,"situation":"entre","minutes":1,"pour":2,"contre":0,"cotes":{"victoire":0.37,"nul":0.26,"defaite":0.37,"coteCleanSheet":4.33}},
   {"matchId":"Game:d97fa91e-a40a-47ee-97da-ddfad398be8a","date":"2026-10-17T16:30:00Z","equipe":"newcastle-united-newcastle-upon-tyne","competition":"Premier League","domicile":true,"adversaire":"Aston Villa FC","statut":"FINAL","score":50.28,"situation":"titulaire","minutes":90,"pour":0,"contre":1,"cotes":{"victoire":0.4,"nul":0.27,"defaite":0.33,"coteCleanSheet":4}},

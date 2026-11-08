@@ -1,8 +1,9 @@
 {
  "joueurId": "jalen-wilson-20001104",
- "misAJour": "2026-11-07T16:31:59.112Z",
+ "misAJour": "2026-11-08T17:51:22.882Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.112Z",
  "matchs": [
+  {"matchId":"Game:435a2d31-2610-44e2-b250-a217c4579482","date":"2026-11-08T00:30:00Z","equipe":"atlanta-hawks","competition":"NBA","domicile":true,"adversaire":"Brooklyn Nets","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":124,"contre":121,"cotes":null},
   {"matchId":"Game:bf235e89-13fb-40c2-b4e1-aaf793b227b6","date":"2026-11-07T00:00:00Z","equipe":"atlanta-hawks","competition":"NBA","domicile":true,"adversaire":"Washington Wizards","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":139,"contre":132,"cotes":null},
   {"matchId":"Game:612750b3-f88e-4db3-85c0-25e6fc466f4b","date":"2026-11-05T00:00:00Z","equipe":"atlanta-hawks","competition":"NBA","domicile":false,"adversaire":"Washington Wizards","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":120,"contre":105,"cotes":null},
   {"matchId":"Game:e6483ab2-3365-4e21-9cf4-80dc1cc37115","date":"2026-11-03T00:30:00Z","equipe":"atlanta-hawks","competition":"NBA","domicile":false,"adversaire":"Indiana Pacers","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":108,"contre":104,"cotes":null},

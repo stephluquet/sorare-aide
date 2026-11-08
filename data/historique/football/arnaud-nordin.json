@@ -1,8 +1,9 @@
 {
  "joueurId": "arnaud-nordin",
- "misAJour": "2026-11-07T16:29:51.829Z",
+ "misAJour": "2026-11-08T17:51:06.893Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.829Z",
  "matchs": [
+  {"matchId":"Game:396f852e-c3d2-48ba-b916-fe0815714f52","date":"2026-11-08T14:00:00Z","equipe":"rennes-rennes","competition":"Ligue 1","domicile":true,"adversaire":"LOSC Lille","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":1,"contre":2,"cotes":{"victoire":0.4,"nul":0.27,"defaite":0.33,"coteCleanSheet":3.5}},
   {"matchId":"Game:049c5cf6-0218-4835-9077-360676518cb3","date":"2026-11-04T15:30:00Z","equipe":"rennes-rennes","competition":"UEFA Europa League","domicile":true,"adversaire":"Olympiakos CFP","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":0,"contre":0,"cotes":{"victoire":0.42,"nul":0.27,"defaite":0.31,"coteCleanSheet":3.25}},
   {"matchId":"Game:3ab4f7f1-a27d-4288-8808-33cfe27ec045","date":"2026-10-30T18:00:00Z","equipe":"rennes-rennes","competition":"Ligue 1","domicile":false,"adversaire":"OGC Nice","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":2,"contre":5,"cotes":{"victoire":0.37,"nul":0.26,"defaite":0.37,"coteCleanSheet":4}},
   {"matchId":"Game:2749ddcb-255b-4828-aa6f-94820133c87b","date":"2026-10-25T16:15:00Z","equipe":"rennes-rennes","competition":"Ligue 1","domicile":true,"adversaire":"RC Strasbourg Alsace","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":3,"contre":0,"cotes":{"victoire":0.52,"nul":0.24,"defaite":0.24,"coteCleanSheet":3.5}},

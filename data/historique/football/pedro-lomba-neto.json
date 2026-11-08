@@ -1,8 +1,9 @@
 {
  "joueurId": "pedro-lomba-neto",
- "misAJour": "2026-11-07T16:29:51.901Z",
+ "misAJour": "2026-11-08T17:51:06.976Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.901Z",
  "matchs": [
+  {"matchId":"Game:16880b49-98ff-4bcf-a40f-8486e1691ed4","date":"2026-11-08T14:00:00Z","equipe":"chelsea-london","competition":"Premier League","domicile":false,"adversaire":"Sunderland AFC","statut":"REVIEWING","score":38.8,"situation":"titulaire","minutes":62,"pour":0,"contre":1,"cotes":{"victoire":0.5,"nul":0.26,"defaite":0.24,"coteCleanSheet":3}},
   {"matchId":"Game:e900fb2d-2e16-4e02-9f51-f3c458ec1bac","date":"2026-10-31T12:30:00Z","equipe":"chelsea-london","competition":"Premier League","domicile":true,"adversaire":"Manchester United FC","statut":"FINAL","score":44.2,"situation":"titulaire","minutes":87,"pour":2,"contre":0,"cotes":{"victoire":0.47,"nul":0.26,"defaite":0.27,"coteCleanSheet":3}},
   {"matchId":"Game:9a241c48-769a-4ba9-b896-aeca1aa677c5","date":"2026-10-24T16:30:00Z","equipe":"chelsea-london","competition":"Premier League","domicile":true,"adversaire":"Tottenham Hotspur FC","statut":"FINAL","score":42.7,"situation":"titulaire","minutes":88,"pour":0,"contre":2,"cotes":{"victoire":0.49,"nul":0.26,"defaite":0.25,"coteCleanSheet":3.4}},
   {"matchId":"Game:b068f723-a9a5-4d81-8754-a87bc4f57a1a","date":"2026-10-17T11:30:00Z","equipe":"chelsea-london","competition":"Premier League","domicile":false,"adversaire":"Everton FC","statut":"FINAL","score":94.7,"situation":"titulaire","minutes":89,"pour":2,"contre":0,"cotes":{"victoire":0.4,"nul":0.27,"defaite":0.33,"coteCleanSheet":3.75}},

@@ -1,9 +1,9 @@
 {
  "joueurId": "zakaria-eddahchouri",
- "misAJour": "2026-11-07T16:29:51.860Z",
+ "misAJour": "2026-11-08T17:51:06.931Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.860Z",
  "matchs": [
-  {"matchId":"Game:6219527a-6904-4019-92f4-3179fa41038c","date":"2026-11-07T15:15:00Z","equipe":"deportivo-la-coruna-a-coruna","competition":"Primera División","domicile":false,"adversaire":"RCD Espanyol de Barcelona","statut":"REVIEWING","score":0,"situation":"absent","minutes":null,"pour":0,"contre":0,"cotes":{"victoire":0.32,"nul":0.3,"defaite":0.38,"coteCleanSheet":3.5}},
+  {"matchId":"Game:6219527a-6904-4019-92f4-3179fa41038c","date":"2026-11-07T15:15:00Z","equipe":"deportivo-la-coruna-a-coruna","competition":"Primera División","domicile":false,"adversaire":"RCD Espanyol de Barcelona","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":0,"contre":0,"cotes":{"victoire":0.32,"nul":0.3,"defaite":0.38,"coteCleanSheet":3.5}},
   {"matchId":"Game:0610d24e-2b42-42b9-b907-b9ae2e3b96fc","date":"2026-11-02T20:00:00Z","equipe":"deportivo-la-coruna-a-coruna","competition":"Primera División","domicile":true,"adversaire":"CA Osasuna","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":2,"contre":1,"cotes":{"victoire":0.45,"nul":0.3,"defaite":0.25,"coteCleanSheet":2.38}},
   {"matchId":"Game:bf7d5d59-67f3-4e79-b1ed-730711dbfebc","date":"2026-10-24T19:00:00Z","equipe":"deportivo-la-coruna-a-coruna","competition":"Primera División","domicile":false,"adversaire":"Atlético de Madrid","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":0,"contre":1,"cotes":{"victoire":0.1,"nul":0.19,"defaite":0.71,"coteCleanSheet":10}},
   {"matchId":"Game:27888147-8075-4686-9199-078f412b6f7a","date":"2026-10-16T19:00:00Z","equipe":"deportivo-la-coruna-a-coruna","competition":"Primera División","domicile":true,"adversaire":"Levante UD","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":1,"contre":1,"cotes":{"victoire":0.45,"nul":0.27,"defaite":0.28,"coteCleanSheet":3}},

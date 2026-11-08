@@ -1,9 +1,9 @@
 {
  "joueurId": "filippo-calixte-mane",
- "misAJour": "2026-11-07T16:29:51.787Z",
+ "misAJour": "2026-11-08T17:51:06.842Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.787Z",
  "matchs": [
-  {"matchId":"Game:645aa306-60ae-4706-bcdf-c0a9b66fcaff","date":"2026-11-07T14:30:00Z","equipe":"borussia-dortmund-dortmund","competition":"Bundesliga","domicile":true,"adversaire":"SV 07 Elversberg","statut":"REVIEWING","score":0,"situation":"absent","minutes":null,"pour":2,"contre":1,"cotes":{"victoire":0.7,"nul":0.19,"defaite":0.11,"coteCleanSheet":2.38}},
+  {"matchId":"Game:645aa306-60ae-4706-bcdf-c0a9b66fcaff","date":"2026-11-07T14:30:00Z","equipe":"borussia-dortmund-dortmund","competition":"Bundesliga","domicile":true,"adversaire":"SV 07 Elversberg","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":2,"contre":1,"cotes":{"victoire":0.7,"nul":0.19,"defaite":0.11,"coteCleanSheet":2.5}},
   {"matchId":"Game:15c4b51d-1c87-4fae-a4d6-84874a904e49","date":"2026-11-04T20:00:00Z","equipe":"borussia-dortmund-dortmund","competition":"UEFA Champions League","domicile":true,"adversaire":"Real Betis","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":2,"contre":1,"cotes":{"victoire":0.55,"nul":0.24,"defaite":0.21,"coteCleanSheet":3.25}},
   {"matchId":"Game:b5868f64-a32f-4817-a39f-1b5bf6ddf04e","date":"2026-10-31T17:30:00Z","equipe":"borussia-dortmund-dortmund","competition":"Bundesliga","domicile":false,"adversaire":"FC Bayern München","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":2,"contre":2,"cotes":{"victoire":0.12,"nul":0.17,"defaite":0.71,"coteCleanSheet":13}},
   {"matchId":"Game:bd8384fc-88fb-4159-ba9e-d6c26edd09d6","date":"2026-10-24T16:30:00Z","equipe":"borussia-dortmund-dortmund","competition":"Bundesliga","domicile":true,"adversaire":"Eintracht Frankfurt","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":1,"contre":0,"cotes":{"victoire":0.62,"nul":0.2,"defaite":0.18,"coteCleanSheet":3}},

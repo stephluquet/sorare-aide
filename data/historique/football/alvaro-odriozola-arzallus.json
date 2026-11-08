@@ -1,8 +1,9 @@
 {
  "joueurId": "alvaro-odriozola-arzallus",
- "misAJour": "2026-11-07T16:29:51.951Z",
+ "misAJour": "2026-11-08T17:51:07.048Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.951Z",
  "matchs": [
+  {"matchId":"Game:5807c965-5fbf-4284-93a2-bb6629fc4467","date":"2026-11-08T15:15:00Z","equipe":"real-sociedad-donostia-san-sebastian","competition":"Primera División","domicile":true,"adversaire":"Rayo Vallecano","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":1,"contre":0,"cotes":{"victoire":0.53,"nul":0.24,"defaite":0.23,"coteCleanSheet":3.25}},
   {"matchId":"Game:3174cf09-66ee-4442-b1d3-6d321dad746e","date":"2026-11-05T17:45:00Z","equipe":"real-sociedad-donostia-san-sebastian","competition":"UEFA Europa League","domicile":true,"adversaire":"Olympique Lyonnais","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":1,"contre":1,"cotes":{"victoire":0.56,"nul":0.23,"defaite":0.21,"coteCleanSheet":2.75}},
   {"matchId":"Game:d70d9e68-9b3e-4e0d-bb8b-1f0e2bda49b1","date":"2026-11-01T20:00:00Z","equipe":"real-sociedad-donostia-san-sebastian","competition":"Primera División","domicile":false,"adversaire":"Athletic Club","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":1,"contre":2,"cotes":{"victoire":0.26,"nul":0.27,"defaite":0.47,"coteCleanSheet":4.5}},
   {"matchId":"Game:e5124109-de39-4c97-89db-f67c0ea4399c","date":"2026-10-25T17:30:00Z","equipe":"real-sociedad-donostia-san-sebastian","competition":"Primera División","domicile":true,"adversaire":"Levante UD","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":2,"contre":1,"cotes":{"victoire":0.59,"nul":0.22,"defaite":0.19,"coteCleanSheet":3}},

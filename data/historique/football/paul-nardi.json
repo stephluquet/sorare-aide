@@ -1,8 +1,9 @@
 {
  "joueurId": "paul-nardi",
- "misAJour": "2026-11-07T16:29:51.966Z",
+ "misAJour": "2026-11-08T17:51:07.066Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.966Z",
  "matchs": [
+  {"matchId":"Game:86296c04-5a11-473d-92cf-d77c0634ef47","date":"2026-11-07T18:00:00Z","equipe":"auxerre-auxerre","competition":"Ligue 1","domicile":true,"adversaire":"Paris FC","statut":"REVIEWING","score":33.4,"situation":"titulaire","minutes":90,"pour":0,"contre":1,"cotes":{"victoire":0.2,"nul":0.25,"defaite":0.55,"coteCleanSheet":6}},
   {"matchId":"Game:38052a31-c95e-4c12-afed-37a8c40573de","date":"2026-11-01T14:00:00Z","equipe":"auxerre-auxerre","competition":"Ligue 1","domicile":false,"adversaire":"RC Strasbourg Alsace","statut":"FINAL","score":0,"situation":"titulaire","minutes":90,"pour":1,"contre":5,"cotes":{"victoire":0.24,"nul":0.24,"defaite":0.52,"coteCleanSheet":6}},
   {"matchId":"Game:32a12b94-4328-420d-a29a-87dc7b37e903","date":"2026-10-25T16:15:00Z","equipe":"auxerre-auxerre","competition":"Ligue 1","domicile":true,"adversaire":"Le Mans FC","statut":"FINAL","score":32.8,"situation":"titulaire","minutes":90,"pour":1,"contre":1,"cotes":{"victoire":0.45,"nul":0.27,"defaite":0.28,"coteCleanSheet":3.4}},
   {"matchId":"Game:f084c347-b5c3-4967-9786-cab168baef88","date":"2026-10-18T15:15:00Z","equipe":"auxerre-auxerre","competition":"Ligue 1","domicile":false,"adversaire":"Le Havre AC","statut":"FINAL","score":60.5,"situation":"titulaire","minutes":90,"pour":3,"contre":1,"cotes":{"victoire":0.31,"nul":0.28,"defaite":0.41,"coteCleanSheet":4}},

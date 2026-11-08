@@ -1,9 +1,9 @@
 {
  "joueurId": "joseph-willock",
- "misAJour": "2026-11-07T16:29:51.962Z",
+ "misAJour": "2026-11-08T17:51:07.061Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.962Z",
  "matchs": [
-  {"matchId":"Game:f04f7cb1-72a9-436f-88f1-e58f366d3d5e","date":"2026-11-07T15:00:00Z","equipe":"newcastle-united-newcastle-upon-tyne","competition":"Premier League","domicile":false,"adversaire":"Fulham FC","statut":"REVIEWING","score":35.4,"situation":"entre","minutes":6,"pour":0,"contre":0,"cotes":{"victoire":0.27,"nul":0.25,"defaite":0.48,"coteCleanSheet":5}},
+  {"matchId":"Game:f04f7cb1-72a9-436f-88f1-e58f366d3d5e","date":"2026-11-07T15:00:00Z","equipe":"newcastle-united-newcastle-upon-tyne","competition":"Premier League","domicile":false,"adversaire":"Fulham FC","statut":"REVIEWING","score":35.7,"situation":"entre","minutes":29,"pour":1,"contre":1,"cotes":{"victoire":0.27,"nul":0.25,"defaite":0.48,"coteCleanSheet":5}},
   {"matchId":"Game:b2dcee25-00d8-474f-a791-5bfe3ab8b08d","date":"2026-11-02T20:00:00Z","equipe":"newcastle-united-newcastle-upon-tyne","competition":"Premier League","domicile":true,"adversaire":"Everton FC","statut":"FINAL","score":40.1,"situation":"titulaire","minutes":64,"pour":0,"contre":1,"cotes":{"victoire":0.43,"nul":0.28,"defaite":0.29,"coteCleanSheet":3.5}},
   {"matchId":"Game:33f3e1a6-c3ba-4b4f-bde6-071450cd06c7","date":"2026-10-25T14:00:00Z","equipe":"newcastle-united-newcastle-upon-tyne","competition":"Premier League","domicile":false,"adversaire":"Crystal Palace FC","statut":"FINAL","score":28.9,"situation":"titulaire","minutes":77,"pour":2,"contre":0,"cotes":{"victoire":0.37,"nul":0.26,"defaite":0.37,"coteCleanSheet":4.33}},
   {"matchId":"Game:d97fa91e-a40a-47ee-97da-ddfad398be8a","date":"2026-10-17T16:30:00Z","equipe":"newcastle-united-newcastle-upon-tyne","competition":"Premier League","domicile":true,"adversaire":"Aston Villa FC","statut":"FINAL","score":40.4,"situation":"titulaire","minutes":56,"pour":0,"contre":1,"cotes":{"victoire":0.4,"nul":0.27,"defaite":0.33,"coteCleanSheet":4}},

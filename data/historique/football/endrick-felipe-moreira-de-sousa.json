@@ -1,8 +1,9 @@
 {
  "joueurId": "endrick-felipe-moreira-de-sousa",
- "misAJour": "2026-11-07T16:29:51.995Z",
+ "misAJour": "2026-11-08T17:51:07.094Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.995Z",
  "matchs": [
+  {"matchId":"Game:99be850f-f39c-4e2d-94d7-11669c4e2546","date":"2026-11-07T20:00:00Z","equipe":"real-madrid-madrid","competition":"Primera División","domicile":false,"adversaire":"Valencia CF","statut":"REVIEWING","score":33.3,"situation":"entre","minutes":6,"pour":3,"contre":0,"cotes":{"victoire":0.75,"nul":0.16,"defaite":0.09,"coteCleanSheet":2.1}},
   {"matchId":"Game:0b81f9dd-cd61-4d87-9b9f-0ab8e24458fd","date":"2026-11-04T17:45:00Z","equipe":"real-madrid-madrid","competition":"UEFA Champions League","domicile":false,"adversaire":"AEK Athens FC","statut":"FINAL","score":39.3,"situation":"entre","minutes":23,"pour":3,"contre":2,"cotes":{"victoire":0.75,"nul":0.16,"defaite":0.09,"coteCleanSheet":2.5}},
   {"matchId":"Game:c55bfc80-23d1-40e4-923c-bd1373f632be","date":"2026-11-01T15:15:00Z","equipe":"real-madrid-madrid","competition":"Primera División","domicile":false,"adversaire":"Real Racing Club de Santander","statut":"FINAL","score":37.3,"situation":"entre","minutes":5,"pour":3,"contre":0,"cotes":{"victoire":0.77,"nul":0.14,"defaite":0.09,"coteCleanSheet":2.38}},
   {"matchId":"Game:0468597c-6df3-401f-86b4-9b0a2edf8e9e","date":"2026-10-25T20:00:00Z","equipe":"real-madrid-madrid","competition":"Primera División","domicile":false,"adversaire":"FC Barcelona","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":2,"contre":1,"cotes":{"victoire":0.23,"nul":0.17,"defaite":0.6,"coteCleanSheet":11}},

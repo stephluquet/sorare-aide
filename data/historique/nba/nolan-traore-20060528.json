@@ -1,8 +1,9 @@
 {
  "joueurId": "nolan-traore-20060528",
- "misAJour": "2026-11-07T16:31:59.110Z",
+ "misAJour": "2026-11-08T17:51:22.865Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.110Z",
  "matchs": [
+  {"matchId":"Game:435a2d31-2610-44e2-b250-a217c4579482","date":"2026-11-08T00:30:00Z","equipe":"brooklyn-nets","competition":"NBA","domicile":false,"adversaire":"Atlanta Hawks","statut":"REVIEWING","score":38.2,"situation":"joue","minutes":23,"pour":121,"contre":124,"cotes":null},
   {"matchId":"Game:a6025895-87a2-430a-871a-2a900195228c","date":"2026-11-05T00:30:00Z","equipe":"brooklyn-nets","competition":"NBA","domicile":true,"adversaire":"Charlotte Hornets","statut":"FINAL","score":32.8,"situation":"joue","minutes":28,"pour":114,"contre":104,"cotes":null},
   {"matchId":"Game:41aa1697-7248-4c23-a27f-d035dd514579","date":"2026-11-03T00:30:00Z","equipe":"brooklyn-nets","competition":"NBA","domicile":false,"adversaire":"New York Knicks","statut":"FINAL","score":33.6,"situation":"joue","minutes":25,"pour":90,"contre":103,"cotes":null},
   {"matchId":"Game:c60a77a0-6e46-4adf-90ef-48f0beab6559","date":"2026-11-01T22:00:00Z","equipe":"brooklyn-nets","competition":"NBA","domicile":false,"adversaire":"Indiana Pacers","statut":"FINAL","score":32.4,"situation":"joue","minutes":31,"pour":98,"contre":90,"cotes":null},

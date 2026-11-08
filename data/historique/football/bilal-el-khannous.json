@@ -1,8 +1,9 @@
 {
  "joueurId": "bilal-el-khannous",
- "misAJour": "2026-11-07T16:29:51.762Z",
+ "misAJour": "2026-11-08T17:51:06.812Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.762Z",
  "matchs": [
+  {"matchId":"Game:4a9e7270-7ce1-416b-93cb-c132e06543fa","date":"2026-11-07T17:30:00Z","equipe":"stuttgart-stuttgart","competition":"Bundesliga","domicile":true,"adversaire":"SV Werder Bremen","statut":"REVIEWING","score":47.3,"situation":"titulaire","minutes":64,"pour":1,"contre":0,"cotes":{"victoire":0.5,"nul":0.23,"defaite":0.27,"coteCleanSheet":4}},
   {"matchId":"Game:261dc25e-ebac-4202-8c01-1c8372524444","date":"2026-11-03T17:45:00Z","equipe":"stuttgart-stuttgart","competition":"UEFA Champions League","domicile":false,"adversaire":"Galatasaray Spor Kulübü","statut":"FINAL","score":46.2,"situation":"titulaire","minutes":90,"pour":0,"contre":2,"cotes":{"victoire":0.3,"nul":0.23,"defaite":0.47,"coteCleanSheet":7}},
   {"matchId":"Game:19c59e73-cc29-4e64-b66a-9fd1485b303c","date":"2026-10-31T14:30:00Z","equipe":"stuttgart-stuttgart","competition":"Bundesliga","domicile":false,"adversaire":"Bayer 04 Leverkusen","statut":"FINAL","score":69.9,"situation":"titulaire","minutes":85,"pour":4,"contre":2,"cotes":{"victoire":0.22,"nul":0.22,"defaite":0.56,"coteCleanSheet":10}},
   {"matchId":"Game:293d223f-165f-478e-9603-9060d636dd8f","date":"2026-10-23T18:30:00Z","equipe":"stuttgart-stuttgart","competition":"Bundesliga","domicile":true,"adversaire":"Borussia Mönchengladbach","statut":"FINAL","score":39.9,"situation":"entre","minutes":35,"pour":2,"contre":3,"cotes":{"victoire":0.7,"nul":0.17,"defaite":0.13,"coteCleanSheet":2.75}},

@@ -1,9 +1,9 @@
 {
  "joueurId": "tarik-muharemovic",
- "misAJour": "2026-11-07T16:29:51.867Z",
+ "misAJour": "2026-11-08T17:51:06.940Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.867Z",
  "matchs": [
-  {"matchId":"Game:d7b912a3-75b7-4f2c-9ca7-7dd40863d53c","date":"2026-11-07T12:30:00Z","equipe":"leeds-united-leeds-west-yorkshire","competition":"Premier League","domicile":true,"adversaire":"Tottenham Hotspur FC","statut":"REVIEWING","score":69.98,"situation":"titulaire","minutes":90,"pour":1,"contre":0,"cotes":{"victoire":0.35,"nul":0.28,"defaite":0.37,"coteCleanSheet":3.75}},
+  {"matchId":"Game:d7b912a3-75b7-4f2c-9ca7-7dd40863d53c","date":"2026-11-07T12:30:00Z","equipe":"leeds-united-leeds-west-yorkshire","competition":"Premier League","domicile":true,"adversaire":"Tottenham Hotspur FC","statut":"REVIEWING","score":67.82,"situation":"titulaire","minutes":90,"pour":1,"contre":0,"cotes":{"victoire":0.35,"nul":0.28,"defaite":0.37,"coteCleanSheet":3.75}},
   {"matchId":"Game:37d74558-97d6-4c90-b5d5-fc1f8c252f89","date":"2026-10-31T15:00:00Z","equipe":"leeds-united-leeds-west-yorkshire","competition":"Premier League","domicile":false,"adversaire":"AFC Bournemouth","statut":"FINAL","score":45,"situation":"titulaire","minutes":90,"pour":0,"contre":2,"cotes":{"victoire":0.27,"nul":0.28,"defaite":0.45,"coteCleanSheet":4}},
   {"matchId":"Game:11ae2adf-13c5-4123-8b0c-e167e59eabd1","date":"2026-10-25T16:30:00Z","equipe":"leeds-united-leeds-west-yorkshire","competition":"Premier League","domicile":false,"adversaire":"Sunderland AFC","statut":"FINAL","score":56.28,"situation":"titulaire","minutes":90,"pour":0,"contre":0,"cotes":{"victoire":0.37,"nul":0.31,"defaite":0.32,"coteCleanSheet":2.75}},
   {"matchId":"Game:63d71d81-21c0-4c1b-9a41-7e524bf671ea","date":"2026-10-18T13:00:00Z","equipe":"leeds-united-leeds-west-yorkshire","competition":"Premier League","domicile":true,"adversaire":"Manchester United FC","statut":"FINAL","score":75.16,"situation":"titulaire","minutes":90,"pour":1,"contre":1,"cotes":{"victoire":0.37,"nul":0.29,"defaite":0.34,"coteCleanSheet":3.5}},

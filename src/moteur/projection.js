@@ -42,13 +42,19 @@ export function scoreSiJoue(joueur, P, { situationConfirmee = null, victoire = n
     };
     const T = parSituation('titulaire'), E = parSituation('entre');
     const sigma = ecartTypePondere(joues.map((m) => m.score - (m.situation === 'titulaire' ? T.mu : E.mu)), ws);
+    const poste = joueur.postes?.[0];
+    // Retrait vers la moyenne du poste (methode.md, section 3 bis) : corrige l'effet de sélection.
+    const Rf = P.retrait?.football, aPoste = Rf?.moyennes?.[poste];
+    const retirer = (mu, n, a) => (a == null ? mu : a + (mu - a) * n / (n + Rf.k));
+    const muT = retirer(T.mu, T.n, aPoste?.titulaire), muE = retirer(E.mu, E.n, aPoste?.entre);
     // Cotes du match (methode.md, section 9) : décalage du score de titulaire selon la chance de victoire.
-    const C = P.contexte?.football_cotes, poste = joueur.postes?.[0];
+    const C = P.contexte?.football_cotes;
     const decalageTitulaire = C && victoire != null && C.pente[poste] != null
       ? C.pente[poste] * (victoire - C.victoire_moyenne[poste]) : 0;
-    const muTitulaire = Math.max(0, T.mu + decalageTitulaire);
-    const mu = q * muTitulaire + (1 - q) * E.mu;
-    return { mu, sigma, q, muTitulaire, muEntre: E.mu, decalageTitulaire, nbTitulaire: T.n, nbEntre: E.n, nbScores: joues.length };
+    const muTitulaire = Math.max(0, muT + decalageTitulaire);
+    const mu = q * muTitulaire + (1 - q) * muE;
+    return { mu, sigma, q, muTitulaire, muEntre: muE, decalageTitulaire, retraitTitulaire: muT - T.mu, retraitEntre: muE - E.mu,
+      nbTitulaire: T.n, nbEntre: E.n, nbScores: joues.length };
   }
 
   // NBA : minutes × score par minute
@@ -57,10 +63,13 @@ export function scoreSiJoue(joueur, P, { situationConfirmee = null, victoire = n
   const wm = avecMinutes.map((m, i) => poids(i, S.demi_vie_minutes, m.date, P, sport));
   const wt = avecMinutes.map((m, i) => poids(i, S.demi_vie_score_par_minute, m.date, P, sport));
   const minutes = moyennePonderee(avecMinutes.map((m) => m.minutes), wm);
-  const taux = moyennePonderee(avecMinutes.map((m) => m.score / m.minutes), wt);
+  const tauxBrut = moyennePonderee(avecMinutes.map((m) => m.score / m.minutes), wt);
+  // Retrait vers le score par minute de la ligue (methode.md, section 3 bis).
+  const Rn = P.retrait?.nba;
+  const taux = Rn ? Rn.taux_moyen + (tauxBrut - Rn.taux_moyen) * avecMinutes.length / (avecMinutes.length + Rn.k) : tauxBrut;
   const mu = minutes * taux;
   const sigma = ecartTypePondere(avecMinutes.map((m) => m.score - mu), wt);
-  return { mu, sigma, minutes, taux, nbScores: avecMinutes.length };
+  return { mu, sigma, minutes, taux, tauxBrut, nbScores: avecMinutes.length };
 }
 
 /**

@@ -1,8 +1,9 @@
 {
  "joueurId": "jalen-green-20020209",
- "misAJour": "2026-11-07T16:31:59.155Z",
+ "misAJour": "2026-11-08T17:51:22.948Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.155Z",
  "matchs": [
+  {"matchId":"Game:1f25ebd3-411f-4db7-ad2c-378fa26e3d43","date":"2026-11-08T02:00:00Z","equipe":"phoenix-suns","competition":"NBA","domicile":true,"adversaire":"Houston Rockets","statut":"REVIEWING","score":23.6,"situation":"joue","minutes":34,"pour":102,"contre":99,"cotes":null},
   {"matchId":"Game:ed77ad71-f6d5-4b28-9cc9-5d3a462d82d0","date":"2026-11-06T02:00:00Z","equipe":"phoenix-suns","competition":"NBA","domicile":true,"adversaire":"Orlando Magic","statut":"FINAL","score":12.5,"situation":"joue","minutes":24,"pour":117,"contre":104,"cotes":null},
   {"matchId":"Game:76ed5389-6167-4779-81df-8ef2e4162c2e","date":"2026-11-05T02:00:00Z","equipe":"phoenix-suns","competition":"NBA","domicile":true,"adversaire":"Portland Trail Blazers","statut":"FINAL","score":31.4,"situation":"joue","minutes":33,"pour":119,"contre":132,"cotes":null},
   {"matchId":"Game:a0f6992b-eb9e-47a6-baaf-bcb12036f5a0","date":"2026-11-03T03:00:00Z","equipe":"phoenix-suns","competition":"NBA","domicile":false,"adversaire":"Golden State Warriors","statut":"FINAL","score":36.6,"situation":"joue","minutes":36,"pour":113,"contre":116,"cotes":null},

@@ -1,8 +1,9 @@
 {
  "joueurId": "goga-bitadze-19990720",
- "misAJour": "2026-11-07T16:31:59.136Z",
+ "misAJour": "2026-11-08T17:51:22.915Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.136Z",
  "matchs": [
+  {"matchId":"Game:0a10fd6f-31c6-4402-b4aa-2c9aa89128a6","date":"2026-11-08T01:30:00Z","equipe":"orlando-magic","competition":"NBA","domicile":false,"adversaire":"Golden State Warriors","statut":"REVIEWING","score":13,"situation":"joue","minutes":8,"pour":119,"contre":126,"cotes":null},
   {"matchId":"Game:ed77ad71-f6d5-4b28-9cc9-5d3a462d82d0","date":"2026-11-06T02:00:00Z","equipe":"orlando-magic","competition":"NBA","domicile":false,"adversaire":"Phoenix Suns","statut":"FINAL","score":8,"situation":"joue","minutes":9,"pour":104,"contre":117,"cotes":null},
   {"matchId":"Game:258a8b5c-4781-4d34-80c6-2959ea1e765d","date":"2026-11-03T00:30:00Z","equipe":"orlando-magic","competition":"NBA","domicile":true,"adversaire":"Washington Wizards","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":94,"contre":103,"cotes":null},
   {"matchId":"Game:a85abfb4-a56e-414a-89a5-a151bf67bbe5","date":"2026-11-01T20:30:00Z","equipe":"orlando-magic","competition":"NBA","domicile":true,"adversaire":"Boston Celtics","statut":"FINAL","score":1.2,"situation":"joue","minutes":6,"pour":97,"contre":108,"cotes":null},

@@ -1,8 +1,9 @@
 {
  "joueurId": "mbwana-ally-samatta",
- "misAJour": "2026-11-07T16:29:51.846Z",
+ "misAJour": "2026-11-08T17:51:06.913Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.846Z",
  "matchs": [
+  {"matchId":"Game:6ecddd69-59df-4d79-9779-d6cab77f6e62","date":"2026-11-08T16:15:00Z","equipe":"le-havre-harfleur","competition":"Ligue 1","domicile":true,"adversaire":"FC Lorient","statut":"REVIEWING","score":53.4,"situation":"titulaire","minutes":46,"pour":0,"contre":1,"cotes":{"victoire":0.33,"nul":0.28,"defaite":0.39,"coteCleanSheet":3.5}},
   {"matchId":"Game:83c68f04-85b4-4b39-8a6b-77ef96f836e7","date":"2026-10-30T18:00:00Z","equipe":"le-havre-harfleur","competition":"Ligue 1","domicile":true,"adversaire":"Paris Saint-Germain","statut":"FINAL","score":40.5,"situation":"entre","minutes":25,"pour":1,"contre":5,"cotes":{"victoire":0.12,"nul":0.18,"defaite":0.7,"coteCleanSheet":11}},
   {"matchId":"Game:b7d0a080-7e9d-4775-8d2a-11fa44778472","date":"2026-10-25T16:15:00Z","equipe":"le-havre-harfleur","competition":"Ligue 1","domicile":false,"adversaire":"Olympique de Marseille","statut":"FINAL","score":40.7,"situation":"titulaire","minutes":61,"pour":3,"contre":4,"cotes":{"victoire":0.17,"nul":0.2,"defaite":0.63,"coteCleanSheet":8}},
   {"matchId":"Game:f084c347-b5c3-4967-9786-cab168baef88","date":"2026-10-18T15:15:00Z","equipe":"le-havre-harfleur","competition":"Ligue 1","domicile":true,"adversaire":"AJ Auxerre","statut":"FINAL","score":48.2,"situation":"titulaire","minutes":90,"pour":1,"contre":3,"cotes":{"victoire":0.41,"nul":0.28,"defaite":0.31,"coteCleanSheet":3.25}},

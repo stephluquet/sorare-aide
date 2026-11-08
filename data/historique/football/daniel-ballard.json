@@ -1,8 +1,9 @@
 {
  "joueurId": "daniel-ballard",
- "misAJour": "2026-11-07T16:29:51.909Z",
+ "misAJour": "2026-11-08T17:51:06.989Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.909Z",
  "matchs": [
+  {"matchId":"Game:16880b49-98ff-4bcf-a40f-8486e1691ed4","date":"2026-11-08T14:00:00Z","equipe":"sunderland-sunderland","competition":"Premier League","domicile":true,"adversaire":"Chelsea FC","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":1,"contre":0,"cotes":{"victoire":0.24,"nul":0.26,"defaite":0.5,"coteCleanSheet":4.5}},
   {"matchId":"Game:916e0350-4bd7-4bfd-a10e-86652539105a","date":"2026-11-05T20:00:00Z","equipe":"sunderland-sunderland","competition":"UEFA Europa League","domicile":true,"adversaire":"GNK Dinamo Zagreb","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":0,"contre":2,"cotes":{"victoire":0.65,"nul":0.2,"defaite":0.15,"coteCleanSheet":2.1}},
   {"matchId":"Game:c5b5d24c-8f92-4d59-9d14-6a5461188927","date":"2026-10-31T15:00:00Z","equipe":"sunderland-sunderland","competition":"Premier League","domicile":false,"adversaire":"Coventry City FC","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":1,"contre":3,"cotes":{"victoire":0.4,"nul":0.29,"defaite":0.31,"coteCleanSheet":3}},
   {"matchId":"Game:11ae2adf-13c5-4123-8b0c-e167e59eabd1","date":"2026-10-25T16:30:00Z","equipe":"sunderland-sunderland","competition":"Premier League","domicile":true,"adversaire":"Leeds United FC","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":0,"contre":0,"cotes":{"victoire":0.32,"nul":0.31,"defaite":0.37,"coteCleanSheet":3.25}},
