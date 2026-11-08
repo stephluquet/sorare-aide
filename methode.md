@@ -296,6 +296,23 @@ passent donc par la table `simulation.calibration_passer` du sport (interpolatio
 équipes ne change pas (table croissante). Limite : tables estimées sur 26 journées ; à refaire
 quand l'archive grandit (même commande).
 
+## 5 ter. Résumés pour l'affichage (2026-11-08)
+
+Ces résumés servent seulement à **dessiner** ; ils ne changent aucune chance ni aucun choix.
+
+- **Distribution du score de l'équipe** (`resumerTirages`) : les `tirages` totaux de la simulation
+  de la section 5 (même graine, même ordre des cartes, donc les mêmes tirages que la proposition)
+  rangés en 40 classes de même largeur. Bornes : quantiles 0,5 % et 99,5 % des totaux, élargis
+  pour contenir la cible, plus 5 % de marge, arrondis à 10 points. On en tire aussi la moyenne,
+  les quantiles 10, 50 et 90 % et la **part des tirages au-dessus de la cible**, qui est
+  exactement `pPasserBrut`. L'appli affiche les deux honnêtement : la part brute sous
+  l'histogramme et, à côté, les chances corrigées par la table de la section 5 bis (`pPasser`).
+- **Fourchette du score s'il joue** (`quantilesSiJoue`) : 2 000 tirages de la distribution de la
+  carte (section 5) **en supposant qu'il joue** (on ne tire pas `p`), multipliés par le bonus de
+  la carte ; quantiles 10 et 90 % (80 % des scores attendus entre les deux), avec la même graine.
+  Comme le score tiré, la fourchette tient compte du lissage, du bornage et des décalages
+  (cotes, retrait vers la moyenne du poste).
+
 ## 6. Choix des compositions
 
 **Cartes admissibles** : proposables (section 1 : ni exclues ni douteuses,

@@ -144,6 +144,68 @@ export function tirerTotaux(distributions, capitaine, multiplicateur, sim, mode 
   return totaux;
 }
 
+// ---------- Résumés pour l'affichage (methode.md, section 5 ter) ----------
+
+// Quantile d'un tableau TRIÉ par interpolation linéaire entre rangs (type 7 de R).
+function quantileTrie(tries, q) {
+  if (!tries.length) return null;
+  const i = (tries.length - 1) * q, a = Math.floor(i), b = Math.ceil(i);
+  return tries[a] + (tries[b] - tries[a]) * (i - a);
+}
+
+/**
+ * Résumé des tirages d'une équipe pour l'affichage : histogramme, quantiles 10/50/90,
+ * moyenne et part des tirages au-dessus de la cible (= pPasserBrut de simulerEquipe pour
+ * les mêmes tirages). N'intervient dans aucun calcul de chances.
+ * @param totaux totaux simulés (tirerTotaux)
+ * @param cible score à atteindre
+ * @param o { classes: nombre de classes (40), arrondi: pas d'arrondi des bornes (10) }
+ * @returns null si aucun tirage, sinon { min, max, largeur, classes: [effectifs], q10, q50, q90, moyenne, partAuDessus, n }
+ *   bornes : quantiles 0,5 % et 99,5 % élargis à la cible, plus 5 % de marge, arrondis au pas ;
+ *   un tirage hors bornes compte dans la classe extrême.
+ */
+export function resumerTirages(totaux, cible, o = {}) {
+  const n = totaux.length;
+  if (!n) return null;
+  const nbClasses = o.classes ?? 40, arrondi = o.arrondi ?? 10;
+  const tries = Float64Array.from(totaux).sort();
+  let min = Math.min(quantileTrie(tries, 0.005), cible), max = Math.max(quantileTrie(tries, 0.995), cible);
+  const marge = (max - min) * 0.05 || arrondi;
+  min = Math.max(0, Math.floor((min - marge) / arrondi) * arrondi);
+  max = Math.ceil((max + marge) / arrondi) * arrondi;
+  const largeur = (max - min) / nbClasses;
+  const classes = new Array(nbClasses).fill(0);
+  let somme = 0, auDessus = 0;
+  for (const t of totaux) {
+    somme += t;
+    if (t >= cible) auDessus++;
+    classes[Math.min(nbClasses - 1, Math.max(0, Math.floor((t - min) / largeur)))]++;
+  }
+  return {
+    min, max, largeur, classes,
+    q10: quantileTrie(tries, 0.1), q50: quantileTrie(tries, 0.5), q90: quantileTrie(tries, 0.9),
+    moyenne: somme / n, partAuDessus: auDessus / n, n,
+  };
+}
+
+/**
+ * Quantiles 10/50/90 du score d'une carte S'IL JOUE : tirages conditionnels (il joue à coup sûr)
+ * dans sa distribution, multiplicateur de la carte compris (bonus ; capitaine si `facteur` le dit).
+ * @param d distribution (distribution())
+ * @param sim P.simulation (graine)
+ * @param o { tirages: 2000, facteur: d.b }
+ * @returns { q10, q50, q90 }
+ */
+export function quantilesSiJoue(d, sim, o = {}) {
+  const n = o.tirages ?? 2000, facteur = o.facteur ?? d.b;
+  const rng = generateur(sim.graine);
+  const certain = { ...d, p: 1 };
+  const v = new Float64Array(n);
+  for (let i = 0; i < n; i++) v[i] = tirerScore(certain, rng) * facteur;
+  v.sort();
+  return { q10: quantileTrie(v, 0.1), q50: quantileTrie(v, 0.5), q90: quantileTrie(v, 0.9) };
+}
+
 // Approximation normale de la probabilité de passer (présélection, methode.md section 6).
 const phi = (z) => { // fonction de répartition de la loi normale (Abramowitz et Stegun 7.1.26)
   const t = 1 / (1 + 0.3275911 * Math.abs(z) / Math.SQRT2);
