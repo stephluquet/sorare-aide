@@ -42,8 +42,8 @@ export function preparerDonneesApp({ donnees, P, regles, journees, visuels = fal
     // Barème officiel lu dans l'API (NBA) et ordre des statistiques de l'historique compact.
     baremes: donnees.baremes ?? {},
     ordreStatsNba: ORDRE_STATS_NBA,
-    cartes: donnees.cartes.map(({ id, sport, joueurId, rarete, collection, bonusPct, visuelUrl }) =>
-      ({ id, sport, joueurId, rarete, collection, bonusPct, ...(visuels ? { visuelUrl: visuelUrl ?? null } : {}) })),
+    cartes: donnees.cartes.map(({ id, sport, joueurId, rarete, collection, bonusPct, visuelUrl, postes }) =>
+      ({ id, sport, joueurId, rarete, collection, bonusPct, ...(postes?.length ? { postes } : {}), ...(visuels ? { visuelUrl: visuelUrl ?? null } : {}) })),
     joueurs: donnees.joueurs.map((j) => ({
       id: j.id, sport: j.sport, nom: j.nom, postes: j.postes, club: j.club, tier: j.tier, etoiles: j.etoiles,
       statutSorare: j.statutSorare, blessures: j.blessures, suspensions: j.suspensions, prochainMatchId: j.prochainMatchId,

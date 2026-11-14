@@ -105,6 +105,9 @@ export function normaliserCarte(c, sport) {
     joueurId: c.anyPlayer?.slug ?? null,
     rarete: c.rarityTyped,
     saison: c.seasonYear,
+    // Poste de la CARTE (celui que le jeu retient), qui peut différer du poste actuel du joueur
+    // (Oscar Bobb : carte attaquant, joueur milieu ; vérifié le 2026-11-14).
+    postes: (c.anyPositions ?? []).map((x) => POSTES[x] ?? x),
     // Nom de collection : variantName (Four Suits, Eclipse) sinon skinName (Standard, Shiny, Holo).
     collection: c.skinEdition ? c.skinEdition.variantName ?? c.skinEdition.skinName : null,
     bonusPct: b == null ? null : Math.round((b - 1) * 1000) / 10,

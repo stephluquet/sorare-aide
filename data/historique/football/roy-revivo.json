@@ -1,8 +1,10 @@
 {
  "joueurId": "roy-revivo",
- "misAJour": "2026-11-14T08:02:26.404Z",
+ "misAJour": "2026-11-14T15:56:53.153Z",
  "dernierHistoriqueComplet": "2026-11-14T08:02:26.404Z",
+ "format": 1,
  "matchs": [
+  {"matchId":"Game:52677582-e2f1-43d6-9e77-b8d10cf61d61","date":"2026-11-14T14:00:00Z","equipe":"israel","competition":"UEFA Nations League","domicile":false,"adversaire":"Kosovo","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":0,"contre":0,"cotes":{"victoire":0.22,"nul":0.26,"defaite":0.52,"coteCleanSheet":5}},
   {"matchId":"Game:62595a00-3258-4908-a69f-2a7878815c26","date":"2026-11-08T13:00:00Z","equipe":"elche-elche","competition":"Primera División","domicile":true,"adversaire":"Real Betis","statut":"FINAL","score":75.08,"situation":"titulaire","minutes":77,"pour":0,"contre":2,"cotes":{"victoire":0.26,"nul":0.26,"defaite":0.48,"coteCleanSheet":6}},
   {"matchId":"Game:fce5d8ab-b45a-4027-b9cb-37e9759a6c0b","date":"2026-11-01T17:30:00Z","equipe":"elche-elche","competition":"Primera División","domicile":true,"adversaire":"Valencia CF","statut":"FINAL","score":41.78,"situation":"titulaire","minutes":90,"pour":0,"contre":1,"cotes":{"victoire":0.41,"nul":0.29,"defaite":0.3,"coteCleanSheet":3.25}},
   {"matchId":"Game:a4780b0c-4e0e-4188-99ab-3bc86b3d91ee","date":"2026-10-24T12:00:00Z","equipe":"elche-elche","competition":"Primera División","domicile":false,"adversaire":"Rayo Vallecano","statut":"FINAL","score":95.94,"situation":"titulaire","minutes":90,"pour":3,"contre":0,"cotes":{"victoire":0.21,"nul":0.26,"defaite":0.53,"coteCleanSheet":5.5}},

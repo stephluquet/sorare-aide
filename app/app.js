@@ -577,6 +577,9 @@ const tendance = (fj) => (fj?.tendance === 'hausse' ? '<span class="tendance hau
 // Football (demande de l'utilisateur, 2026-11-14) : le score de TITULAIRE en grand ; dessous, une seule
 // information : « toujours titulaire », ou son score quand il entre en jeu et à quelle fréquence.
 // Remplaçant annoncé (composition officielle) : son score s'il entre, en grand.
+// Poste affiché et utilisé : celui de la carte (le jeu le retient), sinon celui du joueur.
+const postesL = (l) => (l.c.postes?.length ? l.c.postes : l.j.postes);
+
 function scoreFoot(l) {
   const sc = l.pr.score, b = l.pr.bonus ?? 1;
   if (!sc || sc.muTitulaire == null) return { v: l.pr.siJoue, sous: '' };
@@ -596,7 +599,7 @@ function ligne(l, o = {}) {
   const choisie = (fiche.ouverte === l.c.id || (o.epinglable && vue.epingle[l.c.sport] === l.c.id && tresLarge())) ? ' choisie' : '';
   return `<div class="ligne${choisie}${o.griser && J.has(l.c.id) ? ' bloquee' : ''}" role="button" tabindex="0" data-fiche="${esc(l.c.id)}" aria-label="Voir la fiche de ${esc(l.j.nom)}">
     <div class="c-img">${vignette(l)}</div>
-    <div class="c-nom"><b>${esc(l.j.nom)}</b>${cap ? '<span class="cap" title="Capitaine">C</span>' : ''}<span class="pos">${esc(l.j.postes.join('/'))}</span>${badgeEtoiles(l)}<span class="club">${esc(l.j.club?.nom ?? '?')}</span></div>
+    <div class="c-nom"><b>${esc(l.j.nom)}</b>${cap ? '<span class="cap" title="Capitaine">C</span>' : ''}<span class="pos">${esc(postesL(l).join('/'))}</span>${badgeEtoiles(l)}<span class="club">${esc(l.j.club?.nom ?? '?')}</span></div>
     <div class="c-match">${match}</div>
     <div class="c-forme">${G.pastilles(formeEquipe(l.j.club?.slug)?.derniers)}${tendance(formeDe(l.j))}</div>
     ${l.c.sport === 'nba' ? celluleMinutes(l) : `<div class="c-p"><span class="pv">${pct(l.pr.p)}</span>${G.barreP(l.pr.p, seuil(), 60)}</div>`}
@@ -661,7 +664,19 @@ const TITRES = {
   equilibree: ['Équilibrée', 'La plus grande chance de franchir le palier.'],
   ambitieuse: ['Ambitieuse', 'Encore plus de chances de passer, en acceptant des joueurs moins sûrs de jouer.'],
 };
-const membresDe = (e) => e.cartes.map((id) => parId.get(id)).sort((a, b) => (a.m?.debutUTC ?? '').localeCompare(b.m?.debutUTC ?? ''));
+// Ordre d'affichage d'une équipe. Football : celui du jeu (gardien, défenseur, milieu, attaquant, puis le joker) ;
+// NBA : par coup d'envoi.
+const ORDRE_FOOT = ['GK', 'DF', 'MD', 'FW'];
+function membresDe(e) {
+  const L = e.cartes.map((id) => parId.get(id)).sort((a, b) => (a.m?.debutUTC ?? '').localeCompare(b.m?.debutUTC ?? ''));
+  if (L[0]?.c.sport !== 'football') return L;
+  const reste = [...L], ordre = [];
+  for (const poste of ORDRE_FOOT) {
+    const i = reste.findIndex((l) => postesL(l).includes(poste));
+    if (i >= 0) ordre.push(...reste.splice(i, 1));
+  }
+  return [...ordre, ...reste]; // le joker en dernier
+}
 
 // Carte d'une proposition (Solo, créneau unique, variantes).
 function carteProposition(titre, pourquoi, e, sport, cible, o = {}) {
@@ -926,7 +941,7 @@ function afficherAutres(sport, equipe, a) {
   el.innerHTML = `${tete}<p class="corps petit doux">Pour chaque joueur de l'équipe, la meilleure carte qui peut le remplacer (postes, joueur unique${sport === 'nba' ? ', 16 étoiles' : ''}) et la chance de passer avant → après le changement.</p>
     <div class="tableau">${[...parRemplace.entries()].map(([rem, choix]) => {
       const r = parId.get(rem), suite = choix.slice(1, AUTRES_PAR_GROUPE);
-      return `<div class="groupe-alt"><h3>À la place de ${esc(r.j.nom)} (${esc(r.j.postes.join('/'))}${equipe.capitaine === rem ? ', capitaine' : ''})</h3>${ligneAlt(choix[0])}` +
+      return `<div class="groupe-alt"><h3>À la place de ${esc(r.j.nom)} (${esc(postesL(r).join('/'))}${equipe.capitaine === rem ? ', capitaine' : ''})</h3>${ligneAlt(choix[0])}` +
         (suite.length ? `<details><summary>+ ${pluriel(suite.length, 'autre')}</summary>${suite.map(ligneAlt).join('')}</details>` : '') + '</div>';
     }).join('')}</div>`;
   dessiner(el);
@@ -994,7 +1009,7 @@ const TRIS = [['e', 'Les plus utiles (chances × score)'], ['s', 'Score titulair
 const CROISSANTS = new Set(['n', 'd', 'x']); // tris croissants par défaut (nom, coup d'envoi, étoiles)
 function cartesFiltrees() {
   const s = vue.sport;
-  const L = lignes.filter((l) => l.c.sport === s && (!vue.poste || l.j.postes.includes(vue.poste)) &&
+  const L = lignes.filter((l) => l.c.sport === s && (!vue.poste || postesL(l).includes(vue.poste)) &&
     (vue.etoiles == null || l.j.etoiles === vue.etoiles) &&
     (!vue.dispo || disponible(l)) && (vue.toutesChances || (atteint(l.pr.p) && assezDeMinutes(l))) && (!vue.journee || (l.m && journee(l) === vue.journee)));
   const J = jouees(s), esp = (l) => l.pr.esperance ?? -1;
@@ -1063,7 +1078,7 @@ function afficherListeCartes() {
     return `<tr data-fiche="${esc(l.c.id)}" class="${fiche.ouverte === l.c.id ? 'choisie' : ''}${jouee ? ' bloquee' : ''}">
       <td><input type="checkbox" data-act="cocher" data-v="${esc(l.c.id)}" ${jouee ? 'checked' : ''} ${palierEnCours(s) ? '' : 'disabled'} aria-label="${esc(l.j.nom)} jouée à ce palier"></td>
       <td>${vignette(l)}</td>
-      <td><span class="nom">${esc(l.j.nom)}</span><span class="sous">${esc(l.j.postes.join('/'))} · ${esc(l.j.club?.nom ?? '?')}</span></td>
+      <td><span class="nom">${esc(l.j.nom)}</span><span class="sous">${esc(postesL(l).join('/'))} · ${esc(l.j.club?.nom ?? '?')}</span></td>
       ${nba ? `<td class="r">${badgeEtoiles(l)}</td>` : ''}
       <td>${l.m ? `<span class="nom" style="font-weight:400">${esc(quand(l.m.debutUTC))}</span><span class="sous">${l.lieu === 'ext' ? '@' : l.lieu === 'dom' ? 'vs' : ''} ${esc(l.adv ?? '?')}${v != null ? ` · ${v}${nbsp}% vict.` : ''}</span>` : '<span class="doux">pas de match</span>'}</td>
       ${nba ? `<td><div class="cellule-p"><b>${l.pr.score?.minutes == null ? '–' : nb(l.pr.score.minutes)}</b>${G.barreMin(l.pr.score, seuilMinutes(), 56)}${l.pr.score?.minutesEnHausse ? '<span class="ok-txt" title="minutes en hausse">▲</span>' : ''}</div></td>` : ''}
@@ -1153,7 +1168,7 @@ function ficheHtml(l) {
     <div class="fiche-tete">${vignette(l)}
       <div style="min-width:0;display:grid;gap:4px"><h2>${esc(j.nom)}</h2>
         ${c.sport === 'nba' ? `<div>${badgeEtoiles(l, true)}</div>` : ''}
-        <p class="meta">${esc(j.postes.join('/'))} · ${esc(j.club?.nom ?? '?')} · ${esc((j.tier ?? '').replace('_PLUS', '+').toLowerCase())}${c.sport !== 'nba' && j.etoiles != null ? ` · <span class="etoiles">★${nbsp}${nb(j.etoiles, 1)}</span>` : ''}</p>
+        <p class="meta">${esc(postesL(l).join('/'))}${(c.postes?.length && c.postes.join() !== j.postes.join()) ? ` (aujourd'hui ${esc(j.postes.join('/'))})` : ''} · ${esc(j.club?.nom ?? '?')} · ${esc((j.tier ?? '').replace('_PLUS', '+').toLowerCase())}${c.sport !== 'nba' && j.etoiles != null ? ` · <span class="etoiles">★${nbsp}${nb(j.etoiles, 1)}</span>` : ''}</p>
         <p class="meta">${m ? `${esc(quandLong(m.debutUTC))} · ${esc(m.competition ?? '')} · ${l.lieu === 'ext' ? 'à l’extérieur contre' : l.lieu === 'dom' ? 'à domicile contre' : ''} ${esc(l.adv ?? '?')}` : 'Pas de match connu'}</p>
         <div class="tags">${tags}</div></div></div>
     <div class="fiche-grille">
@@ -1305,7 +1320,7 @@ function ouvrirMarquage(sport) {
     const L = cartes.filter((l) => !q || sansAccents(l.j.nom).includes(q))
       .sort((a, b) => (J.has(b.c.id) - J.has(a.c.id)) || ((b.pr.esperance ?? -1) - (a.pr.esperance ?? -1)));
     $('liste-marquage').innerHTML = L.slice(0, 40).map((l) => `<label class="marque-carte"><input type="checkbox" data-act="marque" data-v="${esc(l.c.id)}" ${J.has(l.c.id) ? 'checked' : ''}>
-        <span style="min-width:0"><span class="nom">${esc(l.j.nom)}</span> ${badgeEtoiles(l)}<br><span class="doux">${esc(l.j.postes.join('/'))} · ${esc(l.j.club?.nom ?? '?')} · ${esc(l.c.collection ?? '')}${l.c.bonusPct ? ` +${nb(l.c.bonusPct)}${nbsp}%` : ''}</span></span>
+        <span style="min-width:0"><span class="nom">${esc(l.j.nom)}</span> ${badgeEtoiles(l)}<br><span class="doux">${esc(postesL(l).join('/'))} · ${esc(l.j.club?.nom ?? '?')} · ${esc(l.c.collection ?? '')}${l.c.bonusPct ? ` +${nb(l.c.bonusPct)}${nbsp}%` : ''}</span></span>
         <span class="doux">${nb(l.pr.esperance)}</span></label>`).join('') +
       (L.length > 40 ? `<p class="petit doux">${L.length - 40} autres cartes : affine la recherche.</p>` : '') +
       (!L.length ? '<p class="petit doux">Aucune carte à ce nom.</p>' : '');

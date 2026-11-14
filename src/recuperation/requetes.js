@@ -30,6 +30,7 @@ query Cartes($slug: String!, $sport: Sport!, $first: Int!, $after: String) {
         slug
         rarityTyped
         seasonYear
+        anyPositions
         pictureUrl
         skinEdition { skinName variantName bonus }
         anyPlayer {

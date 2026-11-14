@@ -49,12 +49,15 @@ export function jourDeJeu(iso, fuseau = 'Europe/Paris') {
   return FORMATS_JOUR.get(fuseau).format(new Date(iso));
 }
 
+// Postes d'une ligne : ceux de la CARTE (que le jeu retient), sinon ceux du joueur (données anciennes).
+export const postesDe = (x) => (x.carte?.postes?.length ? x.carte.postes : x.joueur.postes);
+
 // Équipes candidates (ensembles de 5 cartes) respectant postes, doublons et étoiles.
 function* equipesFootball(adm, regle, sim) {
   const K = sim.candidats_par_poste;
   const parPoste = {};
   for (const poste of regle.postes.obligatoires) {
-    parPoste[poste] = adm.filter((x) => x.joueur.postes.includes(poste)).sort(parEsperance).slice(0, K[poste] ?? 8);
+    parPoste[poste] = adm.filter((x) => postesDe(x).includes(poste)).sort(parEsperance).slice(0, K[poste] ?? 8);
   }
   const libres = [...new Set(regle.postes.libre.postes_autorises.flatMap((po) => parPoste[po] ?? []))];
   const vues = new Set();
@@ -248,7 +251,7 @@ function postesValides(equipe, regle) {
   const placer = (k) => {
     if (k === places.length) return true;
     for (let i = 0; i < equipe.length; i++) {
-      if (pris[i] || !equipe[i].joueur.postes.some((p) => places[k].includes(p))) continue;
+      if (pris[i] || !postesDe(equipe[i]).some((p) => places[k].includes(p))) continue;
       pris[i] = true;
       if (placer(k + 1)) return true;
       pris[i] = false;
@@ -278,7 +281,7 @@ export function autresChoix(lignes, P, o, equipeProposee) {
   const joueursEquipe = new Set(equipe.map((x) => x.joueur.id));
   const libres = admissibles.filter((x) => !joueursEquipe.has(x.joueur.id)).sort(parEsperance);
   const groupes = o.sport === 'football'
-    ? regle.postes.obligatoires.map((poste) => ({ poste, candidats: libres.filter((x) => x.joueur.postes.includes(poste)).slice(0, sim.alternatives_par_poste) }))
+    ? regle.postes.obligatoires.map((poste) => ({ poste, candidats: libres.filter((x) => postesDe(x).includes(poste)).slice(0, sim.alternatives_par_poste) }))
     : [{ poste: null, candidats: libres.slice(0, sim.alternatives_nba) }];
   const capIndex = equipeProposee.capitaine ? equipe.findIndex((x) => x.carte.id === equipeProposee.capitaine) : -1;
   return {
