@@ -89,6 +89,13 @@ ignorent les matchs non joués.
     "joueur_reference": 15,
     "joueur_reference_min": 5,
     "seuil_tendance": 0.15
+  },
+  "profil": {
+    "fenetre_matchs": 10,
+    "min_matchs": 5,
+    "minutes_reference": 20,
+    "quart": 0.25,
+    "ecart_min_points": 0.5
   }
 }
 ```
@@ -542,3 +549,24 @@ Définitions (`src/moteur/forme.js`, paramètres `forme`) :
 - `poids_saison_precedente` et `debut_saison` ne sont pas calibrés.
 - Le rétro-test porte sur des joueurs que l'utilisateur possède aujourd'hui
   (biais de sélection possible) et sur une seule archive (2026-11-07).
+
+## 10. Profil NBA en points Sorare (2026-11-14, affichage seulement)
+
+Demande de l'utilisateur : voir d'où viennent les points d'un joueur, et repérer ses points faibles (il écarte
+les joueurs qui perdent beaucoup de ballons). **Affichage seulement** : le profil ne change ni les chances ni la
+simulation.
+
+- **Données** : statistiques de chaque match NBA (`stats` de l'historique) et **barème lu dans l'API**
+  (`baremes.nba.poids` : point 1, rebond 1,2, passe 1,5, contre 3, interception 3, balle perdue −2, panier à
+  3 points 1, double-double 1, triple-double 1 au 2026-11-14 ; jamais recopié dans le code).
+- **Profil** : moyenne **par match** de chaque statistique sur les `fenetre_matchs` derniers matchs joués
+  (au moins `min_matchs`), et les **points Sorare** qu'elle rapporte (moyenne × barème). Pas de ramenage à
+  36 minutes (décision de l'utilisateur : seul compte ce que le joueur marque dans le match).
+- **Comparaison** : à tous les joueurs du catalogue (les postes sont libres en NBA) qui jouent au moins
+  `minutes_reference` minutes par match en moyenne sur la même fenêtre. Rang de l'apport en points (1 = le plus
+  gros ; pour les balles perdues, la perte la plus faible). **Point fort** dans le premier `quart` du groupe,
+  **point faible** dans le dernier ; une statistique dont les apports s'étalent sur moins de `ecart_min_points`
+  point ne départage pas (« moyen »).
+- **Affichage** : barres de part et d'autre d'une ligne zéro (le négatif à gauche), repère de l'apport médian
+  du groupe, rang ; barre « d'où viennent ses points ». Mes cartes : tri par balles perdues.
+

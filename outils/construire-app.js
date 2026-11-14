@@ -52,6 +52,7 @@ const script = [
   ['src/moteur/simulation.js', lire('src', 'moteur', 'simulation.js')],
   ['src/moteur/compositions.js', lire('src', 'moteur', 'compositions.js')],
   ['src/moteur/forme.js', lire('src', 'moteur', 'forme.js')],
+  ['src/moteur/profil.js', lire('src', 'moteur', 'profil.js')],
   ['app/app.js', lire('app', 'app.js')],
 ].map(([nom, code]) => `// ===== ${nom} =====\n${sansModules(code)}`).join('\n');
 

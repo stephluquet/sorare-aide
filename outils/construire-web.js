@@ -17,7 +17,7 @@ const lire = (...p) => readFileSync(join(RACINE, ...p), 'utf8');
 
 const FICHIERS = [
   'app/app.js',
-  ...['parametres', 'jouer', 'projection', 'simulation', 'compositions', 'forme'].map((f) => `src/moteur/${f}.js`),
+  ...['parametres', 'jouer', 'projection', 'simulation', 'compositions', 'forme', 'profil'].map((f) => `src/moteur/${f}.js`),
   'src/app-donnees.js',
   ...['appel', 'coeur', 'requetes', 'normaliser', 'espn', 'fusion'].map((f) => `src/recuperation/${f}.js`),
   'web/web.js',

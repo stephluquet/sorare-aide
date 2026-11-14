@@ -13,6 +13,7 @@
 
 import { projeterCarte } from '../src/moteur/projection.js';
 import { equipeDuMatch } from '../src/moteur/jouer.js';
+import { profilNba, referenceNba, rangNba } from '../src/moteur/profil.js';
 import { proposer, proposerParCreneau, squadDuJour, joursAVenir, jourDeJeu, autresChoix } from '../src/moteur/compositions.js';
 import { statsEquipe, serieEnMots, formeJoueur, resultat } from '../src/moteur/forme.js';
 import { distribution, tirerTotaux, resumerTirages, quantilesSiJoue, multiplicateurCarte } from '../src/moteur/simulation.js';
@@ -142,6 +143,12 @@ function creerStockage() {
 // ---------- Application ----------
 const D = await chargerDonnees().catch((e) => { $('chargement').textContent = `Impossible de charger les données : ${e.message}`; throw e; });
 const joueurs = new Map(D.joueurs.map((j) => [j.id, deplier(j)]));
+// Profil NBA en points Sorare (methode.md, section 10) : barème lu dans l'API ; groupe de comparaison =
+// joueurs du catalogue à 20 min et plus, tous postes. Affichage seulement.
+const POIDS_NBA = D.baremes?.nba?.poids ?? null;
+const REF_NBA = POIDS_NBA && D.P.profil ? referenceNba([...joueurs.values()].filter((j) => j.sport === 'nba'), POIDS_NBA, D.P.profil) : null;
+const profils = new Map();
+const profilDe = (j) => { if (j.sport !== 'nba' || !REF_NBA) return null; if (!profils.has(j.id)) profils.set(j.id, profilNba(j, POIDS_NBA, D.P.profil)); return profils.get(j.id); };
 const matchs = new Map(D.matchs.map((m) => [m.id, m]));
 // Sports présents dans les données (la version web peut n'en charger qu'un).
 const ACTIFS = (() => { const a = ['football', 'nba'].filter((x) => D.cartes.some((c) => c.sport === x)); return a.length ? a : ['football', 'nba']; })();
@@ -943,7 +950,7 @@ function afficherSquad() {
 }
 
 // ---------- Mes cartes ----------
-const TRIS = [['e', 'Les plus utiles (chances × score)'], ['s', "Score s'il joue"], ['p', 'Chances de jouer'], ['f', 'Joueur en forme'], ['q', 'Équipe en forme'], ['d', "Coup d'envoi"]];
+const TRIS = [['e', 'Les plus utiles (chances × score)'], ['s', "Score s'il joue"], ['p', 'Chances de jouer'], ['f', 'Joueur en forme'], ['q', 'Équipe en forme'], ['d', "Coup d'envoi"], ['t', 'Le moins de balles perdues', 'nba']];
 const CROISSANTS = new Set(['n', 'd', 'x']); // tris croissants par défaut (nom, coup d'envoi, étoiles)
 function cartesFiltrees() {
   const s = vue.sport;
@@ -956,6 +963,8 @@ function cartesFiltrees() {
     q: (l) => formeEquipe(l.j.club?.slug)?.pctVictoires ?? -1, d: (l) => (l.m ? Date.parse(l.m.debutUTC) : 9e15),
     n: (l) => sansAccents(l.j.nom), x: (l) => l.j.etoiles ?? 99, r: (l) => (l.j.etoiles && l.pr.siJoue != null ? l.pr.siJoue / l.j.etoiles : -1),
     b: (l) => l.c.bonusPct ?? 0, j: (l) => (J.has(l.c.id) ? 1 : 0),
+    // points perdus en balles perdues, le plus proche de 0 d'abord ; les joueurs sous 20 min (écartés de toute façon) à la fin
+    t: (l) => { const p = profilDe(l.j); return !p ? -99 : p.minutes < D.P.profil.minutes_reference ? -50 + p.stats.turnovers.points : p.stats.turnovers.points; },
   };
   const cle = cles[vue.tri] ?? esp;
   return L.sort((a, b) => { const x = cle(a), y = cle(b); return ((x < y ? -1 : x > y ? 1 : 0) * vue.sens) || (esp(b) - esp(a)); });
@@ -986,7 +995,7 @@ function afficherCartes() {
       <details class="filtres"${filtresOuverts ? ' open' : ''}><summary>${esc(resume)}</summary><div class="filtres-corps">
         <select class="choix" data-act="journee" aria-label="Journée Sorare"><option value="">Toutes les journées</option>${[...journees.entries()].sort((a, b) => a[0].localeCompare(b[0]))
           .map(([k, n]) => `<option value="${k}" ${k === vue.journee ? 'selected' : ''}>${esc(libelleJournee(s, k))} (${n})</option>`).join('')}</select>
-        <select class="choix" data-act="tri" aria-label="Trier par">${TRIS.map(([k, t]) => `<option value="${k}" ${k === vue.tri ? 'selected' : ''}>Tri : ${t}</option>`).join('')}${TRIS.some(([k]) => k === vue.tri) ? '' : '<option selected>Tri : colonne du tableau</option>'}</select>
+        <select class="choix" data-act="tri" aria-label="Trier par">${TRIS.filter(([, , sp]) => !sp || sp === vue.sport).map(([k, t]) => `<option value="${k}" ${k === vue.tri ? 'selected' : ''}>Tri : ${t}</option>`).join('')}${TRIS.some(([k]) => k === vue.tri) ? '' : '<option selected>Tri : colonne du tableau</option>'}</select>
         ${segSeuil()}
         <label class="case"><input type="checkbox" data-act="dispo" ${vue.dispo ? 'checked' : ''}> disponibles seulement</label>
       </div></details>
@@ -1020,10 +1029,11 @@ function afficherListeCartes() {
       <td><div class="cellule-p"><b>${nb(l.pr.siJoue)}</b>${G.ival(l, 64)}</div></td>
       <td class="r"><b>${nb(l.pr.esperance, 1)}</b></td>
       ${nba ? `<td class="r">${l.j.etoiles && l.pr.siJoue != null ? nb(l.pr.siJoue / l.j.etoiles, 1) : '–'}</td>` : ''}
+      ${nba ? (() => { const p = profilDe(l.j), v = p?.stats.turnovers.points; const t = v == null ? null : rangNba(v, 'turnovers', REF_NBA, D.P.profil); return `<td class="r ${t?.ton === 'faible' ? 'stop-txt' : t?.ton === 'fort' ? 'ok-txt' : ''}" title="points Sorare perdus par match en balles perdues">${v == null ? '–' : `−${nb(Math.abs(v), 1)}`}</td>`; })() : ''}
       <td>${G.pastilles(formeEquipe(l.j.club?.slug)?.derniers)}</td>
       <td class="statut">${l.c.bonusPct ? `<span class="tag">${esc(l.c.collection)} +${nb(l.c.bonusPct)}${nbsp}%</span> ` : ''}${st === 'probable' ? '' : `<span class="tag ${TON_STATUT[st]}">${LIBELLES[st]}</span> `}${!l.pr.eligibleArcade && l.m ? '<span class="tag stop">hors solo</span> ' : ''}${tagsContexte(l)}${!l.c.bonusPct && st === 'probable' && l.pr.eligibleArcade ? `<span class="doux">${esc(l.c.collection ?? '')}</span>` : ''}</td></tr>`;
   }).join('');
-  el.innerHTML = `<div class="defile-x"><table class="dense"><thead><tr>${th('j', 'Jouée')}<th scope="col"><span class="sr">Carte</span><span aria-hidden="true"></span></th>${th('n', 'Joueur')}${nba ? th('x', '★', 'r') : ''}${th('d', 'Match')}${th('p', 'Chances de jouer')}${th('s', "S'il joue")}${th('e', 'Espérance', 'r')}${nba ? th('r', 'Pts/★', 'r') : ''}${th('q', 'Club')}${th('b', 'Bonus · statut')}</tr></thead><tbody>${lignesHtml}</tbody></table></div>${plus}`;
+  el.innerHTML = `<div class="defile-x"><table class="dense"><thead><tr>${th('j', 'Jouée')}<th scope="col"><span class="sr">Carte</span><span aria-hidden="true"></span></th>${th('n', 'Joueur')}${nba ? th('x', '★', 'r') : ''}${th('d', 'Match')}${th('p', 'Chances de jouer')}${th('s', "S'il joue")}${th('e', 'Espérance', 'r')}${nba ? th('r', 'Pts/★', 'r') : ''}${nba ? th('t', 'Pertes', 'r') : ''}${th('q', 'Club')}${th('b', 'Bonus · statut')}</tr></thead><tbody>${lignesHtml}</tbody></table></div>${plus}`;
 }
 
 // ---------- Fiche joueur ----------
@@ -1042,6 +1052,42 @@ function blocClub(titre, nom, slug, sport) {
     <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">${G.pastilles(ms, 'derniers résultats')}<span class="petit"><b>${pct(s.pctVictoires)}</b> de victoires sur ${s.nb}</span>${serie ? `<span class="petit doux">${esc(serie)}</span>` : ''}</div>
     <ul class="res-liste" aria-label="5 derniers matchs, du plus récent au plus ancien">${ms.slice(0, 5).map((m) => `<li><span class="vnd"><span class="${m.res}">${m.res}</span></span><span>${m.pour}-${m.contre}</span><span class="adv" title="${esc(m.adversaire ?? '')}">${m.domicile ? 'vs' : '@'} ${esc(m.adversaire ?? '?')}</span><span class="mini doux">${esc(fJourMois.format(new Date(m.date)))}</span></li>`).join('')}</ul>
     ${sport === 'football' ? `<span class="mini doux">${unite} par match sur ${s.nb}</span>` : ''}${buts}
+  </div>`;
+}
+
+// Profil NBA en points Sorare par match (methode.md, section 10) : barres de part et d'autre de zéro
+// (le négatif à gauche), repère de l'apport médian des joueurs à 20 min et plus, rang dans ce groupe.
+const NOMS_STATS = { points: 'Points marqués', assists: 'Passes', rebounds: 'Rebonds', blocks: 'Contres', steals: 'Interceptions',
+  three_points_made: 'Paniers à 3 pts', double_double: 'Double-double', triple_double: 'Triple-double', turnovers: 'Balles perdues' };
+function blocProfil(l) {
+  const p = profilDe(l.j);
+  if (!p) return REF_NBA ? '<div class="bloc"><h3>Profil · points Sorare par match</h3><p class="petit doux">Pas assez de matchs récents avec le détail des statistiques.</p></div>' : '';
+  const F = D.P.profil;
+  const lignesP = ['points', 'assists', 'rebounds', 'blocks', 'steals', 'three_points_made', 'double_double', 'triple_double', 'turnovers']
+    .filter((s) => s !== 'triple_double' || p.stats[s].moyenne > 0)
+    .map((s) => ({ s, ...p.stats[s], med: REF_NBA.mediane[s], ...rangNba(p.stats[s].points, s, REF_NBA, F) }));
+  const vals = lignesP.flatMap((x) => [x.points, x.med]);
+  const lo = Math.min(0, ...vals) - 1, hi = Math.max(0, ...vals) + 1, W = hi - lo, pos = (v) => ((v - lo) / W) * 100;
+  const brut = (x) => (['double_double', 'triple_double'].includes(x.s) ? `${Math.round(x.moyenne * p.n)} sur ${p.n}` : nb(x.moyenne, 1));
+  const signe = (v) => `${v < 0 ? '−' : '+'}${nb(Math.abs(v), 1)}`;
+  const lignesHtml = lignesP.map((x) => `<div class="pf-ligne pf-${x.ton}${x.points < 0 ? ' pf-negatif' : ''}">
+      <span class="pf-nom">${NOMS_STATS[x.s]}<small>${brut(x)}${['double_double', 'triple_double'].includes(x.s) ? ' matchs' : ' par match'}</small></span>
+      <span class="pf-axe" style="--z:${pos(0)}%"><b style="left:${pos(Math.min(0, x.points))}%;width:${(Math.abs(x.points) / W) * 100}%"></b><i style="left:${pos(x.med)}%" title="apport médian du groupe : ${signe(x.med)}"></i></span>
+      <span class="pf-pts">${signe(x.points)}</span><span class="pf-rang">${x.rang ?? '–'}<sup>${x.rang === 1 ? 'er' : 'e'}</sup></span></div>`).join('');
+  const faibles = lignesP.filter((x) => x.ton === 'faible');
+  const groupes = [['Points', p.stats.points.points], ['Passes', p.stats.assists.points], ['Rebonds', p.stats.rebounds.points],
+    ['Défense', p.stats.blocks.points + p.stats.steals.points], ['Bonus', p.stats.three_points_made.points + p.stats.double_double.points + p.stats.triple_double.points]];
+  const perte = -p.stats.turnovers.points, produit = groupes.reduce((a, [, v]) => a + v, 0), echelle = produit + perte || 1;
+  return `<div class="bloc profil">
+    <header><h3>Profil · points Sorare par match</h3><span class="droite petit doux">${p.n} derniers matchs · ${nb(p.minutes)} min</span></header>
+    <div class="pf-ligne pf-tete"><span>Statistique</span><span></span><span class="pf-pts">Pts</span><span class="pf-rang">Rang</span></div>
+    ${lignesHtml}
+    <div class="pf-total"><span>Total</span><b>${nb(p.total, 1)} <small>pts par match</small></b></div>
+    ${faibles.length ? `<p class="petit stop-txt">${faibles.map((x) => `<b>${NOMS_STATS[x.s]} : ${signe(x.points)} par match</b>, ${x.rang}<sup>e</sup> sur ${x.sur}`).join(' ; ')}.</p>` : ''}
+    <div class="pf-empile" role="img" aria-label="D'où viennent ses points : ${groupes.map(([n, v]) => `${n} ${nb(v, 1)}`).join(', ')} ; balles perdues −${nb(perte, 1)}">
+      <span class="pf-perte" style="width:${(perte / echelle) * 100}%"></span>${groupes.map(([n, v], i) => `<span style="width:${(Math.max(0, v) / echelle) * 100}%;--i:${i}" title="${n} : ${nb(v, 1)}">${v / echelle > 0.12 ? `${n} ${nb(v, 1)}` : ''}</span>`).join('')}
+    </div>
+    <p class="mini doux"><span class="stop-txt">−${nb(perte, 1)} de balles perdues</span> · ${nb(produit, 1)} produits · ${nb(p.total, 1)} nets. Comparé aux ${REF_NBA.n} joueurs de ton catalogue à ${D.P.profil.minutes_reference} min et plus (tous postes) ; rang 1 = le plus gros apport ; vert : premier quart, rouge : dernier quart ; trait : apport médian. Barème lu dans l'API Sorare.</p>
   </div>`;
 }
 
@@ -1085,6 +1131,7 @@ function ficheHtml(l) {
           <p class="legende">${leg}<span><i class="sw" style="border:1.2px dashed var(--attention)"></i>B banc</span><span><i class="sw" style="border:1.2px dashed var(--stop)"></i>A absent</span><span><i class="sw" style="background:var(--d-bande)"></i>10–90 %</span>${fj?.moyRecente != null ? `<span><i class="sw" style="height:3px;background:var(--sport)"></i>3 derniers : ${nb(fj.moyRecente)}</span>` : ''}${fj?.moyReference != null ? `<span><i class="sw" style="height:2px;background:var(--doux)"></i>15 derniers : ${nb(fj.moyReference)}</span>` : ''}<span><i class="sw" style="height:0;border-top:1.5px dashed var(--encre)"></i>projection hors bonus</span></p>
           <p class="petit">${tend ? `Forme du joueur : ${tend} (${nb(fj.moyRecente)} sur ses 3 derniers matchs joués contre ${nb(fj.moyReference)} sur ses 15 derniers). ` : ''}${esc(pres)}</p>
         </div>
+        ${c.sport === 'nba' ? blocProfil(l) : ''}
       </div>
       <div class="bloc">
         <header><h3>Forme des clubs</h3><span class="droite mini doux">plus récent à droite</span></header>

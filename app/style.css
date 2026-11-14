@@ -628,3 +628,27 @@ table.dense td.statut .tag { margin: 1px 0; }
 
 /* Nom : apostrophe dorée */
 .apostrophe { color: var(--logo-or); }
+
+/* ===== Profil NBA en points Sorare (methode.md, section 10) ===== */
+.profil { display: grid; gap: var(--e2); }
+.pf-ligne { display: grid; grid-template-columns: minmax(96px, 128px) minmax(0, 1fr) 44px 30px; gap: var(--e2); align-items: center; font-size: var(--t2); }
+.pf-ligne.pf-negatif.pf-faible { background: var(--stop-doux); margin: 0 calc(-1 * var(--e2)); padding: 4px var(--e2); border-radius: var(--r1); }
+.pf-tete { font-size: var(--t1); color: var(--doux); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+.pf-nom { display: grid; line-height: 1.2; }
+.pf-nom small { font-size: var(--t1); color: var(--doux); }
+.pf-axe { position: relative; height: 16px; background: linear-gradient(to right, transparent calc(var(--z) - 1px), var(--trait-fort) calc(var(--z) - 1px), var(--trait-fort) calc(var(--z) + 1px), transparent calc(var(--z) + 1px)); }
+.pf-axe b { position: absolute; top: 2px; height: 12px; border-radius: 2px; background: var(--n); }
+.pf-ligne.pf-fort .pf-axe b { background: var(--v); }
+.pf-ligne.pf-faible .pf-axe b, .pf-ligne.pf-negatif .pf-axe b { background: var(--d); }
+.pf-ligne.pf-negatif:not(.pf-faible) .pf-axe b { opacity: .55; }
+.pf-axe i { position: absolute; top: 0; width: 2px; height: 16px; background: var(--encre); transform: translateX(-1px); }
+.pf-pts { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+.pf-ligne.pf-fort .pf-pts { color: var(--v); } .pf-ligne.pf-faible .pf-pts { color: var(--d); }
+.pf-rang { text-align: right; color: var(--doux); font-size: var(--t1); }
+.pf-tete .pf-pts, .pf-tete .pf-rang { color: var(--doux); font-weight: 600; }
+.pf-total { display: flex; justify-content: space-between; align-items: baseline; border-top: 1px solid var(--trait); padding-top: var(--e2); }
+.pf-total b { font-family: var(--f-titre); font-size: var(--t4); }
+.pf-total small { font: 400 var(--t1) var(--f-texte); color: var(--doux); }
+.pf-empile { display: flex; height: 26px; border-radius: var(--r1); overflow: hidden; font-size: var(--t1); font-weight: 600; line-height: 26px; color: var(--sur-plein); }
+.pf-empile span { white-space: nowrap; overflow: hidden; padding-left: 5px; background: color-mix(in srgb, var(--nba) calc(100% - var(--i, 0) * 17%), var(--surface)); }
+.pf-empile .pf-perte { background: var(--d); padding: 0; margin-right: 2px; }
