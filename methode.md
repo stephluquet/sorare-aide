@@ -37,9 +37,17 @@ ignorent les matchs non joués.
     "plancher": 0.10,
     "plafond": 0.93,
     "calibration_jouer": [[0.018, 0.101], [0.175, 0.24], [0.326, 0.412], [0.479, 0.571], [0.636, 0.643], [0.751, 0.768], [0.855, 0.822], [0.947, 0.872], [0.998, 0.916]],
-    "demi_vie_minutes": 5,
+    "demi_vie_minutes": 2,
     "demi_vie_score_par_minute": 10,
-    "debut_saison": "2026-10-01"
+    "debut_saison": "2026-10-01",
+    "minutes": {
+      "fourchette": [-8.6, 8.0],
+      "seuil": 20,
+      "seuils": [15, 20, 25],
+      "hausse_recents": 2,
+      "hausse_reference": 10,
+      "hausse_ecart": 6
+    }
   },
   "poids_saison_precedente": 0.5,
   "min_matchs_historique": 5,
@@ -66,7 +74,7 @@ ignorent les matchs non joués.
     "ambitieuse_seuil_jouer": 0.6,
     "calibration_passer": {
       "football": [[0, 0], [0.2, 0.178], [0.35, 0.332], [0.5, 0.48], [0.65, 0.642], [0.8, 0.782], [1, 1]],
-      "nba": [[0, 0], [0.2, 0.118], [0.35, 0.261], [0.5, 0.398], [0.65, 0.527], [0.8, 0.655], [1, 1]]
+      "nba": [[0, 0], [0.2, 0.13], [0.35, 0.27], [0.5, 0.405], [0.65, 0.552], [0.8, 0.72], [1, 1]]
     }
   },
   "contexte": {
@@ -569,4 +577,28 @@ simulation.
   point ne départage pas (« moyen »).
 - **Affichage** : barres de part et d'autre d'une ligne zéro (le négatif à gauche), repère de l'apport médian
   du groupe, rang ; barre « d'où viennent ses points ». Mes cartes : tri par balles perdues.
+
+## 11. Minutes projetées NBA (2026-11-14)
+
+Demande de l'utilisateur : en NBA, presque tout le monde joue sauf blessure ou rare choix du coach ; ce qui compte,
+c'est **combien de temps**. Les minutes expliquent l'essentiel du score (corrélation 0,74 sur l'historique).
+
+- **Minutes projetées** = moyenne pondérée des minutes de ses matchs joués, **demi-vie 2 matchs**
+  (`nba.demi_vie_minutes`, 5 auparavant). Rétro-test (`node outils/retro-test-minutes.js`, 5 607 matchs joués de
+  joueurs ayant joué au moins 4 des 5 matchs précédents, 2026-11-14) : erreur moyenne 5,2 min avec une demi-vie de
+  1,5 à 2 matchs, 5,3 à 3, 5,4 à 5 ; biais +0,2 min.
+- **Fourchette affichée** = minutes projetées + écarts réels observés à 10 % et 90 % (`minutes.fourchette` :
+  −8,6 et +8,0 min ; bornée à 0–48). Environ 10 % des matchs joués sont des **soirées écourtées** (moins de 60 % des
+  minutes prévues : écart au score, fautes, blessure en cours de match).
+- **Minutes en hausse** : moyenne des `hausse_recents` derniers matchs joués ≥ celle des `hausse_reference` derniers
+  + `hausse_ecart` min. Signal réel : dans ces 604 cas, le joueur a joué 3,7 min de plus que sa moyenne des 10
+  derniers (−0,5 sinon).
+- **Filtre** (Solo, Squad) : en plus des chances de jouer et des statuts (blessures ESPN, etc.), les minutes
+  projetées doivent atteindre `minutes.seuil` (20 par défaut, réglable 15 / 20 / 25 dans l'appli).
+- **Score s'il joue** inchangé dans son principe : minutes projetées × score par minute (avec retrait, 3 bis), et
+  simulation par rééchantillonnage de ses scores remis à cette échelle. Au niveau de l'équipe
+  (`SURCHARGE='{"nba":{"demi_vie_minutes":2}}' node outils/retro-test-equipe.js nba`, 440 équipes, 26 journées),
+  la demi-vie change peu la justesse (annoncé 50 % → réalisé 40 à 42 % selon la demi-vie) ; la table de calibrage
+  final NBA (5 bis) est recalée sur ce rétro-test : 20 % → 13 %, 35 % → 27 %, 50 % → 40,5 %, 65 % → 55 %, 80 % → 72 %.
+- **Non fait** : tirer les minutes puis le rendement par minute séparément dans la simulation (gain non démontré).
 

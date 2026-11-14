@@ -69,7 +69,17 @@ export function scoreSiJoue(joueur, P, { situationConfirmee = null, victoire = n
   const taux = Rn ? Rn.taux_moyen + (tauxBrut - Rn.taux_moyen) * avecMinutes.length / (avecMinutes.length + Rn.k) : tauxBrut;
   const mu = minutes * taux;
   const sigma = ecartTypePondere(avecMinutes.map((m) => m.score - mu), wt);
-  return { mu, sigma, minutes, taux, tauxBrut, nbScores: avecMinutes.length };
+  // Minutes projetées, fourchette 10–90 % et tendance (methode.md, section 11).
+  const M = S.minutes;
+  const borne = (x) => Math.max(0, Math.min(48, x));
+  const recents = avecMinutes.slice(0, M?.hausse_recents ?? 2).map((m) => m.minutes);
+  const reference = avecMinutes.slice(0, M?.hausse_reference ?? 10).map((m) => m.minutes);
+  const moy = (xs) => xs.reduce((a, b) => a + b, 0) / xs.length;
+  const minutesEnHausse = Boolean(M) && recents.length >= M.hausse_recents && reference.length >= M.hausse_reference
+    && moy(recents) >= moy(reference) + M.hausse_ecart;
+  return { mu, sigma, minutes, taux, tauxBrut, nbScores: avecMinutes.length,
+    minutesBas: M ? borne(minutes + M.fourchette[0]) : null, minutesHaut: M ? borne(minutes + M.fourchette[1]) : null,
+    minutesEnHausse, minutesReference: reference.length ? moy(reference) : null };
 }
 
 /**

@@ -652,3 +652,13 @@ table.dense td.statut .tag { margin: 1px 0; }
 .pf-empile { display: flex; height: 26px; border-radius: var(--r1); overflow: hidden; font-size: var(--t1); font-weight: 600; line-height: 26px; color: var(--sur-plein); }
 .pf-empile span { white-space: nowrap; overflow: hidden; padding-left: 5px; background: color-mix(in srgb, var(--nba) calc(100% - var(--i, 0) * 17%), var(--surface)); }
 .pf-empile .pf-perte { background: var(--d); padding: 0; margin-right: 2px; }
+
+/* ===== NBA : minutes projetées (methode.md, section 11) ===== */
+.barre-min .plage { fill: color-mix(in srgb, var(--nba) 30%, var(--surface)); }
+.barre-min .point { fill: var(--nba); stroke: var(--surface); stroke-width: 1.5; }
+.barre-min.bas .point { fill: var(--attention); }
+.c-min { display: grid; grid-template-columns: auto auto; column-gap: var(--e2); row-gap: 2px; align-items: center; justify-content: end; }
+.c-min .dispo { grid-column: 1 / -1; text-align: right; font-size: var(--t1); color: var(--doux); white-space: nowrap; }
+.c-min .pv small { font-size: var(--t1); font-weight: 600; color: var(--doux); }
+.kpi .v small { white-space: nowrap; }
+.c-min .pv { white-space: nowrap; }

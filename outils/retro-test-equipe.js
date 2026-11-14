@@ -20,6 +20,9 @@ const RACINE = join(dirname(fileURLToPath(import.meta.url)), '..');
 const sport = process.argv[2] ?? 'football';
 const NB_JOURNEES = Number(process.argv[3] ?? 26);
 const P = parametresDepuisMethode(readFileSync(join(RACINE, 'methode.md'), 'utf8'));
+// Essai de réglages sans toucher methode.md : SURCHARGE='{"nba":{"demi_vie_minutes":2}}' (fusion récursive).
+const fusion = (a, b) => { for (const [k, v] of Object.entries(b)) a[k] = v && typeof v === 'object' && !Array.isArray(v) ? fusion(a[k] ?? {}, v) : v; return a; };
+if (process.env.SURCHARGE) fusion(P, JSON.parse(process.env.SURCHARGE));
 const SEUIL = P.seuil_jouer;
 const sim = { ...P.simulation, tirages: 2000 };
 const JOUE = new Set(['titulaire', 'entre', 'joue']);
