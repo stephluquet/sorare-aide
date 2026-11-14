@@ -96,15 +96,27 @@ function messageErreur(e, slug) {
 }
 
 // Avancement global : chaque sport pèse pareil ; dans un sport, cartes 15 %, historique 80 %, le reste 5 %.
+// Temps restant : vitesse MESURÉE sur l'historique en cours (le relais ajoute un aller-retour : environ 10 min
+// pour 1 100 joueurs, constaté le 2026-11-14, au lieu des 6 attendues à 150 requêtes par minute). Pour un sport
+// pas encore commencé, on suppose autant de joueurs à charger que dans le sport en cours.
 function suiviGlobal(sports, rappel) {
   const debut = Date.now();
+  const histo = {}; // sport → { t0, f0 } : premier relevé de l'historique
   return (ev) => {
     const i = sports.indexOf(ev.sport);
     const part = ev.total ? ev.fait / ev.total : 1;
     const dans = { paliers: 0.01, cartes: 0.01 + 0.14 * part, compositions: 0.15 + 0.03 * part, historique: 0.18 + 0.8 * part, espn: 0.99 }[ev.etape] ?? 0;
     const pourcent = Math.min(99, ((i + dans) / sports.length) * 100);
     let reste = null;
-    if (ev.etape === 'historique' && ev.total - ev.fait > 20) reste = Math.ceil(((ev.total - ev.fait) * 0.4 + (sports.length - 1 - i) * 30) / 60);
+    if (ev.etape === 'historique' && ev.total) {
+      const h = (histo[ev.sport] ??= { t0: Date.now(), f0: ev.fait });
+      const faits = ev.fait - h.f0;
+      if (faits >= 10 && ev.total - ev.fait > 5) {
+        const parJoueur = (Date.now() - h.t0) / 1000 / faits;
+        const suivants = sports.length - 1 - i;
+        reste = Math.max(1, Math.round(((ev.total - ev.fait) * parJoueur + suivants * (ev.total * parJoueur + 20)) / 60));
+      }
+    }
     rappel({ pourcent, texte: `${NOMS[ev.sport]} · ${ev.texte}`, reste, ecouleS: (Date.now() - debut) / 1000, ev });
   };
 }

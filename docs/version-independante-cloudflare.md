@@ -88,8 +88,9 @@ serveur**, quoi que fasse la page. Il se teste en Node 22 sans dépendance (`Req
 
 1. **Première visite** → écran **Paramètres** : clé API Sorare, nom de manager (`yapapir`…), sports (football, NBA).
    Bouton « Tester » : une petite requête (les paliers du manager) confirme que la clé et le nom sont bons.
-2. **Initialisation** : barre de progression (« 312 joueurs sur 874… »). Premier passage **environ 6 minutes**
-   pour un catalogue comme celui de `yapapir` (897 requêtes, plafond de 150 requêtes par minute, mesuré le 2026-11-07).
+2. **Initialisation** : barre de progression (« 312 joueurs sur 874… »). Premier passage **environ 10 minutes**
+   pour un catalogue comme celui de `yapapir` (1 100 joueurs, football et NBA, mesuré par l'utilisateur le 2026-11-14 à
+   travers le relais ; 6 minutes en direct depuis Node, car chaque requête attend la précédente).
    **Reprise automatique** si l'iPhone se verrouille ou si l'onglet est fermé : chaque joueur chargé est enregistré tout
    de suite, on repart de là.
 3. **Ensuite** : l'appli habituelle. Le bouton ↻ relance une **actualisation incrémentale** (environ 20 secondes,
