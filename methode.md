@@ -413,10 +413,11 @@ heure, avec leur meilleure chance de passer et l'état des compositions
 ## 8. Squad du jour
 
 Le score du squad dépend de partenaires inconnus : l'outil propose la
-**meilleure équipe du jour au sens du score attendu** (somme des
-espérances, plus en football le gain du brassard : 50 % du score de base
-attendu, p × μ ; capitaine = le joueur de plus grand p × μ, bonus de carte
-non compris, voir le cumul des bonus en section 5). Cartes admissibles comme en section 6, sauf
+**meilleure équipe du jour au sens du score projeté** (somme des scores
+s'il joue, bonus compris, plus en football le gain du brassard : 50 % du
+score de base μ ; capitaine = le joueur de plus grand μ, bonus de carte
+non compris, voir le cumul des bonus en section 5 ; jusqu'au 2026-11-14 :
+somme des espérances). Cartes admissibles comme en section 6, sauf
 que les cartes **jouées en Arcade sont autorisées** et que tous les matchs
 doivent appartenir à **la journée de jeu en cours** (la suivante si tous ses matchs ont commencé ; l'appli ne propose plus d'autre journée depuis le 2026-11-14), au sens de Sorare
 (`regles/squad.json`, `journee_de_jeu`) : en football, la date du coup
@@ -427,10 +428,11 @@ Vérifié sur un mois de calendrier (voir `CLAUDE.md`). Mêmes règles de
 composition que l'Arcade du sport (à confirmer dans le jeu). Recherche
 exhaustive sur les candidats présélectionnés de la section 6.
 
-**NBA : choix sur le score projeté** (décision de l'utilisateur, 2026-11-14) : en NBA, la valeur
-d'une carte en Squad est son score projeté (score s'il joue, bonus compris), pas son espérance :
-la disponibilité est déjà filtrée par le seuil de chances de jouer et par le seuil de minutes
-projetées, et l'appli NBA n'affiche plus l'espérance. Le football garde l'espérance.
+**Choix sur le score projeté** (décisions de l'utilisateur, 2026-11-14 : NBA, puis football) : la
+valeur d'une carte en Squad est son score projeté (score s'il joue, bonus compris), pas son
+espérance, et le brassard rapporte 50 % du score de base s'il joue (μ) : la disponibilité est déjà
+filtrée par le seuil de chances de jouer (et, en NBA, de minutes projetées). La somme de l'équipe est
+le « score projeté » affiché.
 
 **Autres choix du Squad** (2026-11-14, `autresChoixSquad`) : comme en section 6 bis, les
 meilleures espérances par poste (football) ou en tout (NBA) parmi les cartes du jour, hors des

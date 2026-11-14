@@ -195,7 +195,7 @@ test('créneau unique : les 5 matchs commencent à la même heure', () => {
   }
 });
 
-test('Squad du jour : cartes du jour seulement, cartes jouées en Arcade autorisées, meilleure espérance', () => {
+test('Squad du jour : cartes du jour seulement, cartes jouées en Arcade autorisées, meilleur score projeté', () => {
   const autreJour = '2026-11-09T15:00:00Z';
   const L = effectif([ligne('fw-lundi', { postes: ['FW'], niveau: 99, debut: autreJour })]);
   assert.deepEqual(joursAVenir(L, MAINTENANT), ['2026-11-08', '2026-11-09']);
@@ -207,7 +207,7 @@ test('Squad du jour : cartes du jour seulement, cartes jouées en Arcade autoris
   const adm = L.filter((l) => l.match.debutUTC.startsWith('2026-11-08'));
   const esp = (ids) => {
     const pr = ids.map((id) => parId(L).get(id).projection);
-    return pr.reduce((a, x) => a + x.esperance, 0) + 0.5 * Math.max(...pr.map((x) => x.p * x.score.mu));
+    return pr.reduce((a, x) => a + x.siJoue, 0) + 0.5 * Math.max(...pr.map((x) => x.score.mu)); // score projeté (2026-11-14)
   };
   const pos = (po) => adm.filter((l) => l.joueur.postes[0] === po).map((l) => l.carte.id);
   let best = 0;

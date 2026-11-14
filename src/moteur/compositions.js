@@ -207,7 +207,7 @@ export function proposerParCreneau(lignes, P, o) {
  */
 export function squadDuJour(lignes, P, o) {
   const { admissibles: adm0, ecartees } = cartesAdmissibles(lignes, P, { ...o, jouees: new Set() });
-  const admissibles = valeursSquad(adm0, o.sport);
+  const admissibles = valeursSquad(adm0);
   const mult = o.regle.capitaine?.multiplicateur ?? 1;
   const generateur = o.sport === 'football' ? equipesFootball(admissibles, o.regle, P.simulation) : equipesNba(admissibles, o.regle, P.simulation);
   let meilleure = null, nbEquipes = 0;
@@ -245,12 +245,11 @@ function groupesEtoiles(libres, sim) {
   return [...parNiveau.values()].sort((a, b) => b.etoiles - a.etoiles).map(({ etoiles, poste, candidats }) => ({ etoiles, poste, candidats }));
 }
 
-// Valeur d'une carte en Squad : l'espérance en football ; en NBA, le score projeté (score s'il joue,
-// décision de l'utilisateur du 2026-11-14 : la disponibilité est déjà filtrée par le seuil et le
-// seuil de minutes). Copie des lignes où « esperance » porte cette valeur.
-function valeursSquad(adm, sport) {
-  if (sport !== 'nba') return adm;
-  return adm.map((x) => ({ ...x, projection: { ...x.projection, esperance: x.projection.siJoue } }));
+// Valeur d'une carte en Squad : son score projeté (score s'il joue, bonus compris), dans les deux sports
+// (décisions de l'utilisateur du 2026-11-14 : NBA, puis football) ; la disponibilité est déjà filtrée par
+// les seuils. Copie des lignes où « esperance » porte cette valeur et où le brassard compte en entier (pCap = 1).
+function valeursSquad(adm) {
+  return adm.map((x) => ({ ...x, projection: { ...x.projection, esperance: x.projection.siJoue, pCap: 1 } }));
 }
 
 // Score attendu d'une équipe de Squad : somme des espérances, plus le gain du brassard
@@ -259,7 +258,7 @@ function valeursSquad(adm, sport) {
 function scoreSquad(equipe, regle, mult = regle.capitaine?.multiplicateur ?? 1) {
   const esp = equipe.map((x) => x.projection.esperance);
   const gains = equipe.map((x) => (regle.cumul_bonus?.mode === 'multiplication' ? (mult - 1) * x.projection.esperance
-    : (mult - 1) * x.projection.p * x.projection.score.mu));
+    : (mult - 1) * (x.projection.pCap ?? x.projection.p) * x.projection.score.mu));
   const cap = regle.capitaine ? gains.indexOf(Math.max(...gains)) : -1;
   return { total: esp.reduce((a, b) => a + b, 0) + (cap >= 0 ? gains[cap] : 0), cap };
 }
@@ -274,7 +273,7 @@ function scoreSquad(equipe, regle, mult = regle.capitaine?.multiplicateur ?? 1) 
  */
 export function autresChoixSquad(lignes, P, o, equipeSquad) {
   const sim = P.simulation, regle = o.regle, mult = regle.capitaine?.multiplicateur ?? 1;
-  const admissibles = valeursSquad(cartesAdmissibles(lignes, P, { ...o, jouees: new Set() }).admissibles, o.sport);
+  const admissibles = valeursSquad(cartesAdmissibles(lignes, P, { ...o, jouees: new Set() }).admissibles);
   const parId = new Map(admissibles.map((x) => [x.carte.id, x]));
   const equipe = equipeSquad.cartes.map((id) => parId.get(id));
   if (equipe.some((x) => !x)) return { groupes: [] };

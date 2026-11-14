@@ -423,10 +423,10 @@ const G = {
   // Qui porte l'équipe : espérance de chaque joueur (capitaine compris), avec la cible.
   empilee(membres, e, sport, cible = null) {
     const regle = D.regles[sport], mult = regle.capitaine?.multiplicateur ?? 1;
-    const parts = membres.map((l) => ({ l, v: (sport === 'nba' ? 1 : l.pr.p ?? 0) * (l.pr.score.mu ?? 0) * multiplicateurCarte({ b: l.pr.bonus }, e.capitaine === l.c.id, mult, regle.cumul_bonus?.mode) }))
+    const parts = membres.map((l) => ({ l, v: (l.pr.score.mu ?? 0) * multiplicateurCarte({ b: l.pr.bonus }, e.capitaine === l.c.id, mult, regle.cumul_bonus?.mode) }))
       .sort((a, b) => b.v - a.v);
     const tot = parts.reduce((a, x) => a + x.v, 0), M = Math.max(tot, cible ?? 0) * 1.04 || 1;
-    return `<div class="empilee" role="img" aria-label="${sport === 'nba' ? 'Score projeté' : 'Score attendu'} par joueur (${nb(tot)} au total)${cible ? ` face à la cible ${cible}` : ''} : ${parts.map((x) => `${esc(x.l.j.nom)} ${nb(x.v)}`).join(', ')}">${parts.map((x, i) =>
+    return `<div class="empilee" role="img" aria-label="Score projeté par joueur (${nb(tot)} au total)${cible ? ` face à la cible ${cible}` : ''} : ${parts.map((x) => `${esc(x.l.j.nom)} ${nb(x.v)}`).join(', ')}">${parts.map((x, i) =>
       `<span style="width:${(x.v / M) * 100}%;background:color-mix(in srgb, var(--sport) ${[100, 82, 64, 46, 32][i] ?? 30}%, var(--surface))" title="${esc(x.l.j.nom)} : ${nb(x.v, 1)}">${esc(nomCourt(x.l.j.nom))} ${nb(x.v)}</span>`).join('')}` +
       `${cible ? `<i class="marque-cible" style="left:${(cible / M) * 100}%"><b>cible ${cible}</b></i>` : ''}</div>`;
   },
@@ -641,18 +641,23 @@ function chemin(sport) {
 // Plafond des chances de jouer avant les compositions (plus haute valeur de la table de calibrage).
 const plafondJouer = (sport) => { const t = D.P[sport]?.calibration_jouer; return t?.length ? Math.max(...t.map((x) => x[1])) : D.P[sport]?.plafond; };
 
+// Score projeté d'une équipe (demande de l'utilisateur, 2026-11-14 : hors des chances de passer, on parle
+// de scores projetés) : somme des scores s'il joue, bonus de carte et brassard compris (cumul de regles/).
+function scoreProjete(cartes, capitaine, sport) {
+  const regle = D.regles[sport], mult = regle.capitaine?.multiplicateur ?? 1;
+  return cartes.reduce((t, id) => { const l = parId.get(id); return t + (l.pr.score?.mu ?? 0) * multiplicateurCarte({ b: l.pr.bonus }, capitaine === id, mult, regle.cumul_bonus?.mode); }, 0);
+}
+
 // Chiffres clés et graphiques d'une équipe proposée.
 function kpisEquipe(e, sport, membres, o = {}) {
   const premier = membres.slice().sort((a, b) => a.m.debutUTC.localeCompare(b.m.debutUTC))[0];
-  const ecart = o.cible != null ? Math.round(e.scoreMoyen - o.cible) : null;
+  const ecart = o.cible != null ? Math.round(scoreProjete(e.cartes, e.capitaine, sport) - o.cible) : null;
   const faible = membres.slice().sort((a, b) => (a.pr.p ?? 0) - (b.pr.p ?? 0))[0];
   // Plafond des chances de jouer avant les compositions : rappelé seulement si aucune n'est publiée pour l'équipe.
   const plaf = membres.some((l) => l.pr.situationConfirmee) ? null : plafondJouer(sport);
   const nbaKpi = sport === 'nba' ? `<div class="kpi"><span class="libelle">Étoiles</span><span class="v etoiles">★${nbsp}${nb(e.etoiles, 1)}<small> / ${plafondEtoiles(sport)}</small></span>${G.cases16(membres, plafondEtoiles(sport) ?? 16)}</div>` : '';
   const heros = o.squad
-    ? (sport === 'nba'
-      ? `<div class="kpi heros"><span class="libelle">Score projeté</span><span class="v">${nb(membres.reduce((a, l) => a + (l.pr.siJoue ?? 0), 0))}</span><span class="s">somme des 5, bonus compris</span></div>`
-      : `<div class="kpi heros"><span class="libelle">Score attendu</span><span class="v">${nb(e.esperance)}</span><span class="s">capitaine et bonus compris</span></div>`)
+    ? `<div class="kpi heros"><span class="libelle">Score projeté</span><span class="v">${nb(scoreProjete(e.cartes, e.capitaine, sport))}</span><span class="s">somme des 5, bonus${e.capitaine ? ' et capitaine' : ''} compris</span></div>`
     : `<div class="kpi heros"><span class="libelle">Chances de passer</span><span class="v">${pct(e.pPasser)}</span><span class="s">corrigées sur l'historique</span></div>`;
   // Si les 5 jouent : chances de passer et score habituel face à la cible (methode.md 5 quater).
   // NBA : tout le monde joue ou presque, ce sont les minutes qui comptent : ni « les 5 jouent » ni « si les 5 jouent ».
@@ -663,7 +668,7 @@ function kpisEquipe(e, sport, membres, o = {}) {
     ${nba ? '' : `<div class="kpi"><span class="libelle">Chances que les 5 jouent</span><span class="v">${pct(e.pComplete)}</span>${G.cinq(membres)}<span class="s">maillon faible : ${esc(nomCourt(faible.j.nom))} ${pct(faible.pr.p)}${plaf ? ` · plafond ${pct(plaf ** 5)} avant les compos` : ''}</span></div>`}
     ${si5}
     ${nba ? (() => { const mins = membres.map((x) => x.pr.score?.minutes ?? 0), mi = mins.indexOf(Math.min(...mins)); return `<div class="kpi"><span class="libelle">Minutes projetées</span><span class="v">${nb(mins.reduce((a, b) => a + b, 0))}<small> / 240</small></span><span class="s">le moins : ${esc(nomCourt(membres[mi].j.nom))} ${nb(mins[mi])} min</span></div>`; })() : ''}
-    ${o.squad ? '' : `<div class="kpi"><span class="libelle">Score attendu</span><span class="v">${nb(e.scoreMoyen)}</span><span class="s">cible ${o.cible} · <b class="${ecart >= 0 ? 'ok-txt' : 'stop-txt'}">${ecart >= 0 ? '+' : '−'}${Math.abs(ecart)}</b></span></div>`}
+    ${o.squad ? '' : `<div class="kpi"><span class="libelle">Score projeté</span><span class="v">${nb(scoreProjete(e.cartes, e.capitaine, sport))}</span><span class="s">cible ${o.cible} · <b class="${ecart >= 0 ? 'ok-txt' : 'stop-txt'}">${ecart >= 0 ? '+' : '−'}${Math.abs(ecart)}</b></span></div>`}
     ${nbaKpi}
     <div class="kpi"><span class="libelle">Verrouillage</span><span class="v long">${esc(quand(e.verrouillage))}</span><span class="s">premier coup d'envoi : ${esc(nomCourt(premier.j.nom))}</span></div>
   </div></div>`;
@@ -706,7 +711,7 @@ function carteProposition(titre, pourquoi, e, sport, cible, o = {}) {
     <div class="corps pile">
       ${kpisEquipe(e, sport, membres, { cible })}
       ${r ? `<div>${graphe((w) => G.dist(w, r, cible, sport, o.hauteur ?? 170))}${legendeDist(r, e, cible)}</div>` : ''}
-      <div style="padding-top:var(--e5)"><span class="libelle long">Qui porte l'équipe · ${sport === 'nba' ? 'score projeté' : 'score attendu'} par joueur${e.capitaine ? ', capitaine compris' : ''}</span><div style="margin-top:22px">${G.empilee(membres, e, sport, cible)}</div></div>
+      <div style="padding-top:var(--e5)"><span class="libelle long">Qui porte l'équipe · score projeté par joueur${e.capitaine ? ', capitaine compris' : ''}</span><div style="margin-top:22px">${G.empilee(membres, e, sport, cible)}</div></div>
     </div>
     <div class="tableau">${enteteTab(sport)}${membres.map((l) => ligne(l, { capitaine: e.capitaine, epinglable: o.epinglable })).join('')}</div>
     <div class="corps" style="padding-top:var(--e4)"><div class="actions"><button type="button" class="btn principal" data-act="jouer" data-sport="${sport}" data-v="${esc(e.cartes.join(','))}">J'ai joué cette équipe</button><span class="mini doux">marque les 5 cartes (annulable) · résultat connu après le dernier match, ${esc(quand(dernier))}</span></div></div>
@@ -837,7 +842,7 @@ function panneauSport(s, r) {
       ${d ? `<div>${graphe((w) => G.dist(w, d, p.cible, s, 150))}<p class="lecture" style="margin-top:4px"><b>${pct(d.partAuDessus)}</b> des tirages au-dessus de ${p.cible} ; chances corrigées sur l'historique : <b>${pct(e.pPasser)}</b>.</p></div>` : ''}
       <div class="equipe-puces" aria-label="Proposition prudente">${membres.map((l) => `<span class="tag">${e.capitaine === l.c.id ? '<span class="cap">C</span>' : ''}${esc(nomCourt(l.j.nom))} <b>${s === 'nba' ? `${nb(l.pr.score?.minutes)}${nbsp}min` : txtChances(l)}</b></span>`).join('')}</div>
       <div class="faits">
-        <div class="fait"><span class="libelle">Score attendu</span><span class="v">${nb(e.scoreMoyen)} <small>/ ${p.cible}</small></span></div>
+        <div class="fait"><span class="libelle">Score projeté</span><span class="v">${nb(scoreProjete(e.cartes, e.capitaine, s))} <small>/ ${p.cible}</small></span></div>
         ${s === 'nba' ? `<div class="fait"><span class="libelle">Minutes projetées</span><span class="v">${nb(membres.reduce((a, l) => a + (l.pr.score?.minutes ?? 0), 0))} <small>/ 240</small></span></div>` : `<div class="fait"><span class="libelle">Chances que les 5 jouent</span><span class="v">${pct(e.pComplete)}</span></div>`}
         ${e.siLes5 && s !== 'nba' ? `<div class="fait"><span class="libelle">Si les 5 jouent</span><span class="v">${pct(e.siLes5.pPasser)} <small>· habituel ${nb(e.siLes5.mediane)}</small></span></div>` : ''}
         <div class="fait"><span class="libelle">Verrouillage</span><span class="v">${esc(quand(e.verrouillage))}</span></div>
@@ -940,10 +945,8 @@ function afficherAutres(sport, equipe, a, o = {}) {
   const el = dansVue('autres-choix');
   if (!el || (o.squad ? !(vueCourante() === 'squad' && vue.sport === sport) : !surSolo(sport))) return;
   const dernier = Math.max(...equipe.cartes.map((id) => Date.parse(parId.get(id).m.debutUTC)));
-  // Solo : chances de passer ; Squad : score attendu de l'équipe (NBA : score projeté, somme des 5).
-  const proj = (id) => parId.get(id).pr.siJoue ?? 0;
-  const projEquipe = equipe.cartes.reduce((t, id) => t + proj(id), 0);
-  const valeur = (c) => (!o.squad ? c.pPasser : sport === 'nba' ? projEquipe - proj(c.remplace) + proj(c.carteId) : c.esperanceEquipe);
+  // Solo et Squad : score projeté de l'équipe avant → après (brassard recalculé par le moteur).
+  const valeur = (c) => scoreProjete(equipe.cartes.map((id) => (id === c.remplace ? c.carteId : id)), c.capitaine, sport);
   // Pour CHAQUE joueur de l'équipe, les meilleures cartes qui peuvent le remplacer (une par joueur),
   // dans l'ordre de l'équipe : même règle en Solo et en Squad, en football et en NBA.
   const parRemplace = new Map();
@@ -972,21 +975,21 @@ function afficherAutres(sport, equipe, a, o = {}) {
   }).join('');
   const tete = `<header><h2>Autres choix</h2><span class="doux petit">si tu préfères ajuster l'équipe ${o.squad ? 'du jour' : 'prudente'}</span></header>`;
   if (!parRemplace.size && !a.groupes.some((g) => g.choix.length)) { el.innerHTML = `${tete}<p class="corps petit doux">Pas d’autre carte admissible.</p>`; return; }
-  const avant = o.squad ? Math.round(sport === 'nba' ? projEquipe : equipe.esperance) : Math.round(equipe.pPasser * 100);
-  const unite = o.squad ? '' : `${nbsp}%`;
+  const avant = Math.round(scoreProjete(equipe.cartes, equipe.capitaine, sport));
+  const unite = '';
   const ligneAlt = (c) => {
-    const l = parId.get(c.carteId), apres = Math.round(o.squad ? valeur(c) : c.pPasser * 100);
+    const l = parId.get(c.carteId), apres = Math.round(valeur(c));
     const classe = apres > avant ? 'mieux' : apres < avant ? 'moins' : 'pareil';
     const tard = !o.squad && Date.parse(l.m.debutUTC) - dernier > 36 * 3600000 ? `<span class="tag attention">résultat le ${esc(fJour.format(new Date(l.m.debutUTC)))}</span>` : '';
-    const quoi = o.squad ? (sport === 'nba' ? "score projeté de l'équipe" : "score attendu de l'équipe") : 'chances de passer';
+    const quoi = "score projeté de l'équipe";
     return ligne(l, { capitaine: c.capitaine, epinglable: true, tags: tard, jouee: o.squad ? (jouees(sport).has(l.c.id) ? 'jouée en solo' : '') : undefined,
       extra: `<span class="delta ${classe}">${avant}${unite} → ${apres}${unite}</span><span class="mini doux">${quoi}${c.capitaine === c.carteId ? ', avec le brassard' : ''}${o.parEtoiles ? ` · à la place de ${esc(nomCourt(parId.get(c.remplace).j.nom))}` : ''}</span>` });
   };
   const explication = sport === 'nba'
-    ? `Par nombre d'étoiles, les meilleures cartes ${o.squad ? 'du jour ' : ''}hors de l'équipe : chacune avec le joueur qu'elle remplacerait au mieux (16 étoiles au plus) et ${o.squad ? "le score projeté de l'équipe" : 'la chance de passer'} avant → après.`
+    ? `Par nombre d'étoiles, les meilleures cartes ${o.squad ? 'du jour ' : ''}hors de l'équipe : chacune avec le joueur qu'elle remplacerait au mieux (16 étoiles au plus) et le score projeté de l'équipe avant → après.`
     : o.squad
-    ? `Pour chaque joueur de l'équipe, les meilleures cartes du jour qui peuvent le remplacer (postes, joueur unique${sport === 'nba' ? ', 16 étoiles' : ''}), et le ${sport === 'nba' ? 'score projeté' : 'score attendu'} de l'équipe avant → après le changement.`
-    : `Pour chaque joueur de l'équipe, les meilleures cartes qui peuvent le remplacer (postes, joueur unique${sport === 'nba' ? ', 16 étoiles' : ''}), et la chance de passer avant → après le changement.`;
+    ? `Pour chaque joueur de l'équipe, les meilleures cartes du jour qui peuvent le remplacer (postes, joueur unique${sport === 'nba' ? ', 16 étoiles' : ''}), et le score projeté de l'équipe avant → après le changement.`
+    : `Pour chaque joueur de l'équipe, les meilleures cartes qui peuvent le remplacer (postes, joueur unique${sport === 'nba' ? ', 16 étoiles' : ''}), et le score projeté de l'équipe avant → après le changement.`;
   el.innerHTML = `${tete}<p class="corps petit doux">${explication}</p>
     <div class="tableau">${sport === 'nba' ? groupesNba() : [...parRemplace.entries()].sort((x, y) => ordreEquipe.indexOf(x[0]) - ordreEquipe.indexOf(y[0])).map(([rem, { choix }]) => {
       const r = parId.get(rem), suite = choix.slice(1, AUTRES_PAR_GROUPE);
@@ -1038,9 +1041,9 @@ function afficherSquad() {
     const e = r.equipe, membres = membresDe(e), Jo = jouees(sport);
     if (!parId.has(vue.epingle[`squad|${sport}`])) vue.epingle[`squad|${sport}`] = membres[0].c.id; // le 1er joueur affiché, comme au Solo
     $('squad-contenu').innerHTML = `<div class="solo-grille avec-fiche">
-      <section class="carte" aria-label="Équipe du jour"><header><h2>Équipe du jour</h2><span class="doux petit">le meilleur ${sport === 'nba' ? 'score' : 'score attendu'} de la journée</span></header>
+      <section class="carte" aria-label="Équipe du jour"><header><h2>Équipe du jour</h2><span class="doux petit">le meilleur score projeté de la journée</span></header>
         <div class="corps pile">${kpisEquipe(e, sport, membres, { squad: true })}
-          <div style="padding-top:var(--e2)"><span class="libelle long">Qui porte l'équipe · ${sport === 'nba' ? 'score projeté' : 'score attendu'} par joueur${e.capitaine ? ', capitaine compris' : ''}</span><div style="margin-top:8px">${G.empilee(membres, e, sport)}</div></div></div>
+          <div style="padding-top:var(--e2)"><span class="libelle long">Qui porte l'équipe · score projeté par joueur${e.capitaine ? ', capitaine compris' : ''}</span><div style="margin-top:8px">${G.empilee(membres, e, sport)}</div></div></div>
         <div class="tableau">${enteteTab(sport)}${membres.map((l) => ligne(l, { capitaine: e.capitaine, epinglable: true, jouee: Jo.has(l.c.id) ? 'jouée en solo' : '' })).join('')}</div>
         <p class="corps note" style="padding-top:var(--e3)">${r.admissibles} cartes du jour retenues, ${r.nbEquipes} équipes comparées. Règles de composition supposées identiques au solo (à confirmer).</p></section>
       <section class="carte" id="autres-choix" aria-label="Autres choix"><header><h2>Autres choix</h2><span class="doux petit">si tu préfères ajuster l'équipe du jour</span></header><p class="attente">Recherche des autres joueurs…</p></section>
