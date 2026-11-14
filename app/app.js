@@ -12,6 +12,7 @@
 // sinon stockage du navigateur.
 
 import { projeterCarte } from '../src/moteur/projection.js';
+import { equipeDuMatch } from '../src/moteur/jouer.js';
 import { proposer, proposerParCreneau, squadDuJour, joursAVenir, jourDeJeu, autresChoix } from '../src/moteur/compositions.js';
 import { statsEquipe, serieEnMots, formeJoueur, resultat } from '../src/moteur/forme.js';
 import { distribution, tirerTotaux, resumerTirages, quantilesSiJoue, multiplicateurCarte } from '../src/moteur/simulation.js';
@@ -36,8 +37,9 @@ async function chargerDonnees() {
 function deplier(joueur) {
   return {
     ...joueur,
-    historique: joueur.h.map(([date, st, si, score, minutes]) => ({
+    historique: joueur.h.map(([date, st, si, score, minutes, stats]) => ({
       date, statut: STATUTS_CODES[st], situation: SITUATIONS_CODES[si], score, minutes,
+      ...(stats ? { stats: Object.fromEntries((D.ordreStatsNba ?? []).map((k, i) => [k, stats[i]])) } : {}),
     })),
   };
 }
@@ -164,7 +166,7 @@ const lignes = D.cartes.map((c) => {
   const j = joueurs.get(c.joueurId);
   const m = matchs.get(j?.prochainMatchId) ?? null;
   const pr = projeterCarte(c, j, m, D.P, D.regles[c.sport]);
-  const club = j.club?.slug;
+  const club = equipeDuMatch(j, m) ?? j.club?.slug; // club ou sélection
   const lieu = m ? (m.domicile?.slug === club ? 'dom' : m.exterieur?.slug === club ? 'ext' : null) : null;
   return { c, j, m, pr, lieu, adv: m ? (lieu === 'dom' ? m.exterieur?.nom : lieu === 'ext' ? m.domicile?.nom : `${m.domicile?.nom} – ${m.exterieur?.nom}`) : null,
     cotes: m?.cotes ? (lieu === 'dom' ? m.cotes.domicile : lieu === 'ext' ? m.cotes.exterieur : null) : null };

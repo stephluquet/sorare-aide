@@ -99,3 +99,14 @@ test('retrait vers la moyenne du poste (methode.md 3 bis) : football par situati
   const t = R.nba.taux_moyen + (40 / 30 - R.nba.taux_moyen) * 10 / (10 + R.nba.k);
   assert.ok(Math.abs(n.score.mu - 30 * t) < 1e-9, `${n.score.mu} / ${30 * t}`);
 });
+
+// Matchs de sélection (correction du 2026-11-14) : l'équipe du joueur dans le match est son club ou sa sélection.
+test('equipeDuMatch : club, sinon sélection connue par l’historique, sinon null', async () => {
+  const { equipeDuMatch } = await import('../src/moteur/jouer.js');
+  const match = { domicile: { slug: 'spain' }, exterieur: { slug: 'england' } };
+  const kane = { club: { slug: 'bayern-munchen' }, historique: [{ equipe: 'bayern-munchen' }, { equipe: 'england' }] };
+  assert.equal(equipeDuMatch(kane, match), 'england');
+  assert.equal(equipeDuMatch({ ...kane, historique: undefined, equipesPassees: ['england'] }, match), 'england');
+  assert.equal(equipeDuMatch({ club: { slug: 'spain' } }, match), 'spain');
+  assert.equal(equipeDuMatch({ club: { slug: 'toulouse' }, historique: [{ equipe: 'toulouse' }] }, match), null);
+});

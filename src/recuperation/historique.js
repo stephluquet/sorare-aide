@@ -14,6 +14,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
+import { FORMAT_ARCHIVE } from './fusion.js';
 export { fusionner, trou, besoinHistoriqueComplet } from './fusion.js';
 
 export function cheminArchive(racine, sport, joueurId) {
@@ -34,6 +35,7 @@ export function ecrireArchive(chemin, joueurId, matchs, { complet = false } = {}
     joueurId,
     misAJour: new Date().toISOString(),
     dernierHistoriqueComplet: complet ? new Date().toISOString() : ancien?.dernierHistoriqueComplet ?? null,
+    format: complet ? FORMAT_ARCHIVE : ancien?.format ?? 1,
     matchs,
   };
   // Un match par ligne : fichier compact et diff lisibles.

@@ -2,7 +2,7 @@
 // par minute en NBA), bonus et espérance (methode.md, sections 3 et 4).
 // JavaScript pur, sans accès réseau ni disque.
 
-import { matchsComptes, poids, probabiliteJouer } from './jouer.js';
+import { equipeDuMatch, matchsComptes, poids, probabiliteJouer } from './jouer.js';
 
 function moyennePonderee(valeurs, ws) {
   let s = 0, d = 0;
@@ -82,7 +82,7 @@ export function scoreSiJoue(joueur, P, { situationConfirmee = null, victoire = n
  */
 export function projeterCarte(carte, joueur, match, P, regles = {}) {
   const jouer = probabiliteJouer(joueur, match, P, regles);
-  const club = joueur.club?.slug;
+  const club = equipeDuMatch(joueur, match); // club ou sélection
   const cotes = match?.cotes ? (match.domicile?.slug === club ? match.cotes.domicile : match.exterieur?.slug === club ? match.cotes.exterieur : null) : null;
   const score = scoreSiJoue(joueur, P, { situationConfirmee: jouer.situationConfirmee, victoire: cotes?.victoire ?? null });
   const raisons = [...jouer.raisons];

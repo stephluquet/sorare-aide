@@ -17,7 +17,7 @@ const STATS_MATCH = `
     onGameSheet
     playedInGame
     ... on PlayerGameStats { fieldStatus gameStarted minsPlayed }
-    ... on PlayerGameStatsBasketball { minsPlayed }
+    ... on PlayerGameStatsBasketball { minsPlayed points rebounds assists steals blocks turnovers threePointsMade doubleDouble tripleDouble }
   }`;
 
 export const CARTES = `
@@ -85,6 +85,15 @@ query Historique($slug: String!, $first: Int!) {
   anyPlayer(slug: $slug) {
     slug
     allPlayerGameScores(first: $first) { nodes { ${STATS_MATCH} } }
+  }
+}`;
+
+// Barème officiel du score NBA (vérifié le 2026-11-14) : lu dans le détail du score d'un match récent,
+// jamais recopié dans le code. Coût : environ 100.
+export const BAREME_NBA = `
+query BaremeNba($slug: String!) {
+  anyPlayer(slug: $slug) {
+    allPlayerGameScores(first: 3) { nodes { ... on BasketballPlayerGameScore { scoreStatus scoringVersion detailedScore { stat points } } } }
   }
 }`;
 

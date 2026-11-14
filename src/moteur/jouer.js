@@ -3,6 +3,18 @@
 
 // Poids d'un match de rang i (0 = le plus récent) : décroissance exponentielle,
 // réduite pour un match de la saison précédente.
+/**
+ * Équipe (slug) du joueur dans un match : son club s'il y figure, sinon l'équipe du match avec laquelle il a
+ * déjà joué d'après son historique (sa sélection nationale), sinon null.
+ */
+export function equipeDuMatch(joueur, match) {
+  if (!match?.domicile || !match?.exterieur) return null;
+  const equipes = [match.domicile.slug, match.exterieur.slug];
+  if (joueur?.club?.slug && equipes.includes(joueur.club.slug)) return joueur.club.slug;
+  const passees = new Set(joueur?.equipesPassees ?? (joueur?.historique ?? []).map((m) => m.equipe).filter(Boolean));
+  return equipes.find((e) => passees.has(e)) ?? null;
+}
+
 export function poids(i, demiVie, date, P, sport) {
   const decroissance = demiVie === Infinity ? 1 : 0.5 ** (i / demiVie);
   const anterieur = date && P[sport].debut_saison && date < P[sport].debut_saison;
@@ -79,9 +91,10 @@ export function probabiliteJouer(joueur, match, P, regles = {}) {
   }
   if (pHist === null) exclure(`moins de ${P.min_matchs_historique} matchs connus : à vérifier`);
   if (sport === 'football' && P.statuts_sorare_douteux.includes(joueur.statutSorare)) douter(`statut Sorare ${joueur.statutSorare}`);
-  if (match && joueur.club && match.domicile && match.exterieur &&
-      ![match.domicile.slug, match.exterieur.slug].includes(joueur.club.slug)) {
-    douter('club absent du prochain match (sélection ?) : à vérifier');
+  // Équipe du joueur dans le match : son club, ou sa sélection (matchs de sélection jouables, ex. Ligue des
+  // nations ; correction du 2026-11-14 : ces joueurs étaient tous marqués douteux à tort).
+  if (match && match.domicile && match.exterieur && !equipeDuMatch(joueur, match)) {
+    douter('équipe introuvable dans le match (sélection sans match récent avec elle ?) : à vérifier');
   }
   // Contexte (methode.md, section 9) : blessures annoncées par ESPN, deuxième soir consécutif (NBA).
   const K = P.contexte ?? {};
@@ -109,7 +122,7 @@ export function probabiliteJouer(joueur, match, P, regles = {}) {
 
   // Composition officielle publiée (football) : elle l'emporte sur tout le reste (methode.md, 1 bis).
   let situationConfirmee = null;
-  const compo = match?.compositionsOfficielles?.equipes?.[joueur.club?.slug];
+  const compo = match?.compositionsOfficielles?.equipes?.[equipeDuMatch(joueur, match)];
   if (compo && P.compositions_officielles) {
     const C = P.compositions_officielles;
     const garder = raisons.filter((r) => !/^(blessé|retour de blessure|statut Sorare|moins de)/.test(r));

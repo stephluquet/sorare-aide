@@ -10,10 +10,10 @@
 //   tableBonus   bonus de collection de regles/bonus-collections.json (contrôle seulement)
 //   lireEspn()   → liste des blessures NBA d'ESPN (facultatif)
 //   suivi({ sport, etape, fait, total, texte })   progression (facultatif)
-import { CARTES, COMPOSITIONS, HISTORIQUE, PALIERS } from './requetes.js';
+import { BAREME_NBA, CARTES, COMPOSITIONS, HISTORIQUE, PALIERS } from './requetes.js';
 import { matchHistorique, normaliserCarte, normaliserCompositions, normaliserJoueur, normaliserMatch, normaliserPaliers } from './normaliser.js';
 import { rapprocherBlessures } from './espn.js';
-import { besoinHistoriqueComplet, fusionner, trou } from './fusion.js';
+import { archivePerimee, besoinHistoriqueComplet, fusionner, trou } from './fusion.js';
 
 export const TAILLE_PAGE = 50;
 export const NB_MATCHS_HISTORIQUE = 40;
@@ -95,8 +95,9 @@ export async function recupererSport(slug, sport, deps, { sansHistorique = false
     const archive = await magasin.lire(sport, p.slug);
     archives.set(p.slug, archive);
     // Une archive créée sans historique complet (--sans-historique) ne compte pas.
-    if (!refaireHistorique && !besoinHistoriqueComplet(archive, recus)) continue;
-    if (refaireHistorique || !archive?.dernierHistoriqueComplet) aCompleter.push(p.slug);
+    const perimee = archivePerimee(archive, sport);
+    if (!refaireHistorique && !perimee && !besoinHistoriqueComplet(archive, recus)) continue;
+    if (refaireHistorique || perimee || !archive?.dernierHistoriqueComplet) aCompleter.push(p.slug);
     else if (trou(archive.matchs, recus)) { aCompleter.push(p.slug); anomalies.push(`${tag} trou dans l'historique, 40 matchs refaits : ${p.slug}`); }
   }
   // Chaque joueur complété est enregistré tout de suite : une récupération interrompue reprend là où elle s'est arrêtée.
@@ -139,7 +140,23 @@ export async function recupererSport(slug, sport, deps, { sansHistorique = false
     }
   }
 
-  return { cartes, joueurs, matchs: [...matchs.values()], paliers, totalCartes: total };
+  // Barème NBA (lu dans l'API, jamais recopié) : détail du score d'un joueur qui a joué récemment.
+  let bareme = null;
+  if (sport === 'nba') {
+    const temoin = joueurs.find((j) => j.historique?.some((m) => m.situation === 'joue' && m.statut === 'FINAL'));
+    if (temoin) {
+      try {
+        const d = await appel(BAREME_NBA, { slug: temoin.id });
+        const n = (d.anyPlayer?.allPlayerGameScores?.nodes ?? []).find((x) => x?.detailedScore?.length);
+        if (n) bareme = { sport: 'nba', version: n.scoringVersion ?? null, poids: Object.fromEntries(n.detailedScore.map((x) => [x.stat, x.points])), luA: new Date().toISOString() };
+      } catch (e) {
+        anomalies.push(`${tag} barème illisible : ${e.message}`);
+      }
+    }
+    if (!bareme) anomalies.push(`${tag} barème NBA non lu`);
+  }
+
+  return { cartes, joueurs, matchs: [...matchs.values()], paliers, totalCartes: total, bareme };
 }
 
 /**
@@ -151,10 +168,13 @@ export async function recupererTout(slug, sports, deps, options = {}, precedent 
   const debut = new Date();
   const anomalies = [];
   const tout = { cartes: [], joueurs: [], matchs: [], paliers: [] };
+  const baremes = {};
   for (const sport of sports) {
     const r = await recupererSport(slug, sport, deps, { ...options, anomalies });
     for (const k of Object.keys(tout)) tout[k].push(...r[k]);
+    if (r.bareme) baremes[sport] = r.bareme;
   }
+  if (precedent?.baremes) for (const [s, b] of Object.entries(precedent.baremes)) baremes[s] ??= b;
   // Un sport non récupéré cette fois-ci est repris tel quel de la récupération précédente (même manager).
   const recupereParSport = Object.fromEntries(sports.map((s) => [s, debut.toISOString()]));
   if (precedent && precedent.meta?.slug === slug) {
@@ -176,5 +196,5 @@ export async function recupererTout(slug, sports, deps, options = {}, precedent 
     nb: Object.fromEntries(Object.entries(tout).map(([k, v]) => [k, v.length])),
     anomalies,
   };
-  return { meta, ...tout };
+  return { meta, ...tout, baremes };
 }

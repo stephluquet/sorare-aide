@@ -41,12 +41,22 @@ export function matchHistorique(g, sport) {
     score: g.score,
     situation: situation(s, sport),
     minutes: s?.minsPlayed ?? null,
+    // NBA : statistiques du match, aux noms du barème de l'API (detailedScore) ; null si non jouées ou absentes.
+    ...(sport === 'nba' && s && s.points !== undefined ? { stats: statsNba(s) } : {}),
     // Contexte du match, du point de vue de l'équipe du joueur : buts (ou points) et cotes d'avant-match
     // (football ; les cotes restent lisibles après le match, vérifié le 2026-11-07).
     pour: aDomicile === true ? m.homeScore ?? null : aDomicile === false ? m.awayScore ?? null : null,
     contre: aDomicile === true ? m.awayScore ?? null : aDomicile === false ? m.homeScore ?? null : null,
     cotes: aDomicile === true ? cotes(m.homeStats) : aDomicile === false ? cotes(m.awayStats) : null,
   };
+}
+
+// Champs de PlayerGameStatsBasketball → noms des statistiques du barème (detailedScore.stat).
+export const STATS_NBA = { points: 'points', rebounds: 'rebounds', assists: 'assists', blocks: 'blocks', steals: 'steals',
+  turnovers: 'turnovers', threePointsMade: 'three_points_made', doubleDouble: 'double_double', tripleDouble: 'triple_double' };
+function statsNba(s) {
+  if (!s.playedInGame) return null;
+  return Object.fromEntries(Object.entries(STATS_NBA).map(([champ, nom]) => [nom, s[champ] ?? 0]));
 }
 
 function cotes(stats) {

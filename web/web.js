@@ -9,6 +9,7 @@
 // dans un fichier, pour changer d'appareil ou se prémunir d'un effacement (Safari : 7 jours sans visite).
 import { creerAppel } from '../src/recuperation/appel.js';
 import { recupererTout } from '../src/recuperation/coeur.js';
+import { FORMAT_ARCHIVE } from '../src/recuperation/fusion.js';
 import { lireBlessuresNba } from '../src/recuperation/espn.js';
 import { CARTES } from '../src/recuperation/requetes.js';
 import { parametresDepuisMethode } from '../src/moteur/parametres.js';
@@ -64,7 +65,8 @@ const magasin = {
     const ancien = await magasin.lire(sport, id);
     if (ancien && !complet && JSON.stringify(ancien.matchs) === JSON.stringify(matchs)) return false;
     const maintenant = new Date().toISOString();
-    await ecrireCle('archives', `${sport}/${id}`, { joueurId: id, misAJour: maintenant, dernierHistoriqueComplet: complet ? maintenant : ancien?.dernierHistoriqueComplet ?? null, matchs });
+    await ecrireCle('archives', `${sport}/${id}`, { joueurId: id, misAJour: maintenant, dernierHistoriqueComplet: complet ? maintenant : ancien?.dernierHistoriqueComplet ?? null,
+      format: complet ? FORMAT_ARCHIVE : ancien?.format ?? 1, matchs });
     return true;
   },
 };

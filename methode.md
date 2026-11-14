@@ -153,7 +153,7 @@ déclarée, `p` est donc plutôt prudente.
 | Blessure avec retour prévu avant le prochain match | `p` inchangée, joueur **douteux** |
 | Suspension dans une autre compétition | `p` inchangée, alerte |
 | Statut Sorare dans `statuts_sorare_douteux` (football) | `p` inchangée, joueur **douteux** (statut cohérent avec l'historique : `NOT_PLAYING` → p_hist médiane 0,02, `STARTER` → 0,98, sur les cartes du 2026-11-07 ; utile pour les quelques joueurs annoncés absents qui jouaient encore) |
-| Club du joueur absent du prochain match (match de sélection) | `p` inchangée, joueur **douteux** |
+| Équipe du joueur introuvable dans le prochain match : ni son club, ni une équipe avec laquelle il a joué dans son historique (sa sélection) | `p` inchangée, joueur **douteux**. **Depuis le 2026-11-14**, un match de sélection (Ligue des nations, jouable en Arcade) n'est plus douteux : l'équipe du joueur est sa sélection, retrouvée dans son historique (`equipeDuMatch`), et les cotes et compositions sont lues pour elle. Limite : ses chances de jouer reposent sur tout son historique, club et sélection mêlés. |
 | **Composition officielle publiée** (football) | **l'emporte sur tout le reste**, voir 1 bis |
 
 ### 1 bis. Compositions officielles (football)

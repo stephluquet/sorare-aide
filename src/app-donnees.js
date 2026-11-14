@@ -6,6 +6,8 @@ import { matchsParEquipe } from './moteur/forme.js';
 export const FORMAT_APP = 1;
 const STATUT = { FINAL: 'F', REVIEWING: 'R', DID_NOT_PLAY: 'D' };
 const SITUATION = { titulaire: 't', entre: 'e', joue: 'j', banc: 'b', absent: 'a', inconnu: 'i' };
+// Ordre des statistiques NBA dans l'historique compact (noms du barème de l'API).
+export const ORDRE_STATS_NBA = ['points', 'rebounds', 'assists', 'blocks', 'steals', 'turnovers', 'three_points_made', 'double_double', 'triple_double'];
 
 /**
  * @param donnees  { meta, cartes, joueurs, matchs, paliers }
@@ -18,7 +20,9 @@ export function preparerDonneesApp({ donnees, P, regles, journees, visuels = fal
   const historiqueCompact = (h) => h
     .filter((m) => P.statuts_comptes.includes(m.statut))
     .slice(0, P.fenetre_matchs)
-    .map((m) => [m.date, STATUT[m.statut], SITUATION[m.situation] ?? 'i', m.score == null ? null : Math.round(m.score * 10) / 10, m.minutes]);
+    .map((m) => { const l = [m.date, STATUT[m.statut], SITUATION[m.situation] ?? 'i', m.score == null ? null : Math.round(m.score * 10) / 10, m.minutes];
+      if (m.stats) l.push(ORDRE_STATS_NBA.map((k) => m.stats[k] ?? 0));
+      return l; });
 
   // Forme des équipes (affichage, methode.md 9 bis) : derniers matchs terminés des clubs actuels
   // des joueurs et de leurs prochains adversaires, au format [date, adversaire, domicile 1/0, pour, contre].
@@ -35,6 +39,9 @@ export function preparerDonneesApp({ donnees, P, regles, journees, visuels = fal
     regles,
     paliers: donnees.paliers,
     journees,
+    // Barème officiel lu dans l'API (NBA) et ordre des statistiques de l'historique compact.
+    baremes: donnees.baremes ?? {},
+    ordreStatsNba: ORDRE_STATS_NBA,
     cartes: donnees.cartes.map(({ id, sport, joueurId, rarete, collection, bonusPct, visuelUrl }) =>
       ({ id, sport, joueurId, rarete, collection, bonusPct, ...(visuels ? { visuelUrl: visuelUrl ?? null } : {}) })),
     joueurs: donnees.joueurs.map((j) => ({
@@ -42,6 +49,8 @@ export function preparerDonneesApp({ donnees, P, regles, journees, visuels = fal
       statutSorare: j.statutSorare, blessures: j.blessures, suspensions: j.suspensions, prochainMatchId: j.prochainMatchId,
       ...(j.espn ? { espn: j.espn } : {}),
       h: historiqueCompact(j.historique ?? []),
+      // équipes avec lesquelles il a joué (club et sélection) : reconnaître sa sélection dans un match
+      equipesPassees: [...new Set((j.historique ?? []).map((m) => m.equipe).filter(Boolean))],
     })),
     matchs: donnees.matchs,
     equipes,
