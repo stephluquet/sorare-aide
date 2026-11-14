@@ -206,7 +206,8 @@ export function proposerParCreneau(lignes, P, o) {
  * @param o { sport, jour: 'AAAA-MM-JJ' (journée de jeu), fuseau (journee_de_jeu du sport), regle, seuil, maintenant }
  */
 export function squadDuJour(lignes, P, o) {
-  const { admissibles, ecartees } = cartesAdmissibles(lignes, P, { ...o, jouees: new Set() });
+  const { admissibles: adm0, ecartees } = cartesAdmissibles(lignes, P, { ...o, jouees: new Set() });
+  const admissibles = valeursSquad(adm0, o.sport);
   const mult = o.regle.capitaine?.multiplicateur ?? 1;
   const generateur = o.sport === 'football' ? equipesFootball(admissibles, o.regle, P.simulation) : equipesNba(admissibles, o.regle, P.simulation);
   let meilleure = null, nbEquipes = 0;
@@ -230,6 +231,14 @@ export function squadDuJour(lignes, P, o) {
   };
 }
 
+// Valeur d'une carte en Squad : l'espérance en football ; en NBA, le score projeté (score s'il joue,
+// décision de l'utilisateur du 2026-11-14 : la disponibilité est déjà filtrée par le seuil et le
+// seuil de minutes). Copie des lignes où « esperance » porte cette valeur.
+function valeursSquad(adm, sport) {
+  if (sport !== 'nba') return adm;
+  return adm.map((x) => ({ ...x, projection: { ...x.projection, esperance: x.projection.siJoue } }));
+}
+
 // Score attendu d'une équipe de Squad : somme des espérances, plus le gain du brassard
 // (en addition : (mult − 1) × score de base attendu ; en multiplication : (mult − 1) × espérance),
 // capitaine = le plus grand gain.
@@ -251,7 +260,7 @@ function scoreSquad(equipe, regle, mult = regle.capitaine?.multiplicateur ?? 1) 
  */
 export function autresChoixSquad(lignes, P, o, equipeSquad) {
   const sim = P.simulation, regle = o.regle, mult = regle.capitaine?.multiplicateur ?? 1;
-  const { admissibles } = cartesAdmissibles(lignes, P, { ...o, jouees: new Set() });
+  const admissibles = valeursSquad(cartesAdmissibles(lignes, P, { ...o, jouees: new Set() }).admissibles, o.sport);
   const parId = new Map(admissibles.map((x) => [x.carte.id, x]));
   const equipe = equipeSquad.cartes.map((id) => parId.get(id));
   if (equipe.some((x) => !x)) return { groupes: [] };

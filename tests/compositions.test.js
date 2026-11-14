@@ -234,6 +234,22 @@ test('Squad, autres choix : hors des joueurs de l’équipe, meilleur remplaceme
   }
 });
 
+test('Squad NBA : choisi sur le score projeté, pas sur l’espérance', () => {
+  // Cinq joueurs sûrs (p élevée) et un joueur au score projeté plus haut mais moins disponible.
+  const L = ['a', 'b', 'c', 'd', 'e'].map((k) => ligne(k, { sport: 'nba', niveau: 30 }));
+  const fort = ligne('fort', { sport: 'nba', niveau: 32 });
+  fort.projection = { ...fort.projection, p: 0.81, esperance: 0.81 * fort.projection.siJoue };
+  L.push(fort);
+  const o = { sport: 'nba', jour: jourDeJeu(L[0].match.debutUTC, 'America/New_York'), fuseau: 'America/New_York', regle: { postes: null, capitaine: null, plafond_etoiles: null }, seuil: 0.8, maintenant: MAINTENANT };
+  const r = squadDuJour(L, P, o);
+  assert.ok(r.equipe, r.message);
+  const pa = L[0].projection;
+  assert.ok(fort.projection.siJoue > pa.siJoue && fort.projection.esperance < pa.esperance, `cas discriminant : ${fort.projection.siJoue} / ${fort.projection.esperance} contre ${pa.siJoue} / ${pa.esperance}`);
+  assert.ok(r.equipe.cartes.includes('fort-carte'), 'le meilleur score projeté entre, malgré une disponibilité plus basse');
+  const somme = r.equipe.cartes.reduce((t, id) => t + L.find((l) => l.carte.id === id).projection.siJoue, 0);
+  assert.ok(Math.abs(r.equipe.esperance - somme) < 1e-9, 'la valeur de l’équipe est la somme des scores projetés');
+});
+
 test('cumul des bonus par addition : capitaine Eclipse × 1,7 ; le brassard va au meilleur score de base', () => {
   assert.ok(Math.abs(multiplicateurCarte({ b: 1.2 }, true, 1.5, 'addition') - 1.7) < 1e-12);
   assert.ok(Math.abs(multiplicateurCarte({ b: 1.2 }, true, 1.5, 'multiplication') - 1.8) < 1e-12);

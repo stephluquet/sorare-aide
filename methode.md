@@ -419,11 +419,16 @@ Vérifié sur un mois de calendrier (voir `CLAUDE.md`). Mêmes règles de
 composition que l'Arcade du sport (à confirmer dans le jeu). Recherche
 exhaustive sur les candidats présélectionnés de la section 6.
 
+**NBA : choix sur le score projeté** (décision de l'utilisateur, 2026-11-14) : en NBA, la valeur
+d'une carte en Squad est son score projeté (score s'il joue, bonus compris), pas son espérance :
+la disponibilité est déjà filtrée par le seuil de chances de jouer et par le seuil de minutes
+projetées, et l'appli NBA n'affiche plus l'espérance. Le football garde l'espérance.
+
 **Autres choix du Squad** (2026-11-14, `autresChoixSquad`) : comme en section 6 bis, les
 meilleures espérances par poste (football) ou en tout (NBA) parmi les cartes du jour, hors des
 joueurs de l'équipe ; pour chacune, le remplacement permis (postes, joueur unique, étoiles) qui
 garde le meilleur score attendu d'équipe, brassard recalculé. On affiche le score attendu de
-l'équipe avant → après (NBA : la somme des scores projetés, l'espérance n'étant pas affichée).
+l'équipe avant → après (NBA : la somme des scores projetés).
 L'équipe du jour étant la meilleure, un remplacement ne peut que coûter des points.
 
 ## 9. Contexte du match
