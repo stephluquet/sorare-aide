@@ -121,9 +121,10 @@ minute, **par navigateur**. **À vérifier** : si Sorare compte les appels par a
 utilisateurs passant par le même relais Cloudflare pourraient se gêner (erreurs 429). L'API Sorare est servie par
 CloudFront (Amazon), pas par Cloudflare (en-têtes lus le 2026-11-08) : pas de restriction connue entre les deux.
 
-**Obtenir une clé API Sorare** : elle n'est pas en libre-service. D'après le centre d'aide de Sorare, on ouvre un
-ticket en expliquant son projet ; il faut un numéro de téléphone vérifié et au moins une composition inscrite à une
-compétition à venir (voir les sources). Chaque personne avec qui l'on partage devra faire cette demande.
+**Obtenir une clé API Sorare** : elle se crée soi-même dans les réglages du compte Sorare, bloc « API Keys », bouton
+« Créer une API key » (vu sur une capture de l'utilisateur le 2026-11-14 ; une ancienne page d'aide parlait d'un ticket).
+La clé indique son débit (« 200 demandes/minute ») ; la page annonce « jusqu'à 600 requêtes/minute » sans dire comment
+l'obtenir (à vérifier). L'appli se limite de toute façon à 150 par minute (plafond fixe des champs NBA).
 
 ## 8. Option : site réservé à quelques personnes (Cloudflare Access)
 

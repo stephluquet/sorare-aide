@@ -233,7 +233,7 @@ async function ecranParametres({ premier = false, message = null } = {}) {
       <div class="web-champ"><label for="web-cle">Clé API Sorare</label>
         <input type="password" id="web-cle" autocomplete="off" spellcheck="false" required value="${esc(p.cle ?? '')}">
         <span class="web-doux">Elle reste dans ce navigateur, sur cet appareil. Elle passe par le relais du site pour atteindre Sorare, qui ne la garde pas.
-        Une clé se demande à Sorare par un ticket au centre d’aide.</span></div>
+        Elle se crée dans les réglages de ton compte Sorare, rubrique « API Keys ».</span></div>
       <fieldset class="web-champ" style="border:0;padding:0;margin:0"><legend style="font-weight:600;margin-bottom:6px">Sports</legend>
         <div class="web-cases">${SPORTS.map((s) => `<label><input type="checkbox" name="sport" value="${s}" ${(p.sports ?? SPORTS).includes(s) ? 'checked' : ''}> ${NOMS[s]}</label>`).join('')}</div></fieldset>
       <p id="web-test" class="web-doux" role="status"></p>
