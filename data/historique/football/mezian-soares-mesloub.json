@@ -1,8 +1,9 @@
 {
  "joueurId": "mezian-soares-mesloub",
- "misAJour": "2026-11-07T16:29:51.836Z",
+ "misAJour": "2026-11-14T08:02:35.068Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.836Z",
  "matchs": [
+  {"matchId":"Game:fddf70d2-2e82-4b89-b61b-16aa95280640","date":"2026-11-08T19:45:00Z","equipe":"lens-avion","competition":"Ligue 1","domicile":true,"adversaire":"Olympique de Marseille","statut":"FINAL","score":29.5,"situation":"entre","minutes":22,"pour":1,"contre":2,"cotes":{"victoire":0.42,"nul":0.26,"defaite":0.32,"coteCleanSheet":3.5}},
   {"matchId":"Game:c2431665-ef05-4c66-a0b1-93aa8f22ea73","date":"2026-11-04T20:00:00Z","equipe":"lens-avion","competition":"UEFA Champions League","domicile":true,"adversaire":"Calcio Como","statut":"FINAL","score":30.6,"situation":"entre","minutes":45,"pour":1,"contre":9,"cotes":{"victoire":0.26,"nul":0.26,"defaite":0.48,"coteCleanSheet":5.5}},
   {"matchId":"Game:ba9e398a-ca1f-453d-b986-339c3f6ee117","date":"2026-10-30T20:05:00Z","equipe":"lens-avion","competition":"Ligue 1","domicile":false,"adversaire":"LOSC Lille","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":0,"contre":1,"cotes":{"victoire":0.35,"nul":0.3,"defaite":0.35,"coteCleanSheet":3.4}},
   {"matchId":"Game:bf770412-4767-4812-9cef-dbd19f154f02","date":"2026-10-24T18:45:00Z","equipe":"lens-avion","competition":"Ligue 1","domicile":true,"adversaire":"Paris FC","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":2,"contre":1,"cotes":{"victoire":0.37,"nul":0.28,"defaite":0.35,"coteCleanSheet":4}},

@@ -1,9 +1,12 @@
 {
  "joueurId": "payton-pritchard-19980128",
- "misAJour": "2026-11-08T17:51:22.870Z",
+ "misAJour": "2026-11-14T08:03:10.029Z",
  "dernierHistoriqueComplet": "2026-11-08T17:51:22.870Z",
  "matchs": [
-  {"matchId":"Game:3bdb7370-19f3-4dd2-a6e7-ec50074524e6","date":"2026-11-07T00:00:00Z","equipe":"boston-celtics","competition":"NBA","domicile":false,"adversaire":"Charlotte Hornets","statut":"REVIEWING","score":29.7,"situation":"joue","minutes":24,"pour":119,"contre":80,"cotes":null},
+  {"matchId":"Game:6d38d0ee-b42b-43c0-b10d-92e83457fe1e","date":"2026-11-12T00:00:00Z","equipe":"boston-celtics","competition":"NBA","domicile":false,"adversaire":"Toronto Raptors","statut":"FINAL","score":8.7,"situation":"joue","minutes":32,"pour":98,"contre":93,"cotes":null},
+  {"matchId":"Game:81ef5c59-8716-4709-9f25-c7f4b1fdf8c5","date":"2026-11-11T01:00:00Z","equipe":"boston-celtics","competition":"NBA","domicile":false,"adversaire":"Philadelphia 76ers","statut":"FINAL","score":39.7,"situation":"joue","minutes":30,"pour":123,"contre":101,"cotes":null},
+  {"matchId":"Game:c7ce88d3-9821-4cbe-85e9-c9328dff74f7","date":"2026-11-09T01:00:00Z","equipe":"boston-celtics","competition":"NBA","domicile":false,"adversaire":"Milwaukee Bucks","statut":"FINAL","score":31,"situation":"joue","minutes":30,"pour":117,"contre":97,"cotes":null},
+  {"matchId":"Game:3bdb7370-19f3-4dd2-a6e7-ec50074524e6","date":"2026-11-07T00:00:00Z","equipe":"boston-celtics","competition":"NBA","domicile":false,"adversaire":"Charlotte Hornets","statut":"FINAL","score":29.7,"situation":"joue","minutes":24,"pour":119,"contre":80,"cotes":null},
   {"matchId":"Game:5415ff21-a095-4d9c-8568-7898f2b385a4","date":"2026-11-05T00:30:00Z","equipe":"boston-celtics","competition":"NBA","domicile":true,"adversaire":"Milwaukee Bucks","statut":"FINAL","score":18.7,"situation":"joue","minutes":19,"pour":109,"contre":102,"cotes":null},
   {"matchId":"Game:ce0772fc-f24c-40ce-b31a-097977760824","date":"2026-11-03T01:30:00Z","equipe":"boston-celtics","competition":"NBA","domicile":false,"adversaire":"Houston Rockets","statut":"FINAL","score":13.1,"situation":"joue","minutes":31,"pour":93,"contre":109,"cotes":null},
   {"matchId":"Game:a85abfb4-a56e-414a-89a5-a151bf67bbe5","date":"2026-11-01T20:30:00Z","equipe":"boston-celtics","competition":"NBA","domicile":false,"adversaire":"Orlando Magic","statut":"FINAL","score":23.9,"situation":"joue","minutes":27,"pour":108,"contre":97,"cotes":null},

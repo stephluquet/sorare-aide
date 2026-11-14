@@ -1,9 +1,12 @@
 {
  "joueurId": "quinten-post-20000321",
- "misAJour": "2026-11-07T16:31:59.171Z",
+ "misAJour": "2026-11-14T08:03:10.076Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.171Z",
  "matchs": [
-  {"matchId":"Game:72b164e2-0e38-4403-905c-7c5a3c42d451","date":"2026-11-07T01:00:00Z","equipe":"memphis-grizzlies","competition":"NBA","domicile":true,"adversaire":"Oklahoma City Thunder","statut":"REVIEWING","score":5.4,"situation":"joue","minutes":15,"pour":97,"contre":128,"cotes":null},
+  {"matchId":"Game:082efe85-e637-46e2-a1df-7c1d690cd43b","date":"2026-11-14T01:00:00Z","equipe":"memphis-grizzlies","competition":"NBA","domicile":false,"adversaire":"New Orleans Pelicans","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":142,"contre":111,"cotes":null},
+  {"matchId":"Game:6fb3ec6c-be7c-4285-b497-7b8d410b0cfd","date":"2026-11-12T01:00:00Z","equipe":"memphis-grizzlies","competition":"NBA","domicile":true,"adversaire":"Denver Nuggets","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":118,"contre":123,"cotes":null},
+  {"matchId":"Game:289cd62b-7a85-46b7-987d-5b7aad1bec94","date":"2026-11-10T00:30:00Z","equipe":"memphis-grizzlies","competition":"NBA","domicile":false,"adversaire":"Toronto Raptors","statut":"FINAL","score":1.2,"situation":"joue","minutes":2,"pour":118,"contre":102,"cotes":null},
+  {"matchId":"Game:72b164e2-0e38-4403-905c-7c5a3c42d451","date":"2026-11-07T01:00:00Z","equipe":"memphis-grizzlies","competition":"NBA","domicile":true,"adversaire":"Oklahoma City Thunder","statut":"FINAL","score":5.4,"situation":"joue","minutes":15,"pour":97,"contre":128,"cotes":null},
   {"matchId":"Game:3ad5273b-1d46-44f3-9d79-56b5d4424e5f","date":"2026-11-05T01:00:00Z","equipe":"memphis-grizzlies","competition":"NBA","domicile":true,"adversaire":"Indiana Pacers","statut":"FINAL","score":4.2,"situation":"joue","minutes":12,"pour":103,"contre":107,"cotes":null},
   {"matchId":"Game:532fff94-4faa-4ba3-a973-9fcc354dd4df","date":"2026-11-03T01:00:00Z","equipe":"memphis-grizzlies","competition":"NBA","domicile":true,"adversaire":"New Orleans Pelicans","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":134,"contre":135,"cotes":null},
   {"matchId":"Game:24a2575a-ffbb-4105-b356-82cfbf050cab","date":"2026-11-01T00:00:00Z","equipe":"memphis-grizzlies","competition":"NBA","domicile":true,"adversaire":"Sacramento Kings","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":136,"contre":105,"cotes":null},

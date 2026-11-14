@@ -1,9 +1,9 @@
 {
  "joueurId": "tyrhys-dolan",
- "misAJour": "2026-11-08T17:51:06.928Z",
+ "misAJour": "2026-11-14T08:02:35.086Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.858Z",
  "matchs": [
-  {"matchId":"Game:6219527a-6904-4019-92f4-3179fa41038c","date":"2026-11-07T15:15:00Z","equipe":"espanyol-barcelona","competition":"Primera División","domicile":true,"adversaire":"Real Club Deportivo de La Coruña","statut":"REVIEWING","score":49.8,"situation":"titulaire","minutes":78,"pour":0,"contre":0,"cotes":{"victoire":0.38,"nul":0.3,"defaite":0.32,"coteCleanSheet":3}},
+  {"matchId":"Game:6219527a-6904-4019-92f4-3179fa41038c","date":"2026-11-07T15:15:00Z","equipe":"espanyol-barcelona","competition":"Primera División","domicile":true,"adversaire":"Real Club Deportivo de La Coruña","statut":"FINAL","score":49.8,"situation":"titulaire","minutes":78,"pour":0,"contre":0,"cotes":{"victoire":0.38,"nul":0.3,"defaite":0.32,"coteCleanSheet":3}},
   {"matchId":"Game:01433425-2952-4f5f-9f1c-a6aa24e73166","date":"2026-10-30T20:00:00Z","equipe":"espanyol-barcelona","competition":"Primera División","domicile":false,"adversaire":"Villarreal CF","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":1,"contre":0,"cotes":{"victoire":0.14,"nul":0.2,"defaite":0.66,"coteCleanSheet":10}},
   {"matchId":"Game:4f6a1354-b4ba-4b57-98fb-a4b7253fcd66","date":"2026-10-24T14:15:00Z","equipe":"espanyol-barcelona","competition":"Primera División","domicile":false,"adversaire":"Real Racing Club de Santander","statut":"FINAL","score":35.5,"situation":"entre","minutes":14,"pour":1,"contre":2,"cotes":{"victoire":0.32,"nul":0.27,"defaite":0.41,"coteCleanSheet":4.5}},
   {"matchId":"Game:466f7e52-c245-46d0-9e99-4538f4b95228","date":"2026-10-17T12:00:00Z","equipe":"espanyol-barcelona","competition":"Primera División","domicile":true,"adversaire":"Atlético de Madrid","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":0,"contre":1,"cotes":{"victoire":0.2,"nul":0.25,"defaite":0.55,"coteCleanSheet":6}},

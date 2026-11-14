@@ -1,9 +1,9 @@
 {
  "joueurId": "tyler-adams",
- "misAJour": "2026-11-08T17:51:06.964Z",
+ "misAJour": "2026-11-14T08:02:35.110Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.891Z",
  "matchs": [
-  {"matchId":"Game:d0c15def-46fc-4fdf-a4a7-ee75387eb8c8","date":"2026-11-08T14:00:00Z","equipe":"afc-bournemouth-bournemouth-dorset","competition":"Premier League","domicile":false,"adversaire":"Ipswich Town FC","statut":"REVIEWING","score":44.8,"situation":"titulaire","minutes":90,"pour":2,"contre":1,"cotes":{"victoire":0.49,"nul":0.26,"defaite":0.25,"coteCleanSheet":2.75}},
+  {"matchId":"Game:d0c15def-46fc-4fdf-a4a7-ee75387eb8c8","date":"2026-11-08T14:00:00Z","equipe":"afc-bournemouth-bournemouth-dorset","competition":"Premier League","domicile":false,"adversaire":"Ipswich Town FC","statut":"FINAL","score":50.7,"situation":"titulaire","minutes":90,"pour":2,"contre":1,"cotes":{"victoire":0.49,"nul":0.26,"defaite":0.25,"coteCleanSheet":2.75}},
   {"matchId":"Game:4e34c1b1-5870-4061-a8ce-75e4896191b6","date":"2026-11-05T17:45:00Z","equipe":"afc-bournemouth-bournemouth-dorset","competition":"UEFA Europa League","domicile":false,"adversaire":"AC Sparta Praha","statut":"FINAL","score":85.3,"situation":"entre","minutes":45,"pour":3,"contre":1,"cotes":{"victoire":0.64,"nul":0.21,"defaite":0.15,"coteCleanSheet":2.38}},
   {"matchId":"Game:37d74558-97d6-4c90-b5d5-fc1f8c252f89","date":"2026-10-31T15:00:00Z","equipe":"afc-bournemouth-bournemouth-dorset","competition":"Premier League","domicile":true,"adversaire":"Leeds United FC","statut":"FINAL","score":34.3,"situation":"titulaire","minutes":90,"pour":2,"contre":0,"cotes":{"victoire":0.45,"nul":0.28,"defaite":0.27,"coteCleanSheet":3}},
   {"matchId":"Game:adce3d3c-5283-4ff1-8125-35cf147165d5","date":"2026-10-25T14:00:00Z","equipe":"afc-bournemouth-bournemouth-dorset","competition":"Premier League","domicile":false,"adversaire":"Manchester United FC","statut":"FINAL","score":42.9,"situation":"titulaire","minutes":90,"pour":3,"contre":0,"cotes":{"victoire":0.32,"nul":0.28,"defaite":0.4,"coteCleanSheet":4}},

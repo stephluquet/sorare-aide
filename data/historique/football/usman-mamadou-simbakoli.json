@@ -1,9 +1,9 @@
 {
  "joueurId": "usman-mamadou-simbakoli",
- "misAJour": "2026-11-08T17:51:07.073Z",
+ "misAJour": "2026-11-14T08:02:35.189Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.973Z",
  "matchs": [
-  {"matchId":"Game:1544c86b-d482-4e36-b319-ee613eed4f3e","date":"2026-11-08T16:15:00Z","equipe":"angers-sco-angers","competition":"Ligue 1","domicile":true,"adversaire":"OGC Nice","statut":"REVIEWING","score":0,"situation":"banc","minutes":0,"pour":0,"contre":1,"cotes":{"victoire":0.27,"nul":0.26,"defaite":0.47,"coteCleanSheet":5}},
+  {"matchId":"Game:1544c86b-d482-4e36-b319-ee613eed4f3e","date":"2026-11-08T16:15:00Z","equipe":"angers-sco-angers","competition":"Ligue 1","domicile":true,"adversaire":"OGC Nice","statut":"FINAL","score":36.6,"situation":"entre","minutes":7,"pour":0,"contre":2,"cotes":{"victoire":0.27,"nul":0.26,"defaite":0.47,"coteCleanSheet":5}},
   {"matchId":"Game:7aeeaf50-1c17-49cc-8186-ef3c0be92915","date":"2026-11-01T16:15:00Z","equipe":"angers-sco-angers","competition":"Ligue 1","domicile":false,"adversaire":"Olympique Lyonnais","statut":"FINAL","score":33.1,"situation":"entre","minutes":21,"pour":0,"contre":2,"cotes":{"victoire":0.14,"nul":0.2,"defaite":0.66,"coteCleanSheet":7}},
   {"matchId":"Game:1038dc4a-ca15-454a-b30a-dc7748e8be75","date":"2026-10-25T16:15:00Z","equipe":"angers-sco-angers","competition":"Ligue 1","domicile":true,"adversaire":"FC Lorient","statut":"FINAL","score":34,"situation":"entre","minutes":7,"pour":0,"contre":0,"cotes":{"victoire":0.32,"nul":0.29,"defaite":0.39,"coteCleanSheet":3.5}},
   {"matchId":"Game:e9d944bc-5422-48a0-960a-bf386f891dd9","date":"2026-10-18T13:00:00Z","equipe":"angers-sco-angers","competition":"Ligue 1","domicile":true,"adversaire":"Olympique de Marseille","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":2,"contre":5,"cotes":{"victoire":0.26,"nul":0.26,"defaite":0.48,"coteCleanSheet":5.5}},

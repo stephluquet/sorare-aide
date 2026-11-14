@@ -1,10 +1,13 @@
 {
  "joueurId": "julian-champagnie-20010629",
- "misAJour": "2026-11-08T17:51:22.880Z",
+ "misAJour": "2026-11-14T08:03:09.971Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.108Z",
  "matchs": [
-  {"matchId":"Game:9db043e4-855f-450e-8073-6c9a61e3cf0f","date":"2026-11-08T03:00:00Z","equipe":"san-antonio-spurs","competition":"NBA","domicile":false,"adversaire":"Portland Trail Blazers","statut":"REVIEWING","score":22.8,"situation":"joue","minutes":22,"pour":125,"contre":103,"cotes":null},
-  {"matchId":"Game:02513574-cb5d-42ab-961d-144de8e6ea3f","date":"2026-11-07T03:00:00Z","equipe":"san-antonio-spurs","competition":"NBA","domicile":false,"adversaire":"Sacramento Kings","statut":"REVIEWING","score":19.4,"situation":"joue","minutes":23,"pour":124,"contre":109,"cotes":null},
+  {"matchId":"Game:a1f90fb2-ea47-4a96-bb5f-42714ca9582d","date":"2026-11-14T02:30:00Z","equipe":"san-antonio-spurs","competition":"NBA","domicile":true,"adversaire":"Golden State Warriors","statut":"REVIEWING","score":23.1,"situation":"joue","minutes":23,"pour":123,"contre":85,"cotes":null},
+  {"matchId":"Game:66443f4c-fa83-4b8d-8604-82c2f016b6c7","date":"2026-11-12T01:00:00Z","equipe":"san-antonio-spurs","competition":"NBA","domicile":false,"adversaire":"Chicago Bulls","statut":"FINAL","score":27,"situation":"joue","minutes":35,"pour":124,"contre":119,"cotes":null},
+  {"matchId":"Game:44cdf8b2-8721-41fc-a581-2147f3d6835a","date":"2026-11-10T02:00:00Z","equipe":"san-antonio-spurs","competition":"NBA","domicile":false,"adversaire":"Phoenix Suns","statut":"FINAL","score":22.6,"situation":"joue","minutes":28,"pour":122,"contre":96,"cotes":null},
+  {"matchId":"Game:9db043e4-855f-450e-8073-6c9a61e3cf0f","date":"2026-11-08T03:00:00Z","equipe":"san-antonio-spurs","competition":"NBA","domicile":false,"adversaire":"Portland Trail Blazers","statut":"FINAL","score":22.8,"situation":"joue","minutes":22,"pour":125,"contre":103,"cotes":null},
+  {"matchId":"Game:02513574-cb5d-42ab-961d-144de8e6ea3f","date":"2026-11-07T03:00:00Z","equipe":"san-antonio-spurs","competition":"NBA","domicile":false,"adversaire":"Sacramento Kings","statut":"FINAL","score":19.4,"situation":"joue","minutes":23,"pour":124,"contre":109,"cotes":null},
   {"matchId":"Game:166d5ec6-f180-434b-88cf-c1ec09d8344c","date":"2026-11-05T02:30:00Z","equipe":"san-antonio-spurs","competition":"NBA","domicile":true,"adversaire":"Dallas Mavericks","statut":"FINAL","score":12.3,"situation":"joue","minutes":21,"pour":112,"contre":111,"cotes":null},
   {"matchId":"Game:c1dd47f4-3dd8-4b4a-85ca-8e6a7778f85f","date":"2026-11-03T01:30:00Z","equipe":"san-antonio-spurs","competition":"NBA","domicile":true,"adversaire":"Utah Jazz","statut":"FINAL","score":15.2,"situation":"joue","minutes":23,"pour":119,"contre":97,"cotes":null},
   {"matchId":"Game:ccafc7bb-0150-4d71-af8b-ea0530ec6fb4","date":"2026-11-01T00:00:00Z","equipe":"san-antonio-spurs","competition":"NBA","domicile":true,"adversaire":"Minnesota Timberwolves","statut":"FINAL","score":23.1,"situation":"joue","minutes":27,"pour":121,"contre":111,"cotes":null},

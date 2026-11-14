@@ -1,9 +1,10 @@
 {
  "joueurId": "timothy-castagne",
- "misAJour": "2026-11-08T17:51:06.759Z",
+ "misAJour": "2026-11-14T08:02:34.996Z",
  "dernierHistoriqueComplet": "2026-11-08T17:51:06.759Z",
  "matchs": [
-  {"matchId":"Game:f04f7cb1-72a9-436f-88f1-e58f366d3d5e","date":"2026-11-07T15:00:00Z","equipe":"fulham-london","competition":"Premier League","domicile":true,"adversaire":"Newcastle United FC","statut":"REVIEWING","score":47.94,"situation":"titulaire","minutes":77,"pour":1,"contre":1,"cotes":{"victoire":0.48,"nul":0.25,"defaite":0.27,"coteCleanSheet":3.25}},
+  {"matchId":"Game:39166c09-8ac6-42b2-954c-ed37a100f87b","date":"2026-11-12T17:00:00Z","equipe":"belgium","competition":"UEFA Nations League","domicile":false,"adversaire":"Türkiye","statut":"FINAL","score":36.18,"situation":"titulaire","minutes":90,"pour":2,"contre":1,"cotes":{"victoire":0.48,"nul":0.25,"defaite":0.27,"coteCleanSheet":3.75}},
+  {"matchId":"Game:f04f7cb1-72a9-436f-88f1-e58f366d3d5e","date":"2026-11-07T15:00:00Z","equipe":"fulham-london","competition":"Premier League","domicile":true,"adversaire":"Newcastle United FC","statut":"FINAL","score":47.94,"situation":"titulaire","minutes":77,"pour":1,"contre":1,"cotes":{"victoire":0.48,"nul":0.25,"defaite":0.27,"coteCleanSheet":3.25}},
   {"matchId":"Game:b9505900-982d-46f8-8164-3580abe8f6cb","date":"2026-10-31T20:00:00Z","equipe":"fulham-london","competition":"Premier League","domicile":false,"adversaire":"Aston Villa FC","statut":"FINAL","score":44.48,"situation":"titulaire","minutes":87,"pour":1,"contre":1,"cotes":{"victoire":0.27,"nul":0.28,"defaite":0.45,"coteCleanSheet":4.33}},
   {"matchId":"Game:6ef758b2-70c8-412b-bcb7-b853c5a4d914","date":"2026-10-24T14:00:00Z","equipe":"fulham-london","competition":"Premier League","domicile":false,"adversaire":"Coventry City FC","statut":"FINAL","score":62.64,"situation":"titulaire","minutes":90,"pour":1,"contre":0,"cotes":{"victoire":0.42,"nul":0.28,"defaite":0.3,"coteCleanSheet":3.4}},
   {"matchId":"Game:17261839-1e7f-4da8-90aa-2e935b451fdc","date":"2026-10-17T14:00:00Z","equipe":"fulham-london","competition":"Premier League","domicile":true,"adversaire":"Hull City AFC","statut":"FINAL","score":66.16,"situation":"titulaire","minutes":90,"pour":1,"contre":0,"cotes":{"victoire":0.5699,"nul":0.2401,"defaite":0.19,"coteCleanSheet":2.5}},

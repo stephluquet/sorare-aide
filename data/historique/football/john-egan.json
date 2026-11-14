@@ -1,9 +1,9 @@
 {
  "joueurId": "john-egan",
- "misAJour": "2026-11-08T17:51:07.063Z",
+ "misAJour": "2026-11-14T08:02:35.177Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.964Z",
  "matchs": [
-  {"matchId":"Game:3e58ef7e-4397-48e1-96d0-a9fd490173bc","date":"2026-11-07T15:00:00Z","equipe":"hull-city-hull","competition":"Premier League","domicile":false,"adversaire":"Arsenal FC","statut":"REVIEWING","score":76.4,"situation":"titulaire","minutes":90,"pour":0,"contre":1,"cotes":{"victoire":0.05,"nul":0.13,"defaite":0.82,"coteCleanSheet":13}},
+  {"matchId":"Game:3e58ef7e-4397-48e1-96d0-a9fd490173bc","date":"2026-11-07T15:00:00Z","equipe":"hull-city-hull","competition":"Premier League","domicile":false,"adversaire":"Arsenal FC","statut":"FINAL","score":76.4,"situation":"titulaire","minutes":90,"pour":0,"contre":1,"cotes":{"victoire":0.05,"nul":0.13,"defaite":0.82,"coteCleanSheet":13}},
   {"matchId":"Game:0074a850-aa95-4393-808d-7b7fdc49b3c3","date":"2026-10-31T15:00:00Z","equipe":"hull-city-hull","competition":"Premier League","domicile":true,"adversaire":"Ipswich Town FC","statut":"FINAL","score":36.44,"situation":"titulaire","minutes":45,"pour":2,"contre":2,"cotes":{"victoire":0.34,"nul":0.28,"defaite":0.38,"coteCleanSheet":3.5}},
   {"matchId":"Game:5b013386-7ef7-48d6-866b-f8ec3a09ee8e","date":"2026-10-25T14:00:00Z","equipe":"hull-city-hull","competition":"Premier League","domicile":true,"adversaire":"Brentford FC","statut":"FINAL","score":33.5,"situation":"titulaire","minutes":90,"pour":1,"contre":1,"cotes":{"victoire":0.2,"nul":0.24,"defaite":0.56,"coteCleanSheet":6.5}},
   {"matchId":"Game:17261839-1e7f-4da8-90aa-2e935b451fdc","date":"2026-10-17T14:00:00Z","equipe":"hull-city-hull","competition":"Premier League","domicile":false,"adversaire":"Fulham FC","statut":"FINAL","score":45.3,"situation":"titulaire","minutes":90,"pour":0,"contre":1,"cotes":{"victoire":0.19,"nul":0.2401,"defaite":0.5699,"coteCleanSheet":6}},

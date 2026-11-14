@@ -1,9 +1,9 @@
 {
  "joueurId": "merlin-rohl",
- "misAJour": "2026-11-07T16:29:51.809Z",
+ "misAJour": "2026-11-14T08:02:35.049Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.809Z",
  "matchs": [
-  {"matchId":"Game:caad1cd9-68f5-4b27-8a4a-80c9796685f6","date":"2026-11-06T20:00:00Z","equipe":"everton-liverpool","competition":"Premier League","domicile":true,"adversaire":"Coventry City FC","statut":"REVIEWING","score":56.2,"situation":"titulaire","minutes":73,"pour":3,"contre":1,"cotes":{"victoire":0.56,"nul":0.25,"defaite":0.19,"coteCleanSheet":2.5}},
+  {"matchId":"Game:caad1cd9-68f5-4b27-8a4a-80c9796685f6","date":"2026-11-06T20:00:00Z","equipe":"everton-liverpool","competition":"Premier League","domicile":true,"adversaire":"Coventry City FC","statut":"FINAL","score":56.2,"situation":"titulaire","minutes":73,"pour":3,"contre":1,"cotes":{"victoire":0.56,"nul":0.25,"defaite":0.19,"coteCleanSheet":2.5}},
   {"matchId":"Game:b2dcee25-00d8-474f-a791-5bfe3ab8b08d","date":"2026-11-02T20:00:00Z","equipe":"everton-liverpool","competition":"Premier League","domicile":false,"adversaire":"Newcastle United FC","statut":"FINAL","score":38.1,"situation":"titulaire","minutes":90,"pour":1,"contre":0,"cotes":{"victoire":0.29,"nul":0.28,"defaite":0.43,"coteCleanSheet":4.5}},
   {"matchId":"Game:6d10f2c1-c88a-4442-958a-67160211199d","date":"2026-10-24T14:00:00Z","equipe":"everton-liverpool","competition":"Premier League","domicile":false,"adversaire":"Arsenal FC","statut":"FINAL","score":47.8,"situation":"titulaire","minutes":90,"pour":0,"contre":2,"cotes":{"victoire":0.13,"nul":0.22,"defaite":0.65,"coteCleanSheet":7}},
   {"matchId":"Game:b068f723-a9a5-4d81-8754-a87bc4f57a1a","date":"2026-10-17T11:30:00Z","equipe":"everton-liverpool","competition":"Premier League","domicile":true,"adversaire":"Chelsea FC","statut":"FINAL","score":41.8,"situation":"titulaire","minutes":90,"pour":0,"contre":2,"cotes":{"victoire":0.33,"nul":0.27,"defaite":0.4,"coteCleanSheet":4.5}},

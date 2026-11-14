@@ -1,8 +1,11 @@
 {
  "joueurId": "paolo-banchero-20021112",
- "misAJour": "2026-11-08T17:51:22.946Z",
+ "misAJour": "2026-11-14T08:03:10.059Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.153Z",
  "matchs": [
+  {"matchId":"Game:cc96e2c4-8813-4145-914c-f68527473318","date":"2026-11-14T00:00:00Z","equipe":"orlando-magic","competition":"NBA","domicile":true,"adversaire":"Milwaukee Bucks","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":107,"contre":99,"cotes":null},
+  {"matchId":"Game:1e5ab135-d54d-44c0-a32e-7c9233d4b1b5","date":"2026-11-12T02:00:00Z","equipe":"orlando-magic","competition":"NBA","domicile":false,"adversaire":"Utah Jazz","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":123,"contre":108,"cotes":null},
+  {"matchId":"Game:bffe10aa-0cb1-435b-b0a1-88ae424b1bac","date":"2026-11-11T03:00:00Z","equipe":"orlando-magic","competition":"NBA","domicile":false,"adversaire":"Sacramento Kings","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":107,"contre":100,"cotes":null},
   {"matchId":"Game:0a10fd6f-31c6-4402-b4aa-2c9aa89128a6","date":"2026-11-08T01:30:00Z","equipe":"orlando-magic","competition":"NBA","domicile":false,"adversaire":"Golden State Warriors","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":119,"contre":126,"cotes":null},
   {"matchId":"Game:ed77ad71-f6d5-4b28-9cc9-5d3a462d82d0","date":"2026-11-06T02:00:00Z","equipe":"orlando-magic","competition":"NBA","domicile":false,"adversaire":"Phoenix Suns","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":104,"contre":117,"cotes":null},
   {"matchId":"Game:258a8b5c-4781-4d34-80c6-2959ea1e765d","date":"2026-11-03T00:30:00Z","equipe":"orlando-magic","competition":"NBA","domicile":true,"adversaire":"Washington Wizards","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":94,"contre":103,"cotes":null},

@@ -1,9 +1,9 @@
 {
  "joueurId": "djene-dakonam-ortega",
- "misAJour": "2026-11-08T17:51:06.933Z",
+ "misAJour": "2026-11-14T08:02:35.089Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.862Z",
  "matchs": [
-  {"matchId":"Game:365cdd65-a8e7-4b9a-824d-65b524a5c879","date":"2026-11-08T17:30:00Z","equipe":"getafe-getafe-madrid","competition":"Primera División","domicile":false,"adversaire":"Villarreal CF","statut":"REVIEWING","score":40.96,"situation":"titulaire","minutes":19,"pour":0,"contre":0,"cotes":{"victoire":0.15,"nul":0.22,"defaite":0.63,"coteCleanSheet":6.5}},
+  {"matchId":"Game:365cdd65-a8e7-4b9a-824d-65b524a5c879","date":"2026-11-08T17:30:00Z","equipe":"getafe-getafe-madrid","competition":"Primera División","domicile":false,"adversaire":"Villarreal CF","statut":"FINAL","score":57.6,"situation":"titulaire","minutes":90,"pour":0,"contre":2,"cotes":{"victoire":0.16,"nul":0.23,"defaite":0.61,"coteCleanSheet":6.5}},
   {"matchId":"Game:3f8f8a24-62b7-443c-af3f-caa39a3a6dce","date":"2026-11-05T20:00:00Z","equipe":"getafe-getafe-madrid","competition":"UEFA Conference League","domicile":true,"adversaire":"Brighton & Hove Albion FC","statut":"FINAL","score":54.76,"situation":"titulaire","minutes":90,"pour":0,"contre":1,"cotes":{"victoire":0.17,"nul":0.25,"defaite":0.58,"coteCleanSheet":6}},
   {"matchId":"Game:c1f6e413-5ca0-4ba8-bacb-431a5f675e2c","date":"2026-11-01T13:00:00Z","equipe":"getafe-getafe-madrid","competition":"Primera División","domicile":true,"adversaire":"Sevilla FC","statut":"FINAL","score":84.74,"situation":"titulaire","minutes":90,"pour":3,"contre":1,"cotes":{"victoire":0.28,"nul":0.33,"defaite":0.39,"coteCleanSheet":3}},
   {"matchId":"Game:517bf270-85ae-489c-b24f-498ac79c8531","date":"2026-10-25T13:00:00Z","equipe":"getafe-getafe-madrid","competition":"Primera División","domicile":false,"adversaire":"Athletic Club","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":0,"contre":4,"cotes":{"victoire":0.16,"nul":0.24,"defaite":0.6,"coteCleanSheet":5}},

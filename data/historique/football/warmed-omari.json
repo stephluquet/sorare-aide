@@ -1,9 +1,9 @@
 {
  "joueurId": "warmed-omari",
- "misAJour": "2026-11-07T16:29:51.917Z",
+ "misAJour": "2026-11-14T08:02:35.133Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.917Z",
  "matchs": [
-  {"matchId":"Game:fe13e9df-2645-4d85-9a0f-e335d678d815","date":"2026-11-06T19:30:00Z","equipe":"hamburger-sv-hamburg","competition":"Bundesliga","domicile":true,"adversaire":"Borussia Mönchengladbach","statut":"REVIEWING","score":48.2,"situation":"titulaire","minutes":90,"pour":3,"contre":1,"cotes":{"victoire":0.4,"nul":0.28,"defaite":0.32,"coteCleanSheet":3.5}},
+  {"matchId":"Game:fe13e9df-2645-4d85-9a0f-e335d678d815","date":"2026-11-06T19:30:00Z","equipe":"hamburger-sv-hamburg","competition":"Bundesliga","domicile":true,"adversaire":"Borussia Mönchengladbach","statut":"FINAL","score":48.2,"situation":"titulaire","minutes":90,"pour":3,"contre":1,"cotes":{"victoire":0.4,"nul":0.28,"defaite":0.32,"coteCleanSheet":3.5}},
   {"matchId":"Game:38169f28-df84-4169-afcc-33bec4227c13","date":"2026-11-01T16:30:00Z","equipe":"hamburger-sv-hamburg","competition":"Bundesliga","domicile":false,"adversaire":"Eintracht Frankfurt","statut":"FINAL","score":3.74,"situation":"titulaire","minutes":90,"pour":1,"contre":3,"cotes":{"victoire":0.19,"nul":0.21,"defaite":0.6,"coteCleanSheet":9}},
   {"matchId":"Game:3afd4991-a3ad-47bc-b6bf-7e61017b16c3","date":"2026-10-24T13:30:00Z","equipe":"hamburger-sv-hamburg","competition":"Bundesliga","domicile":false,"adversaire":"SC Paderborn 07","statut":"FINAL","score":60.66,"situation":"titulaire","minutes":90,"pour":0,"contre":1,"cotes":{"victoire":0.34,"nul":0.26,"defaite":0.4,"coteCleanSheet":4.33}},
   {"matchId":"Game:d8db0072-bf68-4fe0-b5a7-4c57f80fafe8","date":"2026-10-17T13:30:00Z","equipe":"hamburger-sv-hamburg","competition":"Bundesliga","domicile":true,"adversaire":"VfB Stuttgart","statut":"FINAL","score":74.82,"situation":"titulaire","minutes":90,"pour":1,"contre":0,"cotes":{"victoire":0.26,"nul":0.23,"defaite":0.51,"coteCleanSheet":8}},

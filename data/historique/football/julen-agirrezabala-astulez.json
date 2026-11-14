@@ -1,9 +1,9 @@
 {
  "joueurId": "julen-agirrezabala-astulez",
- "misAJour": "2026-11-08T17:51:07.041Z",
+ "misAJour": "2026-11-14T08:02:35.156Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.945Z",
  "matchs": [
-  {"matchId":"Game:627423ca-bb85-4d43-977f-6314e92a3014","date":"2026-11-07T13:00:00Z","equipe":"racing-santander-santander","competition":"Primera División","domicile":false,"adversaire":"Málaga CF","statut":"REVIEWING","score":63.6,"situation":"titulaire","minutes":90,"pour":2,"contre":1,"cotes":{"victoire":0.33,"nul":0.27,"defaite":0.4,"coteCleanSheet":4.33}},
+  {"matchId":"Game:627423ca-bb85-4d43-977f-6314e92a3014","date":"2026-11-07T13:00:00Z","equipe":"racing-santander-santander","competition":"Primera División","domicile":false,"adversaire":"Málaga CF","statut":"FINAL","score":63.6,"situation":"titulaire","minutes":90,"pour":2,"contre":1,"cotes":{"victoire":0.33,"nul":0.27,"defaite":0.4,"coteCleanSheet":4.33}},
   {"matchId":"Game:c55bfc80-23d1-40e4-923c-bd1373f632be","date":"2026-11-01T15:15:00Z","equipe":"racing-santander-santander","competition":"Primera División","domicile":true,"adversaire":"Real Madrid","statut":"FINAL","score":42.3,"situation":"titulaire","minutes":90,"pour":0,"contre":3,"cotes":{"victoire":0.09,"nul":0.14,"defaite":0.77,"coteCleanSheet":17}},
   {"matchId":"Game:4f6a1354-b4ba-4b57-98fb-a4b7253fcd66","date":"2026-10-24T14:15:00Z","equipe":"racing-santander-santander","competition":"Primera División","domicile":true,"adversaire":"RCD Espanyol de Barcelona","statut":"FINAL","score":39.6,"situation":"titulaire","minutes":90,"pour":2,"contre":1,"cotes":{"victoire":0.41,"nul":0.27,"defaite":0.32,"coteCleanSheet":3.75}},
   {"matchId":"Game:6fed6da9-1225-4e9e-a395-7b582ccf04e7","date":"2026-10-18T12:00:00Z","equipe":"racing-santander-santander","competition":"Primera División","domicile":false,"adversaire":"CA Osasuna","statut":"FINAL","score":56.2,"situation":"titulaire","minutes":90,"pour":0,"contre":2,"cotes":{"victoire":0.26,"nul":0.27,"defaite":0.47,"coteCleanSheet":5}},

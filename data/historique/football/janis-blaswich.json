@@ -1,9 +1,9 @@
 {
  "joueurId": "janis-blaswich",
- "misAJour": "2026-11-08T17:51:06.818Z",
+ "misAJour": "2026-11-14T08:02:34.987Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.766Z",
  "matchs": [
-  {"matchId":"Game:636826cb-af12-4a81-bb5c-aebac39fcb25","date":"2026-11-08T14:30:00Z","equipe":"bayer-leverkusen-leverkusen","competition":"Bundesliga","domicile":false,"adversaire":"1. FC Köln","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":2,"contre":1,"cotes":{"victoire":0.53,"nul":0.24,"defaite":0.23,"coteCleanSheet":3.4}},
+  {"matchId":"Game:636826cb-af12-4a81-bb5c-aebac39fcb25","date":"2026-11-08T14:30:00Z","equipe":"bayer-leverkusen-leverkusen","competition":"Bundesliga","domicile":false,"adversaire":"1. FC Köln","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":2,"contre":1,"cotes":{"victoire":0.53,"nul":0.24,"defaite":0.23,"coteCleanSheet":3}},
   {"matchId":"Game:71f025d1-a119-4d46-aa00-b3397b7710d7","date":"2026-11-05T20:00:00Z","equipe":"bayer-leverkusen-leverkusen","competition":"UEFA Europa League","domicile":true,"adversaire":"Olympique de Marseille","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":0,"contre":1,"cotes":{"victoire":0.72,"nul":0.16,"defaite":0.12,"coteCleanSheet":2.38}},
   {"matchId":"Game:19c59e73-cc29-4e64-b66a-9fd1485b303c","date":"2026-10-31T14:30:00Z","equipe":"bayer-leverkusen-leverkusen","competition":"Bundesliga","domicile":true,"adversaire":"VfB Stuttgart","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":2,"contre":4,"cotes":{"victoire":0.56,"nul":0.22,"defaite":0.22,"coteCleanSheet":4}},
   {"matchId":"Game:0e4e1cfc-0299-455f-b0fe-25e660cc6456","date":"2026-10-25T14:30:00Z","equipe":"bayer-leverkusen-leverkusen","competition":"Bundesliga","domicile":false,"adversaire":"TSG Hoffenheim","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":0,"contre":3,"cotes":{"victoire":0.46,"nul":0.23,"defaite":0.31,"coteCleanSheet":5}},

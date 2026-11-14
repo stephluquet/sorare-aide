@@ -1,9 +1,9 @@
 {
  "joueurId": "mohamed-salisu-abdul-karim",
- "misAJour": "2026-11-08T17:51:06.927Z",
+ "misAJour": "2026-11-14T08:02:35.086Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.857Z",
  "matchs": [
-  {"matchId":"Game:b64bdf96-91a6-4b44-ac33-d703bbc9d0d2","date":"2026-11-08T16:15:00Z","equipe":"monaco-monaco","competition":"Ligue 1","domicile":false,"adversaire":"Le Mans FC","statut":"REVIEWING","score":0,"situation":"absent","minutes":null,"pour":1,"contre":0,"cotes":{"victoire":0.5699,"nul":0.2401,"defaite":0.19,"coteCleanSheet":2.38}},
+  {"matchId":"Game:b64bdf96-91a6-4b44-ac33-d703bbc9d0d2","date":"2026-11-08T16:15:00Z","equipe":"monaco-monaco","competition":"Ligue 1","domicile":false,"adversaire":"Le Mans FC","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":1,"contre":1,"cotes":{"victoire":0.5699,"nul":0.2401,"defaite":0.19,"coteCleanSheet":2.38}},
   {"matchId":"Game:cc4dc8d5-3537-4b8f-a1f2-4b4a105529f8","date":"2026-11-05T20:00:00Z","equipe":"monaco-monaco","competition":"UEFA Conference League","domicile":true,"adversaire":"FC Nordsjælland","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":2,"contre":0,"cotes":{"victoire":0.63,"nul":0.21,"defaite":0.16,"coteCleanSheet":2.5}},
   {"matchId":"Game:58e66ab7-e95e-4dd4-a72a-d13a3b726696","date":"2026-11-01T16:15:00Z","equipe":"monaco-monaco","competition":"Ligue 1","domicile":false,"adversaire":"Paris FC","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":1,"contre":3,"cotes":{"victoire":0.35,"nul":0.27,"defaite":0.38,"coteCleanSheet":4}},
   {"matchId":"Game:9e794c0b-130a-419d-8714-5718ab803dd7","date":"2026-10-25T14:00:00Z","equipe":"monaco-monaco","competition":"Ligue 1","domicile":true,"adversaire":"LOSC Lille","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":1,"contre":1,"cotes":{"victoire":0.47,"nul":0.28,"defaite":0.25,"coteCleanSheet":2.75}},

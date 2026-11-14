@@ -1,9 +1,9 @@
 {
  "joueurId": "ruben-garcia-santos",
- "misAJour": "2026-11-08T17:51:07.028Z",
+ "misAJour": "2026-11-14T08:02:35.148Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.936Z",
  "matchs": [
-  {"matchId":"Game:79eabeb2-e131-405f-b532-cf75fe76305c","date":"2026-11-07T17:30:00Z","equipe":"osasuna-pamplona-irunea","competition":"Primera División","domicile":true,"adversaire":"Athletic Club","statut":"REVIEWING","score":59.1,"situation":"titulaire","minutes":80,"pour":1,"contre":1,"cotes":{"victoire":0.26,"nul":0.29,"defaite":0.45,"coteCleanSheet":3.75}},
+  {"matchId":"Game:79eabeb2-e131-405f-b532-cf75fe76305c","date":"2026-11-07T17:30:00Z","equipe":"osasuna-pamplona-irunea","competition":"Primera División","domicile":true,"adversaire":"Athletic Club","statut":"FINAL","score":59.1,"situation":"titulaire","minutes":80,"pour":1,"contre":1,"cotes":{"victoire":0.26,"nul":0.29,"defaite":0.45,"coteCleanSheet":3.75}},
   {"matchId":"Game:0610d24e-2b42-42b9-b907-b9ae2e3b96fc","date":"2026-11-02T20:00:00Z","equipe":"osasuna-pamplona-irunea","competition":"Primera División","domicile":false,"adversaire":"Real Club Deportivo de La Coruña","statut":"FINAL","score":31.8,"situation":"entre","minutes":21,"pour":1,"contre":2,"cotes":{"victoire":0.25,"nul":0.3,"defaite":0.45,"coteCleanSheet":3.5}},
   {"matchId":"Game:2fbaf245-7071-4853-a529-78eaedec0455","date":"2026-10-26T20:00:00Z","equipe":"osasuna-pamplona-irunea","competition":"Primera División","domicile":false,"adversaire":"Sevilla FC","statut":"FINAL","score":46.9,"situation":"titulaire","minutes":63,"pour":0,"contre":2,"cotes":{"victoire":0.2,"nul":0.28,"defaite":0.52,"coteCleanSheet":4}},
   {"matchId":"Game:6fed6da9-1225-4e9e-a395-7b582ccf04e7","date":"2026-10-18T12:00:00Z","equipe":"osasuna-pamplona-irunea","competition":"Primera División","domicile":true,"adversaire":"Real Racing Club de Santander","statut":"FINAL","score":59.4,"situation":"titulaire","minutes":89,"pour":2,"contre":0,"cotes":{"victoire":0.47,"nul":0.27,"defaite":0.26,"coteCleanSheet":3.25}},

@@ -1,8 +1,11 @@
 {
  "joueurId": "nic-claxton-19990417",
- "misAJour": "2026-11-07T16:31:59.162Z",
+ "misAJour": "2026-11-14T08:03:10.069Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.162Z",
  "matchs": [
+  {"matchId":"Game:eb012e7d-688c-4d13-b079-179f0760bb0c","date":"2026-11-14T01:00:00Z","equipe":"chicago-bulls","competition":"NBA","domicile":true,"adversaire":"Atlanta Hawks","statut":"REVIEWING","score":13.2,"situation":"joue","minutes":22,"pour":125,"contre":117,"cotes":null},
+  {"matchId":"Game:66443f4c-fa83-4b8d-8604-82c2f016b6c7","date":"2026-11-12T01:00:00Z","equipe":"chicago-bulls","competition":"NBA","domicile":true,"adversaire":"San Antonio Spurs","statut":"FINAL","score":28.7,"situation":"joue","minutes":16,"pour":119,"contre":124,"cotes":null},
+  {"matchId":"Game:977e028e-2992-4d04-a83f-0db79900b279","date":"2026-11-08T20:30:00Z","equipe":"chicago-bulls","competition":"NBA","domicile":true,"adversaire":"Philadelphia 76ers","statut":"FINAL","score":18.8,"situation":"joue","minutes":18,"pour":121,"contre":127,"cotes":null},
   {"matchId":"Game:07c577ad-a08c-48e6-988b-4357e0694e1e","date":"2026-11-05T00:30:00Z","equipe":"chicago-bulls","competition":"NBA","domicile":false,"adversaire":"New York Knicks","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":105,"contre":135,"cotes":null},
   {"matchId":"Game:991acf88-3252-46f1-9630-f58ce807364d","date":"2026-11-03T00:30:00Z","equipe":"chicago-bulls","competition":"NBA","domicile":false,"adversaire":"Philadelphia 76ers","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":107,"contre":126,"cotes":null},
   {"matchId":"Game:eb2ebcbe-f1fe-4297-a2c9-649541922292","date":"2026-10-30T23:30:00Z","equipe":"chicago-bulls","competition":"NBA","domicile":false,"adversaire":"Boston Celtics","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":111,"contre":125,"cotes":null},

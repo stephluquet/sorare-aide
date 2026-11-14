@@ -1,8 +1,10 @@
 {
  "joueurId": "dominik-livakovic",
- "misAJour": "2026-11-07T16:29:51.754Z",
+ "misAJour": "2026-11-14T08:02:35.014Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.754Z",
  "matchs": [
+  {"matchId":"Game:341ba5d3-96bf-4d71-9124-c6b1e70ebd9a","date":"2026-11-12T19:45:00Z","equipe":"croatia","competition":"UEFA Nations League","domicile":false,"adversaire":"England","statut":"FINAL","score":28.3,"situation":"titulaire","minutes":90,"pour":1,"contre":2,"cotes":{"victoire":0.09,"nul":0.16,"defaite":0.75,"coteCleanSheet":11}},
+  {"matchId":"Game:a7c30e57-d482-4935-9217-60fef9f85285","date":"2026-11-08T20:00:00Z","equipe":"barcelona-barcelona","competition":"Primera División","domicile":false,"adversaire":"Atlético de Madrid","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":2,"contre":1,"cotes":{"victoire":0.47,"nul":0.23,"defaite":0.3,"coteCleanSheet":4.33}},
   {"matchId":"Game:55002985-cad3-4dec-ab15-afe964f4f933","date":"2026-11-03T20:00:00Z","equipe":"barcelona-barcelona","competition":"UEFA Champions League","domicile":true,"adversaire":"Aston Villa FC","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":3,"contre":0,"cotes":{"victoire":0.72,"nul":0.16,"defaite":0.12,"coteCleanSheet":3.25}},
   {"matchId":"Game:722ceb32-35fd-4685-9d4e-534a8ba33629","date":"2026-10-31T20:00:00Z","equipe":"barcelona-barcelona","competition":"Primera División","domicile":true,"adversaire":"D. Alavés","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":6,"contre":1,"cotes":{"victoire":0.85,"nul":0.1,"defaite":0.05,"coteCleanSheet":2}},
   {"matchId":"Game:0468597c-6df3-401f-86b4-9b0a2edf8e9e","date":"2026-10-25T20:00:00Z","equipe":"barcelona-barcelona","competition":"Primera División","domicile":true,"adversaire":"Real Madrid","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":1,"contre":2,"cotes":{"victoire":0.6,"nul":0.17,"defaite":0.23,"coteCleanSheet":4.33}},

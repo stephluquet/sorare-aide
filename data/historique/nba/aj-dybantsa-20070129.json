@@ -1,10 +1,13 @@
 {
  "joueurId": "aj-dybantsa-20070129",
- "misAJour": "2026-11-08T17:51:22.930Z",
+ "misAJour": "2026-11-14T08:03:10.005Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.146Z",
  "matchs": [
-  {"matchId":"Game:76776088-14f8-42e4-9f60-cc26350900a6","date":"2026-11-08T01:00:00Z","equipe":"washington-wizards","competition":"NBA","domicile":false,"adversaire":"Oklahoma City Thunder","statut":"REVIEWING","score":25.7,"situation":"joue","minutes":31,"pour":75,"contre":114,"cotes":null},
-  {"matchId":"Game:bf235e89-13fb-40c2-b4e1-aaf793b227b6","date":"2026-11-07T00:00:00Z","equipe":"washington-wizards","competition":"NBA","domicile":false,"adversaire":"Atlanta Hawks","statut":"REVIEWING","score":35.3,"situation":"joue","minutes":36,"pour":132,"contre":139,"cotes":null},
+  {"matchId":"Game:8ad39632-5f10-4ca1-b158-d42ed56a70e2","date":"2026-11-13T00:00:00Z","equipe":"washington-wizards","competition":"NBA","domicile":true,"adversaire":"Detroit Pistons","statut":"FINAL","score":19.6,"situation":"joue","minutes":45,"pour":140,"contre":144,"cotes":null},
+  {"matchId":"Game:7976b9d3-8981-47b7-b3c2-fa13c94f7b91","date":"2026-11-12T00:00:00Z","equipe":"washington-wizards","competition":"NBA","domicile":false,"adversaire":"Indiana Pacers","statut":"FINAL","score":20.8,"situation":"joue","minutes":35,"pour":101,"contre":114,"cotes":null},
+  {"matchId":"Game:a2a33e0a-7900-4d10-b8a1-9b48dfeebc52","date":"2026-11-10T00:00:00Z","equipe":"washington-wizards","competition":"NBA","domicile":false,"adversaire":"Detroit Pistons","statut":"FINAL","score":29.1,"situation":"joue","minutes":38,"pour":111,"contre":122,"cotes":null},
+  {"matchId":"Game:76776088-14f8-42e4-9f60-cc26350900a6","date":"2026-11-08T01:00:00Z","equipe":"washington-wizards","competition":"NBA","domicile":false,"adversaire":"Oklahoma City Thunder","statut":"FINAL","score":25.7,"situation":"joue","minutes":31,"pour":75,"contre":114,"cotes":null},
+  {"matchId":"Game:bf235e89-13fb-40c2-b4e1-aaf793b227b6","date":"2026-11-07T00:00:00Z","equipe":"washington-wizards","competition":"NBA","domicile":false,"adversaire":"Atlanta Hawks","statut":"FINAL","score":35.3,"situation":"joue","minutes":36,"pour":132,"contre":139,"cotes":null},
   {"matchId":"Game:612750b3-f88e-4db3-85c0-25e6fc466f4b","date":"2026-11-05T00:00:00Z","equipe":"washington-wizards","competition":"NBA","domicile":true,"adversaire":"Atlanta Hawks","statut":"FINAL","score":20.7,"situation":"joue","minutes":33,"pour":105,"contre":120,"cotes":null},
   {"matchId":"Game:258a8b5c-4781-4d34-80c6-2959ea1e765d","date":"2026-11-03T00:30:00Z","equipe":"washington-wizards","competition":"NBA","domicile":false,"adversaire":"Orlando Magic","statut":"FINAL","score":36,"situation":"joue","minutes":34,"pour":103,"contre":94,"cotes":null},
   {"matchId":"Game:2d0c6ffd-8abc-478b-9db6-6e6a961e1add","date":"2026-10-30T23:00:00Z","equipe":"washington-wizards","competition":"NBA","domicile":true,"adversaire":"Charlotte Hornets","statut":"FINAL","score":28.9,"situation":"joue","minutes":30,"pour":95,"contre":79,"cotes":null},

@@ -1,9 +1,13 @@
 {
  "joueurId": "nate-ament-20061210",
- "misAJour": "2026-11-07T16:31:59.155Z",
+ "misAJour": "2026-11-14T08:03:10.062Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.155Z",
  "matchs": [
-  {"matchId":"Game:36da0d02-d69f-40cf-add7-8594ec4c4b41","date":"2026-11-07T01:00:00Z","equipe":"milwaukee-bucks","competition":"NBA","domicile":true,"adversaire":"Toronto Raptors","statut":"REVIEWING","score":9.2,"situation":"joue","minutes":16,"pour":107,"contre":121,"cotes":null},
+  {"matchId":"Game:cc96e2c4-8813-4145-914c-f68527473318","date":"2026-11-14T00:00:00Z","equipe":"milwaukee-bucks","competition":"NBA","domicile":false,"adversaire":"Orlando Magic","statut":"REVIEWING","score":22.1,"situation":"joue","minutes":23,"pour":99,"contre":107,"cotes":null},
+  {"matchId":"Game:9e7a761b-4f52-41e4-bc87-3d504ac83e20","date":"2026-11-12T01:00:00Z","equipe":"milwaukee-bucks","competition":"NBA","domicile":true,"adversaire":"Los Angeles Lakers","statut":"FINAL","score":7.3,"situation":"joue","minutes":22,"pour":112,"contre":123,"cotes":null},
+  {"matchId":"Game:0d67c1ee-0944-4d70-af0e-59ec577acb98","date":"2026-11-11T00:30:00Z","equipe":"milwaukee-bucks","competition":"NBA","domicile":false,"adversaire":"New York Knicks","statut":"FINAL","score":21.9,"situation":"joue","minutes":22,"pour":85,"contre":117,"cotes":null},
+  {"matchId":"Game:c7ce88d3-9821-4cbe-85e9-c9328dff74f7","date":"2026-11-09T01:00:00Z","equipe":"milwaukee-bucks","competition":"NBA","domicile":true,"adversaire":"Boston Celtics","statut":"FINAL","score":22.5,"situation":"joue","minutes":24,"pour":97,"contre":117,"cotes":null},
+  {"matchId":"Game:36da0d02-d69f-40cf-add7-8594ec4c4b41","date":"2026-11-07T01:00:00Z","equipe":"milwaukee-bucks","competition":"NBA","domicile":true,"adversaire":"Toronto Raptors","statut":"FINAL","score":9.2,"situation":"joue","minutes":16,"pour":107,"contre":121,"cotes":null},
   {"matchId":"Game:5415ff21-a095-4d9c-8568-7898f2b385a4","date":"2026-11-05T00:30:00Z","equipe":"milwaukee-bucks","competition":"NBA","domicile":false,"adversaire":"Boston Celtics","statut":"FINAL","score":13.4,"situation":"joue","minutes":19,"pour":102,"contre":109,"cotes":null},
   {"matchId":"Game:72d3a44b-0077-4193-a7bf-dbdacbb1f091","date":"2026-11-03T01:00:00Z","equipe":"milwaukee-bucks","competition":"NBA","domicile":false,"adversaire":"Minnesota Timberwolves","statut":"FINAL","score":3.2,"situation":"joue","minutes":8,"pour":100,"contre":112,"cotes":null},
   {"matchId":"Game:3d829014-89ba-45c8-bb1f-9500a465f6a5","date":"2026-11-01T00:00:00Z","equipe":"milwaukee-bucks","competition":"NBA","domicile":true,"adversaire":"Cleveland Cavaliers","statut":"FINAL","score":18.2,"situation":"joue","minutes":19,"pour":111,"contre":136,"cotes":null},

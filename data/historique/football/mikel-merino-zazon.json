@@ -1,9 +1,10 @@
 {
  "joueurId": "mikel-merino-zazon",
- "misAJour": "2026-11-08T17:51:06.980Z",
+ "misAJour": "2026-11-14T08:02:35.123Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.904Z",
  "matchs": [
-  {"matchId":"Game:3e58ef7e-4397-48e1-96d0-a9fd490173bc","date":"2026-11-07T15:00:00Z","equipe":"arsenal-london","competition":"Premier League","domicile":true,"adversaire":"Hull City AFC","statut":"REVIEWING","score":48.6,"situation":"entre","minutes":27,"pour":1,"contre":0,"cotes":{"victoire":0.82,"nul":0.13,"defaite":0.05,"coteCleanSheet":1.57}},
+  {"matchId":"Game:c403f9e0-8ee1-4eb6-821c-1315954aaff0","date":"2026-11-12T19:45:00Z","equipe":"spain","competition":"UEFA Nations League","domicile":false,"adversaire":"Czechia","statut":"FINAL","score":35.6,"situation":"entre","minutes":24,"pour":2,"contre":0,"cotes":{"victoire":0.75,"nul":0.16,"defaite":0.09,"coteCleanSheet":1.8}},
+  {"matchId":"Game:3e58ef7e-4397-48e1-96d0-a9fd490173bc","date":"2026-11-07T15:00:00Z","equipe":"arsenal-london","competition":"Premier League","domicile":true,"adversaire":"Hull City AFC","statut":"FINAL","score":48.6,"situation":"entre","minutes":27,"pour":1,"contre":0,"cotes":{"victoire":0.82,"nul":0.13,"defaite":0.05,"coteCleanSheet":1.57}},
   {"matchId":"Game:0efa4047-7b96-413b-9e9f-1c0a7b8f4838","date":"2026-11-04T20:00:00Z","equipe":"arsenal-london","competition":"UEFA Champions League","domicile":false,"adversaire":"SK Slavia Praha","statut":"FINAL","score":63.1,"situation":"titulaire","minutes":90,"pour":2,"contre":1,"cotes":{"victoire":0.76,"nul":0.16,"defaite":0.08,"coteCleanSheet":1.67}},
   {"matchId":"Game:2f58daab-a7fa-4874-b865-bf1e632f81a9","date":"2026-11-01T16:30:00Z","equipe":"arsenal-london","competition":"Premier League","domicile":false,"adversaire":"Liverpool FC","statut":"FINAL","score":39.2,"situation":"entre","minutes":2,"pour":1,"contre":0,"cotes":{"victoire":0.37,"nul":0.28,"defaite":0.35,"coteCleanSheet":3.5}},
   {"matchId":"Game:6d10f2c1-c88a-4442-958a-67160211199d","date":"2026-10-24T14:00:00Z","equipe":"arsenal-london","competition":"Premier League","domicile":true,"adversaire":"Everton FC","statut":"FINAL","score":31.5,"situation":"titulaire","minutes":68,"pour":2,"contre":0,"cotes":{"victoire":0.65,"nul":0.22,"defaite":0.13,"coteCleanSheet":2.1}},

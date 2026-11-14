@@ -1,8 +1,11 @@
 {
  "joueurId": "bobby-portis-19950210",
- "misAJour": "2026-11-07T16:31:59.130Z",
+ "misAJour": "2026-11-14T08:03:09.972Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.130Z",
  "matchs": [
+  {"matchId":"Game:3d06c857-2d60-4a8a-ad15-a6d8fe80ad06","date":"2026-11-14T01:00:00Z","equipe":"miami-heat","competition":"NBA","domicile":true,"adversaire":"Cleveland Cavaliers","statut":"REVIEWING","score":10.6,"situation":"joue","minutes":16,"pour":133,"contre":121,"cotes":null},
+  {"matchId":"Game:17ca01b2-c8b8-426b-b051-4eb0022c8f2d","date":"2026-11-11T02:00:00Z","equipe":"miami-heat","competition":"NBA","domicile":false,"adversaire":"Utah Jazz","statut":"FINAL","score":11.7,"situation":"joue","minutes":17,"pour":115,"contre":109,"cotes":null},
+  {"matchId":"Game:a264fa8e-73de-438c-9d45-e295ed31eb10","date":"2026-11-09T02:00:00Z","equipe":"miami-heat","competition":"NBA","domicile":false,"adversaire":"Sacramento Kings","statut":"FINAL","score":7.7,"situation":"joue","minutes":21,"pour":114,"contre":108,"cotes":null},
   {"matchId":"Game:a3e90603-4cdf-4520-8959-a974f283e5e3","date":"2026-11-06T03:00:00Z","equipe":"miami-heat","competition":"NBA","domicile":false,"adversaire":"Golden State Warriors","statut":"FINAL","score":6,"situation":"joue","minutes":15,"pour":100,"contre":120,"cotes":null},
   {"matchId":"Game:946af4c8-04fe-4aa5-933d-9dac812707df","date":"2026-11-05T03:30:00Z","equipe":"miami-heat","competition":"NBA","domicile":false,"adversaire":"LA Clippers","statut":"FINAL","score":24.5,"situation":"joue","minutes":18,"pour":117,"contre":116,"cotes":null},
   {"matchId":"Game:490bd106-2c9f-42b9-9012-86393cbf7809","date":"2026-11-03T03:00:00Z","equipe":"miami-heat","competition":"NBA","domicile":false,"adversaire":"Los Angeles Lakers","statut":"FINAL","score":8.6,"situation":"joue","minutes":19,"pour":117,"contre":138,"cotes":null},

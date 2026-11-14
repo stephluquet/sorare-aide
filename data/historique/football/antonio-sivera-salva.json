@@ -1,9 +1,9 @@
 {
  "joueurId": "antonio-sivera-salva",
- "misAJour": "2026-11-07T16:29:51.983Z",
+ "misAJour": "2026-11-14T08:02:35.200Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.983Z",
  "matchs": [
-  {"matchId":"Game:4b564965-b0f4-4e1d-97c9-7c78048aa72d","date":"2026-11-06T20:00:00Z","equipe":"deportivo-alaves-vitoria-gasteiz","competition":"Primera División","domicile":false,"adversaire":"Sevilla FC","statut":"REVIEWING","score":77.6,"situation":"titulaire","minutes":90,"pour":0,"contre":0,"cotes":{"victoire":0.21,"nul":0.29,"defaite":0.5,"coteCleanSheet":4}},
+  {"matchId":"Game:4b564965-b0f4-4e1d-97c9-7c78048aa72d","date":"2026-11-06T20:00:00Z","equipe":"deportivo-alaves-vitoria-gasteiz","competition":"Primera División","domicile":false,"adversaire":"Sevilla FC","statut":"FINAL","score":77.6,"situation":"titulaire","minutes":90,"pour":0,"contre":0,"cotes":{"victoire":0.21,"nul":0.29,"defaite":0.5,"coteCleanSheet":4}},
   {"matchId":"Game:722ceb32-35fd-4685-9d4e-534a8ba33629","date":"2026-10-31T20:00:00Z","equipe":"deportivo-alaves-vitoria-gasteiz","competition":"Primera División","domicile":false,"adversaire":"FC Barcelona","statut":"FINAL","score":8,"situation":"titulaire","minutes":90,"pour":1,"contre":6,"cotes":{"victoire":0.05,"nul":0.1,"defaite":0.85,"coteCleanSheet":21}},
   {"matchId":"Game:f4da65cb-b8f7-4e2c-a68f-c65664fcf6d4","date":"2026-10-23T19:00:00Z","equipe":"deportivo-alaves-vitoria-gasteiz","competition":"Primera División","domicile":true,"adversaire":"Málaga CF","statut":"FINAL","score":42.1,"situation":"titulaire","minutes":90,"pour":1,"contre":1,"cotes":{"victoire":0.5699,"nul":0.2601,"defaite":0.17,"coteCleanSheet":2.1}},
   {"matchId":"Game:7028c197-29ba-4143-b937-c518ef4c8e5f","date":"2026-10-18T14:15:00Z","equipe":"deportivo-alaves-vitoria-gasteiz","competition":"Primera División","domicile":false,"adversaire":"RC Celta","statut":"FINAL","score":27.5,"situation":"titulaire","minutes":90,"pour":1,"contre":2,"cotes":{"victoire":0.27,"nul":0.32,"defaite":0.41,"coteCleanSheet":3.25}},

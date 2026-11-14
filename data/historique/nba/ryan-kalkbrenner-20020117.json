@@ -1,9 +1,11 @@
 {
  "joueurId": "ryan-kalkbrenner-20020117",
- "misAJour": "2026-11-07T16:31:59.156Z",
+ "misAJour": "2026-11-14T08:03:10.063Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.156Z",
  "matchs": [
-  {"matchId":"Game:3bdb7370-19f3-4dd2-a6e7-ec50074524e6","date":"2026-11-07T00:00:00Z","equipe":"charlotte-hornets","competition":"NBA","domicile":true,"adversaire":"Boston Celtics","statut":"REVIEWING","score":6,"situation":"joue","minutes":21,"pour":80,"contre":119,"cotes":null},
+  {"matchId":"Game:5804c304-457b-4412-b95f-34e647e0c0af","date":"2026-11-13T02:00:00Z","equipe":"charlotte-hornets","competition":"NBA","domicile":false,"adversaire":"Phoenix Suns","statut":"FINAL","score":13.7,"situation":"joue","minutes":17,"pour":96,"contre":101,"cotes":null},
+  {"matchId":"Game:deefaa26-af38-4914-ad70-bbcbd9a51cc1","date":"2026-11-10T00:00:00Z","equipe":"charlotte-hornets","competition":"NBA","domicile":true,"adversaire":"Cleveland Cavaliers","statut":"FINAL","score":38.5,"situation":"joue","minutes":35,"pour":124,"contre":112,"cotes":null},
+  {"matchId":"Game:3bdb7370-19f3-4dd2-a6e7-ec50074524e6","date":"2026-11-07T00:00:00Z","equipe":"charlotte-hornets","competition":"NBA","domicile":true,"adversaire":"Boston Celtics","statut":"FINAL","score":6,"situation":"joue","minutes":21,"pour":80,"contre":119,"cotes":null},
   {"matchId":"Game:a6025895-87a2-430a-871a-2a900195228c","date":"2026-11-05T00:30:00Z","equipe":"charlotte-hornets","competition":"NBA","domicile":false,"adversaire":"Brooklyn Nets","statut":"FINAL","score":12.8,"situation":"joue","minutes":20,"pour":104,"contre":114,"cotes":null},
   {"matchId":"Game:25d97ffd-665b-4f14-8670-2ecb844c1dd5","date":"2026-11-03T00:30:00Z","equipe":"charlotte-hornets","competition":"NBA","domicile":true,"adversaire":"Detroit Pistons","statut":"FINAL","score":13.2,"situation":"joue","minutes":16,"pour":91,"contre":124,"cotes":null},
   {"matchId":"Game:c7613c3c-fccb-4c11-85ac-e5e9fe00dcd6","date":"2026-10-31T22:00:00Z","equipe":"charlotte-hornets","competition":"NBA","domicile":true,"adversaire":"Philadelphia 76ers","statut":"FINAL","score":19.6,"situation":"joue","minutes":20,"pour":104,"contre":109,"cotes":null},

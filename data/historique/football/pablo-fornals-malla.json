@@ -1,9 +1,9 @@
 {
  "joueurId": "pablo-fornals-malla",
- "misAJour": "2026-11-08T17:51:07.042Z",
+ "misAJour": "2026-11-14T08:02:34.978Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.946Z",
  "matchs": [
-  {"matchId":"Game:62595a00-3258-4908-a69f-2a7878815c26","date":"2026-11-08T13:00:00Z","equipe":"real-betis-sevilla","competition":"Primera División","domicile":false,"adversaire":"Elche CF","statut":"REVIEWING","score":45.7,"situation":"titulaire","minutes":69,"pour":2,"contre":0,"cotes":{"victoire":0.48,"nul":0.26,"defaite":0.26,"coteCleanSheet":3.4}},
+  {"matchId":"Game:62595a00-3258-4908-a69f-2a7878815c26","date":"2026-11-08T13:00:00Z","equipe":"real-betis-sevilla","competition":"Primera División","domicile":false,"adversaire":"Elche CF","statut":"FINAL","score":45.7,"situation":"titulaire","minutes":69,"pour":2,"contre":0,"cotes":{"victoire":0.48,"nul":0.26,"defaite":0.26,"coteCleanSheet":3.4}},
   {"matchId":"Game:15c4b51d-1c87-4fae-a4d6-84874a904e49","date":"2026-11-04T20:00:00Z","equipe":"real-betis-sevilla","competition":"UEFA Champions League","domicile":false,"adversaire":"Borussia Dortmund","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":1,"contre":2,"cotes":{"victoire":0.21,"nul":0.24,"defaite":0.55,"coteCleanSheet":7}},
   {"matchId":"Game:8280c6a7-cfaf-490c-b52c-794ef1d39d5e","date":"2026-10-31T17:30:00Z","equipe":"real-betis-sevilla","competition":"Primera División","domicile":true,"adversaire":"Málaga CF","statut":"FINAL","score":88.9,"situation":"titulaire","minutes":84,"pour":2,"contre":1,"cotes":{"victoire":0.71,"nul":0.18,"defaite":0.11,"coteCleanSheet":2.1}},
   {"matchId":"Game:309e24aa-12e8-492e-a368-5be141cabb10","date":"2026-10-25T15:15:00Z","equipe":"real-betis-sevilla","competition":"Primera División","domicile":false,"adversaire":"RC Celta","statut":"FINAL","score":43.9,"situation":"entre","minutes":29,"pour":0,"contre":0,"cotes":{"victoire":0.41,"nul":0.29,"defaite":0.3,"coteCleanSheet":3.4}},

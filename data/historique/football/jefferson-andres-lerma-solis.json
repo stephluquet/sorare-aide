@@ -1,9 +1,9 @@
 {
  "joueurId": "jefferson-andres-lerma-solis",
- "misAJour": "2026-11-08T17:51:06.968Z",
+ "misAJour": "2026-11-14T08:02:35.112Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.894Z",
  "matchs": [
-  {"matchId":"Game:01c2cfcf-480c-42bb-b357-dc1ff4c64b6d","date":"2026-11-08T14:00:00Z","equipe":"crystal-palace-london","competition":"Premier League","domicile":true,"adversaire":"Liverpool FC","statut":"REVIEWING","score":46.7,"situation":"titulaire","minutes":90,"pour":1,"contre":3,"cotes":{"victoire":0.18,"nul":0.22,"defaite":0.6,"coteCleanSheet":8}},
+  {"matchId":"Game:01c2cfcf-480c-42bb-b357-dc1ff4c64b6d","date":"2026-11-08T14:00:00Z","equipe":"crystal-palace-london","competition":"Premier League","domicile":true,"adversaire":"Liverpool FC","statut":"FINAL","score":47.2,"situation":"titulaire","minutes":90,"pour":1,"contre":3,"cotes":{"victoire":0.18,"nul":0.22,"defaite":0.6,"coteCleanSheet":8}},
   {"matchId":"Game:1b86a9c3-011a-45ae-a5b0-6e64f078fce0","date":"2026-11-05T17:45:00Z","equipe":"crystal-palace-london","competition":"UEFA Europa League","domicile":true,"adversaire":"TSG Hoffenheim","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":1,"contre":1,"cotes":{"victoire":0.5,"nul":0.24,"defaite":0.26,"coteCleanSheet":3.4}},
   {"matchId":"Game:f86f3975-a71d-43f0-b935-8988bd44282b","date":"2026-10-31T17:30:00Z","equipe":"crystal-palace-london","competition":"Premier League","domicile":false,"adversaire":"Tottenham Hotspur FC","statut":"FINAL","score":34.2,"situation":"entre","minutes":2,"pour":0,"contre":2,"cotes":{"victoire":0.2,"nul":0.24,"defaite":0.56,"coteCleanSheet":6}},
   {"matchId":"Game:33f3e1a6-c3ba-4b4f-bde6-071450cd06c7","date":"2026-10-25T14:00:00Z","equipe":"crystal-palace-london","competition":"Premier League","domicile":true,"adversaire":"Newcastle United FC","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":0,"contre":2,"cotes":{"victoire":0.37,"nul":0.26,"defaite":0.37,"coteCleanSheet":4.5}},

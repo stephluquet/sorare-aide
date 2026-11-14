@@ -5,6 +5,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parametresDepuisMethode } from './parametres.js';
 import { projeterCarte } from './projection.js';
+import { reglesDuMoteur } from '../app-donnees.js';
 
 export const RACINE = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const lireJson = (...p) => JSON.parse(readFileSync(join(RACINE, ...p), 'utf8'));
@@ -13,11 +14,7 @@ export function chargerEntrees(fichierDonnees = join(RACINE, 'data', 'dernier.js
   return {
     donnees: JSON.parse(readFileSync(fichierDonnees, 'utf8')),
     P: parametresDepuisMethode(readFileSync(join(RACINE, 'methode.md'), 'utf8')),
-    // Règle complète du mode, plus la liste des compétitions sous le nom attendu par le moteur.
-    regles: {
-      football: (({ r }) => ({ ...r, competitionsAutorisees: r.competitions_autorisees.noms_api }))({ r: lireJson('regles', 'football-arcade-solo.json') }),
-      nba: (({ r }) => ({ ...r, competitionsAutorisees: r.competitions_autorisees.liste }))({ r: lireJson('regles', 'nba-arcade-solo.json') }),
-    },
+    regles: reglesDuMoteur(lireJson('regles', 'football-arcade-solo.json'), lireJson('regles', 'nba-arcade-solo.json')),
   };
 }
 

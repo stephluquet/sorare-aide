@@ -1,9 +1,11 @@
 {
  "joueurId": "marvin-bagley-iii-19990314",
- "misAJour": "2026-11-08T17:51:22.907Z",
+ "misAJour": "2026-11-14T08:03:10.046Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.129Z",
  "matchs": [
-  {"matchId":"Game:e79d72e0-455c-44c7-a43a-6f35487f266b","date":"2026-11-07T22:00:00Z","equipe":"denver-nuggets","competition":"NBA","domicile":false,"adversaire":"Indiana Pacers","statut":"REVIEWING","score":13.6,"situation":"joue","minutes":12,"pour":114,"contre":102,"cotes":null},
+  {"matchId":"Game:6fb3ec6c-be7c-4285-b497-7b8d410b0cfd","date":"2026-11-12T01:00:00Z","equipe":"denver-nuggets","competition":"NBA","domicile":false,"adversaire":"Memphis Grizzlies","statut":"FINAL","score":10.9,"situation":"joue","minutes":13,"pour":123,"contre":118,"cotes":null},
+  {"matchId":"Game:67a45488-ecfb-4f98-b2d6-ef0bffa6fd90","date":"2026-11-10T01:30:00Z","equipe":"denver-nuggets","competition":"NBA","domicile":false,"adversaire":"Houston Rockets","statut":"FINAL","score":12.6,"situation":"joue","minutes":13,"pour":100,"contre":110,"cotes":null},
+  {"matchId":"Game:e79d72e0-455c-44c7-a43a-6f35487f266b","date":"2026-11-07T22:00:00Z","equipe":"denver-nuggets","competition":"NBA","domicile":false,"adversaire":"Indiana Pacers","statut":"FINAL","score":13.6,"situation":"joue","minutes":12,"pour":114,"contre":102,"cotes":null},
   {"matchId":"Game:e16e474c-9cbc-408a-917d-636ec7595eb3","date":"2026-11-05T02:00:00Z","equipe":"denver-nuggets","competition":"NBA","domicile":true,"adversaire":"Toronto Raptors","statut":"FINAL","score":13.4,"situation":"joue","minutes":15,"pour":128,"contre":109,"cotes":null},
   {"matchId":"Game:efc03269-0d14-4dfa-8441-fc62b223d36a","date":"2026-11-03T02:00:00Z","equipe":"denver-nuggets","competition":"NBA","domicile":true,"adversaire":"Portland Trail Blazers","statut":"FINAL","score":11.8,"situation":"joue","minutes":13,"pour":110,"contre":118,"cotes":null},
   {"matchId":"Game:4e983364-a5ce-413c-9dde-11a2564472b8","date":"2026-10-31T02:00:00Z","equipe":"denver-nuggets","competition":"NBA","domicile":false,"adversaire":"Phoenix Suns","statut":"FINAL","score":9,"situation":"joue","minutes":11,"pour":127,"contre":120,"cotes":null},

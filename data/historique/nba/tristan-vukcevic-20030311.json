@@ -1,8 +1,11 @@
 {
  "joueurId": "tristan-vukcevic-20030311",
- "misAJour": "2026-11-08T17:51:22.866Z",
+ "misAJour": "2026-11-14T08:03:09.972Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.101Z",
  "matchs": [
+  {"matchId":"Game:8ad39632-5f10-4ca1-b158-d42ed56a70e2","date":"2026-11-13T00:00:00Z","equipe":"washington-wizards","competition":"NBA","domicile":true,"adversaire":"Detroit Pistons","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":140,"contre":144,"cotes":null},
+  {"matchId":"Game:7976b9d3-8981-47b7-b3c2-fa13c94f7b91","date":"2026-11-12T00:00:00Z","equipe":"washington-wizards","competition":"NBA","domicile":false,"adversaire":"Indiana Pacers","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":101,"contre":114,"cotes":null},
+  {"matchId":"Game:a2a33e0a-7900-4d10-b8a1-9b48dfeebc52","date":"2026-11-10T00:00:00Z","equipe":"washington-wizards","competition":"NBA","domicile":false,"adversaire":"Detroit Pistons","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":111,"contre":122,"cotes":null},
   {"matchId":"Game:76776088-14f8-42e4-9f60-cc26350900a6","date":"2026-11-08T01:00:00Z","equipe":"washington-wizards","competition":"NBA","domicile":false,"adversaire":"Oklahoma City Thunder","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":75,"contre":114,"cotes":null},
   {"matchId":"Game:bf235e89-13fb-40c2-b4e1-aaf793b227b6","date":"2026-11-07T00:00:00Z","equipe":"washington-wizards","competition":"NBA","domicile":false,"adversaire":"Atlanta Hawks","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":132,"contre":139,"cotes":null},
   {"matchId":"Game:612750b3-f88e-4db3-85c0-25e6fc466f4b","date":"2026-11-05T00:00:00Z","equipe":"washington-wizards","competition":"NBA","domicile":true,"adversaire":"Atlanta Hawks","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":105,"contre":120,"cotes":null},

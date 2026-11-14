@@ -1,9 +1,12 @@
 {
  "joueurId": "jalen-slawson-19991022",
- "misAJour": "2026-11-08T17:51:22.906Z",
+ "misAJour": "2026-11-14T08:03:10.046Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.128Z",
  "matchs": [
-  {"matchId":"Game:e79d72e0-455c-44c7-a43a-6f35487f266b","date":"2026-11-07T22:00:00Z","equipe":"indiana-pacers","competition":"NBA","domicile":true,"adversaire":"Denver Nuggets","statut":"REVIEWING","score":11.2,"situation":"joue","minutes":13,"pour":102,"contre":114,"cotes":null},
+  {"matchId":"Game:37777c33-93b9-408f-83ec-65dc0111457a","date":"2026-11-14T00:00:00Z","equipe":"indiana-pacers","competition":"NBA","domicile":true,"adversaire":"New York Knicks","statut":"REVIEWING","score":3.8,"situation":"joue","minutes":11,"pour":106,"contre":104,"cotes":null},
+  {"matchId":"Game:7976b9d3-8981-47b7-b3c2-fa13c94f7b91","date":"2026-11-12T00:00:00Z","equipe":"indiana-pacers","competition":"NBA","domicile":true,"adversaire":"Washington Wizards","statut":"FINAL","score":10.1,"situation":"joue","minutes":12,"pour":114,"contre":101,"cotes":null},
+  {"matchId":"Game:1ca13494-2e9e-4352-aa61-7795993dc092","date":"2026-11-10T01:00:00Z","equipe":"indiana-pacers","competition":"NBA","domicile":false,"adversaire":"Dallas Mavericks","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":122,"contre":125,"cotes":null},
+  {"matchId":"Game:e79d72e0-455c-44c7-a43a-6f35487f266b","date":"2026-11-07T22:00:00Z","equipe":"indiana-pacers","competition":"NBA","domicile":true,"adversaire":"Denver Nuggets","statut":"FINAL","score":11.2,"situation":"joue","minutes":13,"pour":102,"contre":114,"cotes":null},
   {"matchId":"Game:3ad5273b-1d46-44f3-9d79-56b5d4424e5f","date":"2026-11-05T01:00:00Z","equipe":"indiana-pacers","competition":"NBA","domicile":false,"adversaire":"Memphis Grizzlies","statut":"FINAL","score":6.9,"situation":"joue","minutes":6,"pour":107,"contre":103,"cotes":null},
   {"matchId":"Game:e6483ab2-3365-4e21-9cf4-80dc1cc37115","date":"2026-11-03T00:30:00Z","equipe":"indiana-pacers","competition":"NBA","domicile":true,"adversaire":"Atlanta Hawks","statut":"FINAL","score":40.9,"situation":"joue","minutes":41,"pour":104,"contre":108,"cotes":null},
   {"matchId":"Game:c60a77a0-6e46-4adf-90ef-48f0beab6559","date":"2026-11-01T22:00:00Z","equipe":"indiana-pacers","competition":"NBA","domicile":true,"adversaire":"Brooklyn Nets","statut":"FINAL","score":7,"situation":"joue","minutes":19,"pour":90,"contre":98,"cotes":null},

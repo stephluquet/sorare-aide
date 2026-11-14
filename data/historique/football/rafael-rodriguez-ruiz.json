@@ -1,9 +1,9 @@
 {
  "joueurId": "rafael-rodriguez-ruiz",
- "misAJour": "2026-11-07T16:29:51.877Z",
+ "misAJour": "2026-11-14T08:02:35.100Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.877Z",
  "matchs": [
-  {"matchId":"Game:627423ca-bb85-4d43-977f-6314e92a3014","date":"2026-11-07T13:00:00Z","equipe":"malaga-malaga","competition":"Primera División","domicile":true,"adversaire":"Real Racing Club de Santander","statut":"REVIEWING","score":49.5,"situation":"entre","minutes":18,"pour":1,"contre":2,"cotes":{"victoire":0.4,"nul":0.27,"defaite":0.33,"coteCleanSheet":3.75}},
+  {"matchId":"Game:627423ca-bb85-4d43-977f-6314e92a3014","date":"2026-11-07T13:00:00Z","equipe":"malaga-malaga","competition":"Primera División","domicile":true,"adversaire":"Real Racing Club de Santander","statut":"FINAL","score":49.5,"situation":"entre","minutes":18,"pour":1,"contre":2,"cotes":{"victoire":0.4,"nul":0.27,"defaite":0.33,"coteCleanSheet":3.75}},
   {"matchId":"Game:8280c6a7-cfaf-490c-b52c-794ef1d39d5e","date":"2026-10-31T17:30:00Z","equipe":"malaga-malaga","competition":"Primera División","domicile":false,"adversaire":"Real Betis","statut":"FINAL","score":34.5,"situation":"entre","minutes":29,"pour":1,"contre":2,"cotes":{"victoire":0.11,"nul":0.18,"defaite":0.71,"coteCleanSheet":11}},
   {"matchId":"Game:f4da65cb-b8f7-4e2c-a68f-c65664fcf6d4","date":"2026-10-23T19:00:00Z","equipe":"malaga-malaga","competition":"Primera División","domicile":false,"adversaire":"D. Alavés","statut":"FINAL","score":33.7,"situation":"entre","minutes":22,"pour":1,"contre":1,"cotes":{"victoire":0.17,"nul":0.2601,"defaite":0.5699,"coteCleanSheet":5}},
   {"matchId":"Game:500db6e8-a43c-4c07-99bb-94618d0dcff9","date":"2026-10-18T16:30:00Z","equipe":"malaga-malaga","competition":"Primera División","domicile":true,"adversaire":"Real Sociedad","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":2,"contre":5,"cotes":{"victoire":0.31,"nul":0.27,"defaite":0.42,"coteCleanSheet":4.5}},

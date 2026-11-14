@@ -1,8 +1,11 @@
 {
  "joueurId": "isaiah-joe-19990702",
- "misAJour": "2026-11-07T16:31:59.094Z",
+ "misAJour": "2026-11-14T08:03:10.031Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.094Z",
  "matchs": [
+  {"matchId":"Game:8ad39632-5f10-4ca1-b158-d42ed56a70e2","date":"2026-11-13T00:00:00Z","equipe":"detroit-pistons","competition":"NBA","domicile":false,"adversaire":"Washington Wizards","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":144,"contre":140,"cotes":null},
+  {"matchId":"Game:a2a33e0a-7900-4d10-b8a1-9b48dfeebc52","date":"2026-11-10T00:00:00Z","equipe":"detroit-pistons","competition":"NBA","domicile":true,"adversaire":"Washington Wizards","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":122,"contre":111,"cotes":null},
+  {"matchId":"Game:95deacd7-7e84-4182-8534-e71ea0e41bdb","date":"2026-11-08T23:00:00Z","equipe":"detroit-pistons","competition":"NBA","domicile":true,"adversaire":"Los Angeles Lakers","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":116,"contre":121,"cotes":null},
   {"matchId":"Game:189900aa-f0a4-44f2-a70e-8131cab089fb","date":"2026-11-05T00:00:00Z","equipe":"detroit-pistons","competition":"NBA","domicile":true,"adversaire":"Philadelphia 76ers","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":106,"contre":112,"cotes":null},
   {"matchId":"Game:25d97ffd-665b-4f14-8670-2ecb844c1dd5","date":"2026-11-03T00:30:00Z","equipe":"detroit-pistons","competition":"NBA","domicile":false,"adversaire":"Charlotte Hornets","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":124,"contre":91,"cotes":null},
   {"matchId":"Game:393df0f7-836d-4500-8d99-8fbc2046b703","date":"2026-10-30T23:30:00Z","equipe":"detroit-pistons","competition":"NBA","domicile":false,"adversaire":"Brooklyn Nets","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":110,"contre":94,"cotes":null},

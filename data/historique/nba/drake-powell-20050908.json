@@ -1,8 +1,10 @@
 {
  "joueurId": "drake-powell-20050908",
- "misAJour": "2026-11-08T17:51:22.926Z",
+ "misAJour": "2026-11-14T08:03:10.054Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.144Z",
  "matchs": [
+  {"matchId":"Game:43dd8968-f3a1-4c15-9215-c714566c4fc8","date":"2026-11-12T01:00:00Z","equipe":"brooklyn-nets","competition":"NBA","domicile":false,"adversaire":"New Orleans Pelicans","statut":"FINAL","score":7,"situation":"joue","minutes":7,"pour":145,"contre":111,"cotes":null},
+  {"matchId":"Game:e878aa61-76b3-47d3-a003-79c62985e2b0","date":"2026-11-09T00:30:00Z","equipe":"brooklyn-nets","competition":"NBA","domicile":false,"adversaire":"Dallas Mavericks","statut":"FINAL","score":1.9,"situation":"joue","minutes":10,"pour":93,"contre":130,"cotes":null},
   {"matchId":"Game:435a2d31-2610-44e2-b250-a217c4579482","date":"2026-11-08T00:30:00Z","equipe":"brooklyn-nets","competition":"NBA","domicile":false,"adversaire":"Atlanta Hawks","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":121,"contre":124,"cotes":null},
   {"matchId":"Game:a6025895-87a2-430a-871a-2a900195228c","date":"2026-11-05T00:30:00Z","equipe":"brooklyn-nets","competition":"NBA","domicile":true,"adversaire":"Charlotte Hornets","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":114,"contre":104,"cotes":null},
   {"matchId":"Game:41aa1697-7248-4c23-a27f-d035dd514579","date":"2026-11-03T00:30:00Z","equipe":"brooklyn-nets","competition":"NBA","domicile":false,"adversaire":"New York Knicks","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":90,"contre":103,"cotes":null},

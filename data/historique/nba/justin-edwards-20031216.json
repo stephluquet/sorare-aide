@@ -1,9 +1,12 @@
 {
  "joueurId": "justin-edwards-20031216",
- "misAJour": "2026-11-07T16:31:59.163Z",
+ "misAJour": "2026-11-14T08:03:10.001Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.163Z",
  "matchs": [
-  {"matchId":"Game:f87889ab-82f5-412c-ab7d-be5efeefe629","date":"2026-11-07T00:30:00Z","equipe":"philadelphia-76ers","competition":"NBA","domicile":false,"adversaire":"Cleveland Cavaliers","statut":"REVIEWING","score":3.2,"situation":"joue","minutes":4,"pour":95,"contre":119,"cotes":null},
+  {"matchId":"Game:a00dc23f-b894-4079-80f6-ccd2ced8d918","date":"2026-11-13T00:00:00Z","equipe":"philadelphia-76ers","competition":"NBA","domicile":true,"adversaire":"Toronto Raptors","statut":"FINAL","score":-0.8,"situation":"joue","minutes":1,"pour":123,"contre":112,"cotes":null},
+  {"matchId":"Game:81ef5c59-8716-4709-9f25-c7f4b1fdf8c5","date":"2026-11-11T01:00:00Z","equipe":"philadelphia-76ers","competition":"NBA","domicile":true,"adversaire":"Boston Celtics","statut":"FINAL","score":-2,"situation":"joue","minutes":6,"pour":101,"contre":123,"cotes":null},
+  {"matchId":"Game:977e028e-2992-4d04-a83f-0db79900b279","date":"2026-11-08T20:30:00Z","equipe":"philadelphia-76ers","competition":"NBA","domicile":false,"adversaire":"Chicago Bulls","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":127,"contre":121,"cotes":null},
+  {"matchId":"Game:f87889ab-82f5-412c-ab7d-be5efeefe629","date":"2026-11-07T00:30:00Z","equipe":"philadelphia-76ers","competition":"NBA","domicile":false,"adversaire":"Cleveland Cavaliers","statut":"FINAL","score":3.2,"situation":"joue","minutes":4,"pour":95,"contre":119,"cotes":null},
   {"matchId":"Game:189900aa-f0a4-44f2-a70e-8131cab089fb","date":"2026-11-05T00:00:00Z","equipe":"philadelphia-76ers","competition":"NBA","domicile":false,"adversaire":"Detroit Pistons","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":112,"contre":106,"cotes":null},
   {"matchId":"Game:991acf88-3252-46f1-9630-f58ce807364d","date":"2026-11-03T00:30:00Z","equipe":"philadelphia-76ers","competition":"NBA","domicile":true,"adversaire":"Chicago Bulls","statut":"FINAL","score":3.2,"situation":"joue","minutes":3,"pour":126,"contre":107,"cotes":null},
   {"matchId":"Game:c7613c3c-fccb-4c11-85ac-e5e9fe00dcd6","date":"2026-10-31T22:00:00Z","equipe":"philadelphia-76ers","competition":"NBA","domicile":false,"adversaire":"Charlotte Hornets","statut":"FINAL","score":1.2,"situation":"joue","minutes":3,"pour":109,"contre":104,"cotes":null},

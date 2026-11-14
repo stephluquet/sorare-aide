@@ -1,9 +1,10 @@
 {
  "joueurId": "wael-mohya",
- "misAJour": "2026-11-07T16:29:51.849Z",
+ "misAJour": "2026-11-14T08:02:35.079Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.849Z",
  "matchs": [
-  {"matchId":"Game:fe13e9df-2645-4d85-9a0f-e335d678d815","date":"2026-11-06T19:30:00Z","equipe":"borussia-m-gladbach-monchengladbach","competition":"Bundesliga","domicile":false,"adversaire":"Hamburger SV","statut":"REVIEWING","score":33.6,"situation":"titulaire","minutes":90,"pour":1,"contre":3,"cotes":{"victoire":0.32,"nul":0.28,"defaite":0.4,"coteCleanSheet":4}},
+  {"matchId":"Game:cf25e9c2-b7c8-4533-8829-2f3416a7f5d8","date":"2026-11-13T19:45:00Z","equipe":"germany","competition":"UEFA Nations League","domicile":false,"adversaire":"Serbia","statut":"DID_NOT_PLAY","score":0,"situation":"absent","minutes":null,"pour":3,"contre":1,"cotes":{"victoire":0.75,"nul":0.16,"defaite":0.09,"coteCleanSheet":2.1}},
+  {"matchId":"Game:fe13e9df-2645-4d85-9a0f-e335d678d815","date":"2026-11-06T19:30:00Z","equipe":"borussia-m-gladbach-monchengladbach","competition":"Bundesliga","domicile":false,"adversaire":"Hamburger SV","statut":"FINAL","score":33.6,"situation":"titulaire","minutes":90,"pour":1,"contre":3,"cotes":{"victoire":0.32,"nul":0.28,"defaite":0.4,"coteCleanSheet":4}},
   {"matchId":"Game:5e59ada9-3b40-4262-bfcc-f0bc9f999812","date":"2026-10-31T14:30:00Z","equipe":"borussia-m-gladbach-monchengladbach","competition":"Bundesliga","domicile":true,"adversaire":"SC Paderborn 07","statut":"FINAL","score":35,"situation":"titulaire","minutes":77,"pour":0,"contre":0,"cotes":{"victoire":0.43,"nul":0.26,"defaite":0.31,"coteCleanSheet":4}},
   {"matchId":"Game:293d223f-165f-478e-9603-9060d636dd8f","date":"2026-10-23T18:30:00Z","equipe":"borussia-m-gladbach-monchengladbach","competition":"Bundesliga","domicile":false,"adversaire":"VfB Stuttgart","statut":"FINAL","score":90,"situation":"titulaire","minutes":70,"pour":3,"contre":2,"cotes":{"victoire":0.13,"nul":0.17,"defaite":0.7,"coteCleanSheet":13}},
   {"matchId":"Game:21e3a1ea-2f7d-4d7a-8561-2d71f4cfd38d","date":"2026-10-18T15:30:00Z","equipe":"borussia-m-gladbach-monchengladbach","competition":"Bundesliga","domicile":true,"adversaire":"TSG Hoffenheim","statut":"FINAL","score":60,"situation":"titulaire","minutes":90,"pour":1,"contre":2,"cotes":{"victoire":0.31,"nul":0.24,"defaite":0.45,"coteCleanSheet":6.5}},

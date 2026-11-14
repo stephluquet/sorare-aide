@@ -11,17 +11,12 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { appelGraphql, compteur, relancerViaProxySiBesoin } from './api.js';
-import { CARTES, COMPOSITIONS, HISTORIQUE, PALIERS } from './requetes.js';
-import { matchHistorique, normaliserCarte, normaliserCompositions, normaliserJoueur, normaliserMatch, normaliserPaliers } from './normaliser.js';
-import { lireBlessuresNba, rapprocherBlessures } from './espn.js';
-import { besoinHistoriqueComplet, cheminArchive, ecrireArchive, fusionner, lireArchive, trou } from './historique.js';
+import { lireBlessuresNba } from './espn.js';
+import { recupererTout } from './coeur.js';
+import { cheminArchive, ecrireArchive, lireArchive } from './historique.js';
+import { parametresDepuisMethode } from '../moteur/parametres.js';
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const TAILLE_PAGE = 50;
-const NB_MATCHS_HISTORIQUE = 40;
-const FORMAT = 1;
-
-const progression = (msg) => process.stderr.write(`${msg} (requêtes : ${compteur.requetes})\n`);
 
 function horodatageParis(d = new Date()) {
   const p = Object.fromEntries(new Intl.DateTimeFormat('fr-FR', {
@@ -30,125 +25,18 @@ function horodatageParis(d = new Date()) {
   return `${p.year}-${p.month}-${p.day}T${p.hour}${p.minute}`;
 }
 
-function lireTableBonus() {
-  const t = JSON.parse(readFileSync(join(RACINE, 'regles', 'bonus-collections.json'), 'utf8')).bonus_pct;
-  return { Standard: 0, ...t };
+// Progression sur la sortie d'erreur : chaque étape, et l'historique tous les 25 joueurs.
+function suivi({ sport, etape, fait, total, texte }) {
+  if (etape === 'historique' && fait % 25 !== 0 && fait !== total) return;
+  if (etape === 'compositions' && fait !== total) return;
+  process.stderr.write(`[${sport}] ${texte} (requêtes : ${compteur.requetes})\n`);
 }
 
-async function recupererSport(slug, sport, { sansHistorique, refaireHistorique, anomalies }) {
-  const SPORT = sport.toUpperCase();
-  const tag = `[${sport}]`;
-
-  // 1. Paliers Arcade
-  const paliers = normaliserPaliers((await appelGraphql(PALIERS, { slug, sport: SPORT })).user?.setBoard, sport);
-  progression(`${tag} paliers lus`);
-
-  // 2. Cartes, page par page
-  const cartesBrutes = [];
-  let apres = null, total = null, page = 0;
-  do {
-    const d = await appelGraphql(CARTES, { slug, sport: SPORT, first: TAILLE_PAGE, after: apres });
-    const c = d.user.cards;
-    total = c.totalCount;
-    cartesBrutes.push(...c.nodes);
-    page++;
-    progression(`${tag} cartes ${page}/${Math.ceil(total / TAILLE_PAGE)}`);
-    apres = c.pageInfo.hasNextPage ? c.pageInfo.endCursor : null;
-  } while (apres);
-  if (cartesBrutes.length !== total) anomalies.push(`${tag} ${cartesBrutes.length} cartes reçues pour ${total} annoncées`);
-
-  const tableBonus = lireTableBonus();
-  const cartes = cartesBrutes.map((c) => normaliserCarte(c, sport));
-  for (const c of cartes) {
-    if (c.bonusPct == null) anomalies.push(`${tag} bonus absent : ${c.slug}`);
-    else if (c.collection in tableBonus && tableBonus[c.collection] !== c.bonusPct) {
-      anomalies.push(`${tag} bonus ${c.collection} : API ${c.bonusPct} %, table ${tableBonus[c.collection]} % (${c.slug})`);
-    }
-  }
-
-  // 3. Joueurs (uniques) et prochains matchs
-  const joueursBruts = new Map();
-  for (const c of cartesBrutes) if (c.anyPlayer && !joueursBruts.has(c.anyPlayer.slug)) joueursBruts.set(c.anyPlayer.slug, c.anyPlayer);
-  const matchs = new Map();
-  const joueurs = [];
-  for (const p of joueursBruts.values()) {
-    const j = normaliserJoueur(p, sport);
-    joueurs.push(j);
-    if (p.nextGame && !matchs.has(p.nextGame.id)) matchs.set(p.nextGame.id, normaliserMatch(p.nextGame, sport));
-    if (!p.nextGame) anomalies.push(`${tag} pas de prochain match connu : ${j.nom}`);
-    else if (j.club && ![p.nextGame.homeTeam?.slug, p.nextGame.awayTeam?.slug].includes(j.club.slug)) {
-      anomalies.push(`${tag} club absent du prochain match (sélection ?) : ${j.nom}, ${p.nextGame.homeTeam?.name} – ${p.nextGame.awayTeam?.name}`);
-    }
-  }
-
-  // 3 bis. Compositions officielles des matchs de football proches (publiées vers H-1)
-  if (sport === 'football') {
-    const P = JSON.parse(readFileSync(join(RACINE, 'methode.md'), 'utf8').match(/<!-- parametres:debut -->\s*```json\s*([\s\S]*?)```/)[1]);
-    const horizon = Date.now() + P.compositions_officielles.horizon_heures * 3600_000;
-    const proches = [...matchs.values()].filter((m) => Date.parse(m.debutUTC) > Date.now() - 2 * 3600_000 && Date.parse(m.debutUTC) <= horizon);
-    let publiees = 0;
-    for (const m of proches) {
-      try {
-        const d = await appelGraphql(COMPOSITIONS, { id: m.id.replace(/^Game:/, '') });
-        m.compositionsOfficielles = normaliserCompositions(d.football?.game, new Date().toISOString());
-        if (Object.values(m.compositionsOfficielles?.equipes ?? {}).some(Boolean)) publiees++;
-      } catch (e) {
-        anomalies.push(`${tag} compositions illisibles pour ${m.id} : ${e.message}`);
-      }
-    }
-    progression(`${tag} compositions officielles : ${publiees} publiées sur ${proches.length} matchs dans les ${P.compositions_officielles.horizon_heures} h`);
-  }
-
-  // 4. Historique incrémental
-  const aCompleter = [];
-  const recusParJoueur = new Map();
-  for (const p of joueursBruts.values()) {
-    const recus = (p.playerGameScores ?? []).filter(Boolean).map((g) => matchHistorique(g, sport)).filter((m) => m.matchId);
-    recusParJoueur.set(p.slug, recus);
-    const archive = lireArchive(cheminArchive(RACINE, sport, p.slug));
-    // Une archive créée sans historique complet (--sans-historique) ne compte pas.
-    if (!refaireHistorique && !besoinHistoriqueComplet(archive, recus)) continue;
-    if (refaireHistorique || !archive?.dernierHistoriqueComplet) aCompleter.push(p.slug);
-    else if (trou(archive.matchs, recus)) { aCompleter.push(p.slug); anomalies.push(`${tag} trou dans l'historique, 40 matchs refaits : ${p.slug}`); }
-  }
-  const complets = new Map();
-  if (sansHistorique) {
-    if (aCompleter.length) progression(`${tag} historique complet sauté pour ${aCompleter.length} joueurs (--sans-historique)`);
-  } else {
-    let i = 0;
-    for (const s of aCompleter) {
-      try {
-        const d = await appelGraphql(HISTORIQUE, { slug: s, first: NB_MATCHS_HISTORIQUE });
-        complets.set(s, (d.anyPlayer?.allPlayerGameScores?.nodes ?? []).filter(Boolean).map((g) => matchHistorique(g, sport)).filter((m) => m.matchId));
-      } catch (e) {
-        anomalies.push(`${tag} historique complet impossible pour ${s} : ${e.message}`);
-      }
-      i++;
-      if (i % 25 === 0 || i === aCompleter.length) progression(`${tag} historique ${i}/${aCompleter.length}`);
-    }
-  }
-  for (const j of joueurs) {
-    const chemin = cheminArchive(RACINE, sport, j.id);
-    const archive = lireArchive(chemin)?.matchs ?? [];
-    const complet = complets.get(j.id);
-    const matchsJoueur = fusionner(fusionner(archive, complet ?? []), recusParJoueur.get(j.id) ?? []);
-    ecrireArchive(chemin, j.id, matchsJoueur, { complet: Boolean(complet) });
-    j.historique = matchsJoueur.slice(0, NB_MATCHS_HISTORIQUE);
-  }
-
-  // Blessures annoncées par ESPN (NBA, methode.md section 9) : une requête, hors API Sorare.
-  if (sport === 'nba') {
-    try {
-      const r = rapprocherBlessures(await lireBlessuresNba(), joueurs);
-      progression(`${tag} ESPN : ${r.listes} blessés listés, ${r.rapproches} dans le catalogue`);
-      for (const x of r.ignores) anomalies.push(`${tag} ESPN : même nom, autre équipe : ${x}`);
-    } catch (e) {
-      anomalies.push(`${tag} blessures ESPN illisibles : ${e.message}`);
-    }
-  }
-
-  return { cartes, joueurs, matchs: [...matchs.values()], paliers, totalCartes: total };
-}
+// Archive sur disque : data/historique/<sport>/<joueurId>.json
+const magasinDisque = {
+  lire: async (sport, id) => lireArchive(cheminArchive(RACINE, sport, id)),
+  ecrire: async (sport, id, matchs, options) => ecrireArchive(cheminArchive(RACINE, sport, id), id, matchs, options),
+};
 
 async function principal() {
   await relancerViaProxySiBesoin();
@@ -159,36 +47,18 @@ async function principal() {
   const sports = choix === 'tous' ? ['football', 'nba'] : [choix];
   if (!sports.every((s) => ['football', 'nba'].includes(s))) throw new Error(`Sport inconnu : ${choix}`);
 
-  const debut = new Date();
-  const anomalies = [];
-  const tout = { cartes: [], joueurs: [], matchs: [], paliers: [] };
-  for (const sport of sports) {
-    const r = await recupererSport(slug, sport, { sansHistorique: args.includes('--sans-historique'), refaireHistorique: args.includes('--refaire-historique'), anomalies });
-    for (const k of Object.keys(tout)) tout[k].push(...r[k]);
-  }
-  // Un sport non récupéré cette fois-ci est repris tel quel de la récupération précédente.
-  const recupereParSport = Object.fromEntries(sports.map((s) => [s, debut.toISOString()]));
-  const precedent = join(RACINE, 'data', 'dernier.json');
-  if (existsSync(precedent)) {
-    const ancien = JSON.parse(readFileSync(precedent, 'utf8'));
-    for (const s of ['football', 'nba'].filter((x) => !sports.includes(x))) {
-      if (!ancien.cartes?.some((c) => c.sport === s)) continue;
-      for (const k of Object.keys(tout)) tout[k].push(...ancien[k].filter((x) => x.sport === s));
-      recupereParSport[s] = ancien.meta.recupereParSport?.[s] ?? ancien.meta.recupereA;
-    }
-  }
-  const meta = {
-    format: FORMAT,
-    recupereParSport,
-    slug,
-    sports,
-    recupereA: debut.toISOString(),
-    dureeS: Math.round((Date.now() - debut) / 100) / 10,
-    nbRequetes: compteur.requetes,
-    source: 'https://api.sorare.com/graphql',
-    nb: Object.fromEntries(Object.entries(tout).map(([k, v]) => [k, v.length])),
-    anomalies,
+  const precedentFichier = join(RACINE, 'data', 'dernier.json');
+  const precedent = existsSync(precedentFichier) ? JSON.parse(readFileSync(precedentFichier, 'utf8')) : null;
+  const appel = Object.assign(appelGraphql, { compteur });
+  const deps = {
+    appel, magasin: magasinDisque, suivi, lireEspn: lireBlessuresNba,
+    P: parametresDepuisMethode(readFileSync(join(RACINE, 'methode.md'), 'utf8')),
+    tableBonus: JSON.parse(readFileSync(join(RACINE, 'regles', 'bonus-collections.json'), 'utf8')).bonus_pct,
   };
+  const options = { sansHistorique: args.includes('--sans-historique'), refaireHistorique: args.includes('--refaire-historique') };
+  const { meta, ...tout } = await recupererTout(slug, sports, deps, options, precedent);
+  const debut = new Date(meta.recupereA);
+  const anomalies = meta.anomalies;
 
   const dossier = join(RACINE, 'data', horodatageParis(debut));
   mkdirSync(dossier, { recursive: true });

@@ -11,52 +11,16 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { join } from 'node:path';
 import { chargerEntrees, projeterTout, RACINE } from '../src/moteur/node.js';
-import { matchsParEquipe } from '../src/moteur/forme.js';
+import { preparerDonneesApp } from '../src/app-donnees.js';
 
 const NB_VIGNETTES = { football: 120, nba: 60 };
-const FORMAT = 1;
 const lire = (...p) => readFileSync(join(RACINE, ...p), 'utf8');
 
 const entrees = chargerEntrees();
 const { donnees, P, regles } = entrees;
 
-// ---------- Données au format de l'interface ----------
-const STATUT = { FINAL: 'F', REVIEWING: 'R', DID_NOT_PLAY: 'D' };
-const SITUATION = { titulaire: 't', entre: 'e', joue: 'j', banc: 'b', absent: 'a', inconnu: 'i' };
-const historiqueCompact = (h) => h
-  .filter((m) => P.statuts_comptes.includes(m.statut))
-  .slice(0, P.fenetre_matchs)
-  .map((m) => [m.date, STATUT[m.statut], SITUATION[m.situation] ?? 'i', m.score == null ? null : Math.round(m.score * 10) / 10, m.minutes]);
-
-const app = {
-  format: FORMAT,
-  meta: { recupereA: donnees.meta.recupereA, slug: donnees.meta.slug, construitA: new Date().toISOString() },
-  P,
-  regles,
-  paliers: donnees.paliers,
-  journees: JSON.parse(lire('regles', 'squad.json')).journee_de_jeu,
-  cartes: donnees.cartes.map(({ id, sport, joueurId, rarete, collection, bonusPct }) => ({ id, sport, joueurId, rarete, collection, bonusPct })),
-  joueurs: donnees.joueurs.map((j) => ({
-    id: j.id, sport: j.sport, nom: j.nom, postes: j.postes, club: j.club, tier: j.tier, etoiles: j.etoiles,
-    statutSorare: j.statutSorare, blessures: j.blessures, suspensions: j.suspensions, prochainMatchId: j.prochainMatchId,
-    ...(j.espn ? { espn: j.espn } : {}),
-    h: historiqueCompact(j.historique ?? []),
-  })),
-  matchs: donnees.matchs,
-  equipes: equipesCompactes(),
-  vignettes: {},
-};
-
-// Forme des équipes (affichage, methode.md 9 bis) : derniers matchs terminés des clubs actuels
-// des joueurs et de leurs prochains adversaires, au format [date, adversaire, domicile 1/0, pour, contre].
-function equipesCompactes() {
-  const utiles = new Set();
-  for (const j of donnees.joueurs) if (j.club?.slug) utiles.add(j.club.slug);
-  for (const m of donnees.matchs) for (const e of [m.domicile, m.exterieur]) if (e?.slug) utiles.add(e.slug);
-  const parEquipe = matchsParEquipe(donnees.joueurs);
-  return Object.fromEntries([...parEquipe].filter(([k]) => utiles.has(k)).map(([k, ms]) =>
-    [k, ms.slice(0, P.forme.fenetre_victoires).map((m) => [m.date, m.adversaire, m.domicile ? 1 : 0, m.pour, m.contre])]));
-}
+// ---------- Données au format de l'interface (src/app-donnees.js, commun avec la version web) ----------
+const app = preparerDonneesApp({ donnees, P, regles, journees: JSON.parse(lire('regles', 'squad.json')).journee_de_jeu });
 
 // ---------- Vignettes des cartes susceptibles d'être proposées ----------
 // Cartes ni exclues ni douteuses, éligibles Arcade, au-dessus du seuil de la proposition

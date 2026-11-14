@@ -1,9 +1,10 @@
 {
  "joueurId": "odisseas-vlachodimos",
- "misAJour": "2026-11-07T16:29:51.983Z",
+ "misAJour": "2026-11-14T08:02:34.967Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.983Z",
  "matchs": [
-  {"matchId":"Game:4b564965-b0f4-4e1d-97c9-7c78048aa72d","date":"2026-11-06T20:00:00Z","equipe":"sevilla-sevilla-1890","competition":"Primera División","domicile":true,"adversaire":"D. Alavés","statut":"REVIEWING","score":68.8,"situation":"titulaire","minutes":90,"pour":0,"contre":0,"cotes":{"victoire":0.5,"nul":0.29,"defaite":0.21,"coteCleanSheet":2.2}},
+  {"matchId":"Game:56c71186-0d73-40e4-b54f-80bdaa4e0e02","date":"2026-11-13T19:45:00Z","equipe":"greece","competition":"UEFA Nations League","domicile":false,"adversaire":"Netherlands","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":0,"contre":7,"cotes":{"victoire":0.18,"nul":0.21,"defaite":0.61,"coteCleanSheet":8}},
+  {"matchId":"Game:4b564965-b0f4-4e1d-97c9-7c78048aa72d","date":"2026-11-06T20:00:00Z","equipe":"sevilla-sevilla-1890","competition":"Primera División","domicile":true,"adversaire":"D. Alavés","statut":"FINAL","score":68.8,"situation":"titulaire","minutes":90,"pour":0,"contre":0,"cotes":{"victoire":0.5,"nul":0.29,"defaite":0.21,"coteCleanSheet":2.2}},
   {"matchId":"Game:c1f6e413-5ca0-4ba8-bacb-431a5f675e2c","date":"2026-11-01T13:00:00Z","equipe":"sevilla-sevilla-1890","competition":"Primera División","domicile":false,"adversaire":"Getafe CF","statut":"FINAL","score":29.6,"situation":"titulaire","minutes":90,"pour":1,"contre":3,"cotes":{"victoire":0.39,"nul":0.33,"defaite":0.28,"coteCleanSheet":2.38}},
   {"matchId":"Game:2fbaf245-7071-4853-a529-78eaedec0455","date":"2026-10-26T20:00:00Z","equipe":"sevilla-sevilla-1890","competition":"Primera División","domicile":true,"adversaire":"CA Osasuna","statut":"FINAL","score":67.7,"situation":"titulaire","minutes":90,"pour":2,"contre":0,"cotes":{"victoire":0.52,"nul":0.28,"defaite":0.2,"coteCleanSheet":2.1}},
   {"matchId":"Game:56713d8b-94c2-4c7a-9090-7e2e57aabd04","date":"2026-10-18T19:00:00Z","equipe":"sevilla-sevilla-1890","competition":"Primera División","domicile":false,"adversaire":"Real Madrid","statut":"FINAL","score":28,"situation":"titulaire","minutes":90,"pour":1,"contre":4,"cotes":{"victoire":0.09,"nul":0.16,"defaite":0.75,"coteCleanSheet":13}},

@@ -1,9 +1,9 @@
 {
  "joueurId": "diego-alexander-gomez-amarilla",
- "misAJour": "2026-11-08T17:51:06.923Z",
+ "misAJour": "2026-11-14T08:02:35.083Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.853Z",
  "matchs": [
-  {"matchId":"Game:d74ebce4-532c-4c7b-933d-33da4775c0bf","date":"2026-11-08T14:00:00Z","equipe":"brighton-hove-albion-brighton-east-sussex","competition":"Premier League","domicile":true,"adversaire":"Brentford FC","statut":"REVIEWING","score":82.6,"situation":"titulaire","minutes":89,"pour":2,"contre":0,"cotes":{"victoire":0.51,"nul":0.24,"defaite":0.25,"coteCleanSheet":3.4}},
+  {"matchId":"Game:d74ebce4-532c-4c7b-933d-33da4775c0bf","date":"2026-11-08T14:00:00Z","equipe":"brighton-hove-albion-brighton-east-sussex","competition":"Premier League","domicile":true,"adversaire":"Brentford FC","statut":"FINAL","score":76.6,"situation":"titulaire","minutes":89,"pour":2,"contre":0,"cotes":{"victoire":0.51,"nul":0.24,"defaite":0.25,"coteCleanSheet":3.4}},
   {"matchId":"Game:3f8f8a24-62b7-443c-af3f-caa39a3a6dce","date":"2026-11-05T20:00:00Z","equipe":"brighton-hove-albion-brighton-east-sussex","competition":"UEFA Conference League","domicile":false,"adversaire":"Getafe CF","statut":"FINAL","score":40.9,"situation":"entre","minutes":20,"pour":1,"contre":0,"cotes":{"victoire":0.58,"nul":0.25,"defaite":0.17,"coteCleanSheet":2}},
   {"matchId":"Game:5af9ffac-0980-4383-9c68-f95c4ba2a85a","date":"2026-10-31T15:00:00Z","equipe":"brighton-hove-albion-brighton-east-sussex","competition":"Premier League","domicile":false,"adversaire":"Manchester City FC","statut":"FINAL","score":25.2,"situation":"titulaire","minutes":84,"pour":1,"contre":0,"cotes":{"victoire":0.21,"nul":0.23,"defaite":0.56,"coteCleanSheet":8}},
   {"matchId":"Game:66d90a57-090d-47ef-b8e1-68d0826e4db5","date":"2026-10-25T14:00:00Z","equipe":"brighton-hove-albion-brighton-east-sussex","competition":"Premier League","domicile":false,"adversaire":"Liverpool FC","statut":"FINAL","score":43.4,"situation":"titulaire","minutes":90,"pour":0,"contre":2,"cotes":{"victoire":0.29,"nul":0.25,"defaite":0.46,"coteCleanSheet":5.5}},

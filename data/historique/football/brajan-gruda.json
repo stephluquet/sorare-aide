@@ -1,9 +1,10 @@
 {
  "joueurId": "brajan-gruda",
- "misAJour": "2026-11-08T17:51:07.086Z",
+ "misAJour": "2026-11-14T08:02:35.204Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.986Z",
  "matchs": [
-  {"matchId":"Game:949b0842-21d5-4c9e-83c2-76c12ee56c1f","date":"2026-11-07T14:30:00Z","equipe":"rb-leipzig-leipzig","competition":"Bundesliga","domicile":true,"adversaire":"FC Augsburg","statut":"REVIEWING","score":86,"situation":"titulaire","minutes":65,"pour":5,"contre":2,"cotes":{"victoire":0.66,"nul":0.18,"defaite":0.16,"coteCleanSheet":3.4}},
+  {"matchId":"Game:cf25e9c2-b7c8-4533-8829-2f3416a7f5d8","date":"2026-11-13T19:45:00Z","equipe":"germany","competition":"UEFA Nations League","domicile":false,"adversaire":"Serbia","statut":"REVIEWING","score":70.9,"situation":"titulaire","minutes":86,"pour":3,"contre":1,"cotes":{"victoire":0.75,"nul":0.16,"defaite":0.09,"coteCleanSheet":2.1}},
+  {"matchId":"Game:949b0842-21d5-4c9e-83c2-76c12ee56c1f","date":"2026-11-07T14:30:00Z","equipe":"rb-leipzig-leipzig","competition":"Bundesliga","domicile":true,"adversaire":"FC Augsburg","statut":"FINAL","score":86,"situation":"titulaire","minutes":65,"pour":5,"contre":2,"cotes":{"victoire":0.66,"nul":0.18,"defaite":0.16,"coteCleanSheet":3.4}},
   {"matchId":"Game:00dbf639-1104-47cd-a09f-573454402068","date":"2026-11-04T20:00:00Z","equipe":"rb-leipzig-leipzig","competition":"UEFA Champions League","domicile":true,"adversaire":"Manchester City FC","statut":"FINAL","score":60,"situation":"titulaire","minutes":90,"pour":2,"contre":3,"cotes":{"victoire":0.18,"nul":0.21,"defaite":0.61,"coteCleanSheet":11}},
   {"matchId":"Game:3bd308b9-bb41-40df-b410-47b654e6418b","date":"2026-10-31T14:30:00Z","equipe":"rb-leipzig-leipzig","competition":"Bundesliga","domicile":false,"adversaire":"FC Schalke 04","statut":"FINAL","score":40.8,"situation":"titulaire","minutes":76,"pour":2,"contre":0,"cotes":{"victoire":0.51,"nul":0.24,"defaite":0.25,"coteCleanSheet":3.4}},
   {"matchId":"Game:54b0536d-d949-4fad-81ae-1e3c3b717814","date":"2026-10-24T13:30:00Z","equipe":"rb-leipzig-leipzig","competition":"Bundesliga","domicile":true,"adversaire":"SV 07 Elversberg","statut":"FINAL","score":88.2,"situation":"entre","minutes":28,"pour":4,"contre":0,"cotes":{"victoire":0.66,"nul":0.19,"defaite":0.15,"coteCleanSheet":3}},

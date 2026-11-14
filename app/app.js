@@ -20,7 +20,11 @@ import { distribution, tirerTotaux, resumerTirages, quantilesSiJoue, multiplicat
 const STATUTS_CODES = { F: 'FINAL', R: 'REVIEWING', D: 'DID_NOT_PLAY' };
 const SITUATIONS_CODES = { t: 'titulaire', e: 'entre', j: 'joue', b: 'banc', a: 'absent', i: 'inconnu' };
 
+// Version web autonome (web/web.js) : elle prépare les données dans le navigateur et les fournit ici.
+const WEB = window.SORARE_WEB ?? null;
+
 async function chargerDonnees() {
+  if (WEB) return WEB.donnees;
   const integre = JSON.parse(document.getElementById('donnees').textContent);
   if (integre) return integre;
   const rep = await fetch('donnees-app.json');
@@ -69,6 +73,7 @@ const TRAITS = {
   haut: '<path d="M6 15l6-6 6 6"/>',
   bas: '<path d="M6 9l6 6 6-6"/>',
   suite: '<path d="M9 6l6 6-6 6"/>',
+  reglages: '<circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
   epingle: '<path d="M9 3.5h6l-1 6 3 3.5H7l3-3.5z"/><path d="M12 13v7.5"/>',
 };
 const ico = (n) => (BALLONS[n] ? ballon(n) : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${TRAITS[n]}</svg>`);
@@ -668,6 +673,7 @@ function rendreNav(ecran) {
 function boutonsOutils() {
   const sombre = themeActuel() === 'dark';
   return `<button type="button" class="btn rond discret" data-act="theme" aria-pressed="${sombre}" aria-label="${sombre ? 'Passer en mode clair' : 'Passer en mode sombre'}" title="${sombre ? 'Passer en mode clair' : 'Passer en mode sombre'}">${ico(sombre ? 'soleil' : 'lune')}</button>` +
+    (WEB ? '<button type="button" class="btn rond discret" data-act="parametres" aria-label="Paramètres" title="Paramètres : clé API, manager, sauvegarde">' + ico('reglages') + '</button>' : '') +
     '<button type="button" class="btn rond discret" data-act="aide" aria-label="Aide" title="Aide">' + ico('aide') + '</button>';
 }
 
@@ -1448,6 +1454,7 @@ document.addEventListener('click', (e) => {
       case 'maj': lancerMaj(); return;
       case 'theme': changerTheme(); return;
       case 'aide': ouvrirAide(); return;
+      case 'parametres': WEB?.ouvrirParametres(); return;
       case 'marquer': ouvrirMarquage(b.dataset.sport); return;
       case 'mode': vue.mode = v; afficherSolo(vue.sport); return;
       case 'seuil': etatUtilisateur = { ...etatUtilisateur, seuil: Number(v) }; stockage.enregistrer(etatUtilisateur); tout(); return;
@@ -1578,6 +1585,21 @@ function messageErreurMaj(err) {
 async function lancerMaj() {
   messageMaj = null;
   if (majIndisponible) { toast(majIndisponible); return; }
+  if (WEB) {
+    // Version web : la récupération tourne ici, dans le navigateur, par le relais (web/web.js).
+    if (etatMaj?.statut === 'en_cours') return;
+    etatMaj = { statut: 'en_cours', pourcent: 2, etape: 'Mise à jour…', debut: new Date().toISOString() };
+    afficherMaj();
+    try {
+      const donneesDe = await WEB.actualiser(({ pourcent, texte }) => { etatMaj = { ...etatMaj, pourcent: Math.round(pourcent), etape: texte }; afficherMaj(); });
+      etatMaj = { statut: 'termine', donneesDe, fin: new Date().toISOString() };
+    } catch (err) {
+      etatMaj = { statut: 'erreur', erreur: err.message, fin: new Date().toISOString() };
+      messageMaj = `La mise à jour a échoué : ${err.message}`;
+    }
+    afficherMaj();
+    return;
+  }
   const mcp = await window.claude?.use?.('mcp');
   if (!mcp) { messageMaj = 'Mise à jour impossible depuis cette vue : écris « actualise » à Claude.'; afficherMaj(); return; }
   demandeMaj = { t: Date.now() };
@@ -1597,6 +1619,7 @@ async function brancherMaj() {
   document.addEventListener('click', (e) => { if (e.target.closest('[data-act="recharger"]')) location.reload(); });
   afficherMaj();
   setInterval(afficherMaj, 2000);
+  if (WEB) return; // version web : ↻ relance la récupération dans le navigateur
   const [mcp, db] = await Promise.all([window.claude?.use?.('mcp') ?? null, window.claude?.use?.('db') ?? null]);
   if (!mcp) {
     majIndisponible = horsClaude ? 'Page autonome : pour actualiser, relance « npm run recuperer » puis « npm run app ».' : 'Mise à jour indisponible ici : écris « actualise » à Claude.';

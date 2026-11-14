@@ -1,9 +1,9 @@
 {
  "joueurId": "victor-nilsson-lindelof",
- "misAJour": "2026-11-08T17:51:06.757Z",
+ "misAJour": "2026-11-14T08:02:35.114Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.899Z",
  "matchs": [
-  {"matchId":"Game:50d86361-4fdc-4791-9134-dc2d19321d5b","date":"2026-11-08T16:30:00Z","equipe":"aston-villa-birmingham","competition":"Premier League","domicile":false,"adversaire":"Manchester United FC","statut":"REVIEWING","score":38.18,"situation":"titulaire","minutes":59,"pour":4,"contre":2,"cotes":{"victoire":0.31,"nul":0.26,"defaite":0.43,"coteCleanSheet":5.5}},
+  {"matchId":"Game:50d86361-4fdc-4791-9134-dc2d19321d5b","date":"2026-11-08T16:30:00Z","equipe":"aston-villa-birmingham","competition":"Premier League","domicile":false,"adversaire":"Manchester United FC","statut":"FINAL","score":41.58,"situation":"titulaire","minutes":90,"pour":4,"contre":4,"cotes":{"victoire":0.31,"nul":0.26,"defaite":0.43,"coteCleanSheet":5.5}},
   {"matchId":"Game:55002985-cad3-4dec-ab15-afe964f4f933","date":"2026-11-03T20:00:00Z","equipe":"aston-villa-birmingham","competition":"UEFA Champions League","domicile":false,"adversaire":"FC Barcelona","statut":"FINAL","score":33.9,"situation":"titulaire","minutes":90,"pour":0,"contre":3,"cotes":{"victoire":0.12,"nul":0.16,"defaite":0.72,"coteCleanSheet":19}},
   {"matchId":"Game:b9505900-982d-46f8-8164-3580abe8f6cb","date":"2026-10-31T20:00:00Z","equipe":"aston-villa-birmingham","competition":"Premier League","domicile":true,"adversaire":"Fulham FC","statut":"FINAL","score":48.8,"situation":"titulaire","minutes":90,"pour":1,"contre":1,"cotes":{"victoire":0.45,"nul":0.28,"defaite":0.27,"coteCleanSheet":3.25}},
   {"matchId":"Game:efc9e1b0-f8bd-479a-9355-0f471abd73ad","date":"2026-10-24T11:30:00Z","equipe":"aston-villa-birmingham","competition":"Premier League","domicile":true,"adversaire":"Manchester City FC","statut":"FINAL","score":41.8,"situation":"titulaire","minutes":90,"pour":2,"contre":1,"cotes":{"victoire":0.2,"nul":0.22,"defaite":0.58,"coteCleanSheet":7}},

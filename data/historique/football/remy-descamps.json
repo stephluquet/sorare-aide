@@ -1,9 +1,9 @@
 {
  "joueurId": "remy-descamps",
- "misAJour": "2026-11-08T17:51:06.895Z",
+ "misAJour": "2026-11-14T08:02:35.064Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.831Z",
  "matchs": [
-  {"matchId":"Game:dd085338-2568-4ff5-bbdc-75eb9541d5a8","date":"2026-11-08T16:15:00Z","equipe":"olympique-lyonnais-lyon","competition":"Ligue 1","domicile":false,"adversaire":"Stade Brestois 29","statut":"REVIEWING","score":0,"situation":"banc","minutes":0,"pour":0,"contre":1,"cotes":{"victoire":0.38,"nul":0.27,"defaite":0.35,"coteCleanSheet":3.5}},
+  {"matchId":"Game:dd085338-2568-4ff5-bbdc-75eb9541d5a8","date":"2026-11-08T16:15:00Z","equipe":"olympique-lyonnais-lyon","competition":"Ligue 1","domicile":false,"adversaire":"Stade Brestois 29","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":0,"contre":2,"cotes":{"victoire":0.38,"nul":0.27,"defaite":0.35,"coteCleanSheet":3.5}},
   {"matchId":"Game:3174cf09-66ee-4442-b1d3-6d321dad746e","date":"2026-11-05T17:45:00Z","equipe":"olympique-lyonnais-lyon","competition":"UEFA Europa League","domicile":false,"adversaire":"Real Sociedad","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":1,"contre":1,"cotes":{"victoire":0.21,"nul":0.23,"defaite":0.56,"coteCleanSheet":7}},
   {"matchId":"Game:7aeeaf50-1c17-49cc-8186-ef3c0be92915","date":"2026-11-01T16:15:00Z","equipe":"olympique-lyonnais-lyon","competition":"Ligue 1","domicile":true,"adversaire":"Angers SCO","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":2,"contre":0,"cotes":{"victoire":0.66,"nul":0.2,"defaite":0.14,"coteCleanSheet":2.1}},
   {"matchId":"Game:04a1c88f-ff82-4bed-88c6-6d7407512ec7","date":"2026-10-26T19:30:00Z","equipe":"olympique-lyonnais-lyon","competition":"Ligue 1","domicile":false,"adversaire":"Paris Saint-Germain","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":0,"contre":2,"cotes":{"victoire":0.12,"nul":0.18,"defaite":0.7,"coteCleanSheet":11}},

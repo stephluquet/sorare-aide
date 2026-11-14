@@ -1,9 +1,9 @@
 {
  "joueurId": "antoine-mille",
- "misAJour": "2026-11-08T17:51:06.959Z",
+ "misAJour": "2026-11-14T08:02:35.107Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.887Z",
  "matchs": [
-  {"matchId":"Game:b0b4da9b-1789-4b4c-bd51-54eef22ccd4a","date":"2026-11-07T20:05:00Z","equipe":"troyes-troyes","competition":"Ligue 1","domicile":false,"adversaire":"Paris Saint-Germain","statut":"REVIEWING","score":58.9,"situation":"titulaire","minutes":90,"pour":0,"contre":1,"cotes":{"victoire":0.07,"nul":0.13,"defaite":0.8,"coteCleanSheet":15}},
+  {"matchId":"Game:b0b4da9b-1789-4b4c-bd51-54eef22ccd4a","date":"2026-11-07T20:05:00Z","equipe":"troyes-troyes","competition":"Ligue 1","domicile":false,"adversaire":"Paris Saint-Germain","statut":"FINAL","score":58.9,"situation":"titulaire","minutes":90,"pour":0,"contre":1,"cotes":{"victoire":0.07,"nul":0.13,"defaite":0.8,"coteCleanSheet":15}},
   {"matchId":"Game:dece48ff-347a-49b8-bf36-95ac69111381","date":"2026-10-31T19:45:00Z","equipe":"troyes-troyes","competition":"Ligue 1","domicile":true,"adversaire":"Le Mans FC","statut":"FINAL","score":57.3,"situation":"titulaire","minutes":90,"pour":2,"contre":0,"cotes":{"victoire":0.43,"nul":0.29,"defaite":0.28,"coteCleanSheet":3.25}},
   {"matchId":"Game:212e6078-ab73-4822-9bdf-2c83f009edb9","date":"2026-10-25T16:15:00Z","equipe":"troyes-troyes","competition":"Ligue 1","domicile":false,"adversaire":"Toulouse FC","statut":"FINAL","score":46.2,"situation":"titulaire","minutes":90,"pour":0,"contre":0,"cotes":{"victoire":0.17,"nul":0.22,"defaite":0.61,"coteCleanSheet":8}},
   {"matchId":"Game:c78e02b5-7668-4ec0-ac2c-0632ea637d2f","date":"2026-10-17T18:45:00Z","equipe":"troyes-troyes","competition":"Ligue 1","domicile":true,"adversaire":"RC Lens","statut":"FINAL","score":41.6,"situation":"titulaire","minutes":90,"pour":1,"contre":3,"cotes":{"victoire":0.24,"nul":0.25,"defaite":0.51,"coteCleanSheet":5.5}},

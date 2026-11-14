@@ -1,6 +1,9 @@
 # Version indépendante : hébergement sur Cloudflare (proposition, 2026-11-08)
 
-> Statut : **proposition, rien n'est codé**. À valider par l'utilisateur avant de commencer.
+> Statut (2026-11-14) : **codé et essayé en local** (`npm run web`, `npm run serveur-web`). Pas encore mis en ligne.
+> Fichiers : `web/web.js` (paramètres, initialisation, stockage, sauvegarde), `functions/graphql.js` (relais),
+> `src/recuperation/coeur.js`, `appel.js`, `fusion.js` (récupération commune à Node et au navigateur),
+> `src/app-donnees.js` (données de l'interface), `outils/construire-web.js`, `outils/serveur-web.js`.
 > Ce qui est vérifié porte une date ; ce qui ne l'est pas est marqué « à vérifier ».
 
 ## 1. Le besoin
@@ -154,26 +157,35 @@ Node qui écrit sur le disque.
 
 L'artifact Claude et la chaîne actuelle (`npm run recuperer`, `npm run app`) continuent de fonctionner en parallèle.
 
-## 11. Mise en ligne (à faire par l'utilisateur, environ 15 minutes)
+## 11. Utilisation et mise en ligne
 
-Les libellés de l'interface Cloudflare peuvent avoir changé ; la notice sera mise à jour au premier essai.
+**Sur son PC, sans hébergement** (Node 22) :
+
+```bash
+npm run web
+```
+
+```bash
+npm run serveur-web
+```
+
+puis ouvrir http://localhost:8787. Le relais tourne sur le PC. `npm run serveur-web -- --reseau` ouvre le site aux
+appareils du même Wi-Fi (en http simple : la clé circule alors en clair sur ce réseau).
+
+**Hébergé sur Cloudflare Pages** (à faire par l'utilisateur, environ 15 minutes ; libellés de l'interface à vérifier) :
 
 1. Créer un compte gratuit sur `dash.cloudflare.com`.
 2. **Workers & Pages** → **Créer** → onglet **Pages** → **Se connecter à Git** → autoriser Cloudflare sur le dépôt
-   GitHub `stephluquet/sorare-aide`.
-3. Réglages de construction :
-   - branche de production : celle où la version web est fusionnée (par exemple `main`) ;
-   - préréglage : aucun ;
-   - commande de construction : `npm run web` ;
-   - dossier de sortie : `sorties/web` ;
-   - variable d'environnement : `NODE_VERSION` = `22`.
-4. **Enregistrer et déployer**. Adresse obtenue : `https://<nom-du-projet>.pages.dev` (un nom de domaine à soi peut
-   être ajouté plus tard).
-5. Vérifier que les journaux du projet sont désactivés (section 6).
-6. Facultatif : Cloudflare Access (section 8).
+   GitHub `stephluquet/sorare-aide` (il peut rester **privé** : Cloudflare ne publie que le dossier de sortie, sans
+   `data/`).
+3. Réglages de construction : branche de production (celle qui porte la version web) ; préréglage : aucun ;
+   commande : `npm run web` ; dossier de sortie : `sorties/web` ; variable `NODE_VERSION` = `22`.
+4. **Enregistrer et déployer** → `https://<nom-du-projet>.pages.dev`. Le relais `functions/graphql.js` est pris
+   automatiquement (route `/graphql`).
+5. Laisser désactivés les journaux du projet (section 6). Facultatif : Cloudflare Access (section 8).
 
-Ensuite, chaque `git push` sur la branche de production republie le site ; les autres branches donnent des adresses
-d'aperçu.
+**GitHub Pages ou GitLab Pages seuls ne suffisent pas** : ce sont des hébergements de pages fixes, sans relais ; or
+Sorare refuse les appels venant d'un navigateur. Il faut un relais (Cloudflare, un serveur, ou son PC).
 
 ## 12. Comparaison rapide avec les autres pistes
 

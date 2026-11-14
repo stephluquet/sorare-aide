@@ -1,8 +1,9 @@
 {
  "joueurId": "rodrigo-mendoza-martinez-moya",
- "misAJour": "2026-11-07T16:29:51.755Z",
+ "misAJour": "2026-11-14T08:02:34.975Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.755Z",
  "matchs": [
+  {"matchId":"Game:a7c30e57-d482-4935-9217-60fef9f85285","date":"2026-11-08T20:00:00Z","equipe":"atletico-madrid-madrid","competition":"Primera División","domicile":true,"adversaire":"FC Barcelona","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":1,"contre":2,"cotes":{"victoire":0.3,"nul":0.23,"defaite":0.47,"coteCleanSheet":7}},
   {"matchId":"Game:ba340b8d-1b44-4bb0-9f71-83db41a2093e","date":"2026-11-03T20:00:00Z","equipe":"atletico-madrid-madrid","competition":"UEFA Champions League","domicile":true,"adversaire":"FC Bayern München","statut":"FINAL","score":39.7,"situation":"entre","minutes":15,"pour":0,"contre":2,"cotes":{"victoire":0.32,"nul":0.26,"defaite":0.42,"coteCleanSheet":5}},
   {"matchId":"Game:98807703-57fc-4338-a387-e79a52dc4235","date":"2026-10-31T13:00:00Z","equipe":"atletico-madrid-madrid","competition":"Primera División","domicile":false,"adversaire":"Levante UD","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":2,"contre":0,"cotes":{"victoire":0.61,"nul":0.2,"defaite":0.19,"coteCleanSheet":2.62}},
   {"matchId":"Game:bf7d5d59-67f3-4e79-b1ed-730711dbfebc","date":"2026-10-24T19:00:00Z","equipe":"atletico-madrid-madrid","competition":"Primera División","domicile":true,"adversaire":"Real Club Deportivo de La Coruña","statut":"FINAL","score":37.5,"situation":"entre","minutes":10,"pour":1,"contre":0,"cotes":{"victoire":0.71,"nul":0.19,"defaite":0.1,"coteCleanSheet":2}},

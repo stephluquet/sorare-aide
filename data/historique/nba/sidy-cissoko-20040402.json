@@ -1,10 +1,13 @@
 {
  "joueurId": "sidy-cissoko-20040402",
- "misAJour": "2026-11-08T17:51:22.976Z",
+ "misAJour": "2026-11-14T08:03:10.078Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.175Z",
  "matchs": [
-  {"matchId":"Game:9db043e4-855f-450e-8073-6c9a61e3cf0f","date":"2026-11-08T03:00:00Z","equipe":"portland-trail-blazers","competition":"NBA","domicile":true,"adversaire":"San Antonio Spurs","statut":"REVIEWING","score":12.1,"situation":"joue","minutes":17,"pour":103,"contre":125,"cotes":null},
-  {"matchId":"Game:5670a200-6706-400e-90da-6ecd4f27040f","date":"2026-11-07T03:00:00Z","equipe":"portland-trail-blazers","competition":"NBA","domicile":false,"adversaire":"Los Angeles Lakers","statut":"REVIEWING","score":18.9,"situation":"joue","minutes":23,"pour":118,"contre":124,"cotes":null},
+  {"matchId":"Game:b6029de7-c289-476e-993a-f376b0538c4c","date":"2026-11-14T03:00:00Z","equipe":"portland-trail-blazers","competition":"NBA","domicile":false,"adversaire":"Sacramento Kings","statut":"REVIEWING","score":10.3,"situation":"joue","minutes":26,"pour":120,"contre":107,"cotes":null},
+  {"matchId":"Game:6c66b1ce-d438-4b98-9785-dbb15f3c1bb6","date":"2026-11-12T03:00:00Z","equipe":"portland-trail-blazers","competition":"NBA","domicile":true,"adversaire":"Oklahoma City Thunder","statut":"FINAL","score":21.4,"situation":"joue","minutes":29,"pour":118,"contre":108,"cotes":null},
+  {"matchId":"Game:9eff4461-f019-465d-b579-e32bf750ba62","date":"2026-11-11T04:00:00Z","equipe":"portland-trail-blazers","competition":"NBA","domicile":true,"adversaire":"Oklahoma City Thunder","statut":"FINAL","score":31.1,"situation":"joue","minutes":34,"pour":123,"contre":103,"cotes":null},
+  {"matchId":"Game:9db043e4-855f-450e-8073-6c9a61e3cf0f","date":"2026-11-08T03:00:00Z","equipe":"portland-trail-blazers","competition":"NBA","domicile":true,"adversaire":"San Antonio Spurs","statut":"FINAL","score":12.1,"situation":"joue","minutes":17,"pour":103,"contre":125,"cotes":null},
+  {"matchId":"Game:5670a200-6706-400e-90da-6ecd4f27040f","date":"2026-11-07T03:00:00Z","equipe":"portland-trail-blazers","competition":"NBA","domicile":false,"adversaire":"Los Angeles Lakers","statut":"FINAL","score":18.9,"situation":"joue","minutes":23,"pour":118,"contre":124,"cotes":null},
   {"matchId":"Game:76ed5389-6167-4779-81df-8ef2e4162c2e","date":"2026-11-05T02:00:00Z","equipe":"portland-trail-blazers","competition":"NBA","domicile":false,"adversaire":"Phoenix Suns","statut":"FINAL","score":24.8,"situation":"joue","minutes":22,"pour":132,"contre":119,"cotes":null},
   {"matchId":"Game:efc03269-0d14-4dfa-8441-fc62b223d36a","date":"2026-11-03T02:00:00Z","equipe":"portland-trail-blazers","competition":"NBA","domicile":false,"adversaire":"Denver Nuggets","statut":"FINAL","score":9.6,"situation":"joue","minutes":23,"pour":118,"contre":110,"cotes":null},
   {"matchId":"Game:a83a5e17-f1a4-4854-b968-17e10a34d1bc","date":"2026-10-31T19:00:00Z","equipe":"portland-trail-blazers","competition":"NBA","domicile":false,"adversaire":"Utah Jazz","statut":"FINAL","score":7.1,"situation":"joue","minutes":20,"pour":112,"contre":90,"cotes":null},

@@ -1,8 +1,11 @@
 {
  "joueurId": "isaiah-jackson-20020110",
- "misAJour": "2026-11-07T16:31:59.102Z",
+ "misAJour": "2026-11-14T08:03:09.994Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.102Z",
  "matchs": [
+  {"matchId":"Game:a5a21fd2-ab71-4f3b-90d2-c48140382b17","date":"2026-11-14T03:30:00Z","equipe":"la-clippers","competition":"NBA","domicile":true,"adversaire":"Oklahoma City Thunder","statut":"REVIEWING","score":14.1,"situation":"joue","minutes":18,"pour":113,"contre":112,"cotes":null},
+  {"matchId":"Game:16bf113b-c4de-4ed4-9b0b-63af6fcc8c3c","date":"2026-11-11T02:00:00Z","equipe":"la-clippers","competition":"NBA","domicile":false,"adversaire":"Phoenix Suns","statut":"FINAL","score":11.8,"situation":"joue","minutes":17,"pour":110,"contre":133,"cotes":null},
+  {"matchId":"Game:34ef3322-cc91-494e-ba6a-70022b047096","date":"2026-11-09T02:00:00Z","equipe":"la-clippers","competition":"NBA","domicile":true,"adversaire":"New Orleans Pelicans","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":139,"contre":123,"cotes":null},
   {"matchId":"Game:946af4c8-04fe-4aa5-933d-9dac812707df","date":"2026-11-05T03:30:00Z","equipe":"la-clippers","competition":"NBA","domicile":true,"adversaire":"Miami Heat","statut":"FINAL","score":8.8,"situation":"joue","minutes":13,"pour":116,"contre":117,"cotes":null},
   {"matchId":"Game:f49baf92-7f56-407f-8941-8c8af8ed554d","date":"2026-11-03T03:00:00Z","equipe":"la-clippers","competition":"NBA","domicile":true,"adversaire":"Toronto Raptors","statut":"FINAL","score":28.6,"situation":"joue","minutes":26,"pour":118,"contre":125,"cotes":null},
   {"matchId":"Game:fa494f86-4b42-4b01-981b-d25c299a8cb4","date":"2026-11-02T01:30:00Z","equipe":"la-clippers","competition":"NBA","domicile":false,"adversaire":"Golden State Warriors","statut":"FINAL","score":15.6,"situation":"joue","minutes":22,"pour":112,"contre":124,"cotes":null},

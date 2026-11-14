@@ -1,9 +1,9 @@
 {
  "joueurId": "casper-tengstedt",
- "misAJour": "2026-11-07T16:29:51.845Z",
+ "misAJour": "2026-11-14T08:02:35.075Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.845Z",
  "matchs": [
-  {"matchId":"Game:db8c640f-9da9-4aed-9ec4-0b4ec71c94e4","date":"2026-11-06T19:45:00Z","equipe":"toulouse-toulouse","competition":"Ligue 1","domicile":true,"adversaire":"RC Strasbourg Alsace","statut":"REVIEWING","score":56.3,"situation":"titulaire","minutes":90,"pour":3,"contre":1,"cotes":{"victoire":0.43,"nul":0.27,"defaite":0.3,"coteCleanSheet":3.75}},
+  {"matchId":"Game:db8c640f-9da9-4aed-9ec4-0b4ec71c94e4","date":"2026-11-06T19:45:00Z","equipe":"toulouse-toulouse","competition":"Ligue 1","domicile":true,"adversaire":"RC Strasbourg Alsace","statut":"FINAL","score":56.3,"situation":"titulaire","minutes":90,"pour":3,"contre":1,"cotes":{"victoire":0.43,"nul":0.27,"defaite":0.3,"coteCleanSheet":3.75}},
   {"matchId":"Game:a285bcb0-7a25-46cd-8e0c-8efa7c18f7b6","date":"2026-11-01T19:45:00Z","equipe":"toulouse-toulouse","competition":"Ligue 1","domicile":false,"adversaire":"Olympique de Marseille","statut":"FINAL","score":33.3,"situation":"titulaire","minutes":90,"pour":0,"contre":2,"cotes":{"victoire":0.27,"nul":0.24,"defaite":0.49,"coteCleanSheet":6}},
   {"matchId":"Game:212e6078-ab73-4822-9bdf-2c83f009edb9","date":"2026-10-25T16:15:00Z","equipe":"toulouse-toulouse","competition":"Ligue 1","domicile":true,"adversaire":"ESTAC Troyes","statut":"FINAL","score":42.8,"situation":"titulaire","minutes":90,"pour":0,"contre":0,"cotes":{"victoire":0.61,"nul":0.22,"defaite":0.17,"coteCleanSheet":2.5}},
   {"matchId":"Game:5035af6b-6655-42d1-a432-af47c3089c67","date":"2026-10-16T18:45:00Z","equipe":"toulouse-toulouse","competition":"Ligue 1","domicile":false,"adversaire":"Le Mans FC","statut":"FINAL","score":65.2,"situation":"titulaire","minutes":90,"pour":3,"contre":0,"cotes":{"victoire":0.42,"nul":0.27,"defaite":0.31,"coteCleanSheet":3.75}},

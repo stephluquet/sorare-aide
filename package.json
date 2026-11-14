@@ -7,7 +7,9 @@
     "recuperer": "node src/recuperation/index.js",
     "projeter": "node src/projection.js",
     "test": "node --test tests/*.test.js",
-    "app": "node outils/construire-app.js"
+    "app": "node outils/construire-app.js",
+    "web": "node outils/construire-web.js",
+    "serveur-web": "node outils/serveur-web.js"
   },
   "engines": {
     "node": ">=22"

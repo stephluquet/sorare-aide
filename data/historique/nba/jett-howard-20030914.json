@@ -1,9 +1,12 @@
 {
  "joueurId": "jett-howard-20030914",
- "misAJour": "2026-11-07T16:31:59.166Z",
+ "misAJour": "2026-11-14T08:03:10.072Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.166Z",
  "matchs": [
-  {"matchId":"Game:69884e17-f09a-429f-9f9f-26d7f819f146","date":"2026-11-07T01:00:00Z","equipe":"dallas-mavericks","competition":"NBA","domicile":true,"adversaire":"Utah Jazz","statut":"REVIEWING","score":0,"situation":"joue","minutes":1,"pour":112,"contre":100,"cotes":null},
+  {"matchId":"Game:10f5805c-d709-4de0-889b-4a5aff5fd3be","date":"2026-11-13T01:00:00Z","equipe":"dallas-mavericks","competition":"NBA","domicile":false,"adversaire":"Minnesota Timberwolves","statut":"FINAL","score":4,"situation":"joue","minutes":6,"pour":94,"contre":133,"cotes":null},
+  {"matchId":"Game:1ca13494-2e9e-4352-aa61-7795993dc092","date":"2026-11-10T01:00:00Z","equipe":"dallas-mavericks","competition":"NBA","domicile":true,"adversaire":"Indiana Pacers","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":125,"contre":122,"cotes":null},
+  {"matchId":"Game:e878aa61-76b3-47d3-a003-79c62985e2b0","date":"2026-11-09T00:30:00Z","equipe":"dallas-mavericks","competition":"NBA","domicile":true,"adversaire":"Brooklyn Nets","statut":"FINAL","score":7.2,"situation":"joue","minutes":3,"pour":130,"contre":93,"cotes":null},
+  {"matchId":"Game:69884e17-f09a-429f-9f9f-26d7f819f146","date":"2026-11-07T01:00:00Z","equipe":"dallas-mavericks","competition":"NBA","domicile":true,"adversaire":"Utah Jazz","statut":"FINAL","score":0,"situation":"joue","minutes":1,"pour":112,"contre":100,"cotes":null},
   {"matchId":"Game:166d5ec6-f180-434b-88cf-c1ec09d8344c","date":"2026-11-05T02:30:00Z","equipe":"dallas-mavericks","competition":"NBA","domicile":false,"adversaire":"San Antonio Spurs","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":111,"contre":112,"cotes":null},
   {"matchId":"Game:40ae214c-8aa1-463f-87dc-3eab1b52e7a5","date":"2026-11-03T01:00:00Z","equipe":"dallas-mavericks","competition":"NBA","domicile":true,"adversaire":"Sacramento Kings","statut":"FINAL","score":2,"situation":"joue","minutes":2,"pour":100,"contre":115,"cotes":null},
   {"matchId":"Game:c5725d98-20d7-4bb7-9de2-11ce94d1ad54","date":"2026-10-31T00:00:00Z","equipe":"dallas-mavericks","competition":"NBA","domicile":true,"adversaire":"Houston Rockets","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":116,"contre":111,"cotes":null},

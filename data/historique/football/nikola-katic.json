@@ -1,8 +1,9 @@
 {
  "joueurId": "nikola-katic",
- "misAJour": "2026-11-07T16:29:51.925Z",
+ "misAJour": "2026-11-14T08:02:35.139Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.925Z",
  "matchs": [
+  {"matchId":"Game:24b3bedd-18ab-466c-b09c-02946ae723d5","date":"2026-11-08T18:30:00Z","equipe":"schalke-04-gelsenkirchen","competition":"Bundesliga","domicile":false,"adversaire":"TSG Hoffenheim","statut":"FINAL","score":39.4,"situation":"titulaire","minutes":90,"pour":1,"contre":2,"cotes":{"victoire":0.18,"nul":0.23,"defaite":0.59,"coteCleanSheet":7}},
   {"matchId":"Game:3bd308b9-bb41-40df-b410-47b654e6418b","date":"2026-10-31T14:30:00Z","equipe":"schalke-04-gelsenkirchen","competition":"Bundesliga","domicile":true,"adversaire":"RB Leipzig","statut":"FINAL","score":48.46,"situation":"titulaire","minutes":90,"pour":0,"contre":2,"cotes":{"victoire":0.25,"nul":0.24,"defaite":0.51,"coteCleanSheet":6.5}},
   {"matchId":"Game:9178ef2a-ac78-4384-88bc-9f9e9ed9b4f7","date":"2026-10-24T13:30:00Z","equipe":"schalke-04-gelsenkirchen","competition":"Bundesliga","domicile":false,"adversaire":"1. FC Köln","statut":"FINAL","score":55.28,"situation":"titulaire","minutes":90,"pour":0,"contre":0,"cotes":{"victoire":0.29,"nul":0.25,"defaite":0.46,"coteCleanSheet":4.5}},
   {"matchId":"Game:bccbdc1b-edd7-422f-a542-5e2c55a5914e","date":"2026-10-17T13:30:00Z","equipe":"schalke-04-gelsenkirchen","competition":"Bundesliga","domicile":true,"adversaire":"1. FSV Mainz 05","statut":"FINAL","score":31.36,"situation":"titulaire","minutes":71,"pour":0,"contre":1,"cotes":{"victoire":0.32,"nul":0.28,"defaite":0.4,"coteCleanSheet":4.5}},

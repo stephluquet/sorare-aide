@@ -1,9 +1,9 @@
 {
  "joueurId": "arnau-martinez-lopez",
- "misAJour": "2026-11-08T17:51:07.043Z",
+ "misAJour": "2026-11-14T08:02:35.158Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.947Z",
  "matchs": [
-  {"matchId":"Game:99be850f-f39c-4e2d-94d7-11669c4e2546","date":"2026-11-07T20:00:00Z","equipe":"valencia-valencia","competition":"Primera División","domicile":true,"adversaire":"Real Madrid","statut":"REVIEWING","score":31.84,"situation":"entre","minutes":27,"pour":0,"contre":3,"cotes":{"victoire":0.09,"nul":0.16,"defaite":0.75,"coteCleanSheet":11}},
+  {"matchId":"Game:99be850f-f39c-4e2d-94d7-11669c4e2546","date":"2026-11-07T20:00:00Z","equipe":"valencia-valencia","competition":"Primera División","domicile":true,"adversaire":"Real Madrid","statut":"FINAL","score":31.84,"situation":"entre","minutes":27,"pour":0,"contre":3,"cotes":{"victoire":0.09,"nul":0.16,"defaite":0.75,"coteCleanSheet":11}},
   {"matchId":"Game:fce5d8ab-b45a-4027-b9cb-37e9759a6c0b","date":"2026-11-01T17:30:00Z","equipe":"valencia-valencia","competition":"Primera División","domicile":false,"adversaire":"Elche CF","statut":"FINAL","score":55.16,"situation":"titulaire","minutes":90,"pour":1,"contre":0,"cotes":{"victoire":0.3,"nul":0.29,"defaite":0.41,"coteCleanSheet":3.75}},
   {"matchId":"Game:d127105b-6f18-4bcc-8259-4e6dd643f708","date":"2026-10-24T16:30:00Z","equipe":"valencia-valencia","competition":"Primera División","domicile":true,"adversaire":"Villarreal CF","statut":"FINAL","score":30.06,"situation":"entre","minutes":20,"pour":1,"contre":2,"cotes":{"victoire":0.28,"nul":0.27,"defaite":0.45,"coteCleanSheet":4.5}},
   {"matchId":"Game:9ad2e2d8-bb7d-4bd3-8ac6-35ed7e18509b","date":"2026-10-17T19:00:00Z","equipe":"valencia-valencia","competition":"Primera División","domicile":true,"adversaire":"Athletic Club","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":0,"contre":0,"cotes":{"victoire":0.3,"nul":0.29,"defaite":0.41,"coteCleanSheet":3.75}},

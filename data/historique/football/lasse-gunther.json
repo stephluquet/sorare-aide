@@ -1,9 +1,9 @@
 {
  "joueurId": "lasse-gunther",
- "misAJour": "2026-11-07T16:29:51.793Z",
+ "misAJour": "2026-11-14T08:02:34.961Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.793Z",
  "matchs": [
-  {"matchId":"Game:645aa306-60ae-4706-bcdf-c0a9b66fcaff","date":"2026-11-07T14:30:00Z","equipe":"elversberg-saarbrucken","competition":"Bundesliga","domicile":false,"adversaire":"Borussia Dortmund","statut":"REVIEWING","score":47.84,"situation":"titulaire","minutes":78,"pour":1,"contre":2,"cotes":{"victoire":0.11,"nul":0.19,"defaite":0.7,"coteCleanSheet":13}},
+  {"matchId":"Game:645aa306-60ae-4706-bcdf-c0a9b66fcaff","date":"2026-11-07T14:30:00Z","equipe":"elversberg-saarbrucken","competition":"Bundesliga","domicile":false,"adversaire":"Borussia Dortmund","statut":"FINAL","score":47.84,"situation":"titulaire","minutes":78,"pour":1,"contre":2,"cotes":{"victoire":0.11,"nul":0.19,"defaite":0.7,"coteCleanSheet":13}},
   {"matchId":"Game:586b17c5-f213-4710-bd91-dc9043101e0d","date":"2026-10-30T19:30:00Z","equipe":"elversberg-saarbrucken","competition":"Bundesliga","domicile":true,"adversaire":"1. FSV Mainz 05","statut":"FINAL","score":39.78,"situation":"titulaire","minutes":68,"pour":4,"contre":1,"cotes":{"victoire":0.28,"nul":0.25,"defaite":0.47,"coteCleanSheet":5.5}},
   {"matchId":"Game:54b0536d-d949-4fad-81ae-1e3c3b717814","date":"2026-10-24T13:30:00Z","equipe":"elversberg-saarbrucken","competition":"Bundesliga","domicile":false,"adversaire":"RB Leipzig","statut":"FINAL","score":41.2,"situation":"titulaire","minutes":82,"pour":0,"contre":4,"cotes":{"victoire":0.15,"nul":0.19,"defaite":0.66,"coteCleanSheet":13}},
   {"matchId":"Game:572b9297-b56e-4127-ab74-29ba29677da7","date":"2026-10-17T13:30:00Z","equipe":"elversberg-saarbrucken","competition":"Bundesliga","domicile":true,"adversaire":"FC Augsburg","statut":"FINAL","score":87.86,"situation":"titulaire","minutes":90,"pour":4,"contre":3,"cotes":{"victoire":0.38,"nul":0.27,"defaite":0.35,"coteCleanSheet":4.33}},

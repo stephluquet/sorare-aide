@@ -1,9 +1,10 @@
 {
  "joueurId": "konstantinos-tzolakis",
- "misAJour": "2026-11-08T17:51:07.080Z",
+ "misAJour": "2026-11-14T08:02:34.966Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.980Z",
  "matchs": [
-  {"matchId":"Game:3e58ef7e-4397-48e1-96d0-a9fd490173bc","date":"2026-11-07T15:00:00Z","equipe":"hull-city-hull","competition":"Premier League","domicile":false,"adversaire":"Arsenal FC","statut":"REVIEWING","score":87.1,"situation":"titulaire","minutes":90,"pour":0,"contre":1,"cotes":{"victoire":0.05,"nul":0.13,"defaite":0.82,"coteCleanSheet":13}},
+  {"matchId":"Game:56c71186-0d73-40e4-b54f-80bdaa4e0e02","date":"2026-11-13T19:45:00Z","equipe":"greece","competition":"UEFA Nations League","domicile":false,"adversaire":"Netherlands","statut":"REVIEWING","score":22.6,"situation":"titulaire","minutes":90,"pour":0,"contre":7,"cotes":{"victoire":0.18,"nul":0.21,"defaite":0.61,"coteCleanSheet":8}},
+  {"matchId":"Game:3e58ef7e-4397-48e1-96d0-a9fd490173bc","date":"2026-11-07T15:00:00Z","equipe":"hull-city-hull","competition":"Premier League","domicile":false,"adversaire":"Arsenal FC","statut":"FINAL","score":87.1,"situation":"titulaire","minutes":90,"pour":0,"contre":1,"cotes":{"victoire":0.05,"nul":0.13,"defaite":0.82,"coteCleanSheet":13}},
   {"matchId":"Game:0074a850-aa95-4393-808d-7b7fdc49b3c3","date":"2026-10-31T15:00:00Z","equipe":"hull-city-hull","competition":"Premier League","domicile":true,"adversaire":"Ipswich Town FC","statut":"FINAL","score":26.6,"situation":"titulaire","minutes":90,"pour":2,"contre":2,"cotes":{"victoire":0.34,"nul":0.28,"defaite":0.38,"coteCleanSheet":3.5}},
   {"matchId":"Game:5b013386-7ef7-48d6-866b-f8ec3a09ee8e","date":"2026-10-25T14:00:00Z","equipe":"hull-city-hull","competition":"Premier League","domicile":true,"adversaire":"Brentford FC","statut":"FINAL","score":50.6,"situation":"titulaire","minutes":90,"pour":1,"contre":1,"cotes":{"victoire":0.2,"nul":0.24,"defaite":0.56,"coteCleanSheet":6.5}},
   {"matchId":"Game:17261839-1e7f-4da8-90aa-2e935b451fdc","date":"2026-10-17T14:00:00Z","equipe":"hull-city-hull","competition":"Premier League","domicile":false,"adversaire":"Fulham FC","statut":"FINAL","score":18.5,"situation":"titulaire","minutes":90,"pour":0,"contre":1,"cotes":{"victoire":0.19,"nul":0.2401,"defaite":0.5699,"coteCleanSheet":6}},

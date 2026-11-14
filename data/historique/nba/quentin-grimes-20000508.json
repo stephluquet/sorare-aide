@@ -1,9 +1,12 @@
 {
  "joueurId": "quentin-grimes-20000508",
- "misAJour": "2026-11-07T16:31:59.135Z",
+ "misAJour": "2026-11-14T08:03:10.050Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.135Z",
  "matchs": [
-  {"matchId":"Game:5670a200-6706-400e-90da-6ecd4f27040f","date":"2026-11-07T03:00:00Z","equipe":"los-angeles-lakers","competition":"NBA","domicile":true,"adversaire":"Portland Trail Blazers","statut":"REVIEWING","score":6,"situation":"joue","minutes":21,"pour":124,"contre":118,"cotes":null},
+  {"matchId":"Game:9e7a761b-4f52-41e4-bc87-3d504ac83e20","date":"2026-11-12T01:00:00Z","equipe":"los-angeles-lakers","competition":"NBA","domicile":false,"adversaire":"Milwaukee Bucks","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":123,"contre":112,"cotes":null},
+  {"matchId":"Game:01ef01d3-931a-4ec5-ad1a-648fcfcc4654","date":"2026-11-10T00:00:00Z","equipe":"los-angeles-lakers","competition":"NBA","domicile":false,"adversaire":"Atlanta Hawks","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":124,"contre":114,"cotes":null},
+  {"matchId":"Game:95deacd7-7e84-4182-8534-e71ea0e41bdb","date":"2026-11-08T23:00:00Z","equipe":"los-angeles-lakers","competition":"NBA","domicile":false,"adversaire":"Detroit Pistons","statut":"FINAL","score":23.2,"situation":"joue","minutes":32,"pour":121,"contre":116,"cotes":null},
+  {"matchId":"Game:5670a200-6706-400e-90da-6ecd4f27040f","date":"2026-11-07T03:00:00Z","equipe":"los-angeles-lakers","competition":"NBA","domicile":true,"adversaire":"Portland Trail Blazers","statut":"FINAL","score":6,"situation":"joue","minutes":21,"pour":124,"contre":118,"cotes":null},
   {"matchId":"Game:0b58fd0b-9e63-4aea-ad82-c9dbae80fe7e","date":"2026-11-05T03:00:00Z","equipe":"los-angeles-lakers","competition":"NBA","domicile":false,"adversaire":"Sacramento Kings","statut":"FINAL","score":9.7,"situation":"joue","minutes":25,"pour":116,"contre":103,"cotes":null},
   {"matchId":"Game:490bd106-2c9f-42b9-9012-86393cbf7809","date":"2026-11-03T03:00:00Z","equipe":"los-angeles-lakers","competition":"NBA","domicile":true,"adversaire":"Miami Heat","statut":"FINAL","score":18.8,"situation":"joue","minutes":23,"pour":138,"contre":117,"cotes":null},
   {"matchId":"Game:15604a6c-a81f-40b5-b324-3ad2ef0a0f39","date":"2026-11-02T02:00:00Z","equipe":"los-angeles-lakers","competition":"NBA","domicile":true,"adversaire":"Toronto Raptors","statut":"FINAL","score":5.7,"situation":"joue","minutes":26,"pour":131,"contre":125,"cotes":null},

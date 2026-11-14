@@ -1,8 +1,11 @@
 {
  "joueurId": "tyler-nickel-20030905",
- "misAJour": "2026-11-08T17:51:22.911Z",
+ "misAJour": "2026-11-14T08:03:10.079Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.134Z",
  "matchs": [
+  {"matchId":"Game:37777c33-93b9-408f-83ec-65dc0111457a","date":"2026-11-14T00:00:00Z","equipe":"new-york-knicks","competition":"NBA","domicile":false,"adversaire":"Indiana Pacers","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":104,"contre":106,"cotes":null},
+  {"matchId":"Game:cacefa89-6c13-4332-9fc8-80eeac6652bf","date":"2026-11-12T00:00:00Z","equipe":"new-york-knicks","competition":"NBA","domicile":true,"adversaire":"Cleveland Cavaliers","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":107,"contre":115,"cotes":null},
+  {"matchId":"Game:0d67c1ee-0944-4d70-af0e-59ec577acb98","date":"2026-11-11T00:30:00Z","equipe":"new-york-knicks","competition":"NBA","domicile":true,"adversaire":"Milwaukee Bucks","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":117,"contre":85,"cotes":null},
   {"matchId":"Game:85e570d1-fb5c-43bb-a01c-5faf47ef052d","date":"2026-11-08T01:00:00Z","equipe":"new-york-knicks","competition":"NBA","domicile":false,"adversaire":"Cleveland Cavaliers","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":109,"contre":97,"cotes":null},
   {"matchId":"Game:07c577ad-a08c-48e6-988b-4357e0694e1e","date":"2026-11-05T00:30:00Z","equipe":"new-york-knicks","competition":"NBA","domicile":true,"adversaire":"Chicago Bulls","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":135,"contre":105,"cotes":null},
   {"matchId":"Game:41aa1697-7248-4c23-a27f-d035dd514579","date":"2026-11-03T00:30:00Z","equipe":"new-york-knicks","competition":"NBA","domicile":true,"adversaire":"Brooklyn Nets","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":103,"contre":90,"cotes":null},

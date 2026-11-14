@@ -1,8 +1,11 @@
 {
  "joueurId": "thomas-sorber-20051225",
- "misAJour": "2026-11-08T17:51:22.884Z",
+ "misAJour": "2026-11-14T08:03:10.066Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.114Z",
  "matchs": [
+  {"matchId":"Game:a5a21fd2-ab71-4f3b-90d2-c48140382b17","date":"2026-11-14T03:30:00Z","equipe":"oklahoma-city-thunder","competition":"NBA","domicile":false,"adversaire":"LA Clippers","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":112,"contre":113,"cotes":null},
+  {"matchId":"Game:6c66b1ce-d438-4b98-9785-dbb15f3c1bb6","date":"2026-11-12T03:00:00Z","equipe":"oklahoma-city-thunder","competition":"NBA","domicile":false,"adversaire":"Portland Trail Blazers","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":108,"contre":118,"cotes":null},
+  {"matchId":"Game:9eff4461-f019-465d-b579-e32bf750ba62","date":"2026-11-11T04:00:00Z","equipe":"oklahoma-city-thunder","competition":"NBA","domicile":false,"adversaire":"Portland Trail Blazers","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":103,"contre":123,"cotes":null},
   {"matchId":"Game:76776088-14f8-42e4-9f60-cc26350900a6","date":"2026-11-08T01:00:00Z","equipe":"oklahoma-city-thunder","competition":"NBA","domicile":true,"adversaire":"Washington Wizards","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":114,"contre":75,"cotes":null},
   {"matchId":"Game:72b164e2-0e38-4403-905c-7c5a3c42d451","date":"2026-11-07T01:00:00Z","equipe":"oklahoma-city-thunder","competition":"NBA","domicile":false,"adversaire":"Memphis Grizzlies","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":128,"contre":97,"cotes":null},
   {"matchId":"Game:8be8d8ec-5c69-40fd-84db-cecfdb384e1a","date":"2026-11-05T01:00:00Z","equipe":"oklahoma-city-thunder","competition":"NBA","domicile":true,"adversaire":"Cleveland Cavaliers","statut":"DID_NOT_PLAY","score":0,"situation":"banc","minutes":0,"pour":124,"contre":116,"cotes":null},

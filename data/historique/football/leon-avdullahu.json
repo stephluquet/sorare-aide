@@ -1,8 +1,9 @@
 {
  "joueurId": "leon-avdullahu",
- "misAJour": "2026-11-07T16:29:51.765Z",
+ "misAJour": "2026-11-14T08:02:35.021Z",
  "dernierHistoriqueComplet": "2026-11-07T16:29:51.765Z",
  "matchs": [
+  {"matchId":"Game:24b3bedd-18ab-466c-b09c-02946ae723d5","date":"2026-11-08T18:30:00Z","equipe":"hoffenheim-sinsheim","competition":"Bundesliga","domicile":true,"adversaire":"FC Schalke 04","statut":"FINAL","score":43.6,"situation":"titulaire","minutes":90,"pour":2,"contre":1,"cotes":{"victoire":0.59,"nul":0.23,"defaite":0.18,"coteCleanSheet":2.62}},
   {"matchId":"Game:1b86a9c3-011a-45ae-a5b0-6e64f078fce0","date":"2026-11-05T17:45:00Z","equipe":"hoffenheim-sinsheim","competition":"UEFA Europa League","domicile":false,"adversaire":"Crystal Palace FC","statut":"FINAL","score":62.6,"situation":"titulaire","minutes":90,"pour":1,"contre":1,"cotes":{"victoire":0.26,"nul":0.24,"defaite":0.5,"coteCleanSheet":6.5}},
   {"matchId":"Game:cb2f910a-f794-4632-9228-65183a3fc4e4","date":"2026-10-31T14:30:00Z","equipe":"hoffenheim-sinsheim","competition":"Bundesliga","domicile":false,"adversaire":"SV Werder Bremen","statut":"FINAL","score":45.2,"situation":"titulaire","minutes":87,"pour":0,"contre":2,"cotes":{"victoire":0.36,"nul":0.24,"defaite":0.4,"coteCleanSheet":5.5}},
   {"matchId":"Game:0e4e1cfc-0299-455f-b0fe-25e660cc6456","date":"2026-10-25T14:30:00Z","equipe":"hoffenheim-sinsheim","competition":"Bundesliga","domicile":true,"adversaire":"Bayer 04 Leverkusen","statut":"FINAL","score":43.3,"situation":"titulaire","minutes":90,"pour":3,"contre":0,"cotes":{"victoire":0.31,"nul":0.23,"defaite":0.46,"coteCleanSheet":7}},

@@ -1,9 +1,12 @@
 {
  "joueurId": "zach-lavine-19950310",
- "misAJour": "2026-11-07T16:31:59.135Z",
+ "misAJour": "2026-11-14T08:03:10.050Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.135Z",
  "matchs": [
-  {"matchId":"Game:02513574-cb5d-42ab-961d-144de8e6ea3f","date":"2026-11-07T03:00:00Z","equipe":"sacramento-kings","competition":"NBA","domicile":true,"adversaire":"San Antonio Spurs","statut":"REVIEWING","score":27.3,"situation":"joue","minutes":35,"pour":109,"contre":124,"cotes":null},
+  {"matchId":"Game:b6029de7-c289-476e-993a-f376b0538c4c","date":"2026-11-14T03:00:00Z","equipe":"sacramento-kings","competition":"NBA","domicile":true,"adversaire":"Portland Trail Blazers","statut":"REVIEWING","score":31.6,"situation":"joue","minutes":37,"pour":107,"contre":120,"cotes":null},
+  {"matchId":"Game:bffe10aa-0cb1-435b-b0a1-88ae424b1bac","date":"2026-11-11T03:00:00Z","equipe":"sacramento-kings","competition":"NBA","domicile":true,"adversaire":"Orlando Magic","statut":"FINAL","score":39.6,"situation":"joue","minutes":34,"pour":100,"contre":107,"cotes":null},
+  {"matchId":"Game:a264fa8e-73de-438c-9d45-e295ed31eb10","date":"2026-11-09T02:00:00Z","equipe":"sacramento-kings","competition":"NBA","domicile":true,"adversaire":"Miami Heat","statut":"FINAL","score":19.8,"situation":"joue","minutes":25,"pour":108,"contre":114,"cotes":null},
+  {"matchId":"Game:02513574-cb5d-42ab-961d-144de8e6ea3f","date":"2026-11-07T03:00:00Z","equipe":"sacramento-kings","competition":"NBA","domicile":true,"adversaire":"San Antonio Spurs","statut":"FINAL","score":27.3,"situation":"joue","minutes":35,"pour":109,"contre":124,"cotes":null},
   {"matchId":"Game:0b58fd0b-9e63-4aea-ad82-c9dbae80fe7e","date":"2026-11-05T03:00:00Z","equipe":"sacramento-kings","competition":"NBA","domicile":true,"adversaire":"Los Angeles Lakers","statut":"FINAL","score":27.3,"situation":"joue","minutes":35,"pour":103,"contre":116,"cotes":null},
   {"matchId":"Game:40ae214c-8aa1-463f-87dc-3eab1b52e7a5","date":"2026-11-03T01:00:00Z","equipe":"sacramento-kings","competition":"NBA","domicile":false,"adversaire":"Dallas Mavericks","statut":"FINAL","score":28.3,"situation":"joue","minutes":29,"pour":115,"contre":100,"cotes":null},
   {"matchId":"Game:24a2575a-ffbb-4105-b356-82cfbf050cab","date":"2026-11-01T00:00:00Z","equipe":"sacramento-kings","competition":"NBA","domicile":false,"adversaire":"Memphis Grizzlies","statut":"FINAL","score":8.5,"situation":"joue","minutes":21,"pour":105,"contre":136,"cotes":null},

@@ -1,9 +1,11 @@
 {
  "joueurId": "bones-hyland-20000914",
- "misAJour": "2026-11-07T16:31:59.157Z",
+ "misAJour": "2026-11-14T08:03:10.064Z",
  "dernierHistoriqueComplet": "2026-11-07T16:31:59.157Z",
  "matchs": [
-  {"matchId":"Game:b5de287d-d39e-438a-a4c6-aeab67c35bc6","date":"2026-11-07T01:00:00Z","equipe":"minnesota-timberwolves","competition":"NBA","domicile":false,"adversaire":"New Orleans Pelicans","statut":"REVIEWING","score":6.2,"situation":"joue","minutes":10,"pour":115,"contre":109,"cotes":null},
+  {"matchId":"Game:10f5805c-d709-4de0-889b-4a5aff5fd3be","date":"2026-11-13T01:00:00Z","equipe":"minnesota-timberwolves","competition":"NBA","domicile":true,"adversaire":"Dallas Mavericks","statut":"FINAL","score":48.6,"situation":"joue","minutes":23,"pour":133,"contre":94,"cotes":null},
+  {"matchId":"Game:2be5d50f-54ee-40ae-b8f9-f53273ae7339","date":"2026-11-09T00:00:00Z","equipe":"minnesota-timberwolves","competition":"NBA","domicile":true,"adversaire":"Utah Jazz","statut":"FINAL","score":23.4,"situation":"joue","minutes":14,"pour":115,"contre":100,"cotes":null},
+  {"matchId":"Game:b5de287d-d39e-438a-a4c6-aeab67c35bc6","date":"2026-11-07T01:00:00Z","equipe":"minnesota-timberwolves","competition":"NBA","domicile":false,"adversaire":"New Orleans Pelicans","statut":"FINAL","score":6.2,"situation":"joue","minutes":10,"pour":115,"contre":109,"cotes":null},
   {"matchId":"Game:1cb769b9-5680-4b92-8934-823c7d898a78","date":"2026-11-05T01:30:00Z","equipe":"minnesota-timberwolves","competition":"NBA","domicile":false,"adversaire":"Houston Rockets","statut":"FINAL","score":30.4,"situation":"joue","minutes":16,"pour":117,"contre":107,"cotes":null},
   {"matchId":"Game:72d3a44b-0077-4193-a7bf-dbdacbb1f091","date":"2026-11-03T01:00:00Z","equipe":"minnesota-timberwolves","competition":"NBA","domicile":true,"adversaire":"Milwaukee Bucks","statut":"FINAL","score":26.7,"situation":"joue","minutes":15,"pour":112,"contre":100,"cotes":null},
   {"matchId":"Game:ccafc7bb-0150-4d71-af8b-ea0530ec6fb4","date":"2026-11-01T00:00:00Z","equipe":"minnesota-timberwolves","competition":"NBA","domicile":false,"adversaire":"San Antonio Spurs","statut":"FINAL","score":15.7,"situation":"joue","minutes":14,"pour":111,"contre":121,"cotes":null},
