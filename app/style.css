@@ -679,3 +679,7 @@ table.dense td.statut .tag { margin: 1px 0; }
 .c-tit .sv { font-size: var(--t4); font-weight: 700; }
 .c-tit { min-width: 0; }
 .cellule-tit { display: grid; gap: 2px; }
+
+/* Solo : sélecteur prudente / équilibrée / ambitieuse dans l'en-tête du résumé */
+.tete-propositions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--e3); }
+.tete-propositions .seg small { opacity: .75; font-weight: 400; }
