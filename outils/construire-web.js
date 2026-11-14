@@ -19,6 +19,8 @@ const FICHIERS = [
   'src/app-donnees.js',
   ...['appel', 'coeur', 'requetes', 'normaliser', 'espn', 'fusion'].map((f) => `src/recuperation/${f}.js`),
   'web/web.js',
+  'web/icones/icone.svg',
+  'web/icones/apple-touch-icon.png',
   'methode.md',
   ...readdirSync(join(RACINE, 'regles')).filter((f) => f.endsWith('.json')).map((f) => `regles/${f}`),
 ];
@@ -42,7 +44,10 @@ writeFileSync(join(SORTIE, 'index.html'), `<!doctype html>
 <meta name="referrer" content="no-referrer">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Sorare aide">
+<meta name="theme-color" content="#0d1115">
+<link rel="icon" type="image/svg+xml" href="web/icones/icone.svg">
+<link rel="apple-touch-icon" href="web/icones/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Sorar'help">
 <meta name="description" content="Aide à la composition Sorare (Arcade solo et Squad, football et NBA). Lecture seule.">
 </head><body>
 ${gabarit}

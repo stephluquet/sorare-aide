@@ -105,7 +105,7 @@ function suiviGlobal(sports, rappel) {
     const pourcent = Math.min(99, ((i + dans) / sports.length) * 100);
     let reste = null;
     if (ev.etape === 'historique' && ev.total - ev.fait > 20) reste = Math.ceil(((ev.total - ev.fait) * 0.4 + (sports.length - 1 - i) * 30) / 60);
-    rappel({ pourcent, texte: `${NOMS[ev.sport]} · ${ev.texte}`, reste, ecouleS: (Date.now() - debut) / 1000 });
+    rappel({ pourcent, texte: `${NOMS[ev.sport]} · ${ev.texte}`, reste, ecouleS: (Date.now() - debut) / 1000, ev });
   };
 }
 
@@ -159,7 +159,7 @@ async function restaurer(fichier) {
     flux = flux.pipeThrough(new DecompressionStream('gzip'));
   }
   const c = JSON.parse(await new Response(flux).text());
-  if (c?.type !== 'sorare-aide-sauvegarde' || !Array.isArray(c.archives)) throw new Error('ce fichier n\'est pas une sauvegarde de Sorare aide');
+  if (c?.type !== 'sorare-aide-sauvegarde' || !Array.isArray(c.archives)) throw new Error("ce fichier n'est pas une sauvegarde de Sorar'help");
   await vider('archives');
   const db = await ouvrirBase();
   await new Promise((ok, ko) => {
@@ -183,89 +183,150 @@ async function infosStockage() {
   return { joueurs: n, donneesDe: d?.meta?.recupereA ?? null, slug: d?.meta?.slug ?? null, persistant, utilise };
 }
 
-// ---------- Écrans (paramètres, initialisation) ----------
+// ---------- Écrans (paramètres, initialisation) : maquette « Projecteur » retenue le 2026-11-14 ----------
+// Téléphone : bandeau nuit en haut, carte dessous (sans chevauchement). PC (≥ 1 024 px) : deux colonnes.
+const LOGO_GRAND = (taille) => `<svg class="w-logo" width="${taille}" height="${taille}" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="15" fill="#e7ebef"/><path d="M11 50V42H21V34H31V26H41V50Z" fill="#0d1115"/><rect x="43" y="14" width="10" height="36" rx="1.5" fill="#c99a1e"/></svg>`;
+const NOM = 'Sorar<span class="w-apo">\'</span>help';
 const style = document.createElement('style');
 style.textContent = `
-.web-ecran { position: fixed; inset: 0; z-index: 60; overflow: auto; background: var(--fond); color: var(--encre);
-  font-family: var(--f-texte); padding: max(24px, env(safe-area-inset-top)) 16px 32px; }
+.web-ecran { position: fixed; inset: 0; z-index: 60; overflow: auto; background: var(--fond); color: var(--encre); font: 400 15px/1.45 var(--f-texte); }
 .web-ecran[hidden] { display: none; }
-.web-carte { max-width: 560px; margin: 0 auto; display: grid; gap: 20px; }
-.web-carte h1 { font-family: var(--f-titre); font-size: var(--t2, 28px); margin: 0; line-height: 1.15; }
-.web-carte h2 { font-family: var(--f-titre); font-size: var(--t4, 18px); margin: 0 0 4px; }
-.web-carte p { margin: 0; line-height: 1.5; }
-.web-bloc { background: var(--surface); border: 1px solid var(--trait); border-radius: var(--r2, 12px); padding: 16px; display: grid; gap: 12px; }
-.web-champ { display: grid; gap: 6px; }
-.web-champ label { font-weight: 600; }
-.web-champ input[type=text], .web-champ input[type=password] { font: inherit; padding: 10px 12px; border: 1px solid var(--trait-fort); border-radius: var(--r1, 8px);
-  background: var(--fond); color: var(--encre); width: 100%; box-sizing: border-box; }
-.web-ligne { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-.web-cases { display: flex; gap: 16px; flex-wrap: wrap; }
-.web-doux { color: var(--doux); font-size: var(--t6, 14px); }
-.web-msg { padding: 10px 12px; border-radius: var(--r1, 8px); }
-.web-msg.ok { background: var(--ok-doux); } .web-msg.erreur { background: var(--stop-doux); } .web-msg.info { background: var(--info-doux); }
-.web-jauge { height: 10px; border-radius: 99px; background: var(--surface-2); overflow: hidden; }
-.web-jauge i { display: block; height: 100%; background: var(--encre); width: 0; transition: width .4s; }
-.web-gros { font-family: var(--f-titre); font-size: var(--t1, 40px); font-weight: 800; }
+.w-cadre { min-height: 100%; display: flex; flex-direction: column; }
+.w-heros { position: relative; background: radial-gradient(ellipse 60% 85% at 50% 0%, rgb(229 194 90 / .30), rgb(13 17 21 / 0) 70%), #0d1115; color: #e7ebef;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-end; text-align: center; gap: 12px;
+  padding: max(48px, env(safe-area-inset-top)) 24px 28px; min-height: 260px; box-sizing: border-box; }
+.w-nom { font: 800 34px/1 var(--f-titre); letter-spacing: -.02em; color: #e7ebef; }
+.w-apo { color: #e5c25a; }
+.w-slogan { margin: 0; font-size: 15px; line-height: 1.45; color: #a1acb8; max-width: 520px; }
+.w-marque { position: absolute; top: max(16px, env(safe-area-inset-top)); left: 16px; display: flex; align-items: center; gap: 8px; font: 800 17px/1 var(--f-titre); }
+.w-pct { font: 800 76px/1 var(--f-titre); letter-spacing: -.03em; color: #fff; }
+.w-pct small { font-size: .47em; }
+.w-reste { margin: 0; font-weight: 600; color: #e5c25a; min-height: 1.4em; }
+.w-barre { width: min(240px, 80%); height: 6px; border-radius: 99px; background: #29313a; overflow: hidden; margin-top: 8px; }
+.w-barre i { display: block; height: 100%; width: 0; background: #e5c25a; transition: width .4s; }
+.w-panneau { flex: 1; display: flex; justify-content: center; padding: 16px 16px 32px; box-sizing: border-box; }
+.w-colonne { width: 100%; max-width: 460px; display: grid; gap: 16px; align-content: start; }
+.w-bloc { background: var(--surface); border: 1px solid var(--trait); border-radius: 8px; padding: 20px; display: grid; gap: 14px; box-shadow: var(--ombre); }
+.w-bloc.plat { box-shadow: none; }
+.w-bloc h1 { margin: 0; font: 800 20px/1.2 var(--f-titre); }
+.w-bloc h2 { margin: 0; font: 700 17px/1.2 var(--f-titre); }
+.w-bloc p { margin: 0; }
+.w-champ { display: grid; gap: 6px; }
+.w-champ label, .w-champ legend { font-weight: 600; font-size: 14px; }
+.w-champ input[type=text], .w-champ input[type=password] { font: 400 16px/1.2 var(--f-texte); padding: 12px; border: 1px solid var(--trait-fort); border-radius: 8px;
+  background: var(--surface); color: var(--encre); width: 100%; box-sizing: border-box; }
+.w-champ input:focus-visible { outline: 2px solid var(--encre); outline-offset: 1px; }
+.w-doux { color: var(--doux); font-size: 13px; line-height: 1.4; }
+.w-puces { display: flex; gap: 8px; flex-wrap: wrap; }
+.w-puce { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 99px; border: 1px solid var(--trait-fort); font-weight: 600; cursor: pointer; color: var(--doux); }
+.w-puce input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.w-puce svg { width: 18px; height: 18px; }
+.w-puce:has(input:checked) { border-color: currentColor; }
+.w-puce.foot:has(input:checked) { color: var(--foot); }
+.w-puce.nba:has(input:checked) { color: var(--nba); }
+.w-puce .coche { visibility: hidden; }
+.w-puce:has(input:checked) .coche { visibility: visible; }
+.w-puce:has(input:focus-visible) { outline: 2px solid var(--encre); outline-offset: 2px; }
+.w-large { width: 100%; justify-content: center; padding: 15px 16px; font-size: 16px; font-weight: 700; }
+.w-lien { background: none; border: 0; padding: 4px; font: 600 14px/1.2 var(--f-texte); color: var(--info); cursor: pointer; justify-self: center; text-decoration: underline; text-underline-offset: 3px; }
+.w-ligne { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.w-msg { padding: 10px 12px; border-radius: 8px; font-size: 14px; }
+.w-msg:empty { display: none; }
+.w-msg.ok { background: var(--ok-doux); } .w-msg.erreur { background: var(--stop-doux); } .w-msg.info { background: var(--info-doux); color: var(--info); }
+.w-pied { margin: 0; text-align: center; color: var(--doux); font-size: 13px; }
+.w-etapes { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.w-etapes li { display: flex; gap: 12px; align-items: flex-start; }
+.w-pt { width: 22px; height: 22px; border-radius: 99px; flex: none; box-sizing: border-box; display: flex; align-items: center; justify-content: center; font: 700 12px/1 var(--f-texte); margin-top: 1px; }
+.w-pt.e-fait { background: var(--ok-doux); color: var(--ok); }
+.w-pt.e-cours { border: 3px solid var(--encre); }
+.w-pt.e-attente { border: 2px solid var(--trait-fort); }
+.w-etapes li.e-attente .w-et-nom { color: var(--doux); }
+.w-et-det { color: var(--doux); font-size: 13px; }
+.w-et-barre { height: 4px; border-radius: 99px; background: var(--trait); overflow: hidden; margin-top: 6px; }
+.w-et-barre i { display: block; height: 100%; background: var(--sport, var(--encre)); transition: width .4s; }
+@media (min-width: 1024px) {
+  .w-cadre { flex-direction: row; height: 100%; }
+  .w-heros { flex: 1.15; justify-content: center; align-items: flex-start; text-align: left; padding: 0 96px; gap: 22px; }
+  .w-heros.centre { align-items: center; text-align: center; }
+  .w-marque { top: 32px; left: 40px; font-size: 22px; }
+  .w-nom { font-size: 72px; letter-spacing: -.03em; }
+  .w-slogan { font-size: 21px; }
+  .w-pct { font-size: 168px; letter-spacing: -.04em; }
+  .w-reste { font-size: 20px; }
+  .w-barre { width: 420px; height: 8px; }
+  .w-panneau { flex: 1; align-items: center; overflow: auto; padding: 48px; }
+  .w-bloc { padding: 32px; }
+  .w-bloc h1 { font-size: 26px; }
+}
 `;
 document.head.append(style);
 const ecran = Object.assign(document.createElement('div'), { className: 'web-ecran', hidden: true });
 ecran.setAttribute('role', 'dialog');
 ecran.setAttribute('aria-modal', 'true');
+ecran.setAttribute('aria-label', "Sorar'help");
 document.body.append(ecran);
-const montrer = (html) => { ecran.innerHTML = `<div class="web-carte">${html}</div>`; ecran.hidden = false; ecran.scrollTop = 0; };
+const montrer = (heros, panneau, { centre = false } = {}) => {
+  ecran.innerHTML = `<div class="w-cadre"><section class="w-heros${centre ? ' centre' : ''}">${heros}</section><section class="w-panneau"><div class="w-colonne">${panneau}</div></section></div>`;
+  ecran.hidden = false; ecran.scrollTop = 0;
+};
 const cacher = () => { ecran.hidden = true; ecran.innerHTML = ''; };
 const date = (iso) => (iso ? new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(iso)) : '—');
 const mo = (n) => (n == null ? '?' : `${(n / 1048576).toFixed(n > 10485760 ? 0 : 1).replace('.', ',')}${nbsp}Mo`);
+const BALLON = {
+  football: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path fill="currentColor" d="M12 8L8.3 10.8 9.7 15.2h4.6l1.4-4.4z"/></svg>',
+  nba: '<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M2 12h20M5 5.2C7.2 7 8.2 9.4 8.2 12S7.2 17 5 18.8M19 5.2C16.8 7 15.8 9.4 15.8 12S16.8 17 19 18.8"/></g></svg>',
+};
+const herosAccueil = (sousTitre) => `${LOGO_GRAND(76)}<div class="w-nom">${NOM}</div>
+  <p class="w-slogan">${sousTitre ?? 'L’équipe à jouer pour passer ton palier Arcade, et la meilleure équipe Squad du jour. Football et NBA.'}</p>`;
 
-/** Écran des paramètres. @param premier vrai à la première visite (pas de bouton Fermer). */
+/** Écran des paramètres. @param premier vrai à la première visite (bienvenue, pas de bouton Fermer). */
 async function ecranParametres({ premier = false, message = null } = {}) {
   const p = lireParams() ?? { sports: SPORTS };
   const info = await infosStockage().catch(() => null);
-  montrer(`
-    <div><h1>${premier ? 'Bienvenue dans Sorare aide' : 'Paramètres'}</h1>
-      ${premier ? '<p class="web-doux">L’outil lit tes cartes et propose des équipes. Il ne joue jamais à ta place et n’agit jamais sur le marché.</p>' : ''}</div>
-    ${message ? `<p class="web-msg ${message.classe}">${esc(message.texte)}</p>` : ''}
-    <form class="web-bloc" id="web-form">
-      <h2>Ton compte Sorare</h2>
-      <div class="web-champ"><label for="web-slug">Nom de manager</label>
+  montrer(herosAccueil(premier ? null : 'Paramètres : ton compte, tes sports, tes données.'), `
+    ${message ? `<p class="w-msg ${message.classe}">${esc(message.texte)}</p>` : ''}
+    <form class="w-bloc" id="web-form">
+      <h1>Ton compte Sorare</h1>
+      <div class="w-champ"><label for="web-slug">Nom de manager</label>
         <input type="text" id="web-slug" autocomplete="username" autocapitalize="off" spellcheck="false" required value="${esc(p.slug ?? '')}" placeholder="ex. yapapir">
-        <span class="web-doux">Celui de l’adresse de ton profil : sorare.com/fr/my-club/<b>nom</b>.</span></div>
-      <div class="web-champ"><label for="web-cle">Clé API Sorare</label>
+        <span class="w-doux">Celui de l’adresse de ton profil : sorare.com/…/my-club/<b>nom</b>.</span></div>
+      <div class="w-champ"><label for="web-cle">Clé API</label>
         <input type="password" id="web-cle" autocomplete="off" spellcheck="false" required value="${esc(p.cle ?? '')}">
-        <span class="web-doux">Elle reste dans ce navigateur, sur cet appareil. Elle passe par le relais du site pour atteindre Sorare, qui ne la garde pas.
-        Elle se crée dans les réglages de ton compte Sorare, rubrique « API Keys ».</span></div>
-      <fieldset class="web-champ" style="border:0;padding:0;margin:0"><legend style="font-weight:600;margin-bottom:6px">Sports</legend>
-        <div class="web-cases">${SPORTS.map((s) => `<label><input type="checkbox" name="sport" value="${s}" ${(p.sports ?? SPORTS).includes(s) ? 'checked' : ''}> ${NOMS[s]}</label>`).join('')}</div></fieldset>
-      <p id="web-test" class="web-doux" role="status"></p>
-      <div class="web-ligne">
-        <button type="submit" class="btn principal">${premier ? 'Enregistrer et continuer' : 'Enregistrer'}</button>
-        <button type="button" class="btn" id="web-tester">Tester</button>
-        ${premier ? '' : '<button type="button" class="btn discret" id="web-fermer">Fermer</button>'}
+        <span class="w-doux">Réglages Sorare › API Keys › Créer une API key. Elle reste sur cet appareil et ne fait que traverser le relais du site.</span></div>
+      <fieldset class="w-champ" style="border:0;padding:0;margin:0"><legend>Sports</legend>
+        <div class="w-puces">${SPORTS.map((s) => `<label class="w-puce ${s === 'football' ? 'foot' : 'nba'}"><input type="checkbox" name="sport" value="${s}" ${(p.sports ?? SPORTS).includes(s) ? 'checked' : ''}>${BALLON[s]}${NOMS[s]}<span class="coche" aria-hidden="true">✓</span></label>`).join('')}</div></fieldset>
+      <p id="web-test" class="w-msg" role="status"></p>
+      <button type="submit" class="btn principal w-large">${premier ? 'Charger mes cartes' : 'Enregistrer'}</button>
+      <div class="w-ligne" style="justify-content:center">
+        <button type="button" class="w-lien" id="web-tester">Tester la clé</button>
+        ${premier ? '<label class="w-lien" for="web-fichier">J’ai déjà une sauvegarde</label>' : '<button type="button" class="w-lien" id="web-fermer">Fermer</button>'}
       </div>
     </form>
-    <div class="web-bloc">
+    <div class="w-bloc plat" ${premier ? 'hidden' : ''}>
       <h2>Tes données</h2>
       <p>${info?.joueurs ? `Historique de <b>${info.joueurs}</b> joueurs${info.slug ? ` (manager ${esc(info.slug)})` : ''}, données du ${date(info.donneesDe)}${info.utilise ? `, ${mo(info.utilise)} utilisés` : ''}.` : 'Aucune donnée pour l’instant.'}</p>
-      <p class="web-doux">${info?.persistant ? 'Stockage persistant accordé par le navigateur.' : 'Le navigateur peut effacer ces données (Safari : après 7 jours sans visite, sauf si le site est ajouté à l’écran d’accueil). Garde une sauvegarde.'}</p>
-      <div class="web-ligne">
+      <p class="w-doux">${info?.persistant ? 'Stockage persistant accordé par le navigateur.' : 'Le navigateur peut effacer ces données (Safari : après 7 jours sans visite, sauf si le site est ajouté à l’écran d’accueil). Garde une sauvegarde.'}</p>
+      <div class="w-ligne">
         <button type="button" class="btn" id="web-sauver" ${info?.joueurs ? '' : 'disabled'}>Sauvegarder dans un fichier</button>
         <label class="btn" for="web-fichier" style="cursor:pointer">Restaurer une sauvegarde</label>
-        <input type="file" id="web-fichier" accept=".json,.gz,application/json,application/gzip" hidden>
       </div>
-      <p id="web-donnees-msg" role="status"></p>
     </div>
-    ${premier ? '' : `<div class="web-bloc"><h2>Oublier</h2>
-      <p class="web-doux">Efface la clé, ou bien la clé et toutes les données de ce navigateur.</p>
-      <div class="web-ligne"><button type="button" class="btn" id="web-oublier-cle">Oublier ma clé</button>
+    <input type="file" id="web-fichier" accept=".json,.gz,application/json,application/gzip" hidden>
+    <p id="web-donnees-msg" class="w-msg" role="status"></p>
+    ${premier ? '' : `<div class="w-bloc plat"><h2>Oublier</h2>
+      <p class="w-doux">Efface la clé, ou bien la clé et toutes les données de ce navigateur.</p>
+      <div class="w-ligne"><button type="button" class="btn" id="web-oublier-cle">Oublier ma clé</button>
       <button type="button" class="btn" id="web-tout-effacer">Tout effacer</button></div></div>`}
+    <p class="w-pied">Lecture seule : aucune action sur le marché.</p>
   `);
   const lireForm = () => ({ slug: ecran.querySelector('#web-slug').value.trim(), cle: ecran.querySelector('#web-cle').value.trim(),
     sports: [...ecran.querySelectorAll('input[name=sport]:checked')].map((x) => x.value) });
   const test = ecran.querySelector('#web-test');
+  const dire = (el, classe, texte) => { el.className = `w-msg ${classe}`; el.textContent = texte; };
   ecran.querySelector('#web-tester').onclick = async () => {
     const f = lireForm();
-    if (!f.slug || !f.cle) { test.textContent = 'Renseigne le nom de manager et la clé.'; return; }
-    test.className = 'web-doux'; test.textContent = 'Test en cours…';
+    if (!f.slug || !f.cle) { dire(test, 'erreur', 'Renseigne le nom de manager et la clé.'); return; }
+    dire(test, 'info', 'Test en cours…');
     try {
       const appel = appelAvec(f.cle);
       const res = [];
@@ -273,13 +334,13 @@ async function ecranParametres({ premier = false, message = null } = {}) {
         const d = await appel(CARTES, { slug: f.slug, sport: s.toUpperCase(), first: 50, after: null });
         res.push(`${d.user.cards.totalCount} cartes ${NOMS[s]}`);
       }
-      test.className = 'web-msg ok'; test.textContent = `Clé et manager reconnus : ${res.join(', ')}.`;
-    } catch (e) { test.className = 'web-msg erreur'; test.textContent = `Échec : ${messageErreur(e, f.slug)}`; }
+      dire(test, 'ok', `Clé et manager reconnus : ${res.join(', ')}.`);
+    } catch (e) { dire(test, 'erreur', `Échec : ${messageErreur(e, f.slug)}`); }
   };
   ecran.querySelector('#web-form').onsubmit = async (ev) => {
     ev.preventDefault();
     const f = lireForm();
-    if (!f.sports.length) { test.className = 'web-msg erreur'; test.textContent = 'Choisis au moins un sport.'; return; }
+    if (!f.sports.length) { dire(test, 'erreur', 'Choisis au moins un sport.'); return; }
     const ancien = lireParams();
     ecrireParams(f);
     const d = await lireCle('donnees', 'dernier').catch(() => null);
@@ -291,23 +352,24 @@ async function ecranParametres({ premier = false, message = null } = {}) {
   ecran.querySelector('#web-fermer')?.addEventListener('click', cacher);
   const msg = ecran.querySelector('#web-donnees-msg');
   ecran.querySelector('#web-sauver').onclick = async () => {
-    msg.className = 'web-doux'; msg.textContent = 'Préparation du fichier…';
-    try { const r = await sauvegarder(); msg.className = 'web-msg ok'; msg.textContent = `Fichier ${r.nom} (${mo(r.octets)}, ${r.joueurs} joueurs) enregistré dans tes téléchargements.`; }
-    catch (e) { msg.className = 'web-msg erreur'; msg.textContent = `Sauvegarde impossible : ${e.message}`; }
+    dire(msg, 'info', 'Préparation du fichier…');
+    try { const r = await sauvegarder(); dire(msg, 'ok', `Fichier ${r.nom} (${mo(r.octets)}, ${r.joueurs} joueurs) enregistré dans tes téléchargements.`); }
+    catch (e) { dire(msg, 'erreur', `Sauvegarde impossible : ${e.message}`); }
   };
   ecran.querySelector('#web-fichier').onchange = async (ev) => {
     const f = ev.target.files?.[0]; if (!f) return;
-    msg.className = 'web-doux'; msg.textContent = 'Restauration…';
+    dire(msg, 'info', 'Restauration…');
     try {
       const r = await restaurer(f);
-      msg.className = 'web-msg ok'; msg.textContent = `Restauré : ${r.joueurs} joueurs${r.slug ? ` (manager ${r.slug})` : ''}, sauvegarde du ${date(r.du)}. Vérifie la clé puis enregistre.`;
+      dire(msg, 'ok', `Restauré : ${r.joueurs} joueurs${r.slug ? ` (manager ${r.slug})` : ''}, sauvegarde du ${date(r.du)}. Saisis ta clé puis valide.`);
       if (r.slug) ecran.querySelector('#web-slug').value = r.slug;
-    } catch (e) { msg.className = 'web-msg erreur'; msg.textContent = `Restauration impossible : ${e.message}`; }
+      ecran.querySelector('#web-cle').focus();
+    } catch (e) { dire(msg, 'erreur', `Restauration impossible : ${e.message}`); }
   };
   ecran.querySelector('#web-oublier-cle')?.addEventListener('click', () => {
     ecrireParams({ ...(lireParams() ?? {}), cle: '' });
     ecran.querySelector('#web-cle').value = '';
-    test.className = 'web-msg ok'; test.textContent = 'Clé effacée de ce navigateur.';
+    dire(test, 'ok', 'Clé effacée de ce navigateur.');
   });
   ecran.querySelector('#web-tout-effacer')?.addEventListener('click', async () => {
     if (!confirm('Effacer la clé, l’historique des joueurs et les cartes jouées de ce navigateur ?')) return;
@@ -315,52 +377,72 @@ async function ecranParametres({ premier = false, message = null } = {}) {
     await vider('archives'); await vider('donnees');
     location.reload();
   });
-  (ecran.querySelector('#web-slug').value ? ecran.querySelector('#web-cle') : ecran.querySelector('#web-slug')).focus();
+  (ecran.querySelector('#web-slug').value ? ecran.querySelector('#web-cle') : ecran.querySelector('#web-slug')).focus({ preventScroll: true });
 }
 
-/** Initialisation (ou reprise) : récupération complète des sports choisis. */
+/** Initialisation (ou reprise) : récupération complète des sports choisis, avec la liste des étapes. */
 async function ecranInitialisation() {
   const p = lireParams();
   const info = await infosStockage().catch(() => null);
   const reprise = info?.joueurs > 0;
-  montrer(`
-    <div><h1>${reprise ? 'Mise à jour des données' : 'Chargement de tes cartes'}</h1>
-      <p class="web-doux">Manager ${esc(p.slug)} · ${p.sports.map((s) => NOMS[s]).join(' et ')}</p></div>
-    <div class="web-bloc">
-      <p>${reprise ? `${info.joueurs} joueurs déjà enregistrés : seuls les manquants sont chargés.` : 'La première fois, l’outil charge tes cartes et les 40 derniers matchs de chaque joueur.'}
-        Sorare limite à 150 requêtes par minute : <b>comptez environ 6 minutes</b> pour 900 joueurs.
-        ${reprise ? '' : 'Si la page est fermée ou l’écran se verrouille, l’initialisation reprendra là où elle s’est arrêtée.'}</p>
-      <div class="web-gros" id="web-pct" aria-live="off">0${nbsp}%</div>
-      <div class="web-jauge" aria-hidden="true"><i id="web-barre"></i></div>
-      <p id="web-etape" role="status">Démarrage…</p>
-      <div class="web-ligne"><button type="button" class="btn" id="web-arreter">Interrompre</button>
-        <button type="button" class="btn discret" id="web-params">Paramètres</button></div>
-    </div>`);
+  const etapes = [];
+  for (const s of p.sports) {
+    etapes.push({ id: `${s}-cartes`, nom: `Paliers et cartes ${NOMS[s]}`, sport: s });
+    etapes.push({ id: `${s}-historique`, nom: `Historique des joueurs ${NOMS[s]}`, sport: s, barre: true });
+    if (s === 'nba') etapes.push({ id: 'nba-espn', nom: 'Blessures annoncées (ESPN)', sport: s });
+  }
+  montrer(`<div class="w-marque">${LOGO_GRAND(28)}<span>${NOM}</span></div>
+      <div class="w-pct" id="web-pct">0<small>${nbsp}%</small></div>
+      <p class="w-reste" id="web-reste">Démarrage…</p>
+      <div class="w-barre" aria-hidden="true"><i id="web-barre"></i></div>`, `
+    <div class="w-bloc">
+      <h1>${reprise ? 'Mise à jour de tes cartes' : 'Chargement de tes cartes'}</h1>
+      <p class="w-doux">Manager ${esc(p.slug)}. ${reprise ? `${info.joueurs} joueurs déjà enregistrés : seuls les manquants sont chargés.` : 'Une seule fois : ensuite, une mise à jour prend moins d’une minute.'}</p>
+      <ol class="w-etapes" id="web-etapes">${etapes.map((e) => `<li id="et-${e.id}" class="e-attente" data-sport="${e.sport}"><span class="w-pt e-attente"></span><div style="flex:1"><div class="w-et-nom">${e.nom}</div><div class="w-et-det"></div>${e.barre ? '<div class="w-et-barre" hidden><i style="width:0"></i></div>' : ''}</div></li>`).join('')}</ol>
+    </div>
+    <p class="w-msg info" id="web-etape" role="status">Garde l’écran allumé. Si la page se ferme, le chargement reprendra là où il s’est arrêté.</p>
+    <div class="w-ligne" style="justify-content:center"><button type="button" class="btn" id="web-arreter">Interrompre</button>
+      <button type="button" class="w-lien" id="web-params">Paramètres</button></div>`, { centre: true });
   try { await navigator.storage?.persist?.(); } catch { /* refusé : sauvegarde conseillée */ }
   const ctrl = new AbortController();
   ecran.querySelector('#web-arreter').onclick = () => ctrl.abort();
   ecran.querySelector('#web-params').onclick = () => { ctrl.abort(); ecranParametres({ premier: !info?.donneesDe }); };
-  const pct = ecran.querySelector('#web-pct'), barre = ecran.querySelector('#web-barre'), etape = ecran.querySelector('#web-etape');
+  const pct = ecran.querySelector('#web-pct'), barre = ecran.querySelector('#web-barre'), reste = ecran.querySelector('#web-reste'), etape = ecran.querySelector('#web-etape');
+  const ordre = etapes.map((e) => e.id);
+  const marquer = (id, etat, detail, part) => {
+    const li = ecran.querySelector(`#et-${id}`); if (!li) return;
+    // les étapes précédentes sont faites
+    for (const autre of ordre.slice(0, ordre.indexOf(id))) {
+      const l = ecran.querySelector(`#et-${autre}`);
+      if (l && l.className !== 'e-fait') { l.className = 'e-fait'; l.querySelector('.w-pt').className = 'w-pt e-fait'; l.querySelector('.w-pt').textContent = '✓'; l.querySelector('.w-et-barre')?.setAttribute('hidden', ''); }
+    }
+    li.className = `e-${etat}`; const pt = li.querySelector('.w-pt'); pt.className = `w-pt e-${etat}`; pt.textContent = etat === 'fait' ? '✓' : '';
+    if (detail != null) li.querySelector('.w-et-det').textContent = detail;
+    const b = li.querySelector('.w-et-barre');
+    if (b && part != null) { b.hidden = etat === 'fait'; b.firstElementChild.style.width = `${Math.round(part * 100)}%`; }
+  };
   try {
-    await recuperer({ sports: p.sports, signal: ctrl.signal, rappel: ({ pourcent, texte, reste }) => {
-      pct.textContent = `${Math.floor(pourcent)}${nbsp}%`; barre.style.width = `${pourcent}%`;
-      etape.textContent = texte + (reste ? ` · encore environ ${reste}${nbsp}min` : '');
+    await recuperer({ sports: p.sports, signal: ctrl.signal, rappel: ({ pourcent, reste: min, ev }) => {
+      pct.innerHTML = `${Math.floor(pourcent)}<small>${nbsp}%</small>`; barre.style.width = `${pourcent}%`;
+      reste.textContent = min ? `encore environ ${min}${nbsp}min` : 'calcul du temps restant…';
+      if (!ev) return;
+      if (ev.etape === 'paliers' || ev.etape === 'cartes' || ev.etape === 'compositions') marquer(`${ev.sport}-cartes`, 'cours', ev.etape === 'cartes' ? `page ${ev.fait} sur ${ev.total}` : ev.etape === 'compositions' ? 'compositions officielles des matchs proches' : 'paliers lus');
+      else if (ev.etape === 'historique') marquer(`${ev.sport}-historique`, ev.total && ev.fait >= ev.total ? 'fait' : 'cours', ev.total ? `${ev.fait} sur ${ev.total} joueurs à compléter` : 'déjà à jour', ev.total ? ev.fait / ev.total : 1);
+      else if (ev.etape === 'espn') marquer('nba-espn', 'fait', ev.texte.replace(/^ESPN : /, ''));
     } });
+    for (const id of ordre) marquer(id, 'fait');
+    pct.innerHTML = `100<small>${nbsp}%</small>`; barre.style.width = '100%'; reste.textContent = 'terminé';
     await demarrerAppli();
   } catch (e) {
+    const relancer = (texte) => { const b = ecran.querySelector('#web-arreter'); b.textContent = texte; b.onclick = ecranInitialisation; };
     if (ctrl.signal.aborted) {
-      if (!ecran.querySelector('#web-form')) {
-        etape.className = 'web-msg info';
-        etape.textContent = 'Interrompu. Ce qui a été chargé est gardé : relance pour reprendre.';
-        ecran.querySelector('#web-arreter').textContent = 'Reprendre';
-        ecran.querySelector('#web-arreter').onclick = ecranInitialisation;
-      }
+      if (!ecran.querySelector('#web-form')) { etape.className = 'w-msg info'; etape.textContent = 'Interrompu. Ce qui a été chargé est gardé : reprends quand tu veux.'; reste.textContent = 'en pause'; relancer('Reprendre'); }
       return;
     }
-    etape.className = 'web-msg erreur';
+    etape.className = 'w-msg erreur';
     etape.textContent = `Échec : ${e.message} Ce qui a été chargé est gardé.`;
-    ecran.querySelector('#web-arreter').textContent = 'Réessayer';
-    ecran.querySelector('#web-arreter').onclick = ecranInitialisation;
+    reste.textContent = 'arrêté';
+    relancer('Réessayer');
   }
 }
 
@@ -386,7 +468,7 @@ async function demarrer() {
     if (!d || d.meta?.slug !== p.slug || p.sports.some((s) => !d.meta?.recupereParSport?.[s])) { await ecranInitialisation(); return; }
     await demarrerAppli();
   } catch (e) {
-    montrer(`<h1>Sorare aide</h1><p class="web-msg erreur">Démarrage impossible : ${esc(e.message)}</p>`);
+    montrer(herosAccueil(), `<p class="w-msg erreur">Démarrage impossible : ${esc(e.message)}</p>`);
   }
 }
 demarrer();

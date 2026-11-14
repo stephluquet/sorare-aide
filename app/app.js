@@ -1,4 +1,4 @@
-// Interface de Sorare aide. Refonte « Salle d'analyse + projecteur » validée le 2026-11-08
+// Interface de Sorar'help. Refonte « Salle d'analyse + projecteur » validée le 2026-11-08
 // (docs/refonte-2026-11 : maquette 6, rapports R1 à R3). Navigation demandée par l'utilisateur :
 // un sélecteur Football / NBA toujours accessible (et sur l'accueil), puis, dans chaque sport,
 // Solo (Arcade), Squad et Mes cartes. Adresse : #<sport>/<mode> ou #accueil.
@@ -73,11 +73,12 @@ const TRAITS = {
   haut: '<path d="M6 15l6-6 6 6"/>',
   bas: '<path d="M6 9l6 6 6-6"/>',
   suite: '<path d="M9 6l6 6-6 6"/>',
-  reglages: '<circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
+  reglages: '<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/>',
   epingle: '<path d="M9 3.5h6l-1 6 3 3.5H7l3-3.5z"/><path d="M12 13v7.5"/>',
 };
 const ico = (n) => (BALLONS[n] ? ballon(n) : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${TRAITS[n]}</svg>`);
-const LOGO = '<svg class="logo" viewBox="0 0 28 28" aria-hidden="true"><rect width="28" height="28" rx="8" style="fill:var(--encre)"/><g style="fill:var(--sur-encre)"><rect x="6" y="15" width="3" height="7" rx="1"/><rect x="10.5" y="10" width="3" height="12" rx="1"/><rect x="15" y="6" width="3" height="16" rx="1"/></g><rect x="19.5" y="12" width="3" height="10" rx="1" style="fill:var(--sport)"/></svg>';
+// Logo « Les paliers » (retenu le 2026-11-14) : trois marches et la quatrième, dorée, à franchir.
+const LOGO = '<svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="15" style="fill:var(--encre)"/><path d="M11 50V42H21V34H31V26H41V50Z" style="fill:var(--sur-encre)"/><rect x="43" y="14" width="10" height="36" rx="1.5" style="fill:var(--logo-or)"/></svg>';
 
 const POSTES = { football: ['GK', 'DF', 'MD', 'FW'], nba: ['G', 'F', 'C'] };
 const LIBELLES = { confirme: 'Titulaire confirmé', remplacant: 'Remplaçant annoncé', probable: 'Probable', incertain: 'Sous le seuil', douteux: 'Douteux', exclu: 'Exclu' };
@@ -655,7 +656,7 @@ function rendreNav(ecran) {
       <button type="button" class="btn" data-act="marquer" data-sport="${s}">Marquer les cartes jouées</button></div>`;
   }
   $('laterale').innerHTML = `
-    <a class="marque" href="#accueil">${LOGO}<b>Sorare aide</b></a>
+    <a class="marque" href="#accueil">${LOGO}<b>Sorar<span class="apostrophe">'</span>help</b></a>
     <div class="lat-section"><span class="libelle">Sport</span>${sports}</div>
     <div class="lat-section"><span class="libelle">${SPORTS[s]}</span>${modes.map(([m, i, t]) =>
       `<a class="lat-lien" href="${lien(m)}" ${ecran === m ? 'aria-current="page"' : ''}>${ico(i)}<span>${t}</span>${m === 'cartes' ? `<span class="compte">${nbCartes}</span>` : ''}</a>`).join('')}</div>
