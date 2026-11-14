@@ -129,6 +129,21 @@ export function simulerEquipe(distributions, capitaine, multiplicateur, cible, s
 }
 
 /**
+ * La même équipe si les 5 jouent à coup sûr (methode.md, 5 quater) : chances de passer
+ * (calibrées comme pPasser) et score habituel (médiane des tirages). Sert à séparer les deux
+ * causes d'échec : les absences possibles, et l'écart entre le score habituel et la cible.
+ * @returns { pPasser, pPasserBrut, mediane }
+ */
+export function siLes5Jouent(distributions, capitaine, multiplicateur, cible, sim, mode = 'addition') {
+  const totaux = tirerTotaux(distributions.map((d) => ({ ...d, p: 1 })), capitaine, multiplicateur, sim, mode);
+  let passes = 0;
+  for (const t of totaux) if (t >= cible) passes++;
+  const brut = passes / totaux.length;
+  const tri = Float64Array.from(totaux).sort();
+  return { pPasser: sim.calibration ? interpoler(sim.calibration, brut) : brut, pPasserBrut: brut, mediane: tri[Math.floor(tri.length / 2)] };
+}
+
+/**
  * Les totaux simulés d'une équipe (sim.tirages valeurs, graine fixe) : base de simulerEquipe,
  * du rétro-test de l'équipe et de la distribution affichée face à la cible.
  */

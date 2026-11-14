@@ -2,7 +2,7 @@
 // présélection par approximation normale, simulation des meilleures équipes,
 // trois propositions. JavaScript pur, sans accès réseau ni disque.
 
-import { distribution, moments, multiplicateurCarte, pPasserApprox, simulerEquipe } from './simulation.js';
+import { distribution, moments, multiplicateurCarte, pPasserApprox, simulerEquipe, siLes5Jouent } from './simulation.js';
 
 /**
  * Cartes admissibles pour une tentative.
@@ -108,6 +108,7 @@ function preselection(adm, sport, regle, cible, sim) {
   return { retenues: garde.slice(0, sim.equipes_simulees), nbEquipes };
 }
 
+// Chaque équipe garde (sans l'énumérer) ses distributions : siLes5Jouent n'est calculé que pour les équipes proposées.
 function simuler(retenues, regle, cible, sim) {
   const mult = regle.capitaine?.multiplicateur ?? 1;
   return retenues.map((r) => {
@@ -120,7 +121,15 @@ function simuler(retenues, regle, cible, sim) {
       etoiles: r.equipe.reduce((s, x) => s + (x.joueur.etoiles ?? 0), 0),
       approx: r.approx,
     };
-  });
+  }).map((o, i) => Object.defineProperty(o, 'interne', { value: { distributions: retenues[i].equipe.map((x) => x.d), capitaine: retenues[i].capitaine, mult, mode: regle.cumul_bonus?.mode, cible }, enumerable: false }));
+}
+
+// Ajoute à une équipe proposée ses chances et son score habituel si les 5 jouent (methode.md, 5 quater).
+function completerSiLes5(e, sim) {
+  if (!e?.interne || e.siLes5) return e;
+  const { distributions, capitaine, mult, mode, cible } = e.interne;
+  e.siLes5 = siLes5Jouent(distributions, capitaine, mult, cible, sim, mode);
+  return e;
 }
 
 const meilleure = (liste, cle, departage) => liste.slice().sort((a, b) => (b[cle] - a[cle]) || (b[departage] - a[departage]))[0] ?? null;
@@ -152,6 +161,7 @@ export function proposer(lignes, P, o) {
     const amb = meilleure(passe(sim.ambitieuse_seuil_jouer).simulees, 'pPasser', 'pComplete');
     if (amb && amb.pPasser > res.equilibree.pPasser + 0.005) res.ambitieuse = amb;
   }
+  for (const k of ['prudente', 'equilibree', 'ambitieuse']) completerSiLes5(res[k], sim);
   return res;
 }
 

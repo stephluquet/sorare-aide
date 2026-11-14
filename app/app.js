@@ -585,9 +585,12 @@ function kpisEquipe(e, sport, membres, o = {}) {
   const heros = o.squad
     ? `<div class="kpi heros"><span class="libelle">Score attendu</span><span class="v">${nb(e.esperance)}</span><span class="s">capitaine et bonus compris</span></div>`
     : `<div class="kpi heros"><span class="libelle">Chances de passer</span><span class="v">${pct(e.pPasser)}</span><span class="s">corrigées sur l'historique</span></div>`;
-  return `<div class="cq"><div class="kpis${sport === 'nba' && !o.squad ? ' cinq-kpis' : ''}">
+  // Si les 5 jouent : chances de passer et score habituel face à la cible (methode.md 5 quater).
+  const si5 = !o.squad && e.siLes5 ? `<div class="kpi"><span class="libelle">Si les 5 jouent</span><span class="v">${pct(e.siLes5.pPasser)}</span><span class="s">de passer · score habituel ${nb(e.siLes5.mediane)}, cible ${o.cible}${e.siLes5.mediane < o.cible ? ` (<b class="stop-txt">−${Math.round(o.cible - e.siLes5.mediane)}</b>)` : ''}</span></div>` : '';
+  return `<div class="cq"><div class="kpis${o.squad ? '' : ' cinq-kpis'}">
     ${heros}
-    <div class="kpi"><span class="libelle">Les 5 jouent</span><span class="v">${pct(e.pComplete)}</span>${G.cinq(membres)}<span class="s">maillon faible : ${esc(nomCourt(faible.j.nom))} ${pct(faible.pr.p)}${plaf ? ` · plafond ${pct(plaf ** 5)} avant les compos` : ''}</span></div>
+    <div class="kpi"><span class="libelle">Chances que les 5 jouent</span><span class="v">${pct(e.pComplete)}</span>${G.cinq(membres)}<span class="s">maillon faible : ${esc(nomCourt(faible.j.nom))} ${pct(faible.pr.p)}${plaf ? ` · plafond ${pct(plaf ** 5)} avant les compos` : ''}</span></div>
+    ${si5}
     ${o.squad ? '' : `<div class="kpi"><span class="libelle">Score attendu</span><span class="v">${nb(e.scoreMoyen)}</span><span class="s">cible ${o.cible} · <b class="${ecart >= 0 ? 'ok-txt' : 'stop-txt'}">${ecart >= 0 ? '+' : '−'}${Math.abs(ecart)}</b></span></div>`}
     ${nbaKpi}
     <div class="kpi"><span class="libelle">Verrouillage</span><span class="v long">${esc(quand(e.verrouillage))}</span><span class="s">premier coup d'envoi : ${esc(nomCourt(premier.j.nom))}</span></div>
@@ -748,7 +751,8 @@ function panneauSport(s, r) {
       <div class="equipe-puces" aria-label="Proposition prudente">${membres.map((l) => `<span class="tag">${e.capitaine === l.c.id ? '<span class="cap">C</span>' : ''}${esc(nomCourt(l.j.nom))} <b>${pct(l.pr.p)}</b></span>`).join('')}</div>
       <div class="faits">
         <div class="fait"><span class="libelle">Score attendu</span><span class="v">${nb(e.scoreMoyen)} <small>/ ${p.cible}</small></span></div>
-        <div class="fait"><span class="libelle">Les 5 jouent</span><span class="v">${pct(e.pComplete)}</span></div>
+        <div class="fait"><span class="libelle">Chances que les 5 jouent</span><span class="v">${pct(e.pComplete)}</span></div>
+        ${e.siLes5 ? `<div class="fait"><span class="libelle">Si les 5 jouent</span><span class="v">${pct(e.siLes5.pPasser)} <small>· habituel ${nb(e.siLes5.mediane)}</small></span></div>` : ''}
         <div class="fait"><span class="libelle">Verrouillage</span><span class="v">${esc(quand(e.verrouillage))}</span></div>
       </div>`;
   }
@@ -822,7 +826,7 @@ function afficherSolo(sport) {
     rendreNav('solo');
     if (!r.equilibree) { $('solo-contenu').innerHTML = `<p class="attente">${esc(r.message)}</p>`; return; }
     const memes = r.prudente.cartes.join() === r.equilibree.cartes.join() && r.prudente.capitaine === r.equilibree.capitaine;
-    const variante = (nom, e) => `<details class="repli"><summary>${TITRES[nom][0]} <span class="doux">${pct(e.pPasser)} de chances de passer · les 5 jouent ${pct(e.pComplete)}</span></summary><div class="variante">${carteProposition(TITRES[nom][0], TITRES[nom][1], e, sport, p.cible, { hauteur: 140 })}</div></details>`;
+    const variante = (nom, e) => `<details class="repli"><summary>${TITRES[nom][0]} <span class="doux">${pct(e.pPasser)} de chances de passer · chances que les 5 jouent ${pct(e.pComplete)}</span></summary><div class="variante">${carteProposition(TITRES[nom][0], TITRES[nom][1], e, sport, p.cible, { hauteur: 140 })}</div></details>`;
     const variantes = [memes ? '' : variante('equilibree', r.equilibree), r.ambitieuse ? variante('ambitieuse', r.ambitieuse) : ''].join('');
     const ecartees = Object.entries(r.ecartees).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<li>${v} ${esc(k)}</li>`).join('');
     const apres = (variantes || '<p class="corps petit doux" style="border-top:1px solid var(--trait);padding-top:var(--e3)">Pas d’autre proposition : l’équipe prudente est aussi la plus forte.</p>') +

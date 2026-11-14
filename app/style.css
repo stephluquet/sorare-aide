@@ -314,6 +314,7 @@ main { display: block; min-width: 0; padding: var(--e4) max(16px, env(safe-area-
 @container (min-width: 600px) { .kpis { grid-template-columns: 1.2fr repeat(3, minmax(0, 1fr)); } .kpis.cinq-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @container (min-width: 820px) { .kpis.cinq-kpis { grid-template-columns: 1.2fr repeat(4, minmax(0, 1fr)); } }
 .kpi { display: grid; gap: 4px; align-content: start; min-width: 0; }
+.kpi .libelle, .fait .libelle { white-space: normal; }
 .kpi .v { font-size: var(--t5); font-weight: 700; line-height: 1.1; white-space: nowrap; letter-spacing: -.01em; }
 .kpi .v.long { font-size: var(--t4); white-space: normal; }
 .kpi .v small { font-size: var(--t3); font-weight: 400; color: var(--doux); }

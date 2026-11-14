@@ -313,6 +313,20 @@ Ces résumés servent seulement à **dessiner** ; ils ne changent aucune chance 
   Comme le score tiré, la fourchette tient compte du lissage, du bornage et des décalages
   (cotes, retrait vers la moyenne du poste).
 
+
+## 5 quater. Si les 5 jouent (2026-11-14)
+
+Deux causes font échouer une équipe : un joueur ne joue pas (il marque 0), ou les cinq jouent mais leur
+total reste sous la cible. L'appli les sépare (demande de l'utilisateur du 2026-11-14, qui lisait « Les 5
+jouent » comme des chances de passer) :
+
+- **Chances que les 5 jouent** = produit des chances de jouer, p₁ × … × p₅ (inchangé, ancien libellé « Les 5 jouent ») ;
+- **Si les 5 jouent** : la même simulation (mêmes tirages, même graine, même capitaine) avec pᵢ = 1 pour les cinq ;
+  chances de passer, corrigées par la même table que `pPasser` (5 bis), et **score habituel** = médiane des totaux.
+
+Exemple (données du 2026-11-14, football, palier 360, proposition prudente) : chances de passer 8 %, chances que
+les 5 jouent 58 %, si les 5 jouent 14 %, score habituel 303 : l'écart à la cible (−57) pèse plus que les absences.
+Calculé seulement pour les équipes proposées (`siLes5Jouent`, `src/moteur/simulation.js`), pas pour les 60 équipes simulées.
 ## 6. Choix des compositions
 
 **Cartes admissibles** : proposables (section 1 : ni exclues ni douteuses,
