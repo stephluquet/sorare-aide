@@ -55,7 +55,7 @@ ignorent les matchs non joués.
   "statuts_sorare_douteux": ["NOT_PLAYING", "RETIRED"],
   "compositions_officielles": {
     "horizon_heures": 6,
-    "p_titulaire": 0.99,
+    "p_titulaire": 1,
     "taux_entree_remplacant": 0.466,
     "a_priori_remplacant": 2,
     "demi_vie_remplacant": 5
@@ -191,8 +191,9 @@ comme remplaçant (entré en jeu ou resté sur le banc), `taux` =
 `taux_entree_remplacant`, `a` = `a_priori_remplacant`. Rétro-test (5 974 matchs
 où le joueur était remplaçant) : 46,6 % d'entrées en jeu en moyenne, mais de
 27 % à 75 % selon les joueurs (quartiles) ; la formule retenue fait passer le
-score de Brier de 0,249 (taux moyen pour tous) à 0,187. `p_titulaire` (0,99)
-est un choix : un titulaire annoncé joue presque toujours.
+score de Brier de 0,249 (taux moyen pour tous) à 0,187. `p_titulaire` (1)
+est un choix de l'utilisateur (2026-11-14, auparavant 0,99) : un titulaire annoncé
+compte pour un joueur qui joue, sans décote.
 
 **Filtre dur** : un joueur exclu ou douteux n'est jamais proposé. Seuil :
 seuls les joueurs avec `p ≥ seuil_jouer` sont proposés par défaut (réglable

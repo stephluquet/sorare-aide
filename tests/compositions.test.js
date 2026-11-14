@@ -157,10 +157,11 @@ function avecCompo(l, { titulaires = [], remplacants = [] }) {
   return { ...l, match, projection: projeterCarte(l.carte, l.joueur, match, P, COMP_FOOT) };
 }
 
-test('compositions officielles : titulaire annoncé → p = 0,99, q = 1, même s’il était déclaré blessé', () => {
+test('compositions officielles : titulaire annoncé → p = 1, q = 1, même s’il était déclaré blessé', () => {
   const l = avecCompo(ligne('x', { blessures: [{ type: 'Knock', retourPrevu: '2026-11-30T00:00:00Z' }] }), { titulaires: ['x'] });
   assert.equal(l.projection.statut, 'ok');
   assert.equal(l.projection.p, P.compositions_officielles.p_titulaire);
+  assert.equal(l.projection.p, 1, 'un titulaire confirmé compte à 100 %');
   assert.equal(l.projection.score.q, 1);
   assert.ok(l.projection.raisons.some((r) => r.includes('titulaire (composition officielle)')));
 });
