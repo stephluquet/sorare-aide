@@ -3,12 +3,13 @@
 # On n'y pousse jamais l'historique Git du dépôt GitHub (données de joueurs dans les anciens commits, adresse e-mail) :
 # chaque publication est un instantané de l'état courant, moins les chemins exclus ci-dessous, posé à la suite du
 # dernier instantané GitLab (historique GitLab linéaire et propre).
-# Aucune clé : l'authentification git vient du secret réseau de l'environnement (gitlab.com), jamais d'un fichier.
+# Aucune clé : l'authentification git vient du secret réseau de l'environnement (gitlab.com), jamais d'un fichier
+# (identifiants bidon dans l'adresse : git envoie alors un en-tête que le proxy remplace par le vrai jeton).
 # Usage : bash outils/publier-gitlab.sh ["message"]
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-DEPOT=https://gitlab.com/steph.luquet/sorarhelp.git
+DEPOT=https://oauth2:injecte-par-le-proxy@gitlab.com/steph.luquet/sorarhelp.git
 BRANCHE=main
 # Chemins jamais publiés (motifs de git ls-files, relatifs à la racine)
 EXCLUS=(
