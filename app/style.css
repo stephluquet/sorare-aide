@@ -584,7 +584,11 @@ details.filtres > summary::-webkit-details-marker { display: none; }
 details.filtres > summary::before { content: ""; width: 7px; height: 7px; border-right: 2px solid var(--doux); border-bottom: 2px solid var(--doux); transform: rotate(-45deg); flex: none; }
 details.filtres[open] > summary::before { transform: rotate(45deg); }
 .filtres-corps { display: flex; flex-wrap: wrap; gap: var(--e2); align-items: center; padding-bottom: var(--e2); }
-table.dense { width: 100%; border-collapse: separate; border-spacing: 0; font-size: var(--t2); }
+/* largeurs fixes : elles ne dépendent plus des lignes affichées (tri, filtres) */
+table.dense { width: 100%; min-width: 1040px; table-layout: fixed; border-collapse: separate; border-spacing: 0; font-size: var(--t2); }
+table.dense td { overflow: hidden; text-overflow: ellipsis; }
+table.dense td .cellule-carte { display: flex; align-items: center; gap: 6px; }
+table.dense td .cellule-tit small { text-align: left; overflow: hidden; text-overflow: ellipsis; }
 table.dense th { position: sticky; top: 0; z-index: 5; background: var(--surface-2); text-align: left; font-weight: 600; color: var(--doux); border-bottom: 1px solid var(--trait-fort); padding: 0; white-space: nowrap; }
 table.dense th button, table.dense th > span { all: unset; display: flex; align-items: center; gap: 4px; padding: var(--e2) 6px; cursor: pointer; font-size: var(--t1); letter-spacing: .04em; text-transform: uppercase; width: 100%; box-sizing: border-box; }
 table.dense th > span { cursor: default; }
@@ -598,14 +602,14 @@ table.dense tr.choisie td { background: color-mix(in srgb, var(--sport) 8%, var(
 table.dense tr.bloquee td { opacity: .62; }
 table.dense td.r, table.dense th.r button { text-align: right; justify-content: end; }
 table.dense td .vig { width: 26px; height: 42px; border-radius: 3px; font-size: 10px; }
-table.dense td .nom { font-weight: 600; display: block; max-width: 190px; overflow: hidden; text-overflow: ellipsis; }
-table.dense td .sous { font-size: var(--t1); color: var(--doux); display: block; max-width: 180px; overflow: hidden; text-overflow: ellipsis; }
+table.dense td .nom { font-weight: 600; display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+table.dense td .sous { font-size: var(--t1); color: var(--doux); display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
 table.dense input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--encre); cursor: pointer; }
 .cellule-p { display: flex; align-items: center; gap: var(--e2); }
 .cellule-p b { min-width: 3.4ch; text-align: right; }
 /* Le tableau défile dans sa boîte (en-tête collant), sans jamais élargir la page. */
 .defile-x { overflow: auto; max-height: calc(100vh - 150px); border: 1px solid var(--trait); border-radius: var(--r2); background: var(--surface); overscroll-behavior: contain; }
-table.dense td.statut { white-space: normal; min-width: 110px; max-width: 150px; }
+table.dense td.statut { white-space: normal; }
 table.dense td.statut .tag { margin: 1px 0; }
 .plus-de-cartes { padding: var(--e3) var(--e4); }
 

@@ -357,7 +357,7 @@ const G = {
   },
   barreP(p, s, w = 64, h = 8) {
     if (p == null) return `<svg class="gx barre-p" width="${w}" height="14" aria-hidden="true"><rect class="piste" y="3" width="${w}" height="${h}" rx="2"/></svg>`;
-    const cls = p >= 0.985 ? 'confirme' : p < s ? 'bas' : '';
+    const cls = p >= 0.985 ? 'confirme' : !atteint(p, s) ? 'bas' : '';
     const H = 14, y = (H - h) / 2, xs = (w * s).toFixed(1);
     return `<svg class="gx barre-p ${cls}" width="${w}" height="${H}" viewBox="0 0 ${w} ${H}" role="img" aria-label="Chances de jouer ${pct(p)}, seuil ${pct(s)}"><rect class="piste" x="0" y="${y}" width="${w}" height="${h}" rx="2"/><rect class="rempli" x="0" y="${y}" width="${(w * p).toFixed(1)}" height="${h}" rx="2"/><line class="seuil" x1="${xs}" x2="${xs}" y1="0" y2="${H}"/></svg>`;
   },
@@ -507,7 +507,7 @@ function dessiner(racine = document) {
 // Étoiles affichées : en football, sans les demi-étoiles (à titre indicatif) ; en NBA, telles quelles (plafond de 16).
 const niveauEtoiles = (l) => (l.j.etoiles == null ? null : l.c.sport === 'football' ? Math.floor(l.j.etoiles) : l.j.etoiles);
 const badgeEtoiles = (l, grand = false) => (niveauEtoiles(l) != null
-  ? `<span class="badge-etoiles${grand ? ' grand' : ''}" title="${nb(niveauEtoiles(l), 1)} étoile(s)">★${nbsp}${nb(niveauEtoiles(l), 1)}</span>` : '');
+  ? `<span class="badge-etoiles${grand ? ' grand' : ''}" title="${nb(niveauEtoiles(l), niveauEtoiles(l) % 1 ? 1 : 0)} étoile(s)">★${nbsp}${nb(niveauEtoiles(l), niveauEtoiles(l) % 1 ? 1 : 0)}</span>` : '');
 const plafondEtoiles = (sport) => D.regles[sport]?.plafond_etoiles?.max ?? null;
 
 // Hors de claude.ai (page autonome), les images externes sont permises : lien direct vers l'image Sorare.
@@ -1083,14 +1083,13 @@ function afficherListeCartes() {
     return;
   }
   // PC : tableau dense triable, en-tête collant, colonne « jouée » à cocher.
-  const th = (k, t, cls = '') => `<th scope="col" class="${cls}" ${vue.tri === k ? `aria-sort="${vue.sens > 0 ? 'ascending' : 'descending'}"` : ''}><button type="button" data-act="tri-col" data-v="${k}">${t}<span class="fl">${vue.tri === k ? (vue.sens > 0 ? '▲' : '▼') : ''}</span></button></th>`;
+  const th = (k, t, cls = '', w = null) => `<th scope="col" class="${cls}"${w ? ` style="width:${w}px"` : ''} ${vue.tri === k ? `aria-sort="${vue.sens > 0 ? 'ascending' : 'descending'}"` : ''}><button type="button" data-act="tri-col" data-v="${k}">${t}<span class="fl">${vue.tri === k ? (vue.sens > 0 ? '▲' : '▼') : ''}</span></button></th>`;
   const lignesHtml = vis.map((l) => {
     const st = statut(l), v = victoirePct(l), jouee = J.has(l.c.id);
     return `<tr data-fiche="${esc(l.c.id)}" class="${fiche.ouverte === l.c.id ? 'choisie' : ''}${jouee ? ' bloquee' : ''}">
       <td><input type="checkbox" data-act="cocher" data-v="${esc(l.c.id)}" ${jouee ? 'checked' : ''} ${palierEnCours(s) ? '' : 'disabled'} aria-label="${esc(l.j.nom)} jouée à ce palier"></td>
-      <td>${vignette(l)}</td>
+      <td><div class="cellule-carte">${vignette(l)}${badgeEtoiles(l)}</div></td>
       <td><span class="nom">${esc(l.j.nom)}</span><span class="sous">${esc(postesL(l).join('/'))} · ${esc(l.j.club?.nom ?? '?')}</span></td>
-      <td class="r">${badgeEtoiles(l)}</td>
       <td>${l.m ? `<span class="nom" style="font-weight:400">${esc(quand(l.m.debutUTC))}</span><span class="sous">${l.lieu === 'ext' ? '@' : l.lieu === 'dom' ? 'vs' : ''} ${esc(l.adv ?? '?')}${v != null ? ` · ${v}${nbsp}% vict.` : ''}</span>` : '<span class="doux">pas de match</span>'}</td>
       ${nba ? `<td><div class="cellule-p"><b>${l.pr.score?.minutes == null ? '–' : nb(l.pr.score.minutes)}</b>${G.barreMin(l.pr.score, seuilMinutes(), 56)}${l.pr.score?.minutesEnHausse ? '<span class="ok-txt" title="minutes en hausse">▲</span>' : ''}</div></td>` : ''}
       ${nba ? '' : `<td><div class="cellule-p"><b>${pct(l.pr.p)}</b>${G.barreP(l.pr.p, seuil(), 56)}</div></td>`}
@@ -1101,7 +1100,7 @@ function afficherListeCartes() {
       <td>${G.pastilles(formeEquipe(l.j.club?.slug)?.derniers)}</td>
       <td class="statut">${l.c.bonusPct ? `<span class="tag">${esc(l.c.collection)} +${nb(l.c.bonusPct)}${nbsp}%</span> ` : ''}${st === 'probable' ? '' : `<span class="tag ${TON_STATUT[st]}">${LIBELLES[st]}</span> `}${!l.pr.eligibleArcade && l.m ? '<span class="tag stop">hors solo</span> ' : ''}${tagsContexte(l)}${!l.c.bonusPct && st === 'probable' && l.pr.eligibleArcade ? `<span class="doux">${esc(l.c.collection ?? '')}</span>` : ''}</td></tr>`;
   }).join('');
-  el.innerHTML = `<div class="defile-x"><table class="dense"><thead><tr>${th('j', 'Jouée')}<th scope="col"><span class="sr">Carte</span><span aria-hidden="true"></span></th>${th('n', 'Joueur')}${th('x', '★', 'r')}${th('d', 'Match')}${nba ? th('m', 'Minutes') : ''}${nba ? '' : th('p', 'Chances de jouer')}${th('s', nba ? 'Score projeté' : 'Titulaire')}${nba ? '' : th('e', 'Espérance', 'r')}${nba ? th('r', 'Pts/★', 'r') : ''}${nba ? th('t', 'Pertes', 'r') : ''}${th('q', 'Club')}${th('b', 'Bonus · statut')}</tr></thead><tbody>${lignesHtml}</tbody></table></div>${plus}`;
+  el.innerHTML = `<div class="defile-x"><table class="dense"><thead><tr>${th('j', 'Jouée', '', 64)}${th('x', 'Carte', '', 84)}${th('n', 'Joueur')}${th('d', 'Match')}${nba ? th('m', 'Minutes', '', 112) : ''}${nba ? '' : th('p', 'Chances', '', 112)}${th('s', nba ? 'Score projeté' : 'Titulaire', '', nba ? 124 : 200)}${nba ? '' : th('e', 'Espérance', 'r', 96)}${nba ? th('r', 'Pts/★', 'r', 72) : ''}${nba ? th('t', 'Pertes', 'r', 76) : ''}${th('q', 'Club', '', 112)}${th('b', 'Bonus · statut', '', 160)}</tr></thead><tbody>${lignesHtml}</tbody></table></div>${plus}`;
 }
 
 // ---------- Fiche joueur ----------
