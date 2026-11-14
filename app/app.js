@@ -655,12 +655,14 @@ function kpisEquipe(e, sport, membres, o = {}) {
       : `<div class="kpi heros"><span class="libelle">Score attendu</span><span class="v">${nb(e.esperance)}</span><span class="s">capitaine et bonus compris</span></div>`)
     : `<div class="kpi heros"><span class="libelle">Chances de passer</span><span class="v">${pct(e.pPasser)}</span><span class="s">corrigées sur l'historique</span></div>`;
   // Si les 5 jouent : chances de passer et score habituel face à la cible (methode.md 5 quater).
-  const si5 = !o.squad && e.siLes5 ? `<div class="kpi"><span class="libelle">Si les 5 jouent</span><span class="v">${pct(e.siLes5.pPasser)}</span><span class="s">de passer · score habituel ${nb(e.siLes5.mediane)}, cible ${o.cible}${e.siLes5.mediane < o.cible ? ` (<b class="stop-txt">−${Math.round(o.cible - e.siLes5.mediane)}</b>)` : ''}</span></div>` : '';
+  // NBA : tout le monde joue ou presque, ce sont les minutes qui comptent : ni « les 5 jouent » ni « si les 5 jouent ».
+  const nba = sport === 'nba';
+  const si5 = !nba && !o.squad && e.siLes5 ? `<div class="kpi"><span class="libelle">Si les 5 jouent</span><span class="v">${pct(e.siLes5.pPasser)}</span><span class="s">de passer · score habituel ${nb(e.siLes5.mediane)}, cible ${o.cible}${e.siLes5.mediane < o.cible ? ` (<b class="stop-txt">−${Math.round(o.cible - e.siLes5.mediane)}</b>)` : ''}</span></div>` : '';
   return `<div class="cq"><div class="kpis${o.squad ? '' : ' cinq-kpis'}">
     ${heros}
-    <div class="kpi"><span class="libelle">Chances que les 5 jouent</span><span class="v">${pct(e.pComplete)}</span>${G.cinq(membres)}<span class="s">maillon faible : ${esc(nomCourt(faible.j.nom))} ${pct(faible.pr.p)}${plaf ? ` · plafond ${pct(plaf ** 5)} avant les compos` : ''}</span></div>
+    ${nba ? '' : `<div class="kpi"><span class="libelle">Chances que les 5 jouent</span><span class="v">${pct(e.pComplete)}</span>${G.cinq(membres)}<span class="s">maillon faible : ${esc(nomCourt(faible.j.nom))} ${pct(faible.pr.p)}${plaf ? ` · plafond ${pct(plaf ** 5)} avant les compos` : ''}</span></div>`}
     ${si5}
-    ${sport === 'nba' && !o.squad ? (() => { const mins = membres.map((x) => x.pr.score?.minutes ?? 0), mi = mins.indexOf(Math.min(...mins)); return `<div class="kpi"><span class="libelle">Minutes projetées</span><span class="v">${nb(mins.reduce((a, b) => a + b, 0))}<small> / 240</small></span><span class="s">le moins : ${esc(nomCourt(membres[mi].j.nom))} ${nb(mins[mi])} min</span></div>`; })() : ''}
+    ${nba ? (() => { const mins = membres.map((x) => x.pr.score?.minutes ?? 0), mi = mins.indexOf(Math.min(...mins)); return `<div class="kpi"><span class="libelle">Minutes projetées</span><span class="v">${nb(mins.reduce((a, b) => a + b, 0))}<small> / 240</small></span><span class="s">le moins : ${esc(nomCourt(membres[mi].j.nom))} ${nb(mins[mi])} min</span></div>`; })() : ''}
     ${o.squad ? '' : `<div class="kpi"><span class="libelle">Score attendu</span><span class="v">${nb(e.scoreMoyen)}</span><span class="s">cible ${o.cible} · <b class="${ecart >= 0 ? 'ok-txt' : 'stop-txt'}">${ecart >= 0 ? '+' : '−'}${Math.abs(ecart)}</b></span></div>`}
     ${nbaKpi}
     <div class="kpi"><span class="libelle">Verrouillage</span><span class="v long">${esc(quand(e.verrouillage))}</span><span class="s">premier coup d'envoi : ${esc(nomCourt(premier.j.nom))}</span></div>
@@ -676,7 +678,7 @@ function legendeDist(r, e, cible) {
 }
 
 const TITRES = {
-  prudente: ['Proposition prudente', 'Presque aussi bonne que la meilleure, avec le plus de chances que les 5 jouent.'],
+  prudente: ['Proposition prudente', 'Presque aussi bonne que la meilleure, avec les joueurs les plus sûrs de jouer.'],
   equilibree: ['Équilibrée', 'La plus grande chance de franchir le palier.'],
   ambitieuse: ['Ambitieuse', 'Encore plus de chances de passer, en acceptant des joueurs moins sûrs de jouer.'],
 };
@@ -833,11 +835,11 @@ function panneauSport(s, r) {
     corps = `<div class="hero${fragile ? ' fragile' : ''}"><span class="valeur"><span class="compteur" data-v="${Math.round(e.pPasser * 100)}">${Math.round(e.pPasser * 100)}</span><small>${nbsp}%</small></span><p class="phrase">de chances de passer le palier <b>${p.cible}</b> avec la proposition prudente</p></div>
       ${fragile ? `<p class="petit attention-txt">${ep.derniere ? 'Dernière tentative en cours : les cartes seront libérées quoi qu’il arrive, cette proposition ne sert pas pour l’instant.' : 'Moins d’une chance sur trois : proposition fragile.'}</p>` : ''}
       ${d ? `<div>${graphe((w) => G.dist(w, d, p.cible, s, 150))}<p class="lecture" style="margin-top:4px"><b>${pct(d.partAuDessus)}</b> des tirages au-dessus de ${p.cible} ; chances corrigées sur l'historique : <b>${pct(e.pPasser)}</b>.</p></div>` : ''}
-      <div class="equipe-puces" aria-label="Proposition prudente">${membres.map((l) => `<span class="tag">${e.capitaine === l.c.id ? '<span class="cap">C</span>' : ''}${esc(nomCourt(l.j.nom))} <b>${pct(l.pr.p)}</b></span>`).join('')}</div>
+      <div class="equipe-puces" aria-label="Proposition prudente">${membres.map((l) => `<span class="tag">${e.capitaine === l.c.id ? '<span class="cap">C</span>' : ''}${esc(nomCourt(l.j.nom))} <b>${s === 'nba' ? `${nb(l.pr.score?.minutes)}${nbsp}min` : txtChances(l)}</b></span>`).join('')}</div>
       <div class="faits">
         <div class="fait"><span class="libelle">Score attendu</span><span class="v">${nb(e.scoreMoyen)} <small>/ ${p.cible}</small></span></div>
-        <div class="fait"><span class="libelle">Chances que les 5 jouent</span><span class="v">${pct(e.pComplete)}</span></div>
-        ${e.siLes5 ? `<div class="fait"><span class="libelle">Si les 5 jouent</span><span class="v">${pct(e.siLes5.pPasser)} <small>· habituel ${nb(e.siLes5.mediane)}</small></span></div>` : ''}
+        ${s === 'nba' ? `<div class="fait"><span class="libelle">Minutes projetées</span><span class="v">${nb(membres.reduce((a, l) => a + (l.pr.score?.minutes ?? 0), 0))} <small>/ 240</small></span></div>` : `<div class="fait"><span class="libelle">Chances que les 5 jouent</span><span class="v">${pct(e.pComplete)}</span></div>`}
+        ${e.siLes5 && s !== 'nba' ? `<div class="fait"><span class="libelle">Si les 5 jouent</span><span class="v">${pct(e.siLes5.pPasser)} <small>· habituel ${nb(e.siLes5.mediane)}</small></span></div>` : ''}
         <div class="fait"><span class="libelle">Verrouillage</span><span class="v">${esc(quand(e.verrouillage))}</span></div>
       </div>`;
   }
@@ -911,7 +913,7 @@ function afficherSolo(sport) {
     rendreNav('solo');
     if (!r.equilibree) { $('solo-contenu').innerHTML = `<p class="attente">${esc(r.message)}</p>`; return; }
     const memes = r.prudente.cartes.join() === r.equilibree.cartes.join() && r.prudente.capitaine === r.equilibree.capitaine;
-    const variante = (nom, e) => `<details class="repli"><summary>${TITRES[nom][0]} <span class="doux">${pct(e.pPasser)} de chances de passer · chances que les 5 jouent ${pct(e.pComplete)}</span></summary><div class="variante">${carteProposition(TITRES[nom][0], TITRES[nom][1], e, sport, p.cible, { hauteur: 140 })}</div></details>`;
+    const variante = (nom, e) => `<details class="repli"><summary>${TITRES[nom][0]} <span class="doux">${pct(e.pPasser)} de chances de passer${sport === 'nba' ? '' : ` · chances que les 5 jouent ${pct(e.pComplete)}`}</span></summary><div class="variante">${carteProposition(TITRES[nom][0], TITRES[nom][1], e, sport, p.cible, { hauteur: 140 })}</div></details>`;
     const variantes = [memes ? '' : variante('equilibree', r.equilibree), r.ambitieuse ? variante('ambitieuse', r.ambitieuse) : ''].join('');
     const ecartees = Object.entries(r.ecartees).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<li>${v} ${esc(k)}</li>`).join('');
     const apres = (variantes || '<p class="corps petit doux" style="border-top:1px solid var(--trait);padding-top:var(--e3)">Pas d’autre proposition : l’équipe prudente est aussi la plus forte.</p>') +
