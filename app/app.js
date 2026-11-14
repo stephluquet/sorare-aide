@@ -982,8 +982,17 @@ function afficherAutres(sport, equipe, a, o = {}) {
     const classe = apres > avant ? 'mieux' : apres < avant ? 'moins' : 'pareil';
     const tard = !o.squad && Date.parse(l.m.debutUTC) - dernier > 36 * 3600000 ? `<span class="tag attention">résultat le ${esc(fJour.format(new Date(l.m.debutUTC)))}</span>` : '';
     const quoi = "score projeté de l'équipe";
+    // Solo : l'équipe est choisie sur les chances de passer. Un autre choix qui monte le score projeté sans
+    // améliorer ces chances le dit, avec la raison (methode.md 6 bis ; choix A de l'utilisateur, 2026-11-14).
+    let pourquoi = '';
+    if (!o.squad && apres > avant && c.pPasser != null && c.pPasser < equipe.pPasser) {
+      const rem = parId.get(c.remplace), raisons = [];
+      if ((l.pr.p ?? 0) < (rem.pr.p ?? 0) - 0.005) raisons.push('joue moins sûrement');
+      if ((l.pr.score?.sigma ?? 0) < (rem.pr.score?.sigma ?? 0) - 0.5) raisons.push('plus régulier');
+      pourquoi = `<span class="mini attention-txt" title="L'équipe proposée maximise les chances d'atteindre la cible : un joueur moins sûr de jouer, ou plus régulier quand l'équipe est sous la cible, les fait baisser.">score plus haut, mais moins de chances de passer${raisons.length ? ` : ${raisons.join(', ')}` : ''}</span>`;
+    }
     return ligne(l, { capitaine: c.capitaine, epinglable: true, tags: tard, jouee: o.squad ? (jouees(sport).has(l.c.id) ? 'jouée en solo' : '') : undefined,
-      extra: `<span class="delta ${classe}">${avant}${unite} → ${apres}${unite}</span><span class="mini doux">${quoi}${c.capitaine === c.carteId ? ', avec le brassard' : ''}${o.parEtoiles ? ` · à la place de ${esc(nomCourt(parId.get(c.remplace).j.nom))}` : ''}</span>` });
+      extra: `<span class="delta ${classe}">${avant}${unite} → ${apres}${unite}</span><span class="mini doux">${quoi}${c.capitaine === c.carteId ? ', avec le brassard' : ''}${o.parEtoiles ? ` · à la place de ${esc(nomCourt(parId.get(c.remplace).j.nom))}` : ''}</span>${pourquoi}` });
   };
   const explication = sport === 'nba'
     ? `Par nombre d'étoiles, les meilleures cartes ${o.squad ? 'du jour ' : ''}hors de l'équipe : chacune avec le joueur qu'elle remplacerait au mieux (16 étoiles au plus) et le score projeté de l'équipe avant → après.`
