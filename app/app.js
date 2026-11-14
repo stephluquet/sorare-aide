@@ -365,7 +365,7 @@ const G = {
   },
   barreP(p, s, w = 64, h = 8) {
     if (p == null) return `<svg class="gx barre-p" width="${w}" height="14" aria-hidden="true"><rect class="piste" y="3" width="${w}" height="${h}" rx="2"/></svg>`;
-    const cls = p >= 0.985 ? 'confirme' : !atteint(p, s) ? 'bas' : '';
+    const cls = atteint(p, s) ? 'confirme' : 'bas'; // vert à partir de ton seuil, rouge en dessous (demande de l'utilisateur)
     const H = 14, y = (H - h) / 2, xs = (w * s).toFixed(1);
     return `<svg class="gx barre-p ${cls}" width="${w}" height="${H}" viewBox="0 0 ${w} ${H}" role="img" aria-label="Chances de jouer ${pct(p)}, seuil ${pct(s)}"><rect class="piste" x="0" y="${y}" width="${w}" height="${h}" rx="2"/><rect class="rempli" x="0" y="${y}" width="${(w * p).toFixed(1)}" height="${h}" rx="2"/><line class="seuil" x1="${xs}" x2="${xs}" y1="0" y2="${H}"/></svg>`;
   },
