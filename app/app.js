@@ -140,6 +140,8 @@ function creerStockage() {
 const D = await chargerDonnees().catch((e) => { $('chargement').textContent = `Impossible de charger les données : ${e.message}`; throw e; });
 const joueurs = new Map(D.joueurs.map((j) => [j.id, deplier(j)]));
 const matchs = new Map(D.matchs.map((m) => [m.id, m]));
+// Sports présents dans les données (la version web peut n'en charger qu'un).
+const ACTIFS = (() => { const a = ['football', 'nba'].filter((x) => D.cartes.some((c) => c.sport === x)); return a.length ? a : ['football', 'nba']; })();
 const stockage = creerStockage();
 let etatUtilisateur = etatVide();
 
@@ -219,7 +221,7 @@ const disponible = (l) => ['probable', 'confirme', 'remplacant'].includes(statut
   !jouees(l.c.sport).has(l.c.id) && Date.parse(l.m?.debutUTC) > Date.now();
 
 const vue = {
-  sport: 'football', heros: null, poste: null, etoiles: null, journee: '', tri: 'e', sens: -1, dispo: true, toutVoir: false,
+  sport: ACTIFS[0], heros: null, poste: null, etoiles: null, journee: '', tri: 'e', sens: -1, dispo: true, toutVoir: false,
   mode: 'plusieurs', creneauOuvert: null, squadJour: null, epingle: { football: null, nba: null },
 };
 
@@ -635,7 +637,7 @@ function rendreNav(ecran) {
   const s = vue.sport, accueil = ecran === 'accueil';
   const modes = [['accueil', 'maison', 'Accueil'], ['solo', 'solo', 'Solo'], ['squad', 'squad', 'Squad'], ['cartes', 'cartes', 'Mes cartes']];
   const lien = (m) => (m === 'accueil' ? '#accueil' : `#${s}/${m}`);
-  const sports = ['football', 'nba'].map((x) => {
+  const sports = ACTIFS.map((x) => {
     const p = palierEnCours(x), ch = dernieresChances[x];
     const sous = p ? `Palier ${p.cible}${ch && ch.cible === p.cible ? ` · ${pct(ch.p)}` : ''}` : 'plateau terminé';
     return `<a class="lat-lien lat-sport" data-sport="${x}" href="#${x}/${accueil ? 'solo' : ecran}" ${!accueil && x === s ? 'aria-current="true"' : ''}>${ballon(x)}<span class="txt">${SPORTS[x]}<small>${sous}</small></span></a>`;
@@ -662,7 +664,7 @@ function rendreNav(ecran) {
       <div class="ligne-outils"><button type="button" class="btn rond discret btn-maj-rond" data-act="maj" aria-label="Mettre à jour les données">${ico('maj')}</button>${boutonsOutils()}</div></div>`;
   $('laterale').dataset.sport = s;
   $('haut').innerHTML = `
-    <div class="seg" role="group" aria-label="Sport">${['football', 'nba'].map((x) => `<a href="#${x}/${accueil ? 'solo' : ecran}" data-sport="${x}" ${!accueil && x === s ? 'aria-current="true"' : ''} aria-label="${SPORTS[x]}">${ballon(x)}<span>${SPORTS_COURTS[x]}</span></a>`).join('')}</div>
+    <div class="seg" role="group" aria-label="Sport">${ACTIFS.map((x) => `<a href="#${x}/${accueil ? 'solo' : ecran}" data-sport="${x}" ${!accueil && x === s ? 'aria-current="true"' : ''} aria-label="${SPORTS[x]}">${ballon(x)}<span>${SPORTS_COURTS[x]}</span></a>`).join('')}</div>
     <span class="espace"></span>
     <button type="button" class="btn discret btn-maj" data-act="maj" aria-label="Mettre à jour les données">${ico('maj')}<span class="age"></span></button>
     ${boutonsOutils()}`;
@@ -706,7 +708,7 @@ function contenuHeros(s, r) {
   const p = palierEnCours(s), autre = AUTRE[s], ps = paliersDe(s);
   const surtitre = `<p class="libelle pj-surtitre">${ballon(s)}<span>${SPORTS[s]} · Solo · ${p ? `palier ${rangPalier(p)} sur ${ps.length}` : 'plateau terminé'}</span></p>`;
   const pa = dernieresChances[autre];
-  const bascule = `<button class="btn" type="button" data-act="heros-sport" data-v="${autre}" aria-label="Afficher ${SPORTS[autre]} dans le bandeau${pa ? ` : ${pct(pa.p)} de chances` : ''}">${ballon(autre)}${SPORTS[autre]}${pa ? ` : ${pct(pa.p)}` : ''}</button>`;
+  const bascule = ACTIFS.length < 2 ? '' : `<button class="btn" type="button" data-act="heros-sport" data-v="${autre}" aria-label="Afficher ${SPORTS[autre]} dans le bandeau${pa ? ` : ${pct(pa.p)} de chances` : ''}">${ballon(autre)}${SPORTS[autre]}${pa ? ` : ${pct(pa.p)}` : ''}</button>`;
   if (!p) return `${surtitre}<p class="pj-phrase" style="margin-top:12px">Tous les paliers de ce plateau sont passés.</p><div class="pj-actions"><a class="btn principal" href="#${s}/squad">Squad du jour</a>${bascule}</div><div class="pj-chemin">${chemin(s)}</div>`;
   const e = r?.prudente;
   if (!e) {
@@ -759,7 +761,7 @@ function afficherAccueil(anime) {
       <div class="scene-3d" id="scene-3d" aria-hidden="true"></div>
       <div class="pj-contenu" id="pj-contenu">${contenuHeros(h, r(h))}</div></section>
     <div class="entete"><div class="titres"><h1>Où j'en suis</h1><p class="doux petit">${esc(fJourLong.format(new Date()))} · données Sorare de ${fHeure.format(new Date(D.meta.recupereA))}</p></div></div>
-    <div class="accueil-grille">${['football', 'nba'].map((s) => `<div id="panneau-${s}">${panneauSport(s, r(s))}</div>`).join('')}</div>`;
+    <div class="accueil-grille">${ACTIFS.map((s) => `<div id="panneau-${s}">${panneauSport(s, r(s))}</div>`).join('')}</div>`;
   $('vue-accueil').classList.toggle('anim', anime && !REDUIT.matches);
   dessiner($('vue-accueil'));
   monterScene(h);
