@@ -71,6 +71,7 @@ ignorent les matchs non joués.
     "prudente_ecart_max": 0.05,
     "alternatives_par_poste": 4,
     "alternatives_nba": 8,
+    "alternatives_par_etoile": 4,
     "ambitieuse_seuil_jouer": 0.6,
     "calibration_passer": {
       "football": [[0, 0], [0.2, 0.178], [0.35, 0.332], [0.5, 0.48], [0.65, 0.642], [0.8, 0.782], [1, 1]],
@@ -390,7 +391,12 @@ l'équipe où elle remplace un joueur, en essayant chaque remplacement
 permis (postes, joueur unique, étoiles ≤ 16), et on affiche le meilleur :
 le joueur remplacé et la nouvelle chance de passer. **Depuis le 2026-11-14, tous les remplacements permis sont gardés**
 (`options`) : l'appli montre, pour chaque joueur de l'équipe et dans l'ordre de l'équipe, les
-meilleures cartes qui peuvent le remplacer (une par joueur), en Solo comme en Squad. Si le capitaine est
+meilleures cartes qui peuvent le remplacer (une par joueur), en Solo comme en Squad.
+**NBA : autres choix par étoiles** (2026-11-14, demande de l'utilisateur : en NBA, pas de poste,
+seulement le plafond d'étoiles). Les candidats sont, pour chaque niveau d'étoiles présent, les
+`alternatives_par_etoile` meilleures cartes hors de l'équipe ; chacune est essayée à chaque place
+permise (16 étoiles au plus) et l'appli les range par niveau d'étoiles, chacune avec le joueur
+qu'elle remplacerait au mieux et l'effet avant → après. Si le capitaine est
 remplacé, le brassard passe au joueur de plus grand p × μ.
 
 ## 7. Créneau unique

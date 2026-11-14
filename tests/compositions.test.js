@@ -254,6 +254,24 @@ test('Squad NBA : choisi sur le score projeté, pas sur l’espérance', () => {
   assert.ok(Math.abs(r.equipe.esperance - somme) < 1e-9, 'la valeur de l’équipe est la somme des scores projetés');
 });
 
+test('NBA, autres choix : rangés par niveau d’étoiles, plafond de 16 respecté', () => {
+  const L = [4, 4, 3, 3, 2, 3, 3, 2, 1, 1, 2.5].map((et, i) => ligne(`e${i}`, { sport: 'nba', niveau: 50 - 2 * i, etoiles: et }));
+  const o = { sport: 'nba', jour: jourDeJeu(L[0].match.debutUTC, 'America/New_York'), fuseau: 'America/New_York', regle: REGLE_NBA, seuil: 0.8, maintenant: MAINTENANT };
+  const r = squadDuJour(L, P, o);
+  const a = autresChoixSquad(L, P, o, r.equipe);
+  const niveaux = a.groupes.map((g) => g.etoiles);
+  assert.deepEqual(niveaux, [...niveaux].sort((x, y) => y - x), 'du plus étoilé au moins étoilé');
+  assert.equal(new Set(niveaux).size, niveaux.length, 'un groupe par niveau');
+  const Lp = parId(L);
+  for (const g of a.groupes) for (const c of g.choix) {
+    assert.equal(Lp.get(c.carteId).joueur.etoiles, g.etoiles);
+    for (const op of c.options) {
+      const total = r.equipe.cartes.map((id) => (id === op.remplace ? c.carteId : id)).reduce((t, id) => t + Lp.get(id).joueur.etoiles, 0);
+      assert.ok(total <= 16, `${total} étoiles`);
+    }
+  }
+});
+
 test('cumul des bonus par addition : capitaine Eclipse × 1,7 ; le brassard va au meilleur score de base', () => {
   assert.ok(Math.abs(multiplicateurCarte({ b: 1.2 }, true, 1.5, 'addition') - 1.7) < 1e-12);
   assert.ok(Math.abs(multiplicateurCarte({ b: 1.2 }, true, 1.5, 'multiplication') - 1.8) < 1e-12);

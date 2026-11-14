@@ -958,8 +958,20 @@ function afficherAutres(sport, equipe, a, o = {}) {
   }
   // Groupes dans l'ordre de l'équipe affichée (football : GK, DF, MD, FW, joker ; NBA : coup d'envoi).
   const ordreEquipe = membresDe(equipe).map((l) => l.c.id);
+  // NBA : pas de poste, un plafond d'étoiles → autres choix rangés par niveau d'étoiles ; chaque carte
+  // avec le joueur qu'elle remplacerait au mieux (demande de l'utilisateur, 2026-11-14).
+  o = { ...o, parEtoiles: sport === 'nba' };
+  const meilleure = (c) => (c.options ?? []).filter((op) => valeur({ ...op, carteId: c.carteId }) != null)
+    .map((op) => ({ ...op, carteId: c.carteId })).sort((x, y) => valeur(y) - valeur(x))[0];
+  const groupesNba = () => a.groupes.map((g) => {
+    const choix = g.choix.map(meilleure).filter(Boolean).sort((x, y) => valeur(y) - valeur(x));
+    if (!choix.length) return '';
+    const suite = choix.slice(1, AUTRES_PAR_GROUPE);
+    return `<div class="groupe-alt"><h3><span class="etoiles">★</span>${nbsp}${nb(g.etoiles, g.etoiles % 1 ? 1 : 0)} étoile${g.etoiles >= 2 ? 's' : ''}</h3>${ligneAlt(choix[0])}` +
+      (suite.length ? `<details><summary>+ ${pluriel(suite.length, 'autre')}</summary>${suite.map(ligneAlt).join('')}</details>` : '') + '</div>';
+  }).join('');
   const tete = `<header><h2>Autres choix</h2><span class="doux petit">si tu préfères ajuster l'équipe ${o.squad ? 'du jour' : 'prudente'}</span></header>`;
-  if (!parRemplace.size) { el.innerHTML = `${tete}<p class="corps petit doux">Pas d’autre carte admissible.</p>`; return; }
+  if (!parRemplace.size && !a.groupes.some((g) => g.choix.length)) { el.innerHTML = `${tete}<p class="corps petit doux">Pas d’autre carte admissible.</p>`; return; }
   const avant = o.squad ? Math.round(sport === 'nba' ? projEquipe : equipe.esperance) : Math.round(equipe.pPasser * 100);
   const unite = o.squad ? '' : `${nbsp}%`;
   const ligneAlt = (c) => {
@@ -968,13 +980,15 @@ function afficherAutres(sport, equipe, a, o = {}) {
     const tard = !o.squad && Date.parse(l.m.debutUTC) - dernier > 36 * 3600000 ? `<span class="tag attention">résultat le ${esc(fJour.format(new Date(l.m.debutUTC)))}</span>` : '';
     const quoi = o.squad ? (sport === 'nba' ? "score projeté de l'équipe" : "score attendu de l'équipe") : 'chances de passer';
     return ligne(l, { capitaine: c.capitaine, epinglable: true, tags: tard, jouee: o.squad ? (jouees(sport).has(l.c.id) ? 'jouée en solo' : '') : undefined,
-      extra: `<span class="delta ${classe}">${avant}${unite} → ${apres}${unite}</span><span class="mini doux">${quoi}${c.capitaine === c.carteId ? ', avec le brassard' : ''}</span>` });
+      extra: `<span class="delta ${classe}">${avant}${unite} → ${apres}${unite}</span><span class="mini doux">${quoi}${c.capitaine === c.carteId ? ', avec le brassard' : ''}${o.parEtoiles ? ` · à la place de ${esc(nomCourt(parId.get(c.remplace).j.nom))}` : ''}</span>` });
   };
-  const explication = o.squad
+  const explication = sport === 'nba'
+    ? `Par nombre d'étoiles, les meilleures cartes ${o.squad ? 'du jour ' : ''}hors de l'équipe : chacune avec le joueur qu'elle remplacerait au mieux (16 étoiles au plus) et ${o.squad ? "le score projeté de l'équipe" : 'la chance de passer'} avant → après.`
+    : o.squad
     ? `Pour chaque joueur de l'équipe, les meilleures cartes du jour qui peuvent le remplacer (postes, joueur unique${sport === 'nba' ? ', 16 étoiles' : ''}), et le ${sport === 'nba' ? 'score projeté' : 'score attendu'} de l'équipe avant → après le changement.`
     : `Pour chaque joueur de l'équipe, les meilleures cartes qui peuvent le remplacer (postes, joueur unique${sport === 'nba' ? ', 16 étoiles' : ''}), et la chance de passer avant → après le changement.`;
   el.innerHTML = `${tete}<p class="corps petit doux">${explication}</p>
-    <div class="tableau">${[...parRemplace.entries()].sort((x, y) => ordreEquipe.indexOf(x[0]) - ordreEquipe.indexOf(y[0])).map(([rem, { choix }]) => {
+    <div class="tableau">${sport === 'nba' ? groupesNba() : [...parRemplace.entries()].sort((x, y) => ordreEquipe.indexOf(x[0]) - ordreEquipe.indexOf(y[0])).map(([rem, { choix }]) => {
       const r = parId.get(rem), suite = choix.slice(1, AUTRES_PAR_GROUPE);
       return `<div class="groupe-alt"><h3>À la place de ${esc(r.j.nom)} (${esc(postesL(r).join('/'))}${equipe.capitaine === rem ? ', capitaine' : ''})</h3>${ligneAlt(choix[0])}` +
         (suite.length ? `<details><summary>+ ${pluriel(suite.length, 'autre')}</summary>${suite.map(ligneAlt).join('')}</details>` : '') + '</div>';

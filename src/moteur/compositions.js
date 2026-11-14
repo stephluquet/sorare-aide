@@ -231,6 +231,20 @@ export function squadDuJour(lignes, P, o) {
   };
 }
 
+// NBA : candidats des autres choix rangés par niveau d'étoiles (pas de poste, un plafond d'étoiles) :
+// pour chaque niveau présent, les meilleures cartes (libres déjà triées par espérance), une par joueur.
+function groupesEtoiles(libres, sim) {
+  const parNiveau = new Map();
+  for (const x of libres) {
+    const e = x.joueur.etoiles ?? 0;
+    if (!parNiveau.has(e)) parNiveau.set(e, { etoiles: e, poste: null, candidats: [], joueurs: new Set() });
+    const g = parNiveau.get(e);
+    if (g.candidats.length >= (sim.alternatives_par_etoile ?? 4) || g.joueurs.has(x.joueur.id)) continue;
+    g.joueurs.add(x.joueur.id); g.candidats.push(x);
+  }
+  return [...parNiveau.values()].sort((a, b) => b.etoiles - a.etoiles).map(({ etoiles, poste, candidats }) => ({ etoiles, poste, candidats }));
+}
+
 // Valeur d'une carte en Squad : l'espérance en football ; en NBA, le score projeté (score s'il joue,
 // décision de l'utilisateur du 2026-11-14 : la disponibilité est déjà filtrée par le seuil et le
 // seuil de minutes). Copie des lignes où « esperance » porte cette valeur.
@@ -268,10 +282,10 @@ export function autresChoixSquad(lignes, P, o, equipeSquad) {
   const libres = admissibles.filter((x) => !joueursEquipe.has(x.joueur.id)).sort(parEsperance);
   const groupes = o.sport === 'football'
     ? regle.postes.obligatoires.map((poste) => ({ poste, candidats: libres.filter((x) => postesDe(x).includes(poste)).slice(0, sim.alternatives_par_poste) }))
-    : [{ poste: null, candidats: libres.slice(0, sim.alternatives_nba) }];
+    : groupesEtoiles(libres, sim);
   return {
-    groupes: groupes.map(({ poste, candidats }) => ({
-      poste,
+    groupes: groupes.map(({ poste, etoiles, candidats }) => ({
+      poste, ...(etoiles != null ? { etoiles } : {}),
       choix: candidats.map((c) => {
         let meilleur = null;
         const options = [];
@@ -338,11 +352,11 @@ export function autresChoix(lignes, P, o, equipeProposee) {
   const libres = admissibles.filter((x) => !joueursEquipe.has(x.joueur.id)).sort(parEsperance);
   const groupes = o.sport === 'football'
     ? regle.postes.obligatoires.map((poste) => ({ poste, candidats: libres.filter((x) => postesDe(x).includes(poste)).slice(0, sim.alternatives_par_poste) }))
-    : [{ poste: null, candidats: libres.slice(0, sim.alternatives_nba) }];
+    : groupesEtoiles(libres, sim);
   const capIndex = equipeProposee.capitaine ? equipe.findIndex((x) => x.carte.id === equipeProposee.capitaine) : -1;
   return {
-    groupes: groupes.map(({ poste, candidats }) => ({
-      poste,
+    groupes: groupes.map(({ poste, etoiles, candidats }) => ({
+      poste, ...(etoiles != null ? { etoiles } : {}),
       choix: candidats.map((c) => {
         let meilleur = null;
         const options = []; // tous les remplacements permis (un par joueur de l'équipe qu'elle peut remplacer)
