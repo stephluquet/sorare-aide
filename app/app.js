@@ -180,7 +180,11 @@ const SEUILS_MIN = () => D.P.nba?.minutes?.seuils ?? [15, 20, 25];
 function seuilMinutes() { return etatUtilisateur.seuilMinutes ?? D.P.nba?.minutes?.seuil ?? 20; }
 const assezDeMinutes = (l) => l.c.sport !== 'nba' || l.pr.score?.minutes == null || l.pr.score.minutes >= seuilMinutes();
 // Comparaison au seuil sur le pourcentage AFFICHÉ (89,6 % s'affiche « 90 % » et n'est pas « sous le seuil » de 85 %).
-const atteint = (p, s = seuil()) => p != null && Math.round(p * 100) >= Math.round(s * 100);
+// Solo et Squad : seuil fixe de methode.md (80 %), sans réglage (décision de l'utilisateur, 2026-11-14 :
+// les autres choix suffisent) ; le réglage 70 / 80 / 85 % ne sert plus qu'à filtrer Mes cartes.
+const seuilMoteur = () => D.P.seuil_jouer;
+const seuilAffiche = () => (vueCourante() === 'cartes' ? seuil() : seuilMoteur());
+const atteint = (p, s = seuilAffiche()) => p != null && Math.round(p * 100) >= Math.round(s * 100);
 
 // Projection de toutes les cartes (une fois ; le seuil n'intervient qu'à l'affichage).
 const lignes = D.cartes.map((c) => {
@@ -251,14 +255,14 @@ const vue = {
 
 // ---------- Calculs (dans le navigateur, mis en cache, différés pour ne pas bloquer l'affichage) ----------
 const cache = new Map();
-const cleBase = (sport) => { const p = palierEnCours(sport); return [sport, p?.cible, seuil(), seuilMinutes(), [...jouees(sport)].sort().join(','), Math.floor(Date.now() / 60000)].join('|'); };
+const cleBase = (sport) => { const p = palierEnCours(sport); return [sport, p?.cible, seuilMoteur(), seuilMinutes(), [...jouees(sport)].sort().join(','), Math.floor(Date.now() / 60000)].join('|'); };
 const dernieresChances = {}; // dernière chance de passer connue par sport (barre latérale)
 function propositions(sport) {
   const palier = palierEnCours(sport); if (!palier) return null;
   const cle = `prop|${cleBase(sport)}`;
   if (!cache.has(cle)) {
     const t0 = performance.now();
-    const r = proposer(lignesMoteur(sport), D.P, { sport, cible: palier.cible, regle: D.regles[sport], seuil: seuil(), seuilMinutes: seuilMinutes(), jouees: jouees(sport), maintenant: Date.now() });
+    const r = proposer(lignesMoteur(sport), D.P, { sport, cible: palier.cible, regle: D.regles[sport], seuil: seuilMoteur(), seuilMinutes: seuilMinutes(), jouees: jouees(sport), maintenant: Date.now() });
     r.dureeMs = performance.now() - t0;
     cache.set(cle, r);
     dernieresChances[sport] = r.prudente ? { p: r.prudente.pPasser, cible: palier.cible } : null;
@@ -270,25 +274,25 @@ function parCreneau(sport) {
   const cle = `creneaux|${cleBase(sport)}`;
   if (!cache.has(cle)) {
     const t0 = performance.now();
-    const r = proposerParCreneau(lignesMoteur(sport), D.P, { sport, cible: palier.cible, regle: D.regles[sport], seuil: seuil(), seuilMinutes: seuilMinutes(), jouees: jouees(sport), maintenant: Date.now() });
+    const r = proposerParCreneau(lignesMoteur(sport), D.P, { sport, cible: palier.cible, regle: D.regles[sport], seuil: seuilMoteur(), seuilMinutes: seuilMinutes(), jouees: jouees(sport), maintenant: Date.now() });
     cache.set(cle, { creneaux: r, dureeMs: performance.now() - t0 });
   }
   return cache.get(cle);
 }
 function squad(sport, jour) {
-  const cle = ['squad', sport, jour, seuil(), seuilMinutes(), Math.floor(Date.now() / 60000)].join('|');
-  if (!cache.has(cle)) cache.set(cle, squadDuJour(lignesMoteur(sport), D.P, { sport, jour, fuseau: D.journees[sport].fuseau, regle: D.regles[sport], seuil: seuil(), seuilMinutes: seuilMinutes(), maintenant: Date.now() }));
+  const cle = ['squad', sport, jour, seuilMoteur(), seuilMinutes(), Math.floor(Date.now() / 60000)].join('|');
+  if (!cache.has(cle)) cache.set(cle, squadDuJour(lignesMoteur(sport), D.P, { sport, jour, fuseau: D.journees[sport].fuseau, regle: D.regles[sport], seuil: seuilMoteur(), seuilMinutes: seuilMinutes(), maintenant: Date.now() }));
   return cache.get(cle);
 }
 function autres(sport, equipe) {
   const palier = palierEnCours(sport);
   const cle = `autres|${cleBase(sport)}|${equipe.cartes.join(',')}`;
-  if (!cache.has(cle)) cache.set(cle, autresChoix(lignesMoteur(sport), D.P, { sport, cible: palier.cible, regle: D.regles[sport], seuil: seuil(), seuilMinutes: seuilMinutes(), jouees: jouees(sport), maintenant: Date.now() }, equipe));
+  if (!cache.has(cle)) cache.set(cle, autresChoix(lignesMoteur(sport), D.P, { sport, cible: palier.cible, regle: D.regles[sport], seuil: seuilMoteur(), seuilMinutes: seuilMinutes(), jouees: jouees(sport), maintenant: Date.now() }, equipe));
   return cache.get(cle);
 }
 function autresSquad(sport, jour, equipe) {
-  const cle = ['autres-squad', sport, jour, seuil(), seuilMinutes(), Math.floor(Date.now() / 60000), equipe.cartes.join(',')].join('|');
-  if (!cache.has(cle)) cache.set(cle, autresChoixSquad(lignesMoteur(sport), D.P, { sport, jour, fuseau: D.journees[sport].fuseau, regle: D.regles[sport], seuil: seuil(), seuilMinutes: seuilMinutes(), maintenant: Date.now() }, equipe));
+  const cle = ['autres-squad', sport, jour, seuilMoteur(), seuilMinutes(), Math.floor(Date.now() / 60000), equipe.cartes.join(',')].join('|');
+  if (!cache.has(cle)) cache.set(cle, autresChoixSquad(lignesMoteur(sport), D.P, { sport, jour, fuseau: D.journees[sport].fuseau, regle: D.regles[sport], seuil: seuilMoteur(), seuilMinutes: seuilMinutes(), maintenant: Date.now() }, equipe));
   return cache.get(cle);
 }
 // Distribution du score de l'équipe : mêmes tirages que la simulation de la proposition (même graine,
@@ -315,7 +319,6 @@ const plusTard = (f) => { const r = file.then(apresAffichage).then(f); file = r.
 const journee = (l) => jourDeJeu(l.m.debutUTC, D.journees[l.c.sport].fuseau);
 const fLongUTC = new Intl.DateTimeFormat('fr-FR', { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' });
 const fJourUTC = new Intl.DateTimeFormat('fr-FR', { timeZone: 'UTC', weekday: 'long', day: 'numeric' });
-const fCourtUTC = new Intl.DateTimeFormat('fr-FR', { timeZone: 'UTC', weekday: 'short', day: 'numeric' });
 function libelleJournee(sport, j) {
   const d = new Date(`${j}T12:00:00Z`), decal = D.journees[sport].decalage_etiquette_paris_jours;
   if (!decal) return fLongUTC.format(d);
@@ -323,12 +326,6 @@ function libelleJournee(sport, j) {
   return `Nuit du ${fJourUTC.format(d)} au ${fLongUTC.format(lendemain)} (journée Sorare du ${lendemain.getUTCDate()})`;
 }
 // Libellé court (puces) : la date affichée par Sorare à Paris.
-// Au-delà de 6 jours, le mois est ajouté (« mer. 16 déc. ») pour ne pas confondre avec la semaine en cours.
-const fCourtMoisUTC = new Intl.DateTimeFormat('fr-FR', { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' });
-const libelleJourneeCourt = (sport, j) => {
-  const t = Date.parse(`${j}T12:00:00Z`) + (D.journees[sport].decalage_etiquette_paris_jours ?? 0) * 86400000;
-  return (t - Date.now() > 6.5 * 86400000 ? fCourtMoisUTC : fCourtUTC).format(new Date(t));
-};
 
 // ---------- Palier ----------
 const ETATS = { LINEUP_SET: 'composition posée, matchs à venir', PLAYABLE: 'à jouer', LIVE: 'tentative en cours', FAILED: 'échoué', LOCKED: 'verrouillé' };
@@ -615,7 +612,7 @@ function ligne(l, o = {}) {
     <div class="c-nom"><b>${esc(l.j.nom)}</b>${cap ? '<span class="cap" title="Capitaine">C</span>' : ''}<span class="pos">${esc(postesL(l).join('/'))}</span>${badgeEtoiles(l)}<span class="club">${esc(l.j.club?.nom ?? '?')}</span></div>
     <div class="c-match">${match}</div>
     <div class="c-forme">${G.pastilles(formeEquipe(l.j.club?.slug)?.derniers)}${tendance(formeDe(l.j))}</div>
-    ${l.c.sport === 'nba' ? celluleMinutes(l) : `<div class="c-p"><span class="pv${confirme(l) ? ' ok-txt' : ''}"${confirme(l) ? ' title="Titulaire dans la composition officielle"' : ''}>${txtChances(l)}</span>${G.barreP(l.pr.p, seuil(), 60)}</div>`}
+    ${l.c.sport === 'nba' ? celluleMinutes(l) : `<div class="c-p"><span class="pv${confirme(l) ? ' ok-txt' : ''}"${confirme(l) ? ' title="Titulaire dans la composition officielle"' : ''}>${txtChances(l)}</span>${G.barreP(l.pr.p, seuilAffiche(), 60)}</div>`}
     ${l.c.sport === 'football' ? (() => { const f = scoreFoot(l); return `<div class="c-s c-tit"><span><span class="sv">${nb(f.v)}</span> pts</span>${f.sous ? `<span class="sous">${esc(f.sous)}</span>` : ''}</div>`; })() : `<div class="c-s"><span><span class="sv">${nb(l.pr.siJoue)}</span> pts</span>${G.ival(l, 72)}${ppe}</div>`}
     ${tags ? `<div class="c-tags">${tags}</div>` : ''}
     ${o.extra ? `<div class="c-extra">${o.extra}</div>` : ''}
@@ -899,7 +896,7 @@ function afficherSolo(sport) {
   const contexte = p ? [ep.enCours && !ep.derniere ? 'Une tentative est en cours : ces propositions servent à la suivante si elle échoue.' : '',
     n ? `${pluriel(n, 'carte marquée jouée', 'cartes marquées jouées')} à ce palier, écartée${n > 1 ? 's' : ''} des propositions.` : ''].filter(Boolean).join(' ') : '';
   el.innerHTML = `<div class="entete"><div class="titres"><h1>Solo · ${SPORTS[sport]}</h1><p class="doux petit">${p ? `Palier ${p.cible} · ${rangPalier(p)} sur ${paliersDe(sport).length} · ${esc(etatTexte(p))}` : 'Plateau terminé'}</p></div>
-      <div class="outils reglages"><div class="seg" role="group" aria-label="Créneaux"><button type="button" data-act="mode" data-v="plusieurs" aria-pressed="${vue.mode === 'plusieurs'}">Plusieurs créneaux</button><button type="button" data-act="mode" data-v="unique" aria-pressed="${vue.mode === 'unique'}">Créneau unique</button></div>${sport === 'nba' ? '' : segSeuil()}${segMinutes(sport)}</div></div>
+      <div class="outils reglages"><div class="seg" role="group" aria-label="Créneaux"><button type="button" data-act="mode" data-v="plusieurs" aria-pressed="${vue.mode === 'plusieurs'}">Plusieurs créneaux</button><button type="button" data-act="mode" data-v="unique" aria-pressed="${vue.mode === 'unique'}">Créneau unique</button></div>${segMinutes(sport)}</div></div>
     <div class="tel-seul">${alertePalier(sport) ? `<div style="margin-bottom:var(--e4)">${alertePalier(sport)}</div>` : ''}</div>
     ${contexte ? `<p class="contexte">${esc(contexte)}</p>` : ''}
     <div id="solo-contenu"><p class="attente">Simulation des meilleures équipes…</p></div>`;
@@ -1002,11 +999,13 @@ function afficherCreneaux(sport) {
 function afficherSquad() {
   const sport = vue.sport, J = D.journees[sport];
   const jours = joursAVenir(lignesMoteur(sport), Date.now(), J.fuseau);
-  if (!jours.includes(vue.squadJour)) vue.squadJour = jours[0] ?? null;
-  const jour = vue.squadJour;
+  // Matchs du jour seulement : une équipe de Squad ne se prépare pas pour les jours suivants
+  // (demande de l'utilisateur, 2026-11-14). Journée Sorare en cours, sinon la prochaine.
+  const jour = vue.squadJour = jours[0] ?? null;
+  const aujourdhui = jourDeJeu(new Date().toISOString(), J.fuseau);
   // Même squelette que le Solo : en-tête et réglages, équipe, autres choix, fiche épinglée (≥ 1 800 px).
-  $('vue-squad').innerHTML = `<div class="entete"><div class="titres"><h1>Squad · ${SPORTS[sport]}</h1><p class="doux petit">Meilleure équipe du jour · cartes jouées en solo autorisées${jour ? ` · ${esc(libelleJournee(sport, jour))}` : ''}</p></div>
-      <div class="outils reglages"><div class="reglage"><span>Journée</span><div class="seg" role="group" aria-label="Journée Sorare">${jours.map((j) => `<button type="button" data-act="jour" data-v="${j}" aria-pressed="${j === jour}" title="${esc(libelleJournee(sport, j))}">${esc(libelleJourneeCourt(sport, j))}</button>`).join('')}</div></div>${sport === 'nba' ? '' : segSeuil()}${segMinutes(sport)}</div></div>
+  $('vue-squad').innerHTML = `<div class="entete"><div class="titres"><h1>Squad · ${SPORTS[sport]}</h1><p class="doux petit">${jour ? `${jour === aujourdhui ? 'Matchs du jour' : 'Prochains matchs'} · ${esc(libelleJournee(sport, jour))}` : 'Aucun match à venir'} · cartes jouées en solo autorisées</p></div>
+      ${sport === 'nba' ? `<div class="outils reglages">${segMinutes(sport)}</div>` : ''}</div>
     <div id="squad-contenu"><p class="attente">${jour ? 'Recherche de la meilleure équipe…' : 'Aucun match à venir.'}</p></div>`;
   if (!jour) return;
   plusTard(() => squad(sport, jour)).then((r) => {
@@ -1218,8 +1217,8 @@ function ficheHtml(l) {
         <div class="bloc cq"><div class="kpis">
           ${c.sport === 'nba'
             ? `<div class="kpi heros"><span class="libelle">Minutes projetées</span><span class="v">${s.minutes == null ? '–' : nb(s.minutes)}<small>${nbsp}min</small></span>${G.barreMin(s, seuilMinutes(), 140)}<span class="s">${s.minutes == null ? '' : `8 fois sur 10 entre ${nb(s.minutesBas)} et ${nb(s.minutesHaut)} min${s.minutesEnHausse ? ` · <b class="ok-txt">▲ en hausse</b> (${nb(s.minutesReference)} sur ses 10 derniers)` : ''} · seuil ${seuilMinutes()} min`}</span></div>
-               <div class="kpi"><span class="libelle">Disponibilité</span><span class="v">${pct(pr.p)}</span>${G.barreP(pr.p, seuil(), 140, 10)}<span class="s">chances de jouer (blessures ESPN, absences récentes, 2e soir de suite)</span></div>`
-            : `<div class="kpi heros"><span class="libelle">Chances de jouer</span><span class="v${confirme(l) ? ' ok-txt' : ''}">${txtChances(l)}</span>${G.barreP(pr.p, seuil(), 140, 10)}<span class="s">${confirme(l) ? 'titulaire dans la composition officielle' : `repère orange : ton seuil de ${pct(seuil())}`}</span></div>`}
+               <div class="kpi"><span class="libelle">Disponibilité</span><span class="v">${pct(pr.p)}</span>${G.barreP(pr.p, seuilAffiche(), 140, 10)}<span class="s">chances de jouer (blessures ESPN, absences récentes, 2e soir de suite)</span></div>`
+            : `<div class="kpi heros"><span class="libelle">Chances de jouer</span><span class="v${confirme(l) ? ' ok-txt' : ''}">${txtChances(l)}</span>${G.barreP(pr.p, seuilAffiche(), 140, 10)}<span class="s">${confirme(l) ? 'titulaire dans la composition officielle' : `repère orange : seuil de ${pct(seuilAffiche())}`}</span></div>`}
           ${c.sport === 'football' ? (() => { const sf = scoreFoot(l); return `<div class="kpi"><span class="libelle">${pr.situationConfirmee === 'remplacant' ? 'S’il entre' : 'S’il est titulaire'}</span><span class="v">${nb(sf.v)}</span><span class="s">${esc(sf.sous)}${f ? ` · tous cas confondus, 80 % entre ${nb(f.q10)} et ${nb(f.q90)}` : ''}, bonus compris</span></div>`; })() : `<div class="kpi"><span class="libelle">Score projeté</span><span class="v">${nb(pr.siJoue)}</span>${G.ival(l, 140, true)}<span class="s">${f ? `80 % des cas entre ${nb(f.q10)} et ${nb(f.q90)}, bonus compris${s.minutes != null ? `, pour ${nb(s.minutes)} min projetées` : ''}` : 'pas assez de scores'}${j.etoiles && pr.siJoue != null ? ` · ${nb(pr.siJoue / j.etoiles, 1)} pts/★` : ''}</span></div>`}
           ${c.sport === 'football' ? `<div class="kpi"><span class="libelle">Espérance</span><span class="v">${nb(pr.esperance, 1)}</span><span class="s">chances × score (titulaire ou entré)</span></div>` : ''}
           ${c.sport === 'football'
@@ -1616,7 +1615,7 @@ function tout(anime = false) {
 
 // ---------- Événements (délégués) ----------
 // Après un nouveau rendu, le focus revient sur la commande équivalente (clavier, lecteur d'écran).
-const RERENDUS = new Set(['affichage', 'mode', 'seuil', 'poste', 'etoiles', 'tri-col', 'creneau', 'jour', 'journee', 'tri', 'dispo', 'cocher']);
+const RERENDUS = new Set(['affichage', 'mode', 'seuil', 'poste', 'etoiles', 'tri-col', 'creneau', 'journee', 'tri', 'dispo', 'cocher']);
 function refocaliser(a, v) {
   if (!RERENDUS.has(a)) return;
   const sel = v != null ? `#main [data-act="${a}"][data-v="${CSS.escape(v)}"]` : `#main [data-act="${a}"]`;
@@ -1642,7 +1641,6 @@ document.addEventListener('click', (e) => {
       case 'seuil-min': vue.toutesMinutes = false; etatUtilisateur = { ...etatUtilisateur, seuilMinutes: Number(v) }; stockage.enregistrer(etatUtilisateur); tout(); return;
       case 'jouer': jouerEquipe(b.dataset.sport, v.split(',')); return;
       case 'creneau': vue.creneauOuvert = v; afficherCreneaux(vue.sport); return;
-      case 'jour': vue.squadJour = v; afficherSquad(); return;
       case 'affichage': vue.affichage = v; ecrireAffichage(v); afficherCartes(); return;
       case 'poste': vue.poste = v || null; afficherCartes(); return;
       case 'etoiles': vue.etoiles = v === '' ? null : Number(v); afficherCartes(); return;
