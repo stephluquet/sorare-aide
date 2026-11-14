@@ -1168,7 +1168,7 @@ function ficheHtml(l) {
     <div class="fiche-tete">${vignette(l)}
       <div style="min-width:0;display:grid;gap:4px"><h2>${esc(j.nom)}</h2>
         ${c.sport === 'nba' ? `<div>${badgeEtoiles(l, true)}</div>` : ''}
-        <p class="meta">${esc(postesL(l).join('/'))}${(c.postes?.length && c.postes.join() !== j.postes.join()) ? ` (aujourd'hui ${esc(j.postes.join('/'))})` : ''} · ${esc(j.club?.nom ?? '?')} · ${esc((j.tier ?? '').replace('_PLUS', '+').toLowerCase())}${c.sport !== 'nba' && j.etoiles != null ? ` · <span class="etoiles">★${nbsp}${nb(j.etoiles, 1)}</span>` : ''}</p>
+        <p class="meta">${esc(postesL(l).join('/'))}${(c.postes?.length && c.postes.join() !== j.postes.join()) ? ` <span class="doux" title="Le jeu retient le poste imprimé sur la carte ; Sorare classe aujourd'hui le joueur à un autre poste.">(poste de la carte ; joue aujourd'hui ${esc(j.postes.map((x) => ({ GK: 'gardien', DF: 'défenseur', MD: 'milieu', FW: 'attaquant' }[x] ?? x)).join('/'))})</span>` : ''} · ${esc(j.club?.nom ?? '?')} · ${esc((j.tier ?? '').replace('_PLUS', '+').toLowerCase())}${c.sport !== 'nba' && j.etoiles != null ? ` · <span class="etoiles">★${nbsp}${nb(j.etoiles, 1)}</span>` : ''}</p>
         <p class="meta">${m ? `${esc(quandLong(m.debutUTC))} · ${esc(m.competition ?? '')} · ${l.lieu === 'ext' ? 'à l’extérieur contre' : l.lieu === 'dom' ? 'à domicile contre' : ''} ${esc(l.adv ?? '?')}` : 'Pas de match connu'}</p>
         <div class="tags">${tags}</div></div></div>
     <div class="fiche-grille">
