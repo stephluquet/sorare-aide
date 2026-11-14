@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Test CORS Sorare</title>
+<style>
+  :root { color-scheme: light dark; --fond: #eef1f4; --surface: #fff; --encre: #121820; --doux: #55606d; --ok: #15703f; --ko: #b3261e; --trait: #dde2e8; }
+  @media (prefers-color-scheme: dark) { :root { --fond: #0d1115; --surface: #151a20; --encre: #e7ebef; --doux: #a1acb8; --ok: #63c48f; --ko: #f07f75; --trait: #29313a; } }
+  body { margin: 0; background: var(--fond); color: var(--encre); font: 15px/1.5 system-ui, sans-serif; padding: 24px 16px; }
+  main { max-width: 720px; margin: 0 auto; display: grid; gap: 16px; }
+  h1 { font-size: 24px; margin: 0; }
+  section { background: var(--surface); border: 1px solid var(--trait); border-radius: 8px; padding: 16px; display: grid; gap: 8px; }
+  h2 { font-size: 17px; margin: 0; }
+  p { margin: 0; color: var(--doux); }
+  button { font: inherit; padding: 10px 16px; border-radius: 8px; border: 1px solid var(--encre); background: var(--encre); color: var(--fond); cursor: pointer; justify-self: start; }
+  pre { margin: 0; white-space: pre-wrap; word-break: break-word; font: 13px/1.45 ui-monospace, monospace; background: var(--fond); padding: 10px; border-radius: 4px; min-height: 1.5em; }
+  .ok { color: var(--ok); font-weight: 700; } .ko { color: var(--ko); font-weight: 700; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Le navigateur peut-il appeler l'API Sorare ?</h1>
+  <p>Ouvre ce fichier dans ton navigateur (double-clic), puis lance « Tout tester ». Aucune clé n'est envoyée : la requête demande seulement <code>{ __typename }</code>, que l'API sert à tout le monde.
+     Pour voir le détail, ouvre aussi la console (F12, onglet Console et onglet Réseau).</p>
+  <p>Origine de cette page : <b id="origine"></b></p>
+  <button type="button" id="tout">Tout tester</button>
+
+  <section>
+    <h2>1. Appel normal de l'API Sorare (comme le ferait l'appli)</h2>
+    <p>POST JSON vers https://api.sorare.com/graphql. Attendu : bloqué par le navigateur (« Failed to fetch » / « Load failed »), car Sorare n'autorise que l'origine https://sorare.com.</p>
+    <pre id="r1"></pre>
+  </section>
+
+  <section>
+    <h2>2. Même appel en mode « no-cors »</h2>
+    <p>Le navigateur envoie la requête mais cache la réponse à la page : statut 0, contenu illisible. Preuve que Sorare répond, mais que la page n'a pas le droit de lire.</p>
+    <pre id="r2"></pre>
+  </section>
+
+  <section>
+    <h2>3. Témoin : ESPN, qui autorise tous les sites</h2>
+    <p>GET de la liste des blessés NBA. Attendu : lu sans problème (ESPN renvoie Access-Control-Allow-Origin: *).</p>
+    <pre id="r3"></pre>
+  </section>
+</main>
+<script>
+  const SORARE = 'https://api.sorare.com/graphql';
+  const corps = JSON.stringify({ query: '{ __typename }' });
+  document.getElementById('origine').textContent = location.origin === 'null' ? 'null (fichier ouvert depuis le disque)' : location.origin;
+  const ecrire = (id, ok, texte) => { document.getElementById(id).innerHTML = `<span class="${ok ? 'ok' : 'ko'}">${ok ? 'LU' : 'BLOQUÉ'}</span> · ${texte.replace(/</g, '&lt;')}`; };
+
+  async function test1() {
+    try {
+      const r = await fetch(SORARE, { method: 'POST', headers: { 'content-type': 'application/json' }, body: corps });
+      ecrire('r1', true, `HTTP ${r.status} : ${(await r.text()).slice(0, 200)}`);
+    } catch (e) { ecrire('r1', false, `${e.name} : ${e.message}`); }
+  }
+  async function test2() {
+    try {
+      const r = await fetch(SORARE, { method: 'POST', mode: 'no-cors', headers: { 'content-type': 'text/plain' }, body: corps });
+      const t = await r.text();
+      ecrire('r2', r.type !== 'opaque', `type de réponse « ${r.type} », statut ${r.status}, contenu lisible : ${t ? `« ${t.slice(0, 120)} »` : 'rien'}`);
+    } catch (e) { ecrire('r2', false, `${e.name} : ${e.message}`); }
+  }
+  async function test3() {
+    try {
+      const r = await fetch('https://site.api.espn.com/apis/site/v2/sports/basketball/nba/injuries');
+      const d = await r.json();
+      ecrire('r3', true, `HTTP ${r.status} : ${d.injuries?.length ?? '?'} équipes dans la liste des blessés`);
+    } catch (e) { ecrire('r3', false, `${e.name} : ${e.message}`); }
+  }
+  document.getElementById('tout').onclick = async () => {
+    for (const id of ['r1', 'r2', 'r3']) document.getElementById(id).textContent = 'en cours…';
+    await test1(); await test2(); await test3();
+  };
+</script>
+</body>
+</html>
