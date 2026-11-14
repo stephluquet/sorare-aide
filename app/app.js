@@ -309,7 +309,7 @@ function distribEquipe(sport, e, cible) {
 // enchaîne les calculs un par un pour ne jamais bloquer l'affichage longtemps.
 let file = Promise.resolve();
 const apresAffichage = () => new Promise((ok) => requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(ok, 0))));
-const plusTard = (f) => (file = file.then(apresAffichage).then(f));
+const plusTard = (f) => { const r = file.then(apresAffichage).then(f); file = r.catch((e) => console.error(e)); return r; };
 
 // Journée Sorare d'une carte et son libellé (football : date de Paris ; NBA : date de New York, nuit à Paris).
 const journee = (l) => jourDeJeu(l.m.debutUTC, D.journees[l.c.sport].fuseau);
@@ -934,7 +934,7 @@ function afficherSolo(sport) {
 // que l'équipe est signalé.
 const AUTRES_PAR_GROUPE = 5;
 function afficherAutres(sport, equipe, a, o = {}) {
-  const el = $('autres-choix');
+  const el = dansVue('autres-choix');
   if (!el || (o.squad ? !(vueCourante() === 'squad' && vue.sport === sport) : !surSolo(sport))) return;
   const dernier = Math.max(...equipe.cartes.map((id) => Date.parse(parId.get(id).m.debutUTC)));
   // Solo : chances de passer ; Squad : score attendu de l'équipe (NBA : score projeté, somme des 5).
@@ -1249,8 +1249,11 @@ function ficheHtml(l) {
 const fiche = { ouverte: null, origine: null };
 // Fiche épinglée : Solo et Squad à partir de 1 800 px (3e colonne), Mes cartes (liste) à partir de 1 024 px.
 const cleEpingle = () => `${vueCourante()}|${vue.sport}`;
+// Élément de l'écran affiché : Solo, Squad et Mes cartes ont chacun leur « col-fiche » (et Solo et Squad
+// leur « autres-choix ») ; un écran masqué ne doit jamais être pris pour l'écran courant.
+const dansVue = (id) => document.querySelector(`#vue-${vueCourante()} #${id}`);
 function epingleActive() {
-  const col = $('col-fiche');
+  const col = dansVue('col-fiche');
   if (!col || !col.closest('#main') || col.closest('[hidden]')) return false;
   if (vueCourante() === 'solo' && vue.mode !== 'plusieurs') return false;
   return col.dataset.des === 'pc' ? largePC() : tresLarge();
@@ -1261,7 +1264,7 @@ function marquerChoisies() {
     el.dataset.fiche === fiche.ouverte || (ep != null && el.dataset.fiche === ep && !el.closest('#col-fiche'))));
 }
 function afficherColFiche() {
-  const col = $('col-fiche'); if (!col || !epingleActive()) return;
+  const col = dansVue('col-fiche'); if (!col || !epingleActive()) return;
   const l = parId.get(vue.epingle[cleEpingle()]);
   col.innerHTML = `<div class="volet-tete">${ico('epingle')}<b>Fiche épinglée</b><span class="mini doux">clic sur une ligne pour changer</span></div>${l ? ficheHtml(l) : ''}`;
   dessiner(col);
@@ -1591,7 +1594,10 @@ function tout(anime = false) {
   const { ecran, sport } = lireAdresse();
   if (sport) changerSport(sport);
   $('chargement').hidden = true;
-  for (const v of ['accueil', 'solo', 'squad', 'cartes']) $(`vue-${v}`).hidden = ecran !== v;
+  for (const v of ['accueil', 'solo', 'squad', 'cartes']) {
+    $(`vue-${v}`).hidden = ecran !== v;
+    if (ecran !== v && v !== 'accueil') $(`vue-${v}`).innerHTML = ''; // chaque écran est redessiné quand on y revient
+  }
   document.body.dataset.sport = vue.sport;
   $('main').dataset.sport = vue.sport;
   if (fiche.ouverte && !parId.has(fiche.ouverte)) fermerFiche();
