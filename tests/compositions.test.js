@@ -232,6 +232,10 @@ test('Squad, autres choix : hors des joueurs de l’équipe, meilleur remplaceme
     assert.ok(c.ecart <= 1e-9, `${c.carteId} : ${c.ecart}`);
     assert.ok(Math.abs(c.esperanceEquipe - (r.equipe.esperance + c.ecart)) < 1e-9);
   }
+  // tous les remplacements permis sont rendus : plusieurs joueurs de l'équipe ont des remplaçants
+  const remplaces = new Set(tous.flatMap((c) => c.options.map((op) => op.remplace)));
+  assert.ok(remplaces.size > 1, `remplaçants pour ${remplaces.size} joueur(s)`);
+  for (const c of tous) for (const op of c.options) assert.ok(op.esperanceEquipe <= r.equipe.esperance + 1e-9);
 });
 
 test('Squad NBA : choisi sur le score projeté, pas sur l’espérance', () => {

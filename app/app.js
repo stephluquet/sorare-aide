@@ -944,13 +944,17 @@ function afficherAutres(sport, equipe, a, o = {}) {
   const proj = (id) => parId.get(id).pr.siJoue ?? 0;
   const projEquipe = equipe.cartes.reduce((t, id) => t + proj(id), 0);
   const valeur = (c) => (!o.squad ? c.pPasser : sport === 'nba' ? projEquipe - proj(c.remplace) + proj(c.carteId) : c.esperanceEquipe);
-  const vus = new Set(), parRemplace = new Map();
-  const tous = a.groupes.flatMap((g) => g.choix).filter((c) => c.remplace && valeur(c) != null).sort((x, y) => valeur(y) - valeur(x));
-  for (const c of tous) {
-    const l = parId.get(c.carteId); if (!l || vus.has(l.j.id)) continue;
-    vus.add(l.j.id);
-    if (!parRemplace.has(c.remplace)) parRemplace.set(c.remplace, []);
-    parRemplace.get(c.remplace).push(c);
+  // Pour CHAQUE joueur de l'équipe, les meilleures cartes qui peuvent le remplacer (une par joueur),
+  // dans l'ordre de l'équipe : même règle en Solo et en Squad, en football et en NBA.
+  const parRemplace = new Map();
+  const options = a.groupes.flatMap((g) => g.choix).flatMap((c) => (c.options ?? []).map((op) => ({ ...op, carteId: c.carteId })))
+    .filter((c) => valeur(c) != null).sort((x, y) => valeur(y) - valeur(x));
+  for (const c of options) {
+    const l = parId.get(c.carteId); if (!l) continue;
+    if (!parRemplace.has(c.remplace)) parRemplace.set(c.remplace, { vus: new Set(), choix: [] });
+    const g = parRemplace.get(c.remplace);
+    if (g.vus.has(l.j.id)) continue;
+    g.vus.add(l.j.id); g.choix.push(c);
   }
   // Groupes dans l'ordre de l'équipe affichée (football : GK, DF, MD, FW, joker ; NBA : coup d'envoi).
   const ordreEquipe = membresDe(equipe).map((l) => l.c.id);
@@ -968,9 +972,9 @@ function afficherAutres(sport, equipe, a, o = {}) {
   };
   const explication = o.squad
     ? `Pour chaque joueur de l'équipe, les meilleures cartes du jour qui peuvent le remplacer (postes, joueur unique${sport === 'nba' ? ', 16 étoiles' : ''}), et le ${sport === 'nba' ? 'score projeté' : 'score attendu'} de l'équipe avant → après le changement.`
-    : `Pour chaque joueur de l'équipe, la meilleure carte qui peut le remplacer (postes, joueur unique${sport === 'nba' ? ', 16 étoiles' : ''}) et la chance de passer avant → après le changement.`;
+    : `Pour chaque joueur de l'équipe, les meilleures cartes qui peuvent le remplacer (postes, joueur unique${sport === 'nba' ? ', 16 étoiles' : ''}), et la chance de passer avant → après le changement.`;
   el.innerHTML = `${tete}<p class="corps petit doux">${explication}</p>
-    <div class="tableau">${[...parRemplace.entries()].sort((x, y) => ordreEquipe.indexOf(x[0]) - ordreEquipe.indexOf(y[0])).map(([rem, choix]) => {
+    <div class="tableau">${[...parRemplace.entries()].sort((x, y) => ordreEquipe.indexOf(x[0]) - ordreEquipe.indexOf(y[0])).map(([rem, { choix }]) => {
       const r = parId.get(rem), suite = choix.slice(1, AUTRES_PAR_GROUPE);
       return `<div class="groupe-alt"><h3>À la place de ${esc(r.j.nom)} (${esc(postesL(r).join('/'))}${equipe.capitaine === rem ? ', capitaine' : ''})</h3>${ligneAlt(choix[0])}` +
         (suite.length ? `<details><summary>+ ${pluriel(suite.length, 'autre')}</summary>${suite.map(ligneAlt).join('')}</details>` : '') + '</div>';

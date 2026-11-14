@@ -388,7 +388,9 @@ espérances parmi les cartes admissibles (section 6) hors de l'équipe ; en
 NBA, les `alternatives_nba` meilleures. Pour chacune, on simule (section 5)
 l'équipe où elle remplace un joueur, en essayant chaque remplacement
 permis (postes, joueur unique, étoiles ≤ 16), et on affiche le meilleur :
-le joueur remplacé et la nouvelle chance de passer. Si le capitaine est
+le joueur remplacé et la nouvelle chance de passer. **Depuis le 2026-11-14, tous les remplacements permis sont gardés**
+(`options`) : l'appli montre, pour chaque joueur de l'équipe et dans l'ordre de l'équipe, les
+meilleures cartes qui peuvent le remplacer (une par joueur), en Solo comme en Squad. Si le capitaine est
 remplacé, le brassard passe au joueur de plus grand p × μ.
 
 ## 7. Créneau unique

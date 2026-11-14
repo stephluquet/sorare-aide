@@ -274,15 +274,18 @@ export function autresChoixSquad(lignes, P, o, equipeSquad) {
       poste,
       choix: candidats.map((c) => {
         let meilleur = null;
+        const options = [];
         for (let i = 0; i < equipe.length; i++) {
           const essai = equipe.map((x, k) => (k === i ? c : x));
           if (new Set(essai.map((x) => x.joueur.id)).size < essai.length) continue;
           if (!postesValides(essai, regle) || !etoilesValides(essai, regle)) continue;
           const { total, cap } = scoreSquad(essai, regle, mult);
-          if (!meilleur || total > meilleur.esperanceEquipe) meilleur = { remplace: equipe[i].carte.id, capitaine: cap >= 0 ? essai[cap].carte.id : null, esperanceEquipe: total };
+          const opt = { remplace: equipe[i].carte.id, capitaine: cap >= 0 ? essai[cap].carte.id : null, esperanceEquipe: total };
+          options.push(opt);
+          if (!meilleur || total > meilleur.esperanceEquipe) meilleur = opt;
         }
         return { carteId: c.carte.id, esperance: c.projection.esperance, ...(meilleur ?? { remplace: null, esperanceEquipe: null }),
-          ecart: meilleur ? meilleur.esperanceEquipe - equipeSquad.esperance : null };
+          ecart: meilleur ? meilleur.esperanceEquipe - equipeSquad.esperance : null, options };
       }),
     })),
   };
@@ -342,6 +345,7 @@ export function autresChoix(lignes, P, o, equipeProposee) {
       poste,
       choix: candidats.map((c) => {
         let meilleur = null;
+        const options = []; // tous les remplacements permis (un par joueur de l'équipe qu'elle peut remplacer)
         for (let i = 0; i < equipe.length; i++) {
           const essai = equipe.map((x, k) => (k === i ? c : x));
           if (new Set(essai.map((x) => x.joueur.id)).size < essai.length) continue;
@@ -352,10 +356,12 @@ export function autresChoix(lignes, P, o, equipeProposee) {
             cap = v.indexOf(Math.max(...v));
           }
           const r = simulerEquipe(essai.map((x) => x.d), cap, mult, o.cible, sim, regle.cumul_bonus?.mode);
-          if (!meilleur || r.pPasser > meilleur.pPasser) meilleur = { remplace: equipe[i].carte.id, capitaine: cap >= 0 ? essai[cap].carte.id : null, pPasser: r.pPasser, pComplete: r.pComplete };
+          const opt = { remplace: equipe[i].carte.id, capitaine: cap >= 0 ? essai[cap].carte.id : null, pPasser: r.pPasser, pComplete: r.pComplete };
+          options.push(opt);
+          if (!meilleur || r.pPasser > meilleur.pPasser) meilleur = opt;
         }
         return { carteId: c.carte.id, esperance: c.projection.esperance, p: c.projection.p, siJoue: c.projection.siJoue,
-          ...(meilleur ?? { remplace: null, pPasser: null }), ecart: meilleur ? meilleur.pPasser - equipeProposee.pPasser : null };
+          ...(meilleur ?? { remplace: null, pPasser: null }), ecart: meilleur ? meilleur.pPasser - equipeProposee.pPasser : null, options };
       }),
     })),
   };
