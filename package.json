@@ -1,5 +1,6 @@
 {
   "name": "sorare-aide",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "description": "Aide à la composition Sorare (lecture seule)",

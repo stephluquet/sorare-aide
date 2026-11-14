@@ -6,6 +6,8 @@ Outil personnel d'aide à la décision pour Sorare (football d'abord, NBA ensuit
 
 Manager : **`yapapir`**. Langue de travail : français. **Le projet est en JavaScript** (Node 22, sans dépendance) ; un paquet R viendra plus tard et réutilisera `regles/`, `methode.md` et `tests/cas/`.
 
+**Version 1.0 du 2026-11-14** (`package.json`, `README.md`, `NOTES-DE-VERSION.md` : ajouter une entrée à chaque nouvelle version). Prompt de la revue critique multi-agents : `docs/prompt-revue-v1.md`.
+
 ## Tenir ce fichier à jour
 Ce fichier est la mémoire du projet entre les sessions. **Mettez-le à jour dans le même commit** chaque fois que vous découvrez quelque chose de durable : une requête qui marche, un champ qui n'existe pas, une limite de l'API, un nouveau script. Indiquez ce qui a été **vérifié** (avec la date) et ce qui est **supposé**. Retirez ce qui devient faux plutôt que de l'empiler.
 
