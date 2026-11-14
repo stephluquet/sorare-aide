@@ -916,8 +916,8 @@ function afficherSolo(sport) {
     const apres = (variantes || '<p class="corps petit doux" style="border-top:1px solid var(--trait);padding-top:var(--e3)">Pas d’autre proposition : l’équipe prudente est aussi la plus forte.</p>') +
       `<details class="repli"><summary>Détail technique <span class="doux">${r.admissibles} cartes retenues, ${r.nbEquipes} équipes comparées en ${nb(r.dureeMs / 1000, 1)} s</span></summary><div class="technique"><ul>${ecartees}</ul>` +
       `<p>Chances calculées par ${D.P.simulation.tirages} tirages (méthode v${D.P.version}), puis corrigées par la table de calibrage du sport (rétro-test des équipes). Les joueurs sont tirés indépendamment : deux coéquipiers ont en réalité des scores liés.</p></div></details>`;
-    // Fiche épinglée (≥ 1 800 px) : le dernier joueur choisi, sinon le capitaine.
-    if (!parId.has(vue.epingle[`solo|${sport}`])) vue.epingle[`solo|${sport}`] = r.prudente.capitaine ?? r.prudente.cartes[0];
+    // Fiche épinglée (≥ 1 800 px) : le dernier joueur choisi, sinon le 1er joueur de l'équipe.
+    if (!parId.has(vue.epingle[`solo|${sport}`])) vue.epingle[`solo|${sport}`] = membresDe(r.prudente)[0].c.id; // le 1er joueur affiché
     $('solo-contenu').innerHTML = `<div class="solo-grille avec-fiche">
         <div class="pile">${carteProposition(TITRES.prudente[0], TITRES.prudente[1], r.prudente, sport, p.cible, { apres, epinglable: true })}</div>
         <section class="carte" id="autres-choix" aria-label="Autres choix"><header><h2>Autres choix</h2><span class="doux petit">si tu préfères ajuster l'équipe prudente</span></header><p class="attente">Recherche des autres joueurs…</p></section>
@@ -1011,7 +1011,7 @@ function afficherSquad() {
     if (vueCourante() !== 'squad' || vue.sport !== sport || vue.squadJour !== jour) return;
     if (!r.equipe) { $('squad-contenu').innerHTML = `<p class="attente">${esc(r.message)}</p>`; return; }
     const e = r.equipe, membres = membresDe(e), Jo = jouees(sport);
-    if (!parId.has(vue.epingle[`squad|${sport}`])) vue.epingle[`squad|${sport}`] = e.capitaine ?? e.cartes[0];
+    if (!parId.has(vue.epingle[`squad|${sport}`])) vue.epingle[`squad|${sport}`] = membres[0].c.id; // le 1er joueur affiché, comme au Solo
     $('squad-contenu').innerHTML = `<div class="solo-grille avec-fiche">
       <section class="carte" aria-label="Équipe du jour"><header><h2>Équipe du jour</h2><span class="doux petit">le meilleur ${sport === 'nba' ? 'score' : 'score attendu'} de la journée</span></header>
         <div class="corps pile">${kpisEquipe(e, sport, membres, { squad: true })}
