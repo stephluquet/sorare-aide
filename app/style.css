@@ -662,3 +662,10 @@ table.dense td.statut .tag { margin: 1px 0; }
 .c-min .pv small { font-size: var(--t1); font-weight: 600; color: var(--doux); }
 .kpi .v small { white-space: nowrap; }
 .c-min .pv { white-space: nowrap; }
+
+/* Football : score de titulaire, une ligne dessous (toujours titulaire, ou s'il entre) */
+.c-tit { display: grid; justify-items: end; gap: 2px; }
+.c-tit .sous, .cellule-tit small { font-size: var(--t1); color: var(--doux); text-align: right; line-height: 1.25; }
+.c-tit .sv { font-size: var(--t4); font-weight: 700; }
+.c-tit { min-width: 0; }
+.cellule-tit { display: grid; gap: 2px; }

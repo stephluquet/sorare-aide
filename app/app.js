@@ -574,6 +574,19 @@ const tendance = (fj) => (fj?.tendance === 'hausse' ? '<span class="tendance hau
 
 // Ligne joueur, LA MÊME PARTOUT (propositions, autres choix, Squad, Mes cartes sur téléphone) :
 // étroite, sur 3 lignes ; large (≥ 640 px de conteneur), une ligne de tableau à colonnes fixes.
+// Football (demande de l'utilisateur, 2026-11-14) : le score de TITULAIRE en grand ; dessous, une seule
+// information : « toujours titulaire », ou son score quand il entre en jeu et à quelle fréquence.
+// Remplaçant annoncé (composition officielle) : son score s'il entre, en grand.
+function scoreFoot(l) {
+  const sc = l.pr.score, b = l.pr.bonus ?? 1;
+  if (!sc || sc.muTitulaire == null) return { v: l.pr.siJoue, sous: '' };
+  const tit = sc.muTitulaire * b, ent = sc.muEntre * b, q = sc.q ?? 1;
+  if (l.pr.situationConfirmee === 'remplacant') return { v: ent, sous: 'remplaçant annoncé : score s’il entre' };
+  if (l.pr.situationConfirmee === 'titulaire') return { v: tit, sous: 'titulaire confirmé' };
+  if (q >= 0.9) return { v: tit, sous: 'toujours titulaire' };
+  return { v: tit, sous: `s’il entre : ${nb(ent)} (${pct(1 - q)} des matchs)` };
+}
+
 function ligne(l, o = {}) {
   const J = jouees(l.c.sport), v = victoirePct(l), cap = o.capitaine === l.c.id;
   const lieu = l.lieu === 'ext' ? '@' : l.lieu === 'dom' ? 'vs' : '';
@@ -587,7 +600,7 @@ function ligne(l, o = {}) {
     <div class="c-match">${match}</div>
     <div class="c-forme">${G.pastilles(formeEquipe(l.j.club?.slug)?.derniers)}${tendance(formeDe(l.j))}</div>
     ${l.c.sport === 'nba' ? celluleMinutes(l) : `<div class="c-p"><span class="pv">${pct(l.pr.p)}</span>${G.barreP(l.pr.p, seuil(), 60)}</div>`}
-    <div class="c-s"><span><span class="sv">${nb(l.pr.siJoue)}</span> pts</span>${G.ival(l, 72)}${ppe}</div>
+    ${l.c.sport === 'football' ? (() => { const f = scoreFoot(l); return `<div class="c-s c-tit"><span><span class="sv">${nb(f.v)}</span> pts</span>${f.sous ? `<span class="sous">${esc(f.sous)}</span>` : ''}</div>`; })() : `<div class="c-s"><span><span class="sv">${nb(l.pr.siJoue)}</span> pts</span>${G.ival(l, 72)}${ppe}</div>`}
     ${tags ? `<div class="c-tags">${tags}</div>` : ''}
     ${o.extra ? `<div class="c-extra">${o.extra}</div>` : ''}
   </div>`;
@@ -597,7 +610,7 @@ function celluleMinutes(l) {
   const sc = l.pr.score;
   return `<div class="c-p c-min"><span class="pv">${sc?.minutes == null ? '–' : nb(sc.minutes)}<small>${nbsp}min</small></span>${G.barreMin(sc, seuilMinutes(), 60)}<span class="dispo">${sc?.minutesEnHausse ? '<b class="ok-txt" title="2 derniers matchs bien au-dessus de sa moyenne">▲ en hausse</b> · ' : ''}dispo ${pct(l.pr.p)}</span></div>`;
 }
-const enteteTab = (sport = 'football') => `<div class="entete-tab libelle" aria-hidden="true"><span></span><span>Joueur</span><span>Match · victoire</span><span>Club · 5 derniers</span><span>${sport === 'nba' ? 'Minutes projetées' : 'Chances de jouer'}</span><span>${sport === 'nba' ? 'Score projeté · 10–90 %' : "S'il joue · 10–90 %"}</span></div>`;
+const enteteTab = (sport = 'football') => `<div class="entete-tab libelle" aria-hidden="true"><span></span><span>Joueur</span><span>Match · victoire</span><span>Club · 5 derniers</span><span>${sport === 'nba' ? 'Minutes projetées' : 'Chances de jouer'}</span><span>${sport === 'nba' ? 'Score projeté · 10–90 %' : 'Titulaire · s’il entre'}</span></div>`;
 
 // Chemin des paliers du plateau, le palier en cours mis en avant.
 function chemin(sport) {
@@ -977,7 +990,7 @@ function afficherSquad() {
 }
 
 // ---------- Mes cartes ----------
-const TRIS = [['e', 'Les plus utiles (chances × score)'], ['s', "Score s'il joue (NBA : projeté)"], ['p', 'Chances de jouer'], ['f', 'Joueur en forme'], ['q', 'Équipe en forme'], ['d', "Coup d'envoi"], ['m', 'Minutes projetées', 'nba'], ['t', 'Le moins de balles perdues', 'nba']];
+const TRIS = [['e', 'Les plus utiles (chances × score)'], ['s', 'Score titulaire (NBA : projeté)'], ['p', 'Chances de jouer'], ['f', 'Joueur en forme'], ['q', 'Équipe en forme'], ['d', "Coup d'envoi"], ['m', 'Minutes projetées', 'nba'], ['t', 'Le moins de balles perdues', 'nba']];
 const CROISSANTS = new Set(['n', 'd', 'x']); // tris croissants par défaut (nom, coup d'envoi, étoiles)
 function cartesFiltrees() {
   const s = vue.sport;
@@ -986,7 +999,7 @@ function cartesFiltrees() {
     (!vue.dispo || disponible(l)) && (vue.toutesChances || (atteint(l.pr.p) && assezDeMinutes(l))) && (!vue.journee || (l.m && journee(l) === vue.journee)));
   const J = jouees(s), esp = (l) => l.pr.esperance ?? -1;
   const cles = {
-    e: esp, s: (l) => l.pr.siJoue ?? -1, p: (l) => l.pr.p ?? -1, f: (l) => formeDe(l.j)?.ecart ?? -9,
+    e: esp, s: (l) => (l.c.sport === 'football' ? scoreFoot(l).v : l.pr.siJoue) ?? -1, p: (l) => l.pr.p ?? -1, f: (l) => formeDe(l.j)?.ecart ?? -9,
     q: (l) => formeEquipe(l.j.club?.slug)?.pctVictoires ?? -1, d: (l) => (l.m ? Date.parse(l.m.debutUTC) : 9e15),
     n: (l) => sansAccents(l.j.nom), x: (l) => l.j.etoiles ?? 99, r: (l) => (l.j.etoiles && l.pr.siJoue != null ? l.pr.siJoue / l.j.etoiles : -1),
     b: (l) => l.c.bonusPct ?? 0, j: (l) => (J.has(l.c.id) ? 1 : 0),
@@ -1055,14 +1068,14 @@ function afficherListeCartes() {
       <td>${l.m ? `<span class="nom" style="font-weight:400">${esc(quand(l.m.debutUTC))}</span><span class="sous">${l.lieu === 'ext' ? '@' : l.lieu === 'dom' ? 'vs' : ''} ${esc(l.adv ?? '?')}${v != null ? ` · ${v}${nbsp}% vict.` : ''}</span>` : '<span class="doux">pas de match</span>'}</td>
       ${nba ? `<td><div class="cellule-p"><b>${l.pr.score?.minutes == null ? '–' : nb(l.pr.score.minutes)}</b>${G.barreMin(l.pr.score, seuilMinutes(), 56)}${l.pr.score?.minutesEnHausse ? '<span class="ok-txt" title="minutes en hausse">▲</span>' : ''}</div></td>` : ''}
       <td><div class="cellule-p"><b>${pct(l.pr.p)}</b>${G.barreP(l.pr.p, seuil(), 56)}</div></td>
-      <td><div class="cellule-p"><b>${nb(l.pr.siJoue)}</b>${G.ival(l, 64)}</div></td>
+      <td>${nba ? `<div class="cellule-p"><b>${nb(l.pr.siJoue)}</b>${G.ival(l, 64)}</div>` : (() => { const f = scoreFoot(l); return `<div class="cellule-tit"><b>${nb(f.v)}</b>${f.sous ? `<small>${esc(f.sous)}</small>` : ''}</div>`; })()}</td>
       <td class="r"><b>${nb(l.pr.esperance, 1)}</b></td>
       ${nba ? `<td class="r">${l.j.etoiles && l.pr.siJoue != null ? nb(l.pr.siJoue / l.j.etoiles, 1) : '–'}</td>` : ''}
       ${nba ? (() => { const p = profilDe(l.j), v = p?.stats.turnovers.points; const t = v == null ? null : rangNba(v, 'turnovers', REF_NBA, D.P.profil); return `<td class="r ${t?.ton === 'faible' ? 'stop-txt' : t?.ton === 'fort' ? 'ok-txt' : ''}" title="points Sorare perdus par match en balles perdues">${v == null ? '–' : `−${nb(Math.abs(v), 1)}`}</td>`; })() : ''}
       <td>${G.pastilles(formeEquipe(l.j.club?.slug)?.derniers)}</td>
       <td class="statut">${l.c.bonusPct ? `<span class="tag">${esc(l.c.collection)} +${nb(l.c.bonusPct)}${nbsp}%</span> ` : ''}${st === 'probable' ? '' : `<span class="tag ${TON_STATUT[st]}">${LIBELLES[st]}</span> `}${!l.pr.eligibleArcade && l.m ? '<span class="tag stop">hors solo</span> ' : ''}${tagsContexte(l)}${!l.c.bonusPct && st === 'probable' && l.pr.eligibleArcade ? `<span class="doux">${esc(l.c.collection ?? '')}</span>` : ''}</td></tr>`;
   }).join('');
-  el.innerHTML = `<div class="defile-x"><table class="dense"><thead><tr>${th('j', 'Jouée')}<th scope="col"><span class="sr">Carte</span><span aria-hidden="true"></span></th>${th('n', 'Joueur')}${nba ? th('x', '★', 'r') : ''}${th('d', 'Match')}${nba ? th('m', 'Minutes') : ''}${th('p', nba ? 'Dispo' : 'Chances de jouer')}${th('s', nba ? 'Score projeté' : "S'il joue")}${th('e', 'Espérance', 'r')}${nba ? th('r', 'Pts/★', 'r') : ''}${nba ? th('t', 'Pertes', 'r') : ''}${th('q', 'Club')}${th('b', 'Bonus · statut')}</tr></thead><tbody>${lignesHtml}</tbody></table></div>${plus}`;
+  el.innerHTML = `<div class="defile-x"><table class="dense"><thead><tr>${th('j', 'Jouée')}<th scope="col"><span class="sr">Carte</span><span aria-hidden="true"></span></th>${th('n', 'Joueur')}${nba ? th('x', '★', 'r') : ''}${th('d', 'Match')}${nba ? th('m', 'Minutes') : ''}${th('p', nba ? 'Dispo' : 'Chances de jouer')}${th('s', nba ? 'Score projeté' : 'Titulaire')}${th('e', 'Espérance', 'r')}${nba ? th('r', 'Pts/★', 'r') : ''}${nba ? th('t', 'Pertes', 'r') : ''}${th('q', 'Club')}${th('b', 'Bonus · statut')}</tr></thead><tbody>${lignesHtml}</tbody></table></div>${plus}`;
 }
 
 // ---------- Fiche joueur ----------
@@ -1150,11 +1163,10 @@ function ficheHtml(l) {
             ? `<div class="kpi heros"><span class="libelle">Minutes projetées</span><span class="v">${s.minutes == null ? '–' : nb(s.minutes)}<small>${nbsp}min</small></span>${G.barreMin(s, seuilMinutes(), 140)}<span class="s">${s.minutes == null ? '' : `8 fois sur 10 entre ${nb(s.minutesBas)} et ${nb(s.minutesHaut)} min${s.minutesEnHausse ? ` · <b class="ok-txt">▲ en hausse</b> (${nb(s.minutesReference)} sur ses 10 derniers)` : ''} · seuil ${seuilMinutes()} min`}</span></div>
                <div class="kpi"><span class="libelle">Disponibilité</span><span class="v">${pct(pr.p)}</span>${G.barreP(pr.p, seuil(), 140, 10)}<span class="s">chances de jouer (blessures ESPN, absences récentes, 2e soir de suite)</span></div>`
             : `<div class="kpi heros"><span class="libelle">Chances de jouer</span><span class="v">${pct(pr.p)}</span>${G.barreP(pr.p, seuil(), 140, 10)}<span class="s">repère orange : ton seuil de ${pct(seuil())}</span></div>`}
-          <div class="kpi"><span class="libelle">${c.sport === 'nba' ? 'Score projeté' : "S'il joue"}</span><span class="v">${nb(pr.siJoue)}</span>${G.ival(l, 140, true)}<span class="s">${f ? `80 % des cas entre ${nb(f.q10)} et ${nb(f.q90)}, bonus compris${c.sport === 'nba' && s.minutes != null ? `, pour ${nb(s.minutes)} min projetées` : ''}` : 'pas assez de scores'}</span></div>
-          <div class="kpi"><span class="libelle">Espérance</span><span class="v">${nb(pr.esperance, 1)}</span><span class="s">${c.sport === 'nba' ? 'disponibilité × score projeté' : "chances × score s'il joue"}${c.sport === 'nba' && j.etoiles && pr.siJoue != null ? ` · ${nb(pr.siJoue / j.etoiles, 1)} pts/★ s'il joue` : ''}</span></div>
+          ${c.sport === 'football' ? (() => { const sf = scoreFoot(l); return `<div class="kpi"><span class="libelle">${pr.situationConfirmee === 'remplacant' ? 'S’il entre' : 'S’il est titulaire'}</span><span class="v">${nb(sf.v)}</span><span class="s">${esc(sf.sous)}${f ? ` · tous cas confondus, 80 % entre ${nb(f.q10)} et ${nb(f.q90)}` : ''}, bonus compris</span></div>`; })() : `<div class="kpi"><span class="libelle">Score projeté</span><span class="v">${nb(pr.siJoue)}</span>${G.ival(l, 140, true)}<span class="s">${f ? `80 % des cas entre ${nb(f.q10)} et ${nb(f.q90)}, bonus compris${c.sport === 'nba' && s.minutes != null ? `, pour ${nb(s.minutes)} min projetées` : ''}` : 'pas assez de scores'}</span></div>`}
+          <div class="kpi"><span class="libelle">Espérance</span><span class="v">${nb(pr.esperance, 1)}</span><span class="s">${c.sport === 'nba' ? 'disponibilité × score projeté' : "chances × score (titulaire ou entré)"}${c.sport === 'nba' && j.etoiles && pr.siJoue != null ? ` · ${nb(pr.siJoue / j.etoiles, 1)} pts/★ s'il joue` : ''}</span></div>
           ${c.sport === 'football'
-            ? `<div class="kpi"><span class="libelle">Titulaire quand il joue</span><span class="v">${s.q == null ? '–' : pct(s.q)}</span><span class="s">sur ses matchs joués récents</span></div>
-               <div class="kpi" style="grid-column:1/-1"><span class="libelle">Cote du match · victoire, nul, défaite</span>${G.cote3(l.cotes)}</div>`
+            ? `<div class="kpi" style="grid-column:1/-1"><span class="libelle">Cote du match · victoire, nul, défaite</span>${G.cote3(l.cotes)}</div>`
             : ''}
         </div></div>
         <div class="bloc">
