@@ -295,7 +295,12 @@ function libelleJournee(sport, j) {
   return `Nuit du ${fJourUTC.format(d)} au ${fLongUTC.format(lendemain)} (journée Sorare du ${lendemain.getUTCDate()})`;
 }
 // Libellé court (puces) : la date affichée par Sorare à Paris.
-const libelleJourneeCourt = (sport, j) => fCourtUTC.format(new Date(Date.parse(`${j}T12:00:00Z`) + (D.journees[sport].decalage_etiquette_paris_jours ?? 0) * 86400000));
+// Au-delà de 6 jours, le mois est ajouté (« mer. 16 déc. ») pour ne pas confondre avec la semaine en cours.
+const fCourtMoisUTC = new Intl.DateTimeFormat('fr-FR', { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' });
+const libelleJourneeCourt = (sport, j) => {
+  const t = Date.parse(`${j}T12:00:00Z`) + (D.journees[sport].decalage_etiquette_paris_jours ?? 0) * 86400000;
+  return (t - Date.now() > 6.5 * 86400000 ? fCourtMoisUTC : fCourtUTC).format(new Date(t));
+};
 
 // ---------- Palier ----------
 const ETATS = { LINEUP_SET: 'composition posée, matchs à venir', PLAYABLE: 'à jouer', LIVE: 'tentative en cours', FAILED: 'échoué', LOCKED: 'verrouillé' };
@@ -915,10 +920,13 @@ function afficherSquad() {
     if (vueCourante() !== 'squad' || vue.sport !== sport || vue.squadJour !== jour) return;
     if (!r.equipe) { $('squad-contenu').innerHTML = `<p class="attente">${esc(r.message)}</p>`; return; }
     const e = r.equipe, membres = membresDe(e), Jo = jouees(sport);
-    const dansEquipe = new Set(e.cartes);
+    // Hors de l'équipe = autres JOUEURS (pas seulement autres cartes) ; une seule carte par joueur, la meilleure.
+    const joueursEquipe = new Set(membres.map((l) => l.j.id));
     const maintenant = Date.now();
-    const meilleures = lignes.filter((l) => l.c.sport === sport && l.m && !dansEquipe.has(l.c.id) && Date.parse(l.m.debutUTC) > maintenant && journee(l) === jour &&
-      l.pr.statut === 'ok' && l.pr.p >= seuil() && l.pr.eligibleArcade && l.pr.esperance != null).sort((a, b) => b.pr.esperance - a.pr.esperance).slice(0, 10);
+    const vus = new Set();
+    const meilleures = lignes.filter((l) => l.c.sport === sport && l.m && !joueursEquipe.has(l.j.id) && Date.parse(l.m.debutUTC) > maintenant && journee(l) === jour &&
+      l.pr.statut === 'ok' && l.pr.p >= seuil() && l.pr.eligibleArcade && l.pr.esperance != null).sort((a, b) => b.pr.esperance - a.pr.esperance)
+      .filter((l) => !vus.has(l.j.id) && vus.add(l.j.id)).slice(0, 10);
     $('squad-contenu').innerHTML = `<div class="squad-grille">
       <section class="carte" aria-label="Équipe du jour"><header><h2>Équipe du jour</h2><span class="doux petit">score attendu maximal</span></header>
         <div class="corps pile">${kpisEquipe(e, sport, membres, { squad: true })}
