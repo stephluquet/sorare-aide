@@ -14,7 +14,7 @@
 import { projeterCarte } from '../src/moteur/projection.js';
 import { equipeDuMatch } from '../src/moteur/jouer.js';
 import { profilNba, referenceNba, rangNba } from '../src/moteur/profil.js';
-import { proposer, proposerParCreneau, squadDuJour, joursAVenir, jourDeJeu, autresChoix } from '../src/moteur/compositions.js';
+import { proposer, proposerParCreneau, squadDuJour, joursAVenir, jourDeJeu, autresChoix, autresChoixSquad } from '../src/moteur/compositions.js';
 import { statsEquipe, serieEnMots, formeJoueur, resultat } from '../src/moteur/forme.js';
 import { distribution, tirerTotaux, resumerTirages, quantilesSiJoue, multiplicateurCarte } from '../src/moteur/simulation.js';
 
@@ -105,6 +105,9 @@ const nomCourt = (nom) => { const p = nom.split(' '); return p.length > 1 ? p.sl
 const REDUIT = matchMedia('(prefers-reduced-motion: reduce)');
 const largePC = () => innerWidth >= 1024;
 const tresLarge = () => innerWidth >= 1800;
+// Mes cartes sur PC : liste (comme les compositions, fiche épinglée à droite) ou tableau. Retenu dans le navigateur.
+function lireAffichage() { try { return localStorage.getItem('sorare-aide-affichage-cartes') === 'tableau' ? 'tableau' : 'liste'; } catch { return 'liste'; } }
+function ecrireAffichage(v) { try { localStorage.setItem('sorare-aide-affichage-cartes', v); } catch { /* navigation privée */ } }
 
 // ---------- État de l'utilisateur ----------
 const CLE_LOCALE = 'sorare-aide-etat';
@@ -243,7 +246,7 @@ const disponible = (l) => ['probable', 'confirme', 'remplacant'].includes(statut
 
 const vue = {
   sport: ACTIFS[0], heros: null, poste: null, etoiles: null, journee: '', tri: 'e', sens: -1, dispo: true, toutVoir: false, toutesChances: false, toutesMinutes: false, collection: null,
-  mode: 'plusieurs', creneauOuvert: null, squadJour: null, epingle: { football: null, nba: null },
+  mode: 'plusieurs', creneauOuvert: null, squadJour: null, epingle: {}, affichage: lireAffichage(),
 };
 
 // ---------- Calculs (dans le navigateur, mis en cache, différés pour ne pas bloquer l'affichage) ----------
@@ -281,6 +284,11 @@ function autres(sport, equipe) {
   const palier = palierEnCours(sport);
   const cle = `autres|${cleBase(sport)}|${equipe.cartes.join(',')}`;
   if (!cache.has(cle)) cache.set(cle, autresChoix(lignesMoteur(sport), D.P, { sport, cible: palier.cible, regle: D.regles[sport], seuil: seuil(), seuilMinutes: seuilMinutes(), jouees: jouees(sport), maintenant: Date.now() }, equipe));
+  return cache.get(cle);
+}
+function autresSquad(sport, jour, equipe) {
+  const cle = ['autres-squad', sport, jour, seuil(), seuilMinutes(), Math.floor(Date.now() / 60000), equipe.cartes.join(',')].join('|');
+  if (!cache.has(cle)) cache.set(cle, autresChoixSquad(lignesMoteur(sport), D.P, { sport, jour, fuseau: D.journees[sport].fuseau, regle: D.regles[sport], seuil: seuil(), seuilMinutes: seuilMinutes(), maintenant: Date.now() }, equipe));
   return cache.get(cle);
 }
 // Distribution du score de l'équipe : mêmes tirages que la simulation de la proposition (même graine,
@@ -554,7 +562,7 @@ if (D.lotsVignettes) {
 // Étiquettes d'une ligne : seulement ce qui sort de l'ordinaire (statut, bonus, contexte, jouée…).
 function tagsLigne(l, o = {}) {
   const st = statut(l), out = [];
-  if (st !== 'probable') out.push(`<span class="tag ${TON_STATUT[st]}">${LIBELLES[st]}</span>`);
+  if (st !== 'probable' && st !== 'confirme') out.push(`<span class="tag ${TON_STATUT[st]}">${LIBELLES[st]}</span>`);
   if (l.c.bonusPct) out.push(`<span class="tag">${esc(l.c.collection)} +${nb(l.c.bonusPct)}${nbsp}%</span>`);
   if (o.horsSolo && !l.pr.eligibleArcade && l.m) out.push('<span class="tag stop" title="Compétition non autorisée en solo">hors solo</span>');
   if (o.jouee) out.push(`<span class="tag">${o.jouee}</span>`);
@@ -581,13 +589,16 @@ const tendance = (fj) => (fj?.tendance === 'hausse' ? '<span class="tendance hau
 // Remplaçant annoncé (composition officielle) : son score s'il entre, en grand.
 // Poste affiché et utilisé : celui de la carte (le jeu le retient), sinon celui du joueur.
 const postesL = (l) => (l.c.postes?.length ? l.c.postes : l.j.postes);
+// Chances de jouer affichées : « Confirmé » pour un titulaire de la composition officielle (p = 99 % dans le calcul).
+const confirme = (l) => l.pr.situationConfirmee === 'titulaire';
+const txtChances = (l) => (confirme(l) ? 'Confirmé' : pct(l.pr.p));
 
 function scoreFoot(l) {
   const sc = l.pr.score, b = l.pr.bonus ?? 1;
   if (!sc || sc.muTitulaire == null) return { v: l.pr.siJoue, sous: '' };
   const tit = sc.muTitulaire * b, ent = sc.muEntre * b, q = sc.q ?? 1;
   if (l.pr.situationConfirmee === 'remplacant') return { v: ent, sous: 'remplaçant annoncé : score s’il entre' };
-  if (l.pr.situationConfirmee === 'titulaire') return { v: tit, sous: 'titulaire confirmé' };
+  if (l.pr.situationConfirmee === 'titulaire') return { v: tit, sous: q >= 0.9 ? 'toujours titulaire' : `titulaire (${pct(q)} de ses matchs)` };
   if (q >= 0.9) return { v: tit, sous: 'toujours titulaire' };
   return { v: tit, sous: `s’il entre : ${nb(ent)} (${pct(1 - q)} des matchs)` };
 }
@@ -598,13 +609,13 @@ function ligne(l, o = {}) {
   const match = l.m ? `<span class="l1">${esc(quand(l.m.debutUTC))} </span><span class="l2">${lieu} ${esc(l.adv ?? '?')}<span class="cote-txt">${v != null ? ` · ${v}${nbsp}% vict.` : ''}</span></span>${v != null ? `<span class="cotebarre" title="Probabilité de victoire de son équipe">${G.coteMini(v)}${v}${nbsp}% vict.</span>` : ''}` : '<span class="l1">pas de match connu</span>';
   const ppe = l.c.sport === 'nba' && l.j.etoiles && l.pr.siJoue != null ? `<span class="ppe">${nb(l.pr.siJoue / l.j.etoiles, 1)} pts/★</span>` : '';
   const tags = tagsLigne(l, { ...o, jouee: o.jouee ?? (J.has(l.c.id) ? 'jouée à ce palier' : '') });
-  const choisie = (fiche.ouverte === l.c.id || (o.epinglable && vue.epingle[l.c.sport] === l.c.id && tresLarge())) ? ' choisie' : '';
+  const choisie = (fiche.ouverte === l.c.id || (epingleActive() && vue.epingle[cleEpingle()] === l.c.id)) ? ' choisie' : '';
   return `<div class="ligne${choisie}${o.griser && J.has(l.c.id) ? ' bloquee' : ''}" role="button" tabindex="0" data-fiche="${esc(l.c.id)}" aria-label="Voir la fiche de ${esc(l.j.nom)}">
     <div class="c-img">${vignette(l)}</div>
     <div class="c-nom"><b>${esc(l.j.nom)}</b>${cap ? '<span class="cap" title="Capitaine">C</span>' : ''}<span class="pos">${esc(postesL(l).join('/'))}</span>${badgeEtoiles(l)}<span class="club">${esc(l.j.club?.nom ?? '?')}</span></div>
     <div class="c-match">${match}</div>
     <div class="c-forme">${G.pastilles(formeEquipe(l.j.club?.slug)?.derniers)}${tendance(formeDe(l.j))}</div>
-    ${l.c.sport === 'nba' ? celluleMinutes(l) : `<div class="c-p"><span class="pv">${pct(l.pr.p)}</span>${G.barreP(l.pr.p, seuil(), 60)}</div>`}
+    ${l.c.sport === 'nba' ? celluleMinutes(l) : `<div class="c-p"><span class="pv${confirme(l) ? ' ok-txt' : ''}"${confirme(l) ? ' title="Titulaire dans la composition officielle"' : ''}>${txtChances(l)}</span>${G.barreP(l.pr.p, seuil(), 60)}</div>`}
     ${l.c.sport === 'football' ? (() => { const f = scoreFoot(l); return `<div class="c-s c-tit"><span><span class="sv">${nb(f.v)}</span> pts</span>${f.sous ? `<span class="sous">${esc(f.sous)}</span>` : ''}</div>`; })() : `<div class="c-s"><span><span class="sv">${nb(l.pr.siJoue)}</span> pts</span>${G.ival(l, 72)}${ppe}</div>`}
     ${tags ? `<div class="c-tags">${tags}</div>` : ''}
     ${o.extra ? `<div class="c-extra">${o.extra}</div>` : ''}
@@ -906,7 +917,7 @@ function afficherSolo(sport) {
       `<details class="repli"><summary>Détail technique <span class="doux">${r.admissibles} cartes retenues, ${r.nbEquipes} équipes comparées en ${nb(r.dureeMs / 1000, 1)} s</span></summary><div class="technique"><ul>${ecartees}</ul>` +
       `<p>Chances calculées par ${D.P.simulation.tirages} tirages (méthode v${D.P.version}), puis corrigées par la table de calibrage du sport (rétro-test des équipes). Les joueurs sont tirés indépendamment : deux coéquipiers ont en réalité des scores liés.</p></div></details>`;
     // Fiche épinglée (≥ 1 800 px) : le dernier joueur choisi, sinon le capitaine.
-    if (!parId.has(vue.epingle[sport])) vue.epingle[sport] = r.prudente.capitaine ?? r.prudente.cartes[0];
+    if (!parId.has(vue.epingle[`solo|${sport}`])) vue.epingle[`solo|${sport}`] = r.prudente.capitaine ?? r.prudente.cartes[0];
     $('solo-contenu').innerHTML = `<div class="solo-grille avec-fiche">
         <div class="pile">${carteProposition(TITRES.prudente[0], TITRES.prudente[1], r.prudente, sport, p.cible, { apres, epinglable: true })}</div>
         <section class="carte" id="autres-choix" aria-label="Autres choix"><header><h2>Autres choix</h2><span class="doux petit">si tu préfères ajuster l'équipe prudente</span></header><p class="attente">Recherche des autres joueurs…</p></section>
@@ -922,33 +933,45 @@ function afficherSolo(sport) {
 // en ligne et les suivantes repliées, avec la chance de passer avant → après. Un match bien plus tard
 // que l'équipe est signalé.
 const AUTRES_PAR_GROUPE = 5;
-function afficherAutres(sport, equipe, a) {
-  const el = $('autres-choix'); if (!el || !surSolo(sport)) return;
+function afficherAutres(sport, equipe, a, o = {}) {
+  const el = $('autres-choix');
+  if (!el || (o.squad ? !(vueCourante() === 'squad' && vue.sport === sport) : !surSolo(sport))) return;
   const dernier = Math.max(...equipe.cartes.map((id) => Date.parse(parId.get(id).m.debutUTC)));
+  // Solo : chances de passer ; Squad : score attendu de l'équipe (NBA : score projeté, somme des 5).
+  const proj = (id) => parId.get(id).pr.siJoue ?? 0;
+  const projEquipe = equipe.cartes.reduce((t, id) => t + proj(id), 0);
+  const valeur = (c) => (!o.squad ? c.pPasser : sport === 'nba' ? projEquipe - proj(c.remplace) + proj(c.carteId) : c.esperanceEquipe);
   const vus = new Set(), parRemplace = new Map();
-  const tous = a.groupes.flatMap((g) => g.choix).filter((c) => c.remplace && c.pPasser != null).sort((x, y) => y.pPasser - x.pPasser);
+  const tous = a.groupes.flatMap((g) => g.choix).filter((c) => c.remplace && valeur(c) != null).sort((x, y) => valeur(y) - valeur(x));
   for (const c of tous) {
     const l = parId.get(c.carteId); if (!l || vus.has(l.j.id)) continue;
     vus.add(l.j.id);
     if (!parRemplace.has(c.remplace)) parRemplace.set(c.remplace, []);
     parRemplace.get(c.remplace).push(c);
   }
-  const tete = '<header><h2>Autres choix</h2><span class="doux petit">si tu préfères ajuster l\'équipe prudente</span></header>';
+  const tete = `<header><h2>Autres choix</h2><span class="doux petit">si tu préfères ajuster l'équipe ${o.squad ? 'du jour' : 'prudente'}</span></header>`;
   if (!parRemplace.size) { el.innerHTML = `${tete}<p class="corps petit doux">Pas d’autre carte admissible.</p>`; return; }
-  const avant = Math.round(equipe.pPasser * 100);
+  const avant = o.squad ? Math.round(sport === 'nba' ? projEquipe : equipe.esperance) : Math.round(equipe.pPasser * 100);
+  const unite = o.squad ? '' : `${nbsp}%`;
   const ligneAlt = (c) => {
-    const l = parId.get(c.carteId), apres = Math.round(c.pPasser * 100);
+    const l = parId.get(c.carteId), apres = Math.round(o.squad ? valeur(c) : c.pPasser * 100);
     const classe = apres > avant ? 'mieux' : apres < avant ? 'moins' : 'pareil';
-    const tard = Date.parse(l.m.debutUTC) - dernier > 36 * 3600000 ? `<span class="tag attention">résultat le ${esc(fJour.format(new Date(l.m.debutUTC)))}</span>` : '';
-    return ligne(l, { capitaine: c.capitaine, epinglable: true, tags: tard, extra: `<span class="delta ${classe}">${avant}${nbsp}% → ${apres}${nbsp}%</span><span class="mini doux">chances de passer${c.capitaine === c.carteId ? ', avec le brassard' : ''}</span>` });
+    const tard = !o.squad && Date.parse(l.m.debutUTC) - dernier > 36 * 3600000 ? `<span class="tag attention">résultat le ${esc(fJour.format(new Date(l.m.debutUTC)))}</span>` : '';
+    const quoi = o.squad ? (sport === 'nba' ? "score projeté de l'équipe" : "score attendu de l'équipe") : 'chances de passer';
+    return ligne(l, { capitaine: c.capitaine, epinglable: true, tags: tard, jouee: o.squad ? (jouees(sport).has(l.c.id) ? 'jouée en solo' : '') : undefined,
+      extra: `<span class="delta ${classe}">${avant}${unite} → ${apres}${unite}</span><span class="mini doux">${quoi}${c.capitaine === c.carteId ? ', avec le brassard' : ''}</span>` });
   };
-  el.innerHTML = `${tete}<p class="corps petit doux">Pour chaque joueur de l'équipe, la meilleure carte qui peut le remplacer (postes, joueur unique${sport === 'nba' ? ', 16 étoiles' : ''}) et la chance de passer avant → après le changement.</p>
+  const explication = o.squad
+    ? `Pour chaque joueur de l'équipe, les meilleures cartes du jour qui peuvent le remplacer (postes, joueur unique${sport === 'nba' ? ', 16 étoiles' : ''}), et le ${sport === 'nba' ? 'score projeté' : 'score attendu'} de l'équipe avant → après le changement.`
+    : `Pour chaque joueur de l'équipe, la meilleure carte qui peut le remplacer (postes, joueur unique${sport === 'nba' ? ', 16 étoiles' : ''}) et la chance de passer avant → après le changement.`;
+  el.innerHTML = `${tete}<p class="corps petit doux">${explication}</p>
     <div class="tableau">${[...parRemplace.entries()].map(([rem, choix]) => {
       const r = parId.get(rem), suite = choix.slice(1, AUTRES_PAR_GROUPE);
       return `<div class="groupe-alt"><h3>À la place de ${esc(r.j.nom)} (${esc(postesL(r).join('/'))}${equipe.capitaine === rem ? ', capitaine' : ''})</h3>${ligneAlt(choix[0])}` +
         (suite.length ? `<details><summary>+ ${pluriel(suite.length, 'autre')}</summary>${suite.map(ligneAlt).join('')}</details>` : '') + '</div>';
     }).join('')}</div>`;
   dessiner(el);
+  marquerChoisies();
 }
 
 // Créneau unique : liste des créneaux (maître) et équipe du créneau choisi (détail).
@@ -979,32 +1002,28 @@ function afficherSquad() {
   const jours = joursAVenir(lignesMoteur(sport), Date.now(), J.fuseau);
   if (!jours.includes(vue.squadJour)) vue.squadJour = jours[0] ?? null;
   const jour = vue.squadJour;
-  $('vue-squad').innerHTML = `<div class="entete"><div class="titres"><h1>Squad · ${SPORTS[sport]}</h1><p class="doux petit">La meilleure équipe du jour au sens du score attendu. Les cartes jouées en solo restent utilisables.</p></div>
-      <div class="outils"><div class="seg" role="group" aria-label="Journée Sorare">${jours.map((j) => `<button type="button" data-act="jour" data-v="${j}" aria-pressed="${j === jour}" title="${esc(libelleJournee(sport, j))}">${esc(libelleJourneeCourt(sport, j))}</button>`).join('')}</div></div></div>
-    ${jour ? `<p class="contexte">Journée Sorare : ${esc(libelleJournee(sport, jour))}</p>` : ''}
+  // Même squelette que le Solo : en-tête et réglages, équipe, autres choix, fiche épinglée (≥ 1 800 px).
+  $('vue-squad').innerHTML = `<div class="entete"><div class="titres"><h1>Squad · ${SPORTS[sport]}</h1><p class="doux petit">Meilleure équipe du jour · cartes jouées en solo autorisées${jour ? ` · ${esc(libelleJournee(sport, jour))}` : ''}</p></div>
+      <div class="outils reglages"><div class="reglage"><span>Journée</span><div class="seg" role="group" aria-label="Journée Sorare">${jours.map((j) => `<button type="button" data-act="jour" data-v="${j}" aria-pressed="${j === jour}" title="${esc(libelleJournee(sport, j))}">${esc(libelleJourneeCourt(sport, j))}</button>`).join('')}</div></div>${sport === 'nba' ? '' : segSeuil()}${segMinutes(sport)}</div></div>
     <div id="squad-contenu"><p class="attente">${jour ? 'Recherche de la meilleure équipe…' : 'Aucun match à venir.'}</p></div>`;
   if (!jour) return;
   plusTard(() => squad(sport, jour)).then((r) => {
     if (vueCourante() !== 'squad' || vue.sport !== sport || vue.squadJour !== jour) return;
     if (!r.equipe) { $('squad-contenu').innerHTML = `<p class="attente">${esc(r.message)}</p>`; return; }
     const e = r.equipe, membres = membresDe(e), Jo = jouees(sport);
-    // Hors de l'équipe = autres JOUEURS (pas seulement autres cartes) ; une seule carte par joueur, la meilleure.
-    const joueursEquipe = new Set(membres.map((l) => l.j.id));
-    const maintenant = Date.now();
-    const vus = new Set();
-    const meilleures = lignes.filter((l) => l.c.sport === sport && l.m && !joueursEquipe.has(l.j.id) && Date.parse(l.m.debutUTC) > maintenant && journee(l) === jour &&
-      l.pr.statut === 'ok' && atteint(l.pr.p) && l.pr.eligibleArcade && valeurCarte(l) != null).sort((a, b) => valeurCarte(b) - valeurCarte(a))
-      .filter((l) => !vus.has(l.j.id) && vus.add(l.j.id)).slice(0, 10);
-    $('squad-contenu').innerHTML = `<div class="squad-grille">
-      <section class="carte" aria-label="Équipe du jour"><header><h2>Équipe du jour</h2><span class="doux petit">score attendu maximal</span></header>
+    if (!parId.has(vue.epingle[`squad|${sport}`])) vue.epingle[`squad|${sport}`] = e.capitaine ?? e.cartes[0];
+    $('squad-contenu').innerHTML = `<div class="solo-grille avec-fiche">
+      <section class="carte" aria-label="Équipe du jour"><header><h2>Équipe du jour</h2><span class="doux petit">le meilleur ${sport === 'nba' ? 'score' : 'score attendu'} de la journée</span></header>
         <div class="corps pile">${kpisEquipe(e, sport, membres, { squad: true })}
           <div style="padding-top:var(--e2)"><span class="libelle long">Qui porte l'équipe · ${sport === 'nba' ? 'score projeté' : 'score attendu'} par joueur${e.capitaine ? ', capitaine compris' : ''}</span><div style="margin-top:8px">${G.empilee(membres, e, sport)}</div></div></div>
-        <div class="tableau">${enteteTab(sport)}${membres.map((l) => ligne(l, { capitaine: e.capitaine, jouee: Jo.has(l.c.id) ? 'jouée en solo' : '' })).join('')}</div>
+        <div class="tableau">${enteteTab(sport)}${membres.map((l) => ligne(l, { capitaine: e.capitaine, epinglable: true, jouee: Jo.has(l.c.id) ? 'jouée en solo' : '' })).join('')}</div>
         <p class="corps note" style="padding-top:var(--e3)">${r.admissibles} cartes du jour retenues, ${r.nbEquipes} équipes comparées. Règles de composition supposées identiques au solo (à confirmer).</p></section>
-      <section class="carte" aria-label="Autres cartes du jour"><header><h2>Autres cartes du jour</h2><span class="doux petit">${sport === 'nba' ? 'les meilleurs scores projetés' : 'les meilleures espérances'} hors de l'équipe</span></header>
-        <div class="tableau">${meilleures.map((l) => ligne(l, { jouee: Jo.has(l.c.id) ? 'jouée en solo' : '' })).join('') || '<p class="corps petit doux">Aucune autre carte ce jour-là.</p>'}</div></section>
+      <section class="carte" id="autres-choix" aria-label="Autres choix"><header><h2>Autres choix</h2><span class="doux petit">si tu préfères ajuster l'équipe du jour</span></header><p class="attente">Recherche des autres joueurs…</p></section>
+      <aside class="col-fiche carte" id="col-fiche" aria-label="Fiche épinglée"></aside>
     </div>`;
+    afficherColFiche();
     dessiner($('squad-contenu'));
+    plusTard(() => autresSquad(sport, jour, e)).then((a) => afficherAutres(sport, e, a, { squad: true }));
   });
 }
 
@@ -1050,7 +1069,7 @@ function afficherCartes() {
   const triNom = TRIS.find(([k, , sp]) => k === vue.tri && (!sp || sp === s))?.[1] ?? 'colonne';
   const resume = `Filtres : ${vue.journee ? libelleJournee(s, vue.journee) : 'toutes les journées'} · tri ${triNom.toLowerCase()} · ${s === 'nba' ? (vue.toutesMinutes ? 'toutes minutes' : `${seuilMinutes()}${nbsp}min et plus`) : vue.toutesChances ? 'toutes chances' : `${Math.round(seuil() * 100)}${nbsp}%`}${vue.collection ? ` · ${vue.collection}` : ''}${vue.dispo ? ' · disponibles' : ''}`;
   const filtresOuverts = $('vue-cartes').querySelector('details.filtres')?.open ?? largePC();
-  $('vue-cartes').innerHTML = `<div class="entete"><div class="titres"><h1>Mes cartes · ${SPORTS[s]}</h1><p class="doux petit">${pluriel(lignes.filter((l) => l.c.sport === s).length, 'carte')} · ${J.size} jouée${J.size > 1 ? 's' : ''}${attendues ? ` sur ${attendues}` : ''} à ce palier${largePC() ? ' · coche la colonne « Jouée » pour marquer une carte' : ''}</p></div></div>
+  $('vue-cartes').innerHTML = `<div class="entete"><div class="titres"><h1>Mes cartes · ${SPORTS[s]}</h1><p class="doux petit">${pluriel(lignes.filter((l) => l.c.sport === s).length, 'carte')} · ${J.size} jouée${J.size > 1 ? 's' : ''}${attendues ? ` sur ${attendues}` : ''} à ce palier${largePC() ? (vue.affichage === 'tableau' ? ' · coche la colonne « Jouée » pour marquer une carte' : ' · marque une carte depuis sa fiche') : ''}</p></div>${largePC() ? `<div class="outils"><div class="seg" role="group" aria-label="Affichage"><button type="button" data-act="affichage" data-v="liste" aria-pressed="${vue.affichage === 'liste'}">Liste</button><button type="button" data-act="affichage" data-v="tableau" aria-pressed="${vue.affichage === 'tableau'}">Tableau</button></div></div>` : ''}</div>
     <div class="tel-seul">${alertePalier(s) ? `<div style="margin-bottom:var(--e3)">${alertePalier(s)}</div>` : ''}</div>
     <div class="barre-filtres">
       <div class="seg" role="group" aria-label="Poste">${[null, ...POSTES[s]].map((x) => `<button type="button" data-act="poste" data-v="${x ?? ''}" aria-pressed="${x === vue.poste}">${x ?? 'Tous'}</button>`).join('')}</div>
@@ -1082,6 +1101,17 @@ function afficherListeCartes() {
     el.innerHTML = `<div class="carte tableau">${vis.map((l) => ligne(l, { horsSolo: true, griser: true })).join('')}</div>${plus}`;
     return;
   }
+  // PC, affichage liste : la ligne des compositions, fiche épinglée à droite (dès 1 024 px).
+  if (vue.affichage === 'liste') {
+    const k = `cartes|${s}`;
+    if (!vis.some((l) => l.c.id === vue.epingle[k])) vue.epingle[k] = vis[0].c.id;
+    el.innerHTML = `<div class="cartes-grille">
+      <section class="carte tableau" aria-label="Cartes">${enteteTab(s)}${vis.map((l) => ligne(l, { horsSolo: true, griser: true, epinglable: true })).join('')}${plus}</section>
+      <aside class="col-fiche carte" id="col-fiche" data-des="pc" aria-label="Fiche épinglée"></aside></div>`;
+    afficherColFiche();
+    dessiner(el);
+    return;
+  }
   // PC : tableau dense triable, en-tête collant, colonne « jouée » à cocher.
   const th = (k, t, cls = '', w = null) => `<th scope="col" class="${cls}"${w ? ` style="width:${w}px"` : ''} ${vue.tri === k ? `aria-sort="${vue.sens > 0 ? 'ascending' : 'descending'}"` : ''}><button type="button" data-act="tri-col" data-v="${k}">${t}<span class="fl">${vue.tri === k ? (vue.sens > 0 ? '▲' : '▼') : ''}</span></button></th>`;
   const lignesHtml = vis.map((l) => {
@@ -1092,7 +1122,7 @@ function afficherListeCartes() {
       <td><span class="nom">${esc(l.j.nom)}</span><span class="sous">${esc(postesL(l).join('/'))} · ${esc(l.j.club?.nom ?? '?')}</span></td>
       <td>${l.m ? `<span class="nom" style="font-weight:400">${esc(quand(l.m.debutUTC))}</span><span class="sous">${l.lieu === 'ext' ? '@' : l.lieu === 'dom' ? 'vs' : ''} ${esc(l.adv ?? '?')}${v != null ? ` · ${v}${nbsp}% vict.` : ''}</span>` : '<span class="doux">pas de match</span>'}</td>
       ${nba ? `<td><div class="cellule-p"><b>${l.pr.score?.minutes == null ? '–' : nb(l.pr.score.minutes)}</b>${G.barreMin(l.pr.score, seuilMinutes(), 56)}${l.pr.score?.minutesEnHausse ? '<span class="ok-txt" title="minutes en hausse">▲</span>' : ''}</div></td>` : ''}
-      ${nba ? '' : `<td><div class="cellule-p"><b>${pct(l.pr.p)}</b>${G.barreP(l.pr.p, seuil(), 56)}</div></td>`}
+      ${nba ? '' : `<td><div class="cellule-p"><b class="${confirme(l) ? 'ok-txt' : ''}">${txtChances(l)}</b>${G.barreP(l.pr.p, seuil(), 56)}</div></td>`}
       <td>${nba ? `<div class="cellule-p"><b>${nb(l.pr.siJoue)}</b>${G.ival(l, 64)}</div>` : (() => { const f = scoreFoot(l); return `<div class="cellule-tit"><b>${nb(f.v)}</b>${f.sous ? `<small>${esc(f.sous)}</small>` : ''}</div>`; })()}</td>
       ${nba ? '' : `<td class="r"><b>${nb(l.pr.esperance, 1)}</b></td>`}
       ${nba ? `<td class="r">${l.j.etoiles && l.pr.siJoue != null ? nb(l.pr.siJoue / l.j.etoiles, 1) : '–'}</td>` : ''}
@@ -1187,7 +1217,7 @@ function ficheHtml(l) {
           ${c.sport === 'nba'
             ? `<div class="kpi heros"><span class="libelle">Minutes projetées</span><span class="v">${s.minutes == null ? '–' : nb(s.minutes)}<small>${nbsp}min</small></span>${G.barreMin(s, seuilMinutes(), 140)}<span class="s">${s.minutes == null ? '' : `8 fois sur 10 entre ${nb(s.minutesBas)} et ${nb(s.minutesHaut)} min${s.minutesEnHausse ? ` · <b class="ok-txt">▲ en hausse</b> (${nb(s.minutesReference)} sur ses 10 derniers)` : ''} · seuil ${seuilMinutes()} min`}</span></div>
                <div class="kpi"><span class="libelle">Disponibilité</span><span class="v">${pct(pr.p)}</span>${G.barreP(pr.p, seuil(), 140, 10)}<span class="s">chances de jouer (blessures ESPN, absences récentes, 2e soir de suite)</span></div>`
-            : `<div class="kpi heros"><span class="libelle">Chances de jouer</span><span class="v">${pct(pr.p)}</span>${G.barreP(pr.p, seuil(), 140, 10)}<span class="s">repère orange : ton seuil de ${pct(seuil())}</span></div>`}
+            : `<div class="kpi heros"><span class="libelle">Chances de jouer</span><span class="v${confirme(l) ? ' ok-txt' : ''}">${txtChances(l)}</span>${G.barreP(pr.p, seuil(), 140, 10)}<span class="s">${confirme(l) ? 'titulaire dans la composition officielle' : `repère orange : ton seuil de ${pct(seuil())}`}</span></div>`}
           ${c.sport === 'football' ? (() => { const sf = scoreFoot(l); return `<div class="kpi"><span class="libelle">${pr.situationConfirmee === 'remplacant' ? 'S’il entre' : 'S’il est titulaire'}</span><span class="v">${nb(sf.v)}</span><span class="s">${esc(sf.sous)}${f ? ` · tous cas confondus, 80 % entre ${nb(f.q10)} et ${nb(f.q90)}` : ''}, bonus compris</span></div>`; })() : `<div class="kpi"><span class="libelle">Score projeté</span><span class="v">${nb(pr.siJoue)}</span>${G.ival(l, 140, true)}<span class="s">${f ? `80 % des cas entre ${nb(f.q10)} et ${nb(f.q90)}, bonus compris${s.minutes != null ? `, pour ${nb(s.minutes)} min projetées` : ''}` : 'pas assez de scores'}${j.etoiles && pr.siJoue != null ? ` · ${nb(pr.siJoue / j.etoiles, 1)} pts/★` : ''}</span></div>`}
           ${c.sport === 'football' ? `<div class="kpi"><span class="libelle">Espérance</span><span class="v">${nb(pr.esperance, 1)}</span><span class="s">chances × score (titulaire ou entré)</span></div>` : ''}
           ${c.sport === 'football'
@@ -1217,22 +1247,29 @@ function ficheHtml(l) {
 // Volet de la fiche : à droite sur PC (la page reste visible), plein écran sur téléphone.
 // À partir de 1 800 px, dans le Solo, la fiche est une 3e colonne épinglée.
 const fiche = { ouverte: null, origine: null };
+// Fiche épinglée : Solo et Squad à partir de 1 800 px (3e colonne), Mes cartes (liste) à partir de 1 024 px.
+const cleEpingle = () => `${vueCourante()}|${vue.sport}`;
+function epingleActive() {
+  const col = $('col-fiche');
+  if (!col || !col.closest('#main') || col.closest('[hidden]')) return false;
+  if (vueCourante() === 'solo' && vue.mode !== 'plusieurs') return false;
+  return col.dataset.des === 'pc' ? largePC() : tresLarge();
+}
 function marquerChoisies() {
+  const ep = epingleActive() ? vue.epingle[cleEpingle()] : null;
   document.querySelectorAll('#main [data-fiche]').forEach((el) => el.classList.toggle('choisie',
-    el.dataset.fiche === fiche.ouverte || (tresLarge() && Boolean(el.closest('#solo-contenu')) && el.dataset.fiche === vue.epingle[vue.sport] && Boolean($('col-fiche')))));
+    el.dataset.fiche === fiche.ouverte || (ep != null && el.dataset.fiche === ep && !el.closest('#col-fiche'))));
 }
 function afficherColFiche() {
-  const col = $('col-fiche'); if (!col || !tresLarge()) return;
-  const l = parId.get(vue.epingle[vue.sport]);
+  const col = $('col-fiche'); if (!col || !epingleActive()) return;
+  const l = parId.get(vue.epingle[cleEpingle()]);
   col.innerHTML = `<div class="volet-tete">${ico('epingle')}<b>Fiche épinglée</b><span class="mini doux">clic sur une ligne pour changer</span></div>${l ? ficheHtml(l) : ''}`;
   dessiner(col);
   marquerChoisies();
 }
 function ouvrirFiche(id) {
   const l = parId.get(id); if (!l) return;
-  if (tresLarge() && $('col-fiche') && vueCourante() === 'solo' && vue.mode === 'plusieurs') {
-    vue.epingle[l.c.sport] = id; afficherColFiche(); return;
-  }
+  if (epingleActive()) { vue.epingle[cleEpingle()] = id; afficherColFiche(); return; }
   if (!fiche.ouverte) fiche.origine = document.activeElement;
   fiche.ouverte = id;
   const v = $('volet');
@@ -1571,7 +1608,7 @@ function tout(anime = false) {
 
 // ---------- Événements (délégués) ----------
 // Après un nouveau rendu, le focus revient sur la commande équivalente (clavier, lecteur d'écran).
-const RERENDUS = new Set(['mode', 'seuil', 'poste', 'etoiles', 'tri-col', 'creneau', 'jour', 'journee', 'tri', 'dispo', 'cocher']);
+const RERENDUS = new Set(['affichage', 'mode', 'seuil', 'poste', 'etoiles', 'tri-col', 'creneau', 'jour', 'journee', 'tri', 'dispo', 'cocher']);
 function refocaliser(a, v) {
   if (!RERENDUS.has(a)) return;
   const sel = v != null ? `#main [data-act="${a}"][data-v="${CSS.escape(v)}"]` : `#main [data-act="${a}"]`;
@@ -1598,6 +1635,7 @@ document.addEventListener('click', (e) => {
       case 'jouer': jouerEquipe(b.dataset.sport, v.split(',')); return;
       case 'creneau': vue.creneauOuvert = v; afficherCreneaux(vue.sport); return;
       case 'jour': vue.squadJour = v; afficherSquad(); return;
+      case 'affichage': vue.affichage = v; ecrireAffichage(v); afficherCartes(); return;
       case 'poste': vue.poste = v || null; afficherCartes(); return;
       case 'etoiles': vue.etoiles = v === '' ? null : Number(v); afficherCartes(); return;
       case 'tri-col': vue.sens = vue.tri === v ? -vue.sens : (CROISSANTS.has(v) ? 1 : -1); vue.tri = v; afficherCartes(); return;

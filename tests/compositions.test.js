@@ -7,7 +7,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parametresDepuisMethode } from '../src/moteur/parametres.js';
 import { projeterCarte } from '../src/moteur/projection.js';
-import { proposer, proposerParCreneau, squadDuJour, joursAVenir, jourDeJeu, autresChoix } from '../src/moteur/compositions.js';
+import { proposer, proposerParCreneau, squadDuJour, joursAVenir, jourDeJeu, autresChoix, autresChoixSquad } from '../src/moteur/compositions.js';
 import { simulerEquipe, multiplicateurCarte } from '../src/moteur/simulation.js';
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -213,6 +213,24 @@ test('Squad du jour : cartes du jour seulement, cartes jouées en Arcade autoris
   for (const g of pos('GK')) for (const d of pos('DF')) for (const m of pos('MD')) for (const f of pos('FW'))
     for (const x of [...pos('DF'), ...pos('MD'), ...pos('FW')]) { if (new Set([d, m, f, x]).size < 4) continue; best = Math.max(best, esp([g, d, m, f, x])); }
   assert.ok(Math.abs(r.equipe.esperance - best) < 1e-9, `${r.equipe.esperance} contre ${best}`);
+});
+
+test('Squad, autres choix : hors des joueurs de l’équipe, meilleur remplacement, score attendu avant → après', () => {
+  const L = effectif();
+  const o = { sport: 'football', jour: '2026-11-08', regle: REGLE_FOOT, seuil: P.seuil_jouer, maintenant: MAINTENANT };
+  const r = squadDuJour(L, P, o);
+  const a = autresChoixSquad(L, P, o, r.equipe);
+  const Lp = parId(L);
+  const joueurs = new Set(r.equipe.cartes.map((id) => Lp.get(id).joueur.id));
+  const tous = a.groupes.flatMap((g) => g.choix);
+  assert.ok(tous.length > 0);
+  for (const c of tous) {
+    assert.ok(!joueurs.has(Lp.get(c.carteId).joueur.id), 'pas un joueur de l’équipe');
+    assert.ok(r.equipe.cartes.includes(c.remplace));
+    // l'équipe du jour est la meilleure : aucun remplacement ne fait mieux
+    assert.ok(c.ecart <= 1e-9, `${c.carteId} : ${c.ecart}`);
+    assert.ok(Math.abs(c.esperanceEquipe - (r.equipe.esperance + c.ecart)) < 1e-9);
+  }
 });
 
 test('cumul des bonus par addition : capitaine Eclipse × 1,7 ; le brassard va au meilleur score de base', () => {

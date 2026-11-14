@@ -438,6 +438,12 @@ main { display: block; min-width: 0; padding: var(--e4) max(16px, env(safe-area-
 @media (min-width: 1800px) { .solo-grille.avec-fiche { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) 460px; } }
 .col-fiche { display: none; }
 @media (min-width: 1800px) { .col-fiche { display: block; position: sticky; top: var(--e5); max-height: calc(100vh - 48px); overflow-y: auto; } }
+/* Mes cartes (affichage liste, PC) : la liste et la fiche épinglée dès 1 024 px */
+.cartes-grille { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--e5); align-items: start; }
+@media (min-width: 1024px) {
+  .cartes-grille { grid-template-columns: minmax(0, 1fr) clamp(360px, 30vw, 460px); }
+  .col-fiche[data-des="pc"] { display: block; position: sticky; top: var(--e5); max-height: calc(100vh - 48px); overflow-y: auto; }
+}
 .reglages { display: flex; flex-wrap: wrap; gap: var(--e3); align-items: center; }
 .reglage { display: inline-flex; align-items: center; gap: var(--e2); flex-wrap: wrap; font-size: var(--t2); color: var(--doux); }
 .legende-dist { margin-top: var(--e2); display: grid; gap: 4px; }

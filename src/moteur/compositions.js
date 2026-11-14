@@ -212,12 +212,7 @@ export function squadDuJour(lignes, P, o) {
   let meilleure = null, nbEquipes = 0;
   for (const equipe of generateur) {
     nbEquipes++;
-    const esp = equipe.map((x) => x.projection.esperance);
-    // Gain du brassard : en addition, + (mult − 1) × score de base ; en multiplication, × mult du score bonifié.
-    const gains = equipe.map((x) => (o.regle.cumul_bonus?.mode === 'multiplication' ? (mult - 1) * x.projection.esperance
-      : (mult - 1) * x.projection.p * x.projection.score.mu));
-    const cap = o.regle.capitaine ? gains.indexOf(Math.max(...gains)) : -1;
-    const total = esp.reduce((a, b) => a + b, 0) + (cap >= 0 ? gains[cap] : 0);
+    const { total, cap } = scoreSquad(equipe, o.regle, mult);
     if (!meilleure || total > meilleure.esperance) meilleure = { equipe, cap, esperance: total };
   }
   if (!meilleure) return { equipe: null, admissibles: admissibles.length, ecartees, nbEquipes, message: `Aucune équipe possible ce jour-là : ${admissibles.length} cartes admissibles.` };
@@ -232,6 +227,55 @@ export function squadDuJour(lignes, P, o) {
       etoiles: e.reduce((s, x) => s + (x.joueur.etoiles ?? 0), 0),
     },
     admissibles: admissibles.length, ecartees, nbEquipes,
+  };
+}
+
+// Score attendu d'une équipe de Squad : somme des espérances, plus le gain du brassard
+// (en addition : (mult − 1) × score de base attendu ; en multiplication : (mult − 1) × espérance),
+// capitaine = le plus grand gain.
+function scoreSquad(equipe, regle, mult = regle.capitaine?.multiplicateur ?? 1) {
+  const esp = equipe.map((x) => x.projection.esperance);
+  const gains = equipe.map((x) => (regle.cumul_bonus?.mode === 'multiplication' ? (mult - 1) * x.projection.esperance
+    : (mult - 1) * x.projection.p * x.projection.score.mu));
+  const cap = regle.capitaine ? gains.indexOf(Math.max(...gains)) : -1;
+  return { total: esp.reduce((a, b) => a + b, 0) + (cap >= 0 ? gains[cap] : 0), cap };
+}
+
+/**
+ * Autres choix du Squad (methode.md 8) : mêmes candidats que les autres choix du Solo (meilleures
+ * espérances par poste, ou en tout en NBA), parmi les cartes du jour hors des joueurs de l'équipe ;
+ * pour chacune, le remplacement permis (postes, joueur unique, étoiles) qui garde le meilleur score
+ * attendu d'équipe, brassard recalculé.
+ * @param equipeSquad résultat de squadDuJour (equipe : cartes, esperance)
+ * @returns { groupes: [{ poste, choix: [{ carteId, remplace, capitaine, esperanceEquipe, ecart }] }] }
+ */
+export function autresChoixSquad(lignes, P, o, equipeSquad) {
+  const sim = P.simulation, regle = o.regle, mult = regle.capitaine?.multiplicateur ?? 1;
+  const { admissibles } = cartesAdmissibles(lignes, P, { ...o, jouees: new Set() });
+  const parId = new Map(admissibles.map((x) => [x.carte.id, x]));
+  const equipe = equipeSquad.cartes.map((id) => parId.get(id));
+  if (equipe.some((x) => !x)) return { groupes: [] };
+  const joueursEquipe = new Set(equipe.map((x) => x.joueur.id));
+  const libres = admissibles.filter((x) => !joueursEquipe.has(x.joueur.id)).sort(parEsperance);
+  const groupes = o.sport === 'football'
+    ? regle.postes.obligatoires.map((poste) => ({ poste, candidats: libres.filter((x) => postesDe(x).includes(poste)).slice(0, sim.alternatives_par_poste) }))
+    : [{ poste: null, candidats: libres.slice(0, sim.alternatives_nba) }];
+  return {
+    groupes: groupes.map(({ poste, candidats }) => ({
+      poste,
+      choix: candidats.map((c) => {
+        let meilleur = null;
+        for (let i = 0; i < equipe.length; i++) {
+          const essai = equipe.map((x, k) => (k === i ? c : x));
+          if (new Set(essai.map((x) => x.joueur.id)).size < essai.length) continue;
+          if (!postesValides(essai, regle) || !etoilesValides(essai, regle)) continue;
+          const { total, cap } = scoreSquad(essai, regle, mult);
+          if (!meilleur || total > meilleur.esperanceEquipe) meilleur = { remplace: equipe[i].carte.id, capitaine: cap >= 0 ? essai[cap].carte.id : null, esperanceEquipe: total };
+        }
+        return { carteId: c.carte.id, esperance: c.projection.esperance, ...(meilleur ?? { remplace: null, esperanceEquipe: null }),
+          ecart: meilleur ? meilleur.esperanceEquipe - equipeSquad.esperance : null };
+      }),
+    })),
   };
 }
 

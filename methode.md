@@ -418,6 +418,13 @@ Vérifié sur un mois de calendrier (voir `CLAUDE.md`). Mêmes règles de
 composition que l'Arcade du sport (à confirmer dans le jeu). Recherche
 exhaustive sur les candidats présélectionnés de la section 6.
 
+**Autres choix du Squad** (2026-11-14, `autresChoixSquad`) : comme en section 6 bis, les
+meilleures espérances par poste (football) ou en tout (NBA) parmi les cartes du jour, hors des
+joueurs de l'équipe ; pour chacune, le remplacement permis (postes, joueur unique, étoiles) qui
+garde le meilleur score attendu d'équipe, brassard recalculé. On affiche le score attendu de
+l'équipe avant → après (NBA : la somme des scores projetés, l'espérance n'étant pas affichée).
+L'équipe du jour étant la meilleure, un remplacement ne peut que coûter des points.
+
 ## 9. Contexte du match
 
 Rétro-tests du 2026-11-07 (`node outils/retro-test-contexte.js football|nba`)
