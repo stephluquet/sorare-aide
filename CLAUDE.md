@@ -31,6 +31,7 @@ node src/recuperation.js yapapir football    # → data/cartes-football-AAAA-MM-
 node src/recuperation.js yapapir nba         # → data/cartes-nba-AAAA-MM-JJ.json
 node src/projection.js                       # → sorties/projections-AAAA-MM-JJ.html (football + NBA)
 npm test                                     # rejoue tests/cas/
+bash outils/publier-gitlab.sh               # instantané du code, SANS données personnelles, vers le dépôt GitLab public
 npm run app                                  # assemble app/ + src/moteur/ + données → sorties/app/sorare-aide.html (artifact), index.html et donnees-app.json (hors artifact)
 ```
 
@@ -93,6 +94,7 @@ npm run app                                  # assemble app/ + src/moteur/ + don
 - Le fichier publié n'a ni `<!doctype>`, ni `<html>`, ni `<head>`, ni `<body>` (ajoutés à la publication) ; `<title>` et `<style>` en tête. Données de la maquette sans images : environ 0,9 Mo pour 1 029 cartes avec 15 matchs d'historique chacune.
 
 ## Règles absolues
+- **Dépôt GitLab public** https://gitlab.com/steph.luquet/sorarhelp (créé par l'utilisateur le 2026-11-14) : **ne jamais y pousser de donnée** (clé API, historique des joueurs, pages produites, maquettes sur les vraies données, adresses e-mail). Toujours passer par `bash outils/publier-gitlab.sh` (instantané sans l'historique GitHub, chemins exclus listés dans le script, contrôle final), jamais `git push` direct. Authentification par le secret réseau `gitlab.com` de l'environnement (identifiant `oauth2` + jeton `write_repository`).
 - Aucune action sur l'argent ou le marché : pas d'enchère, d'achat, de vente, d'offre (l'outil ne fait que lire ; `appelGraphql()` refuse les mutations).
 - Ne jamais inventer une statistique, un statut de joueur ou une règle de compétition. Si c'est inconnu : écrire « à vérifier ».
 - Les règles de compétition et les formules ne vivent qu'à un seul endroit (`regles/`, `methode.md`), jamais recopiées dans le code. Le moteur lit ses paramètres dans le bloc JSON de `methode.md` (l'ancienne chaîne, dans `docs/methode-v1.md`).
