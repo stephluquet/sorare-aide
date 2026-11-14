@@ -949,6 +949,8 @@ function afficherAutres(sport, equipe, a, o = {}) {
     if (!parRemplace.has(c.remplace)) parRemplace.set(c.remplace, []);
     parRemplace.get(c.remplace).push(c);
   }
+  // Groupes dans l'ordre de l'équipe affichée (football : GK, DF, MD, FW, joker ; NBA : coup d'envoi).
+  const ordreEquipe = membresDe(equipe).map((l) => l.c.id);
   const tete = `<header><h2>Autres choix</h2><span class="doux petit">si tu préfères ajuster l'équipe ${o.squad ? 'du jour' : 'prudente'}</span></header>`;
   if (!parRemplace.size) { el.innerHTML = `${tete}<p class="corps petit doux">Pas d’autre carte admissible.</p>`; return; }
   const avant = o.squad ? Math.round(sport === 'nba' ? projEquipe : equipe.esperance) : Math.round(equipe.pPasser * 100);
@@ -965,7 +967,7 @@ function afficherAutres(sport, equipe, a, o = {}) {
     ? `Pour chaque joueur de l'équipe, les meilleures cartes du jour qui peuvent le remplacer (postes, joueur unique${sport === 'nba' ? ', 16 étoiles' : ''}), et le ${sport === 'nba' ? 'score projeté' : 'score attendu'} de l'équipe avant → après le changement.`
     : `Pour chaque joueur de l'équipe, la meilleure carte qui peut le remplacer (postes, joueur unique${sport === 'nba' ? ', 16 étoiles' : ''}) et la chance de passer avant → après le changement.`;
   el.innerHTML = `${tete}<p class="corps petit doux">${explication}</p>
-    <div class="tableau">${[...parRemplace.entries()].map(([rem, choix]) => {
+    <div class="tableau">${[...parRemplace.entries()].sort((x, y) => ordreEquipe.indexOf(x[0]) - ordreEquipe.indexOf(y[0])).map(([rem, choix]) => {
       const r = parId.get(rem), suite = choix.slice(1, AUTRES_PAR_GROUPE);
       return `<div class="groupe-alt"><h3>À la place de ${esc(r.j.nom)} (${esc(postesL(r).join('/'))}${equipe.capitaine === rem ? ', capitaine' : ''})</h3>${ligneAlt(choix[0])}` +
         (suite.length ? `<details><summary>+ ${pluriel(suite.length, 'autre')}</summary>${suite.map(ligneAlt).join('')}</details>` : '') + '</div>';
