@@ -11,6 +11,8 @@ import { fileURLToPath } from 'node:url';
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SORTIE = join(RACINE, 'sorties', 'web');
+// Adresse publique du site (aperçus de lien : l'image doit avoir une adresse absolue).
+const SITE = process.env.SORARHELP_URL ?? 'https://sorare-aide.pages.dev';
 const lire = (...p) => readFileSync(join(RACINE, ...p), 'utf8');
 
 const FICHIERS = [
@@ -21,6 +23,7 @@ const FICHIERS = [
   'web/web.js',
   'web/icones/icone.svg',
   'web/icones/apple-touch-icon.png',
+  'web/icones/partage.png',
   'methode.md',
   ...readdirSync(join(RACINE, 'regles')).filter((f) => f.endsWith('.json')).map((f) => `regles/${f}`),
 ];
@@ -48,7 +51,17 @@ writeFileSync(join(SORTIE, 'index.html'), `<!doctype html>
 <link rel="icon" type="image/svg+xml" href="web/icones/icone.svg">
 <link rel="apple-touch-icon" href="web/icones/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-title" content="Sorar'help">
-<meta name="description" content="Aide à la composition Sorare (Arcade solo et Squad, football et NBA). Lecture seule.">
+<meta name="description" content="L'équipe à jouer pour passer ton palier Arcade, et la meilleure équipe Squad du jour. Football et NBA. Lecture seule.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Sorar'help">
+<meta property="og:title" content="Sorar'help">
+<meta property="og:description" content="L'équipe à jouer pour passer ton palier Arcade, et la meilleure équipe Squad du jour. Football et NBA. Lecture seule.">
+<meta property="og:url" content="${SITE}/">
+<meta property="og:image" content="${SITE}/web/icones/partage.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Logo Sorar'help : un escalier dont la dernière marche est dorée, sur fond nuit">
+<meta name="twitter:card" content="summary_large_image">
 </head><body>
 ${gabarit}
 </body></html>
