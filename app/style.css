@@ -475,9 +475,9 @@ img.vig { border: 0; }
 .c-s .ppe { display: none; }
 .c-extra { grid-area: extra; font-size: var(--t2); display: flex; flex-wrap: wrap; gap: var(--e2); align-items: center; padding-top: 4px; }
 .entete-tab { display: none; }
-@container (min-width: 640px) {
+@container (min-width: 720px) {
   .ligne {
-    grid-template-columns: 32px minmax(130px, 1.3fr) minmax(120px, 1fr) 100px 104px 108px; column-gap: 10px;
+    grid-template-columns: 32px minmax(120px, 1.3fr) minmax(96px, 1fr) 96px 100px minmax(112px, 128px); column-gap: 10px;
     grid-template-areas: "img nom match forme p s" "img tags match forme p s" "img extra extra extra extra extra";
     min-height: 56px; padding: 6px var(--e4); align-items: start;
   }
@@ -494,7 +494,7 @@ img.vig { border: 0; }
   .c-p .pv { font-size: var(--t3); text-align: left; }
   .c-s .ppe { display: block; font-size: var(--t1); }
   .entete-tab {
-    display: grid; grid-template-columns: 32px minmax(130px, 1.3fr) minmax(120px, 1fr) 100px 104px 108px; column-gap: 10px;
+    display: grid; grid-template-columns: 32px minmax(120px, 1.3fr) minmax(96px, 1fr) 96px 100px minmax(112px, 128px); column-gap: 10px;
     padding: var(--e2) var(--e4); border-top: 1px solid var(--trait); background: var(--surface-2);
   }
   .entete-tab span { white-space: normal; line-height: 1.3; }
