@@ -693,6 +693,11 @@ table.dense td.statut .tag { margin: 1px 0; }
 .c-tit { min-width: 0; }
 /* étroit : score et mention sur une ligne, alignés à gauche sous la forme du club */
 @container (max-width: 379px) { .c-s.c-tit { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: start; gap: 0 var(--e2); } .c-tit .sous { text-align: left; } }
+/* très étroit (320 px) : la mention passe toujours sous le score, pour un même bord gauche d'une ligne à l'autre */
+@container (max-width: 299px) { .c-tit .sous { flex-basis: 100%; } }
+/* colonnes : score et mention au bord gauche de la colonne, sous leur en-tête, quelle que soit la longueur de la mention
+   (alignés à droite, le score se décalait selon que la mention tenait ou non sur une ligne) */
+@container (min-width: 720px) { .c-s.c-tit { justify-items: start; justify-content: stretch; } .c-tit .sous { text-align: left; } }
 .cellule-tit { display: grid; gap: 2px; }
 
 /* Solo : sélecteur prudente / équilibrée / ambitieuse dans l'en-tête du résumé */
