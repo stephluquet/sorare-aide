@@ -268,6 +268,7 @@ Rapport de la revue : https://claude.ai/artifact/9VVxJfD4jgqGfUbyxRPKGz (constat
 - **C-02** : `details.filtres` a `min-width: 0` (un libellé de journée NBA long élargissait la page à 390 px).
 - **A2-01** : ligne joueur empilée = `nom | chances`, puis le match sur toute la largeur, puis `forme | score` ; sous 380 px de conteneur le score passe sous la forme (sinon ils se chevauchent). Le nom passe à la ligne. Contrôle : aucun `.c-match` ni `.c-nom b` avec `scrollWidth > clientWidth`.
 - **A2-03, A2-04** : le mode du Solo et le créneau ouvert par sport sont gardés pour la visite (`sessionStorage`, clé `sorare-aide-solo`) : ils survivent au rechargement qui suit ↻, pas à une nouvelle visite. Après le choix d'un créneau, la page défile jusqu'à son équipe quand elle est sous le premier écran.
+- **A2-07** : la fiche épinglée de Mes cartes se cale sous la barre de filtres collante, dont la hauteur est mesurée (`suivreFiltres`, variable CSS `--h-filtres` sur `#vue-cartes`).
 
 ## Étape 3 (à venir) : conseil avant chaque journée
 Vérifier titulaires et blessures avec des sources citées et datées, signaler les pièges, proposer 2 ou 3 compositions. L'utilisateur valide dans l'appli Sorare.

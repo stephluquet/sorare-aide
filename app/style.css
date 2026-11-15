@@ -442,7 +442,8 @@ main { display: block; min-width: 0; padding: var(--e4) max(16px, env(safe-area-
 .cartes-grille { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--e5); align-items: start; }
 @media (min-width: 1024px) {
   .cartes-grille { grid-template-columns: minmax(0, 1fr) clamp(360px, 30vw, 460px); }
-  .col-fiche[data-des="pc"] { display: block; position: sticky; top: var(--e5); max-height: calc(100vh - 48px); overflow-y: auto; }
+  /* sous la barre de filtres collante (hauteur mesurée : --h-filtres), sinon le haut de la fiche glisse dessous */
+  .col-fiche[data-des="pc"] { display: block; position: sticky; top: calc(var(--h-filtres, 0px) + var(--e2)); max-height: calc(100vh - var(--h-filtres, 0px) - var(--e5)); overflow-y: auto; }
 }
 .reglages { display: flex; flex-wrap: wrap; gap: var(--e3); align-items: center; }
 .reglage { display: inline-flex; align-items: center; gap: var(--e2); flex-wrap: wrap; font-size: var(--t2); color: var(--doux); }

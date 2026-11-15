@@ -1143,7 +1143,20 @@ function afficherCartes() {
       </div></details>
     </div>
     <div id="cartes-liste"></div>`;
+  suivreFiltres();
   afficherListeCartes();
+}
+
+// La fiche épinglée de Mes cartes se cale sous la barre de filtres collante, dont la hauteur varie
+// (filtres ouverts ou repliés, retours à la ligne) : hauteur mesurée, donnée au CSS par --h-filtres.
+let roFiltres = null;
+function suivreFiltres() {
+  const vueCartes = $('vue-cartes'), barre = vueCartes.querySelector('.barre-filtres');
+  roFiltres?.disconnect();
+  if (!barre) return;
+  const poser = () => vueCartes.style.setProperty('--h-filtres', `${Math.ceil(barre.getBoundingClientRect().height)}px`);
+  poser();
+  if (typeof ResizeObserver === 'function') { roFiltres = new ResizeObserver(poser); roFiltres.observe(barre); }
 }
 
 function afficherListeCartes() {
