@@ -361,6 +361,9 @@ function alertePalier(sport) {
 }
 
 // ---------- Graphiques (SVG fait main, couleurs en jetons) ----------
+// Barres empilées : teinte du sport par rang (en % de la couleur, le reste en surface). Texte clair sur les deux
+// premières, encre ensuite : au moins 4,9:1 dans les deux thèmes et les deux sports (calculé le 2026-11-15).
+const TEINTES = [100, 90, 54, 42, 30];
 const G = {
   // Chances de jouer : barre avec repère du seuil (une longueur se lit mieux qu'un angle).
   // NBA : minutes projetées sur 0–48 : fourchette 10–90 %, point = projection, trait = seuil de minutes.
@@ -374,7 +377,7 @@ const G = {
     if (p == null) return `<svg class="gx barre-p" width="${w}" height="14" aria-hidden="true"><rect class="piste" y="3" width="${w}" height="${h}" rx="2"/></svg>`;
     const cls = atteint(p, s) ? 'confirme' : 'sous'; // vert à partir de ton seuil, rouge en dessous (demande de l'utilisateur)
     const H = 14, y = (H - h) / 2, xs = (w * s).toFixed(1);
-    return `<svg class="gx barre-p ${cls}" width="${w}" height="${H}" viewBox="0 0 ${w} ${H}" role="img" aria-label="Chances de jouer ${pct(p)}, seuil ${pct(s)}"><rect class="piste" x="0" y="${y}" width="${w}" height="${h}" rx="2"/><rect class="rempli" x="0" y="${y}" width="${(w * p).toFixed(1)}" height="${h}" rx="2"/><line class="seuil" x1="${xs}" x2="${xs}" y1="0" y2="${H}"/></svg>`;
+    return `<svg class="gx barre-p ${cls}" width="${w}" height="${H}" viewBox="0 0 ${w} ${H}" role="img" aria-label="Chances de jouer ${pct(p)}, seuil ${pct(s)}"><rect class="piste" x="0" y="${y}" width="${w}" height="${h}" rx="2"/><rect class="rempli" x="0" y="${y}" width="${(w * p).toFixed(1)}" height="${h}" rx="2"/><line class="seuil-fond" x1="${xs}" x2="${xs}" y1="0" y2="${H}"/><line class="seuil" x1="${xs}" x2="${xs}" y1="0" y2="${H}"/></svg>`;
   },
   // Score s'il joue : point et fourchette 10–90 % sur l'échelle commune du sport.
   ival(l, w = 72, axe = false) {
@@ -433,7 +436,7 @@ const G = {
       .sort((a, b) => b.v - a.v);
     const tot = parts.reduce((a, x) => a + x.v, 0), M = Math.max(tot, cible ?? 0) * 1.04 || 1;
     return `<div class="empilee" role="img" aria-label="Score projeté par joueur (${nb(tot)} au total)${cible ? ` face à la cible ${cible}` : ''} : ${parts.map((x) => `${esc(x.l.j.nom)} ${nb(x.v)}`).join(', ')}">${parts.map((x, i) =>
-      `<span style="width:${(x.v / M) * 100}%;background:color-mix(in srgb, var(--sport) ${[100, 82, 64, 46, 32][i] ?? 30}%, var(--surface))" title="${esc(x.l.j.nom)} : ${nb(x.v, 1)}">${esc(nomCourt(x.l.j.nom))} ${nb(x.v)}</span>`).join('')}` +
+      `<span style="width:${(x.v / M) * 100}%;background:color-mix(in srgb, var(--sport) ${TEINTES[i] ?? 30}%, var(--surface))"${i < 2 ? ' class="plein"' : ''} title="${esc(x.l.j.nom)} : ${nb(x.v, 1)}">${esc(nomCourt(x.l.j.nom))} ${nb(x.v)}</span>`).join('')}` +
       `${cible ? `<i class="marque-cible" style="left:${(cible / M) * 100}%"><b>cible ${cible}</b></i>` : ''}</div>`;
   },
   // Distribution du score de l'équipe face à la cible (résumé du moteur : resumerTirages).
@@ -733,7 +736,19 @@ function ageDonnees() {
   return { t, min, court, long: `il y a ${court}`, vieux: min >= 180 };
 }
 
+// La navigation est redessinée souvent (chances calculées après coup, mise à jour) : la commande qui avait le focus
+// le retrouve après le rendu (même lien ou même bouton), sinon le clavier repartait du début de la page.
+function cleFocusNav() {
+  const a = document.activeElement, zone = a?.closest?.('#laterale, #haut, #bas');
+  if (!zone) return null;
+  return { zone: zone.id, sel: a.id ? `#${CSS.escape(a.id)}` : a.dataset.act ? `[data-act="${CSS.escape(a.dataset.act)}"]${a.dataset.v != null ? `[data-v="${CSS.escape(a.dataset.v)}"]` : ''}` : a.getAttribute('href') ? `a[href="${CSS.escape(a.getAttribute('href'))}"]` : null };
+}
 function rendreNav(ecran) {
+  const focusAvant = cleFocusNav();
+  rendreNavHtml(ecran);
+  if (focusAvant?.sel && !document.activeElement?.closest?.('#laterale, #haut, #bas')) $(focusAvant.zone).querySelector(focusAvant.sel)?.focus({ preventScroll: true });
+}
+function rendreNavHtml(ecran) {
   const s = vue.sport, accueil = ecran === 'accueil';
   const modes = [['accueil', 'maison', 'Accueil'], ['solo', 'solo', 'Solo'], ['squad', 'squad', 'Squad'], ['cartes', 'cartes', 'Mes cartes']];
   const lien = (m) => (m === 'accueil' ? '#accueil' : `#${s}/${m}`);
@@ -1257,7 +1272,7 @@ function blocProfil(l) {
     <div class="pf-total"><span>Total</span><b>${nb(p.total, 1)} <small>pts par match</small></b></div>
     ${faibles.length ? `<p class="petit stop-txt">${faibles.map((x) => `<b>${NOMS_STATS[x.s]} : ${signe(x.points)} par match</b>, ${x.rang}<sup>e</sup> sur ${x.sur}`).join(' ; ')}.</p>` : ''}
     <div class="pf-empile" role="img" aria-label="D'où viennent ses points : ${groupes.map(([n, v]) => `${n} ${nb(v, 1)}`).join(', ')} ; balles perdues −${nb(perte, 1)}">
-      <span class="pf-perte" style="width:${(perte / echelle) * 100}%"></span>${groupes.map(([n, v], i) => `<span style="width:${(Math.max(0, v) / echelle) * 100}%;--i:${i}" title="${n} : ${nb(v, 1)}">${v / echelle > 0.12 ? `${n} ${nb(v, 1)}` : ''}</span>`).join('')}
+      <span class="pf-perte" style="width:${(perte / echelle) * 100}%"></span>${groupes.map(([n, v], i) => `<span${i < 2 ? ' class="plein"' : ''} style="width:${(Math.max(0, v) / echelle) * 100}%;--p:${TEINTES[i] ?? 30}%" title="${n} : ${nb(v, 1)}">${v / echelle > 0.12 ? `${n} ${nb(v, 1)}` : ''}</span>`).join('')}
     </div>
     <p class="mini doux"><span class="stop-txt">−${nb(perte, 1)} de balles perdues</span> · ${nb(produit, 1)} produits · ${nb(p.total, 1)} nets. Comparé aux ${REF_NBA.n} joueurs de ton catalogue à ${D.P.profil.minutes_reference} min et plus (tous postes) ; rang 1 = le plus gros apport ; vert : premier quart, rouge : dernier quart ; trait : apport médian. Barème lu dans l'API Sorare.</p>
   </div>`;
@@ -1292,7 +1307,7 @@ function ficheHtml(l) {
           ${c.sport === 'nba'
             ? `<div class="kpi heros"><span class="libelle">Minutes projetées</span><span class="v">${s.minutes == null ? '–' : nb(s.minutes)}<small>${nbsp}min</small></span>${G.barreMin(s, seuilMinutesAffiche(), 140)}<span class="s">${s.minutes == null ? '' : `8 fois sur 10 entre ${nb(s.minutesBas)} et ${nb(s.minutesHaut)} min${s.minutesEnHausse ? ` · <b class="ok-txt">▲ en hausse</b> (${nb(s.minutesReference)} sur ses 10 derniers)` : ''} · seuil ${seuilMinutesAffiche()} min`}</span></div>
                <div class="kpi"><span class="libelle">Disponibilité</span><span class="v">${pct(pr.p)}</span>${G.barreP(pr.p, seuilAffiche(), 140, 10)}<span class="s">chances de jouer (blessures ESPN, absences récentes, 2e soir de suite)</span></div>`
-            : `<div class="kpi heros"><span class="libelle">Chances de jouer</span><span class="v${confirme(l) ? ' ok-txt' : ''}">${txtChances(l)}</span>${G.barreP(pr.p, seuilAffiche(), 140, 10)}<span class="s">${confirme(l) ? 'titulaire dans la composition officielle' : `repère orange : seuil de ${pct(seuilAffiche())}`}</span></div>`}
+            : `<div class="kpi heros"><span class="libelle">Chances de jouer</span><span class="v${confirme(l) ? ' ok-txt' : ''}">${txtChances(l)}</span>${G.barreP(pr.p, seuilAffiche(), 140, 10)}<span class="s">${confirme(l) ? 'titulaire dans la composition officielle' : `repère : seuil de ${pct(seuilAffiche())}`}</span></div>`}
           ${c.sport === 'football' ? (() => { const sf = scoreFoot(l); return `<div class="kpi"><span class="libelle">${pr.situationConfirmee === 'remplacant' ? 'S’il entre' : 'S’il est titulaire'}</span><span class="v">${nb(sf.v)}</span><span class="s">${esc(sf.sous)}${f ? ` · tous cas confondus, 80 % entre ${nb(f.q10)} et ${nb(f.q90)}` : ''}, bonus compris</span></div>`; })() : `<div class="kpi"><span class="libelle">Score projeté</span><span class="v">${nb(pr.siJoue)}</span>${G.ival(l, 140, true)}<span class="s">${f ? `80 % des cas entre ${nb(f.q10)} et ${nb(f.q90)}, bonus compris${s.minutes != null ? `, pour ${nb(s.minutes)} min projetées` : ''}` : 'pas assez de scores'}${j.etoiles && pr.siJoue != null ? ` · ${nb(pr.siJoue / j.etoiles, 1)} pts/★` : ''}</span></div>`}
           ${c.sport === 'football' ? `<div class="kpi"><span class="libelle">Espérance</span><span class="v">${nb(pr.esperance, 1)}</span><span class="s">chances × score (titulaire ou entré)</span></div>` : ''}
           ${c.sport === 'football'
@@ -1411,14 +1426,26 @@ function toast(texte, annuler = null) {
 
 // ---------- Fenêtres : marquage rapide des cartes jouées, aide ----------
 const sansAccents = (x) => (x ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+// Commande qui a ouvert la fenêtre : l'élément, et de quoi retrouver son équivalent s'il a été redessiné entre-temps
+// (la navigation est re-rendue à la fermeture du marquage).
 let origineFenetre = null;
+const memoOrigine = (e) => ({ e, id: e?.id || null, act: e?.dataset?.act ?? null, v: e?.dataset?.v ?? null, zone: e?.closest?.('#laterale, #haut, #main, #bas')?.id || null });
+function rendreFocus(o) {
+  if (!o?.e) return;
+  if (o.e.isConnected) { o.e.focus({ preventScroll: true }); return; }
+  const sel = o.id ? `#${CSS.escape(o.id)}` : o.act ? `[data-act="${CSS.escape(o.act)}"]${o.v != null ? `[data-v="${CSS.escape(o.v)}"]` : ''}` : null;
+  if (!sel) return;
+  const candidats = [...document.querySelectorAll(sel)].filter((x) => x.offsetParent);
+  (candidats.find((x) => o.zone && x.closest(`#${CSS.escape(o.zone)}`)) ?? candidats[0])?.focus({ preventScroll: true });
+}
 function ouvrirFenetre(titre, corps, onFermer = null) {
   const v = $('voile');
-  if (v.hidden) origineFenetre = document.activeElement;
+  if (v.hidden) origineFenetre = memoOrigine(document.activeElement);
   v.innerHTML = `<div class="fenetre" role="dialog" aria-modal="true" aria-labelledby="titre-fenetre" tabindex="-1">
     <div class="volet-tete"><b id="titre-fenetre">${titre}</b><button type="button" class="btn rond discret" data-act="fermer-fenetre" aria-label="Fermer">${ico('fermer')}</button></div>
     <div class="corps">${corps}</div></div>`;
   v.hidden = false;
+  for (const x of document.querySelectorAll('#app, #bas')) x.inert = true; // l'arrière-plan n'est plus atteignable au clavier ni au lecteur d'écran
   fermerFenetre.rappel = onFermer;
   v.querySelector('.fenetre').focus({ preventScroll: true });
 }
@@ -1426,8 +1453,9 @@ function fermerFenetre() {
   const v = $('voile'); if (v.hidden) return;
   v.hidden = true; v.innerHTML = '';
   const f = fermerFenetre.rappel; fermerFenetre.rappel = null;
+  for (const x of document.querySelectorAll('#app, #bas')) x.inert = false;
   if (f) f();
-  if (origineFenetre?.isConnected) origineFenetre.focus({ preventScroll: true });
+  rendreFocus(origineFenetre); origineFenetre = null;
 }
 // Recherche par nom ; une case coche ou décoche. Les propositions ne sont recalculées qu'à la fermeture.
 function ouvrirMarquage(sport) {

@@ -20,7 +20,7 @@
   --foot: #0b6b80; --nba: #b0335d;
   --ok: #15703f; --ok-doux: #e1f1e7; --attention: #8a5000; --attention-doux: #fbefdc;
   --stop: #b3261e; --stop-doux: #f9e3e1; --info: #2f4a6b; --info-doux: #e4ebf3;
-  --or: #8f6c00; --or-doux: #f5ecd0;
+  --or: #7d5e00; --or-doux: #f5ecd0;
   --d-tit: #2f4a6b; --d-ent: #a9bdd6; --d-neutre: #c6ced8; --d-bande: #e7edf4;
   --v: #1d7a48; --n: #6b7682; --d: #b3261e; --sur-plein: #ffffff;
   --voile: rgb(10 14 20 / .45);
@@ -277,7 +277,8 @@ main { display: block; min-width: 0; padding: var(--e4) max(16px, env(safe-area-
 .barre-p .rempli { fill: var(--encre); }
 .barre-p.sous .rempli { fill: var(--stop); }
 .barre-p.confirme .rempli { fill: var(--ok); }
-.barre-p .seuil { stroke: var(--attention); stroke-width: 2; }
+.barre-p .seuil-fond { stroke: var(--surface); stroke-width: 4; } /* liseré : détache le repère de la barre verte ou rouge */
+.barre-p .seuil { stroke: var(--encre); stroke-width: 2; }
 .ival .bande { fill: color-mix(in srgb, var(--d-tit) 35%, transparent); }
 .ival .pt { fill: var(--encre); stroke: var(--surface); stroke-width: 1.5; }
 .cote3 { display: flex; height: 10px; border-radius: 2px; overflow: hidden; gap: 2px; }
@@ -289,10 +290,8 @@ main { display: block; min-width: 0; padding: var(--e4) max(16px, env(safe-area-
 .cote-mini .reste { fill: url(#hachure); }
 .empilee { display: flex; height: 28px; border-radius: var(--r1); position: relative; background: var(--surface-2); }
 .empilee span { height: 100%; display: flex; align-items: center; padding: 0 6px; font-size: var(--t1); font-weight: 600; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; min-width: 0; border-right: 2px solid var(--surface); color: var(--encre); }
-/* texte lisible sur chaque teinte : clair sur les 3 plus foncées en thème clair, sur la première seulement en sombre */
-.empilee span:nth-child(-n+3) { color: var(--sur-plein); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .empilee span:nth-child(n+2) { color: var(--encre); } }
-:root[data-theme="dark"] .empilee span:nth-child(n+2) { color: var(--encre); }
+/* texte lisible sur chaque teinte (TEINTES d'app.js) : clair sur les deux plus foncées, encre sur les autres, dans les deux thèmes */
+.empilee span.plein { color: var(--sur-plein); }
 .empilee .marque-cible { position: absolute; top: -6px; bottom: -6px; width: 2px; background: var(--encre); font-style: normal; }
 .empilee .marque-cible b { position: absolute; top: -18px; transform: translateX(-50%); font-size: var(--t1); white-space: nowrap; }
 .cases16 { display: grid; grid-template-columns: repeat(16, 1fr); gap: 2px; max-width: 320px; }
@@ -650,7 +649,7 @@ table.dense td.statut .tag { margin: 1px 0; }
 }
 
 /* Nom : apostrophe dorée */
-.apostrophe { color: var(--logo-or); }
+.apostrophe { color: var(--or); } /* --logo-or (marche du logo, sur fond encre) est trop pâle sur fond clair */
 
 /* ===== Profil NBA en points Sorare (methode.md, section 10) ===== */
 .profil { display: grid; gap: var(--e2); }
@@ -672,8 +671,9 @@ table.dense td.statut .tag { margin: 1px 0; }
 .pf-total { display: flex; justify-content: space-between; align-items: baseline; border-top: 1px solid var(--trait); padding-top: var(--e2); }
 .pf-total b { font-family: var(--f-titre); font-size: var(--t4); }
 .pf-total small { font: 400 var(--t1) var(--f-texte); color: var(--doux); }
-.pf-empile { display: flex; height: 26px; border-radius: var(--r1); overflow: hidden; font-size: var(--t1); font-weight: 600; line-height: 26px; color: var(--sur-plein); }
-.pf-empile span { white-space: nowrap; overflow: hidden; padding-left: 5px; background: color-mix(in srgb, var(--nba) calc(100% - var(--i, 0) * 17%), var(--surface)); }
+.pf-empile { display: flex; height: 26px; border-radius: var(--r1); overflow: hidden; font-size: var(--t1); font-weight: 600; line-height: 26px; color: var(--encre); }
+.pf-empile span { white-space: nowrap; overflow: hidden; padding-left: 5px; background: color-mix(in srgb, var(--nba) var(--p, 100%), var(--surface)); }
+.pf-empile span.plein { color: var(--sur-plein); }
 .pf-empile .pf-perte { background: var(--d); padding: 0; margin-right: 2px; }
 
 /* ===== NBA : minutes projetées (methode.md, section 11) ===== */
