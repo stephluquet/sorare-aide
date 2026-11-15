@@ -503,10 +503,6 @@ const G = {
     });
     if (proj != null) s += `<line class="proj" x1="${pl}" x2="${pl + iw}" y1="${Y(proj).toFixed(1)}" y2="${Y(proj).toFixed(1)}"><title>Projection s'il joue, hors bonus : ${nb(proj)}</title></line>`;
     if (fj?.moyReference != null) s += `<line class="m15" x1="${pl}" x2="${pl + iw}" y1="${Y(fj.moyReference).toFixed(1)}" y2="${Y(fj.moyReference).toFixed(1)}" opacity=".55"><title>Moyenne des 15 derniers matchs joués : ${nb(fj.moyReference)}</title></line>`;
-    if (fj?.moyRecente != null && idxJoues.length >= 3) {
-      const a = idxJoues[idxJoues.length - 3], z = idxJoues[idxJoues.length - 1];
-      s += `<line class="m3" x1="${(X(a) - bw / 2 - 3).toFixed(1)}" x2="${(X(z) + bw / 2 + 3).toFixed(1)}" y1="${Y(fj.moyRecente).toFixed(1)}" y2="${Y(fj.moyRecente).toFixed(1)}"><title>Moyenne des 3 derniers matchs joués : ${nb(fj.moyRecente)}</title></line>`;
-    }
     return `${s}</svg>`;
   },
 };
@@ -607,6 +603,12 @@ const postesL = (l) => (l.c.postes?.length ? l.c.postes : l.j.postes);
 const confirme = (l) => l.pr.situationConfirmee === 'titulaire';
 const txtChances = (l) => (confirme(l) ? 'Confirmé' : pct(l.pr.p));
 
+// Effet de la cote du match sur le score de titulaire (football, methode.md section 9), en une ligne pour la tuile.
+function effetCote(pr) {
+  const d = pr.score?.decalageTitulaire;
+  if (!d || Math.abs(d) < 0.05) return '';
+  return `<b class="${d > 0 ? 'ok-txt' : 'stop-txt'}">${d > 0 ? '+' : '−'}${nb(Math.abs(d), 1)}${nbsp}pts</b> s’il est titulaire`;
+}
 function scoreFoot(l) {
   const sc = l.pr.score, b = l.pr.bonus ?? 1;
   if (!sc || sc.muTitulaire == null) return { v: l.pr.siJoue, sous: '' };
@@ -1307,21 +1309,24 @@ function ficheHtml(l) {
         <div class="tags">${tags}</div></div></div>
     <div class="fiche-grille">
       <div class="pile">
-        <div class="bloc cq"><div class="kpis">
+        <div class="tuiles">
           ${c.sport === 'nba'
-            ? `<div class="kpi heros"><span class="libelle">Minutes projetées</span><span class="v">${s.minutes == null ? '–' : nb(s.minutes)}<small>${nbsp}min</small></span>${G.barreMin(s, seuilMinutesAffiche(), 140)}<span class="s">${s.minutes == null ? '' : `8 fois sur 10 entre ${nb(s.minutesBas)} et ${nb(s.minutesHaut)} min${s.minutesEnHausse ? ` · <b class="ok-txt">▲ en hausse</b> (${nb(s.minutesReference)} sur ses 10 derniers)` : ''} · seuil ${seuilMinutesAffiche()} min`}</span></div>
-               <div class="kpi"><span class="libelle">Disponibilité</span><span class="v">${pct(pr.p)}</span>${G.barreP(pr.p, seuilAffiche(), 140, 10)}<span class="s">chances de jouer (blessures ESPN, absences récentes, 2e soir de suite)</span></div>`
-            : `<div class="kpi heros"><span class="libelle">Chances de jouer</span><span class="v${confirme(l) ? ' ok-txt' : ''}">${txtChances(l)}</span>${G.barreP(pr.p, seuilAffiche(), 140, 10)}<span class="s">${confirme(l) ? 'titulaire dans la composition officielle' : `repère : seuil de ${pct(seuilAffiche())}`}</span></div>`}
-          ${c.sport === 'football' ? (() => { const sf = scoreFoot(l); return `<div class="kpi"><span class="libelle">${pr.situationConfirmee === 'remplacant' ? 'S’il entre' : 'S’il est titulaire'}</span><span class="v">${nb(sf.v)}</span><span class="s">${esc(sf.sous)}${f ? ` · tous cas confondus, 80 % entre ${nb(f.q10)} et ${nb(f.q90)}` : ''}, bonus compris</span></div>`; })() : `<div class="kpi"><span class="libelle">Score projeté</span><span class="v">${nb(pr.siJoue)}</span>${G.ival(l, 140, true)}<span class="s">${f ? `80 % des cas entre ${nb(f.q10)} et ${nb(f.q90)}, bonus compris${s.minutes != null ? `, pour ${nb(s.minutes)} min projetées` : ''}` : 'pas assez de scores'}${j.etoiles && pr.siJoue != null ? ` · ${nb(pr.siJoue / j.etoiles, 1)} pts/★` : ''}</span></div>`}
-          ${c.sport === 'football' ? `<div class="kpi"><span class="libelle">Espérance</span><span class="v">${nb(pr.esperance, 1)}</span><span class="s">chances × score (titulaire ou entré)</span></div>` : ''}
+            ? `<div class="kpi tuile"><span class="libelle">Minutes projetées</span><span class="v">${s.minutes == null ? '–' : nb(s.minutes)}<small>${nbsp}min</small></span>${G.barreMin(s, seuilMinutesAffiche(), 140)}<span class="s">${s.minutes == null ? '' : `8 fois sur 10 entre ${nb(s.minutesBas)} et ${nb(s.minutesHaut)} min${s.minutesEnHausse ? ` · <b class="ok-txt">▲ en hausse</b> (${nb(s.minutesReference)} sur ses 10 derniers)` : ''} · seuil ${seuilMinutesAffiche()} min`}</span></div>
+               <div class="kpi tuile"><span class="libelle">Disponibilité</span><span class="v">${pct(pr.p)}</span>${G.barreP(pr.p, seuilAffiche(), 140, 10)}<span class="s">chances de jouer (blessures ESPN, absences récentes, 2e soir de suite)</span></div>`
+            : `<div class="kpi tuile"><span class="libelle">Chances de jouer</span><span class="v${confirme(l) ? ' ok-txt' : ''}">${txtChances(l)}</span>${G.barreP(pr.p, seuilAffiche(), 140, 10)}<span class="s">${confirme(l) ? 'titulaire dans la composition officielle' : `repère : seuil de ${pct(seuilAffiche())}`}</span></div>`}
+          ${c.sport === 'football' ? (() => { const sf = scoreFoot(l); return `<div class="kpi tuile"><span class="libelle">${pr.situationConfirmee === 'remplacant' ? 'S’il entre' : 'S’il est titulaire'}</span><span class="v">${nb(sf.v)}<small>${nbsp}pts</small></span><span class="s">${esc(sf.sous.replace(/^(s’il entre : [\d,]+)/, `$1${nbsp}pts`))}</span></div>`; })() : `<div class="kpi tuile"><span class="libelle">Score projeté</span><span class="v">${nb(pr.siJoue)}<small>${nbsp}pts</small></span>${G.ival(l, 140, true)}<span class="s">${f ? `80 % des cas entre ${nb(f.q10)} et ${nb(f.q90)}, bonus compris${s.minutes != null ? `, pour ${nb(s.minutes)} min projetées` : ''}` : 'pas assez de scores'}</span></div>
+               <div class="kpi tuile"><span class="libelle">Points par étoile</span><span class="v">${j.etoiles && pr.siJoue != null ? nb(pr.siJoue / j.etoiles, 1) : '–'}<small>${nbsp}pts/★</small></span><span class="s">score projeté ÷ ${nb(j.etoiles ?? 0, 1)} étoile${(j.etoiles ?? 0) > 1 ? 's' : ''} · plafond de ${plafondEtoiles('nba')} par équipe</span></div>`}
+          ${c.sport === 'football' ? `<div class="kpi tuile"><span class="libelle">Score projeté</span><span class="v">${nb(pr.siJoue)}<small>${nbsp}pts</small></span>${G.ival(l, 140, true)}<span class="s">${f ? `80 % des cas entre ${nb(f.q10)} et ${nb(f.q90)}, bonus compris` : 'pas assez de scores'}</span></div>` : ''}
           ${c.sport === 'football'
-            ? `<div class="kpi" style="grid-column:1/-1"><span class="libelle">Cote du match · victoire, nul, défaite</span>${G.cote3(l.cotes)}</div>`
+            ? `<div class="kpi tuile"><span class="libelle">Cote du match</span>${l.cotes?.victoire != null
+                ? `<span class="v">${pct(l.cotes.victoire)}<small>${nbsp}de victoire</small></span>${G.cote3(l.cotes)}${effetCote(pr) ? `<span class="s">${effetCote(pr)}</span>` : ''}`
+                : '<span class="v doux">–</span><span class="s">pas encore publiée</span>'}</div>`
             : ''}
-        </div></div>
+        </div>
         <div class="bloc">
           <header><h3>${H.length} derniers matchs</h3><span class="droite petit doux">joué ${nbJ} sur ${H.length}${c.sport === 'football' ? ` · titulaire ${nbT}` : ''}</span></header>
           ${graphe((w) => G.histo(w, l))}
-          <p class="legende">${leg}<span><i class="sw" style="border:1.2px dashed var(--attention)"></i>B banc</span><span><i class="sw" style="border:1.2px dashed var(--stop)"></i>A absent</span><span><i class="sw" style="background:var(--d-bande)"></i>10–90 %</span>${fj?.moyRecente != null ? `<span><i class="sw" style="height:3px;background:var(--sport)"></i>3 derniers : ${nb(fj.moyRecente)}</span>` : ''}${fj?.moyReference != null ? `<span><i class="sw" style="height:2px;background:var(--doux)"></i>15 derniers : ${nb(fj.moyReference)}</span>` : ''}<span><i class="sw" style="height:0;border-top:1.5px dashed var(--encre)"></i>projection hors bonus</span></p>
+          <p class="legende">${leg}<span><i class="sw" style="border:1.2px dashed var(--attention)"></i>B banc</span><span><i class="sw" style="border:1.2px dashed var(--stop)"></i>A absent</span><span><i class="sw" style="background:var(--d-bande)"></i>10–90 %</span>${fj?.moyReference != null ? `<span><i class="sw" style="height:2px;background:var(--doux)"></i>15 derniers : ${nb(fj.moyReference)}</span>` : ''}<span><i class="sw" style="height:0;border-top:1.5px dashed var(--encre)"></i>projection hors bonus</span></p>
           <p class="petit">${tend ? `Forme du joueur : ${tend} (${nb(fj.moyRecente)} sur ses 3 derniers matchs joués contre ${nb(fj.moyReference)} sur ses 15 derniers). ` : ''}${esc(pres)}</p>
         </div>
         ${c.sport === 'nba' ? blocProfil(l) : ''}
@@ -1333,7 +1338,7 @@ function ficheHtml(l) {
         <p class="note">Affiché pour information : la forme de l'équipe ne change pas les chances calculées (elle n'apportait rien de plus que la cote du match sur ton historique).</p>
       </div>
     </div>
-    ${pr.raisons.length ? `<div class="bloc"><h3>Ce que le calcul a retenu</h3><ul class="raisons">${pr.raisons.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
+    ${(() => { const rs = pr.raisons.filter((x) => !(effetCote(pr) && /chances de gagner/.test(x))); return rs.length ? `<div class="bloc"><h3>Ce que le calcul a retenu</h3><ul class="raisons">${rs.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''; })()}
     ${palier ? `<div class="actions"><button type="button" class="btn ${J.has(c.id) ? '' : 'principal'}" data-act="basculer" data-sport="${c.sport}" data-v="${esc(c.id)}">${J.has(c.id) ? 'Remettre disponible' : `Marquer comme jouée (palier ${palier.cible})`}</button></div>` : ''}
   </div>`;
 }

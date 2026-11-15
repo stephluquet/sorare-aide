@@ -269,7 +269,6 @@ main { display: block; min-width: 0; padding: var(--e4) max(16px, env(safe-area-
 .histo .bande { fill: var(--d-bande); }
 .histo .proj { stroke: var(--encre); stroke-width: 1.5; stroke-dasharray: 5 4; }
 .histo .m15 { stroke: var(--doux); stroke-width: 2; }
-.histo .m3 { stroke: var(--sport); stroke-width: 3; }
 .histo .grille { stroke: var(--trait); }
 .histo .coupure { stroke: var(--trait-fort); stroke-width: 1.5; }
 .histo text.val { fill: var(--encre); font-weight: 600; }
@@ -283,10 +282,10 @@ main { display: block; min-width: 0; padding: var(--e4) max(16px, env(safe-area-
 .ival .pt { fill: var(--encre); stroke: var(--surface); stroke-width: 1.5; }
 .cote3 { display: flex; height: 10px; border-radius: 2px; overflow: hidden; gap: 2px; }
 .cote3 i { display: block; height: 100%; }
-.cote3 .cv { background: var(--encre); } .cote3 .cn { background: var(--d-neutre); } .cote3 .cd { background: repeating-linear-gradient(45deg, var(--trait-fort) 0 2px, var(--trait) 2px 5px); }
+.cote3 .cv { background: var(--ok); } .cote3 .cn { background: var(--trait-fort); } .cote3 .cd { background: repeating-linear-gradient(45deg, var(--trait-fort) 0 2px, var(--trait) 2px 5px); }
 .cote3-leg { display: flex; justify-content: space-between; gap: var(--e2); font-size: var(--t1); color: var(--doux); margin-top: 4px; }
 .cotebarre { display: inline-flex; align-items: center; gap: 6px; font-size: var(--t1); }
-.cote-mini .vic { fill: var(--encre); }
+.cote-mini .vic { fill: var(--ok); }
 .cote-mini .reste { fill: url(#hachure); }
 .empilee { display: flex; height: 28px; border-radius: var(--r1); position: relative; background: var(--surface-2); }
 .empilee span { height: 100%; display: flex; align-items: center; padding: 0 6px; font-size: var(--t1); font-weight: 600; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; min-width: 0; border-right: 2px solid var(--surface); color: var(--encre); }
@@ -555,6 +554,12 @@ details.repli > summary .doux { font-weight: 400; }
 .fiche-tete .meta { font-size: var(--t2); color: var(--doux); }
 .fiche-tete .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: var(--e1); }
 .fiche-grille { display: grid; gap: var(--e4); min-width: 0; }
+/* Fiche : quatre tuiles de même taille (2 × 2) pour les chiffres clés, les mêmes places en football et en NBA */
+.tuiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--e2); }
+.tuile { border: 1px solid var(--trait); border-radius: var(--r2); background: var(--surface-2); padding: var(--e3); gap: 6px; }
+.tuile .v { font-size: var(--t5); font-weight: 800; }
+.tuile svg { max-width: 100%; }
+.tuile .cote3-leg { font-size: 11px; gap: 4px; }
 @container (min-width: 760px) { .fiche-grille { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); align-items: start; } }
 .bloc { border: 1px solid var(--trait); border-radius: var(--r2); padding: var(--e4); display: grid; gap: var(--e3); background: var(--surface); min-width: 0; }
 .bloc > header { display: flex; flex-wrap: wrap; gap: 4px var(--e3); align-items: baseline; }
