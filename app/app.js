@@ -104,7 +104,7 @@ const pluriel = (n, mot, pl = `${mot}s`) => `${n} ${n > 1 ? pl : mot}`;
 const nomCourt = (nom) => { const p = nom.split(' '); return p.length > 1 ? p.slice(1).join(' ') : nom; };
 const REDUIT = matchMedia('(prefers-reduced-motion: reduce)');
 const largePC = () => innerWidth >= 1024;
-const tresLarge = () => innerWidth >= 1800;
+const tresLarge = () => innerWidth >= 1900; // fiche épinglée en 3e colonne (Solo, Squad) : même seuil que app/style.css
 // Mes cartes sur PC : liste (comme les compositions, fiche épinglée à droite) ou tableau. Retenu dans le navigateur.
 function lireAffichage() { try { return localStorage.getItem('sorare-aide-affichage-cartes') === 'tableau' ? 'tableau' : 'liste'; } catch { return 'liste'; } }
 // Solo : le mode (plusieurs créneaux / créneau unique) et le créneau ouvert par sport sont gardés pour la visite en cours
@@ -1762,7 +1762,7 @@ let largeurPrec = innerWidth, minuterieRedim = null;
 window.addEventListener('resize', () => {
   clearTimeout(minuterieRedim);
   minuterieRedim = setTimeout(() => {
-    const palier = (w) => (w >= 1800) + (w >= 1024);
+    const palier = (w) => (w >= 1900) + (w >= 1024);
     if (palier(innerWidth) !== palier(largeurPrec)) { if (fiche.ouverte) fermerFiche(); tout(); } else dessiner();
     largeurPrec = innerWidth;
   }, 150);

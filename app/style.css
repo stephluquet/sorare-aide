@@ -434,14 +434,16 @@ main { display: block; min-width: 0; padding: var(--e4) max(16px, env(safe-area-
 
 /* ===== Solo : grilles ===== */
 .solo-grille { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--e5); align-items: start; }
-@media (min-width: 1360px) { .solo-grille { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); } .solo-grille.creneau-grille { grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); } }
-@media (min-width: 1800px) { .solo-grille.avec-fiche { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) 460px; } }
+/* Deux colonnes : celle de l'équipe fait au moins 720 px, le seuil où la ligne joueur passe en colonnes
+   (@container plus bas). En dessous de 1 420 px d'écran, une seule colonne, assez large pour les colonnes aussi. */
+@media (min-width: 1420px) { .solo-grille { grid-template-columns: minmax(720px, 2fr) minmax(0, 1fr); } .solo-grille.creneau-grille { grid-template-columns: minmax(0, 1fr) minmax(720px, 2fr); } }
+@media (min-width: 1900px) { .solo-grille.avec-fiche { grid-template-columns: minmax(720px, 2fr) minmax(0, 1fr) 460px; } }
 .col-fiche { display: none; }
-@media (min-width: 1800px) { .col-fiche { display: block; position: sticky; top: var(--e5); max-height: calc(100vh - 48px); overflow-y: auto; } }
+@media (min-width: 1900px) { .col-fiche { display: block; position: sticky; top: var(--e5); max-height: calc(100vh - 48px); overflow-y: auto; } }
 /* Mes cartes (affichage liste, PC) : la liste et la fiche épinglée dès 1 024 px */
 .cartes-grille { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--e5); align-items: start; }
 @media (min-width: 1024px) {
-  .cartes-grille { grid-template-columns: minmax(0, 1fr) clamp(360px, 30vw, 460px); }
+  .cartes-grille { grid-template-columns: minmax(0, 1fr) clamp(360px, 25vw, 460px); }
   /* sous la barre de filtres collante (hauteur mesurée : --h-filtres), sinon le haut de la fiche glisse dessous */
   .col-fiche[data-des="pc"] { display: block; position: sticky; top: calc(var(--h-filtres, 0px) + var(--e2)); max-height: calc(100vh - var(--h-filtres, 0px) - var(--e5)); overflow-y: auto; }
 }
@@ -500,10 +502,9 @@ img.vig { border: 0; }
   .c-tags { padding-top: 4px; }
   .vig { width: 32px; height: 50px; }
   .c-img { align-self: start; grid-row: 1 / span 2; }
-  .c-nom b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .c-nom .club { display: block; flex-basis: 100%; }
   .c-match { display: grid; white-space: normal; gap: 2px; }
-  .c-match .l1, .c-match .l2 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .c-match .l1 { white-space: nowrap; } /* l'adversaire (.l2) passe à la ligne s'il est long, il n'est plus coupé */
   .c-match .cotebarre { display: flex; }
   .c-match .cote-txt { display: none; }
   .c-forme { flex-direction: column; align-items: start; gap: 2px; }
@@ -545,7 +546,7 @@ details.repli > summary .doux { font-weight: 400; }
 
 /* ===== Squad ===== */
 .squad-grille { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--e5); align-items: start; }
-@media (min-width: 1360px) { .squad-grille { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); } }
+@media (min-width: 1420px) { .squad-grille { grid-template-columns: minmax(720px, 2fr) minmax(0, 1fr); } }
 
 /* ===== Fiche ===== */
 .fiche { container-type: inline-size; display: grid; gap: var(--e4); min-width: 0; }
