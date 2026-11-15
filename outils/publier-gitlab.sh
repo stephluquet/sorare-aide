@@ -13,8 +13,7 @@ DEPOT=https://oauth2:injecte-par-le-proxy@gitlab.com/steph.luquet/sorarhelp.git
 BRANCHE=main
 # Chemins jamais publiés (motifs de git ls-files, relatifs à la racine)
 EXCLUS=(
-  'data/historique/*'                       # historique match par match des joueurs du compte
-  'data/releves/*'                          # relevés exploratoires
+  'data/*'                                  # toutes les données : historique des joueurs, relevés, catalogues du compte
   'sorties/*'                               # pages produites avec les cartes du compte
   'docs/refonte-2026-11/maquettes/*.html'   # maquettes construites sur les vraies données
 )
@@ -27,6 +26,10 @@ git read-tree HEAD
 for motif in "${EXCLUS[@]}"; do git rm -r -q --cached --ignore-unmatch -- "$motif" >/dev/null; done
 for f in "${GARDES[@]}"; do git update-index --add --cacheinfo "$(git ls-tree HEAD -- "$f" | awk '{print $1","$3","$4}')"; done
 
+# Contrôle : aucun fichier de données ni page produite ne reste dans l'instantané
+if git ls-files -- data sorties | grep -q .; then
+  echo "Refusé : des fichiers de data/ ou de sorties/ seraient publiés :" >&2; git ls-files -- data sorties | head -20 >&2; exit 1
+fi
 # Dernier contrôle : rien qui ressemble à une clé ou à une adresse e-mail personnelle
 if git ls-files -z | xargs -0 git grep --cached -nIE 'glpat-[A-Za-z0-9_-]{10,}|sk-[A-Za-z0-9]{20,}|@insee\.fr|@gmail\.com' -- 2>/dev/null; then
   echo "Refusé : contenu sensible ci-dessus." >&2; exit 1
