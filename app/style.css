@@ -640,8 +640,10 @@ table.dense td.statut .tag { margin: 1px 0; }
 @media (max-width: 1023px) {
   .btn { min-height: 44px; }
   .btn.rond { width: 44px; }
-  .seg button, .seg a { min-height: 40px; }
+  .seg button, .seg a, .haut .seg a { min-height: 44px; min-width: 44px; justify-content: center; }
   select.choix, .case { min-height: 44px; }
+  details.filtres > summary, .groupe-alt details > summary { min-height: 44px; }
+  .toast .btn, .pj-actions .btn { min-height: 44px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
