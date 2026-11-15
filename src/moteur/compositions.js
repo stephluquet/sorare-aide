@@ -205,6 +205,37 @@ export function proposerParCreneau(lignes, P, o) {
  * autorisées. Mêmes contraintes de composition que l'Arcade du sport (à confirmer dans le jeu).
  * @param o { sport, jour: 'AAAA-MM-JJ' (journée de jeu), fuseau (journee_de_jeu du sport), regle, seuil, maintenant }
  */
+/**
+ * Pourquoi aucune équipe n'est possible ce jour-là : calculé sur les cartes du jour, jamais deviné.
+ * @returns { cartesDuJour, admissibles, joueurs, parPoste: [{ poste, n }], cause, ecartees }
+ *   cause.code : 'aucune' (aucune carte retenue), 'poste' (postes sans joueur : cause.postes), 'nombre' (moins de
+ *   joueurs différents que la taille de l'équipe), 'etoiles' (plafond dépassé même avec les moins étoilés),
+ *   'postes' (postes impossibles à remplir avec des joueurs tous différents).
+ */
+export function diagnosticSquad(lignes, P, o, admissibles) {
+  const duJour = lignes.filter((l) => l.match && jourDeJeu(l.match.debutUTC, o.fuseau) === o.jour);
+  const { ecartees } = cartesAdmissibles(duJour, P, { ...o, jouees: new Set() });
+  // Un joueur ne compte qu'une fois (deux cartes du même joueur ne vont pas dans la même équipe).
+  const joueurs = new Map();
+  for (const x of admissibles) {
+    const u = joueurs.get(x.joueur.id) ?? { etoiles: x.joueur.etoiles ?? 0, postes: new Set() };
+    for (const p of postesDe(x)) u.postes.add(p);
+    joueurs.set(x.joueur.id, u);
+  }
+  const uniques = [...joueurs.values()];
+  const taille = o.regle.taille_equipe;
+  const parPoste = (o.regle.postes?.obligatoires ?? []).map((poste) => ({ poste, n: uniques.filter((u) => u.postes.has(poste)).length }));
+  const manquants = parPoste.filter((x) => x.n === 0).map((x) => x.poste);
+  const plafond = o.regle.plafond_etoiles?.max ?? null;
+  const minimum = uniques.map((u) => u.etoiles).sort((a, b) => a - b).slice(0, taille).reduce((a, b) => a + b, 0);
+  const cause = !uniques.length ? { code: 'aucune' }
+    : manquants.length ? { code: 'poste', postes: manquants }
+    : uniques.length < taille ? { code: 'nombre', joueurs: uniques.length, taille }
+    : plafond != null && minimum > plafond ? { code: 'etoiles', minimum, plafond }
+    : { code: 'postes' };
+  return { cartesDuJour: duJour.length, admissibles: admissibles.length, joueurs: uniques.length, taille, parPoste, plafond, etoilesMinimum: uniques.length >= taille ? minimum : null, cause, ecartees };
+}
+
 export function squadDuJour(lignes, P, o) {
   const { admissibles: adm0, ecartees } = cartesAdmissibles(lignes, P, { ...o, jouees: new Set() });
   const admissibles = valeursSquad(adm0);
@@ -216,7 +247,7 @@ export function squadDuJour(lignes, P, o) {
     const { total, cap } = scoreSquad(equipe, o.regle, mult);
     if (!meilleure || total > meilleure.esperance) meilleure = { equipe, cap, esperance: total };
   }
-  if (!meilleure) return { equipe: null, admissibles: admissibles.length, ecartees, nbEquipes, message: `Aucune équipe possible ce jour-là : ${admissibles.length} cartes admissibles.` };
+  if (!meilleure) return { equipe: null, admissibles: admissibles.length, ecartees, nbEquipes, vide: diagnosticSquad(lignes, P, o, admissibles), message: `Aucune équipe possible ce jour-là : ${admissibles.length} cartes admissibles.` };
   const e = meilleure.equipe;
   return {
     equipe: {

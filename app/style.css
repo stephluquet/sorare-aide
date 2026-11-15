@@ -554,6 +554,14 @@ details.repli > summary .doux { font-weight: 400; }
 .fiche-tete .meta { font-size: var(--t2); color: var(--doux); }
 .fiche-tete .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: var(--e1); }
 .fiche-grille { display: grid; gap: var(--e4); min-width: 0; }
+/* Squad sans équipe possible : la cause, puis le compte par poste en tuiles */
+.squad-vide { max-width: 760px; }
+.squad-vide .cause { font-size: var(--t4); font-weight: 700; font-family: var(--f-titre); }
+.tuiles.quatre { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@container (max-width: 520px) { .tuiles.quatre { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.squad-vide .corps { container-type: inline-size; }
+.tuile.manque { border-color: var(--stop); background: var(--stop-doux); }
+.tuile.manque .v, .tuile.manque .s { color: var(--stop); }
 /* Fiche : quatre tuiles de même taille (2 × 2) pour les chiffres clés, les mêmes places en football et en NBA */
 .tuiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--e2); }
 .tuile { border: 1px solid var(--trait); border-radius: var(--r2); background: var(--surface-2); padding: var(--e3); gap: 6px; }

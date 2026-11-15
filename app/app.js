@@ -1078,6 +1078,33 @@ function afficherCreneaux(sport) {
 }
 
 // ---------- Squad du jour ----------
+// Aucune équipe possible : la cause exacte (diagnosticSquad du moteur) et le compte par poste, sans rien deviner.
+const NOMS_POSTES = { GK: ['gardien', 'Gardiens'], DF: ['défenseur', 'Défenseurs'], MD: ['milieu', 'Milieux'], FW: ['attaquant', 'Attaquants'] };
+function squadVide(v, sport, aujourdhui) {
+  const quandTxt = aujourdhui ? 'aujourd’hui' : 'ce jour-là';
+  const c = v.cause;
+  const liste = (xs) => (xs.length > 1 ? `${xs.slice(0, -1).join(', ')} ni ${xs.at(-1)}` : xs[0]);
+  const cause = c.code === 'aucune' ? (v.cartesDuJour > 1 ? `Aucune de tes ${v.cartesDuJour} cartes qui jouent ${quandTxt} n’est retenue.` : `Ta seule carte qui joue ${quandTxt} n’est pas retenue.`)
+    : c.code === 'poste' ? `Aucun ${liste(c.postes.map((p) => NOMS_POSTES[p]?.[0] ?? p))} ne joue ${quandTxt} parmi tes cartes retenues.`
+    : c.code === 'nombre' ? `${pluriel(c.joueurs, 'joueur')} seulement ${c.joueurs > 1 ? 'jouent' : 'joue'} ${quandTxt} : il en faut ${c.taille}.`
+    : c.code === 'etoiles' ? `Les ${v.taille} joueurs les moins étoilés totalisent ${nb(c.minimum, 1)} étoiles : le plafond est de ${c.plafond}.`
+    : `Les postes ne peuvent pas tous être remplis avec ${v.taille} joueurs différents.`;
+  const tuile = (libelle, valeur, sous, manque) => `<div class="kpi tuile${manque ? ' manque' : ''}"><span class="libelle">${libelle}</span><span class="v">${valeur}</span><span class="s">${sous}</span></div>`;
+  const tuiles = sport === 'football'
+    ? v.parPoste.map(({ poste, n }) => tuile(NOMS_POSTES[poste]?.[1] ?? poste, n, n ? 'il en faut 1' : 'il en faut 1 : aucun', n === 0)).join('')
+    : tuile('Joueurs qui jouent', `${v.joueurs}<small>${nbsp}/ ${v.taille}</small>`, `il en faut ${v.taille}, tous différents`, v.joueurs < v.taille)
+      + tuile('Étoiles au minimum', v.etoilesMinimum == null ? '–' : `${nb(v.etoilesMinimum, 1)}<small>${nbsp}/ ${v.plafond}</small>`, v.etoilesMinimum == null ? 'pas assez de joueurs pour le calculer' : `les ${v.taille} moins étoilés, plafond de ${v.plafond}`, c.code === 'etoiles');
+  const regle = sport === 'football' ? 'Une équipe = un gardien, un défenseur, un milieu, un attaquant et un cinquième joueur de champ, tous différents.' : `Une équipe = ${v.taille} joueurs différents, ${v.plafond} étoiles au plus.`;
+  const ecartees = Object.entries(v.ecartees).sort((a, b) => b[1] - a[1]);
+  return `<section class="carte squad-vide" aria-label="Aucune équipe possible"><header><h2>Aucune équipe possible ${quandTxt}</h2></header>
+    <div class="corps pile">
+      <p class="cause">${esc(cause)}</p>
+      <div class="tuiles${sport === 'football' ? ' quatre' : ''}">${tuiles}</div>
+      <p class="petit doux">${pluriel(v.cartesDuJour, 'carte')} de ton catalogue ${v.cartesDuJour > 1 ? 'jouent' : 'joue'} ${quandTxt} ; ${v.admissibles} ${v.admissibles > 1 ? 'sont retenues' : 'est retenue'} (${pluriel(v.joueurs, 'joueur')}). ${regle}</p>
+    </div>
+    ${ecartees.length ? `<details class="repli"><summary>Cartes du jour écartées <span class="doux">${ecartees.reduce((a, [, n]) => a + n, 0)}</span></summary><div class="technique"><ul>${ecartees.map(([k, n]) => `<li>${n} ${esc(k)}</li>`).join('')}</ul></div></details>` : ''}
+  </section>`;
+}
 function afficherSquad() {
   const sport = vue.sport, J = D.journees[sport];
   const jours = joursAVenir(lignesMoteur(sport), Date.now(), J.fuseau);
@@ -1092,7 +1119,7 @@ function afficherSquad() {
   if (!jour) return;
   plusTard(() => squad(sport, jour)).then((r) => {
     if (vueCourante() !== 'squad' || vue.sport !== sport || vue.squadJour !== jour) return;
-    if (!r.equipe) { $('squad-contenu').innerHTML = `<p class="attente">${esc(r.message)}</p>`; return; }
+    if (!r.equipe) { $('squad-contenu').innerHTML = r.vide ? squadVide(r.vide, sport, jour === aujourdhui) : `<p class="attente">${esc(r.message)}</p>`; return; }
     const e = r.equipe, membres = membresDe(e), Jo = jouees(sport);
     if (!parId.has(vue.epingle[`squad|${sport}`])) vue.epingle[`squad|${sport}`] = membres[0].c.id; // le 1er joueur affiché, comme au Solo
     $('squad-contenu').innerHTML = `<div class="solo-grille avec-fiche">

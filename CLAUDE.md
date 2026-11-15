@@ -286,6 +286,9 @@ Point de départ : revue UX de Codex (fournie par l'utilisateur), « proposition
 - **Historique** : plus de trait ni de légende « 3 derniers » (le chiffre est dans la phrase « Forme du joueur ») ; les trois dernières barres jouées restent plus foncées.
 - Codex, autres propositions : l'utilisateur ne retient pas la 02 (composition).
 
+## Squad sans équipe possible (2026-11-15, validé sur maquette)
+Revue de Codex, section 06. `diagnosticSquad` (compositions.js) dit la cause exacte, jamais devinée : `poste` (postes sans joueur), `nombre` (moins de joueurs différents que la taille), `etoiles` (plafond dépassé même avec les moins étoilés), `aucune` (aucune carte retenue), `postes` (postes impossibles à remplir avec des joueurs différents). `squadDuJour` le rend dans `vide`. L'appli (`squadVide`) affiche le titre, la phrase de cause, le compte de joueurs par poste en tuiles (poste manquant en rouge, `.tuile.manque`), une ligne de contexte et les cartes du jour écartées, repliées. **Décisions de l'utilisateur : pas de bouton vers Mes cartes (« si on n'a pas les cartes, on n'a pas les cartes »), pas de journée suivante.** `tests/squad-vide.test.js` (81 tests). Vu sur les données du 14 novembre en avançant l'horloge de la page (lundi 23 novembre au soir : aucun gardien).
+
 ## Étape 3 (à venir) : conseil avant chaque journée
 Vérifier titulaires et blessures avec des sources citées et datées, signaler les pièges, proposer 2 ou 3 compositions. L'utilisateur valide dans l'appli Sorare.
 
