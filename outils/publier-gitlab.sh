@@ -16,6 +16,7 @@ EXCLUS=(
   'data/*'                                  # toutes les données : historique des joueurs, relevés, catalogues du compte
   'sorties/*'                               # pages produites avec les cartes du compte
   'docs/refonte-2026-11/maquettes/*.html'   # maquettes construites sur les vraies données
+  'docs/revue-1.0/*'                        # constats de la revue et plan de reprise : citent le compte et ses cartes
 )
 GARDES=('docs/refonte-2026-11/maquettes/icones.html')  # étude d'icônes, sans donnée
 

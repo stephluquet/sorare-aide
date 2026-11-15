@@ -1,0 +1,14 @@
+const { chromium } = require('playwright'); const http = require('http'), fs = require('fs'), path = require('path'); const dir = process.argv[2];
+const srv = http.createServer((q, r) => { fs.readFile(path.join(dir, decodeURIComponent(q.url.split('?')[0])), (e, d) => { if (e) { r.writeHead(404); r.end(); return; } r.writeHead(200, { 'content-type': q.url.includes('.json') ? 'application/json' : 'text/html; charset=utf-8' }); r.end(/\.html/.test(q.url) ? '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><body>' + d : d); }); }).listen(0, async () => {
+  const b = await chromium.launch({ proxy: process.env.HTTPS_PROXY ? { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } : undefined });
+  for (const w of [390, 320]) for (const sport of ['football', 'nba']) { const p = await b.newPage({ viewport: { width: w, height: 760 }, deviceScaleFactor: 2 }); const errs = []; p.on('pageerror', (e) => errs.push(e.message));
+    const pomper = async (n = 8) => { for (let i = 0; i < n; i++) { await p.clock.runFor(500); await new Promise((r) => setTimeout(r, 150)); } };
+    await p.clock.install({ time: new Date('2026-11-14T18:00:00Z') }); await p.goto(`http://localhost:${srv.address().port}/sorare-aide.html#${sport}/cartes`); await pomper(18);
+    await p.screenshot({ path: path.join(__dirname, `tel-${sport}-${w}.png`) });
+    const m = await p.evaluate(() => { const R = (x) => x.getBoundingClientRect(); const bar = document.querySelector('.barre-filtres'); return { barre: Math.round(R(bar).height), visibles: [...bar.children].filter((x) => R(x).width > 0).map((x) => x.className.split(' ').pop() + ' ' + Math.round(R(x).width)).join(', '), petites: [...bar.querySelectorAll('button, summary')].filter((x) => R(x).width > 0 && (R(x).height < 44 || R(x).width < 30)).length }; });
+    await p.click('details.menu[data-menu="filtres"] summary'); await pomper(2); await p.screenshot({ path: path.join(__dirname, `tel-${sport}-${w}-filtres.png`) });
+    const dansMenu = await p.evaluate(() => [...document.querySelectorAll('.menu-corps .tel-menu')].map((t) => t.innerText.replace(/\s+/g, ' ')).join(' / '));
+    await p.click('.menu-corps [data-act="etoiles"][data-v="3"]'); await pomper(); await p.click(sport === 'nba' ? '.menu-corps [data-act="poste"][data-v="G"]' : '.menu-corps [data-act="poste"][data-v="DF"]'); await pomper();
+    console.log(w, sport, JSON.stringify(m), '| menu :', dansMenu, '| après choix :', await p.evaluate(() => document.getElementById('compte-cartes').textContent + ', menu ouvert : ' + !!document.querySelector('details.menu[open]') + ', libellé : ' + document.querySelector('details.menu summary').getAttribute('aria-label')), '| erreurs', errs.length, errs[0] || '', '| débordement', await p.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth));
+    await p.close(); }
+  await b.close(); srv.close(); });

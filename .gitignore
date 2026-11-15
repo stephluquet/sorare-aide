@@ -4,3 +4,5 @@ data/vignettes/
 sorties/maquettes/
 sorties/app/
 sorties/web/
+outils/controles/*.png
+outils/controles/*.jpg

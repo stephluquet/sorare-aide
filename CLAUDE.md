@@ -8,6 +8,8 @@ Manager : **`yapapir`**. Langue de travail : français. **Le projet est en JavaS
 
 **Version 1.1 du 2026-11-15** (`package.json`, `README.md`, `NOTES-DE-VERSION.md` : ajouter une entrée à chaque nouvelle version). Prompt de la revue critique multi-agents : `docs/prompt-revue-v1.md`.
 
+**Reprise après la 1.1** : `docs/revue-1.0/reprise.md` (où on en est, façon de travailler, lot 2 à faire, lot 3 reporté) et `docs/revue-1.0/constats-lots-2-3.md` (détail des constats) ; scripts de contrôle de l'interface dans `outils/controles/` (bruts, à nettoyer au lot 2). Ce dossier `docs/revue-1.0/` n'est pas publié sur GitLab.
+
 ## Tenir ce fichier à jour
 Ce fichier est la mémoire du projet entre les sessions. **Mettez-le à jour dans le même commit** chaque fois que vous découvrez quelque chose de durable : une requête qui marche, un champ qui n'existe pas, une limite de l'API, un nouveau script. Indiquez ce qui a été **vérifié** (avec la date) et ce qui est **supposé**. Retirez ce qui devient faux plutôt que de l'empiler.
 
