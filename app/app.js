@@ -77,6 +77,7 @@ const TRAITS = {
   haut: '<path d="M6 15l6-6 6 6"/>',
   bas: '<path d="M6 9l6 6 6-6"/>',
   suite: '<path d="M9 6l6 6-6 6"/>',
+  tri: '<path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/>',
   reglages: '<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/>',
   epingle: '<path d="M9 3.5h6l-1 6 3 3.5H7l3-3.5z"/><path d="M12 13v7.5"/>',
 };
@@ -109,14 +110,12 @@ const telephone = () => innerWidth < 720; // Solo : l'équipe d'abord, haut d'é
 const moyenPC = () => innerWidth >= 1420 && innerWidth < 1900; // Solo, Squad : fiche dans la colonne de droite, en onglet
 const tresLarge = () => innerWidth >= 1900; // fiche épinglée en 3e colonne (Solo, Squad) : même seuil que app/style.css
 // Mes cartes sur PC : liste (comme les compositions, fiche épinglée à droite) ou tableau. Retenu dans le navigateur.
-function lireAffichage() { try { return localStorage.getItem('sorare-aide-affichage-cartes') === 'tableau' ? 'tableau' : 'liste'; } catch { return 'liste'; } }
 // Solo : le mode (plusieurs créneaux / créneau unique) et le créneau ouvert par sport sont gardés pour la visite en cours
 // (sessionStorage) : ils survivent au rechargement qui suit une mise à jour des données, pas à la visite suivante.
 const CLE_SOLO = 'sorare-aide-solo';
 function lireSolo() { try { const v = JSON.parse(sessionStorage.getItem(CLE_SOLO) || 'null'); return { mode: v?.mode === 'unique' ? 'unique' : 'plusieurs', creneaux: v?.creneaux && typeof v.creneaux === 'object' ? v.creneaux : {} }; } catch { return { mode: 'plusieurs', creneaux: {} }; } }
 const soloMemo = lireSolo();
 function ecrireSolo() { try { sessionStorage.setItem(CLE_SOLO, JSON.stringify(soloMemo)); } catch { /* stockage refusé : le choix vaut jusqu'au rechargement */ } }
-function ecrireAffichage(v) { try { localStorage.setItem('sorare-aide-affichage-cartes', v); } catch { /* navigation privée */ } }
 
 // ---------- État de l'utilisateur ----------
 const CLE_LOCALE = 'sorare-aide-etat';
@@ -288,7 +287,7 @@ const disponible = (l) => ['probable', 'confirme', 'remplacant'].includes(statut
 
 const vue = {
   sport: ACTIFS[0], heros: null, poste: null, etoiles: null, journee: '', tri: 'e', sens: -1, dispo: true, toutVoir: false, toutesChances: false, toutesMinutes: false, collection: null,
-  mode: soloMemo.mode, creneauOuvert: null, versCreneau: false, squadJour: null, proposition: 'prudente', epingle: {}, affichage: lireAffichage(),
+  mode: soloMemo.mode, creneauOuvert: null, versCreneau: false, squadJour: null, proposition: 'prudente', epingle: {},
 };
 
 // ---------- Calculs (dans le navigateur, mis en cache, différés pour ne pas bloquer l'affichage) ----------
@@ -656,9 +655,9 @@ function ligne(l, o = {}) {
   return `<div class="ligne${choisie}${o.griser && J.has(l.c.id) ? ' bloquee' : ''}" role="button" tabindex="0" data-fiche="${esc(l.c.id)}" aria-label="Voir la fiche de ${esc(l.j.nom)}">
     <div class="c-img">${vignette(l)}${cap ? '<span class="cap" title="Capitaine">C</span>' : ''}</div>
     <div class="c-nom"><span class="nom-ligne"><b>${esc(l.j.nom)}</b></span><span class="pos">${esc(postesL(l).join('/'))}</span>${badgeEtoiles(l)}${l.c.bonusPct ? `<span class="tag">${esc(l.c.collection)} +${nb(l.c.bonusPct)}${nbsp}%</span>` : ''}<span class="club">${esc(l.j.club?.nom ?? '?')}</span></div>
-    <div class="c-match">${match}</div>
+    <div class="c-match">${match}<span class="forme-mini">${G.pastilles(formeEquipe(l.equipe.slug)?.derniers)}</span></div>
     <div class="c-forme">${G.pastilles(formeEquipe(l.equipe.slug)?.derniers)}</div>
-    ${l.c.sport === 'nba' ? celluleMinutes(l) : `<div class="c-p"><span class="pv${confirme(l) ? ' ok-txt' : ''}"${confirme(l) ? ' title="Titulaire dans la composition officielle"' : ''}>${txtChances(l)}</span>${G.barreP(l.pr.p, seuilAffiche(), 60)}</div>`}
+    ${l.c.sport === 'nba' ? celluleMinutes(l) : `<div class="c-p"><span class="pv${confirme(l) ? ' ok-txt' : ''}"${confirme(l) ? ' title="Titulaire dans la composition officielle"' : ''}>${txtChances(l)}</span>${G.barreP(l.pr.p, seuilAffiche(), 72)}</div>`}
     ${l.c.sport === 'football' ? (() => { const f = scoreFoot(l); return `<div class="c-s c-tit"><span class="sc"><span class="sv">${nb(f.v)}</span> pts ${tendance(formeDe(l.j))}</span>${G.ival(l, 72)}${f.sous ? `<span class="sous${f.sous === 'toujours titulaire' ? ' defaut' : ''}">${esc(f.sous)}</span>` : ''}</div>`; })() : `<div class="c-s"><span class="sc"><span class="sv">${nb(l.pr.siJoue)}</span> pts ${tendance(formeDe(l.j))}</span>${G.ival(l, 72)}${ppe}</div>`}
     ${tags ? `<div class="c-tags">${tags}</div>` : ''}
     ${o.utilisable && l.m ? `<div class="c-action"><button type="button" class="action-ligne" data-act="basculer" data-sport="${l.c.sport}" data-v="${esc(l.c.id)}" title="Cette carte est déjà prise dans une composition en cours : l’écarter jusqu’à la fin de son match">${ico('ecarter')}<span>Déjà utilisée</span></button></div>` : ''}
@@ -668,9 +667,15 @@ function ligne(l, o = {}) {
 // NBA : les minutes projetées remplacent les chances de jouer dans la ligne (disponibilité en petit dessous).
 function celluleMinutes(l) {
   const sc = l.pr.score;
-  return `<div class="c-p c-min"><span class="pv">${sc?.minutes == null ? '–' : nb(sc.minutes)}<small>${nbsp}min</small></span>${G.barreMin(sc, seuilMinutesAffiche(), 60)}${sc?.minutesEnHausse ? '<span class="dispo"><b class="ok-txt" title="2 derniers matchs bien au-dessus de sa moyenne">▲ en hausse</b></span>' : ''}</div>`;
+  return `<div class="c-p c-min"><span class="pv">${sc?.minutes == null ? '–' : nb(sc.minutes)}<small>${nbsp}min</small></span>${G.barreMin(sc, seuilMinutesAffiche(), 72)}${sc?.minutesEnHausse ? '<span class="dispo"><b class="ok-txt" title="2 derniers matchs bien au-dessus de sa moyenne">▲ en hausse</b></span>' : ''}</div>`;
 }
-const enteteTab = (sport = 'football') => `<div class="entete-tab libelle" aria-hidden="true"><span></span><span>Joueur</span><span>Match · victoire</span><span>Équipe · 5 derniers</span><span>${sport === 'nba' ? 'Minutes projetées' : 'Chances de jouer'}</span><span>${sport === 'nba' ? 'Score projeté · 10–90 %' : 'Titulaire · s’il entre'}</span></div>`;
+// En-tête des listes de joueurs. Dans Mes cartes (o.tri), chaque colonne trie la liste d'un clic.
+function enteteTab(sport = 'football', o = {}) {
+  const nba = sport === 'nba';
+  const cols = [['n', 'Joueur'], ['d', 'Match · cote · forme'], [nba ? 'm' : 'p', nba ? 'Minutes projetées' : 'Chances de jouer'], ['s', nba ? 'Score projeté · 10–90 %' : 'Titulaire · s’il entre']];
+  if (!o.tri) return `<div class="entete-tab libelle" aria-hidden="true"><span></span>${cols.map(([, t]) => `<span>${t}</span>`).join('')}</div>`;
+  return `<div class="entete-tab libelle triable"><span></span>${cols.map(([k, t]) => `<button type="button" data-act="tri-col" data-v="${k}" aria-pressed="${vue.tri === k}" title="Trier par cette colonne">${t}<span class="fl" aria-hidden="true">${vue.tri === k ? (vue.sens > 0 ? ' ▲' : ' ▼') : ''}</span></button>`).join('')}</div>`;
+}
 
 // Chemin des paliers du plateau, le palier en cours mis en avant.
 function chemin(sport) {
@@ -1243,25 +1248,31 @@ function afficherCartes() {
   if (vue.etoiles != null && !parNiveau.has(vue.etoiles)) vue.etoiles = null;
   if (vue.collection && !parCollection.has(vue.collection)) vue.collection = null;
   if (s === 'nba' && (vue.tri === 'e' || vue.tri === 'p')) { vue.tri = 's'; vue.sens = -1; }
-  const triNom = TRIS.find(([k, , sp]) => k === vue.tri && (!sp || sp === s))?.[1] ?? 'colonne';
-  const resume = `Filtres : ${vue.journee ? libelleJournee(s, vue.journee) : 'toutes les journées'} · tri ${triNom.toLowerCase()} · ${s === 'nba' ? (vue.toutesMinutes ? 'toutes minutes' : `${seuilMinutes()}${nbsp}min et plus`) : vue.toutesChances ? 'toutes chances' : `${Math.round(seuil() * 100)}${nbsp}%`}${vue.collection ? ` · ${vue.collection}` : ''}${vue.dispo ? ' · disponibles' : ''}`;
-  const filtresOuverts = $('vue-cartes').querySelector('details.filtres')?.open ?? largePC();
-  $('vue-cartes').innerHTML = `<div class="entete"><div class="titres"><h1>Mes cartes · ${SPORTS[s]}</h1><p class="doux petit">${pluriel(lignes.filter((l) => l.c.sport === s).length, 'carte')}${J.size ? ` · ${pluriel(J.size, 'déjà utilisée', 'déjà utilisées')}` : ''}</p></div>${largePC() ? `<div class="outils"><div class="seg" role="group" aria-label="Affichage"><button type="button" data-act="affichage" data-v="liste" aria-pressed="${vue.affichage === 'liste'}">Liste</button><button type="button" data-act="affichage" data-v="tableau" aria-pressed="${vue.affichage === 'tableau'}">Tableau</button></div></div>` : ''}</div>
+  const triNom = TRIS.find(([k, , sp]) => k === vue.tri && (!sp || sp === s))?.[1] ?? { n: 'Nom du joueur' }[vue.tri] ?? 'Colonne';
+  // Raccourcis : postes et étoiles, sur la ligne de commandes sur PC ; sur téléphone, dans le menu « Filtres ».
+  const segPostes = `<div class="seg seg-postes" role="group" aria-label="Poste">${[null, ...POSTES[s]].map((x) => `<button type="button" data-act="poste" data-v="${x ?? ''}" aria-pressed="${x === vue.poste}">${x ?? 'Tous'}</button>`).join('')}</div>`;
+  const segEtoiles = `<div class="seg seg-etoiles" role="group" aria-label="Étoiles"><button type="button" data-act="etoiles" data-v="" aria-pressed="${vue.etoiles == null}" aria-label="Toutes les étoiles"><span class="mot">Toutes </span>★</button>${[...parNiveau.entries()].sort((a, b) => a[0] - b[0]).map(([e, n]) =>
+    `<button type="button" data-act="etoiles" data-v="${e}" aria-pressed="${e === vue.etoiles}" title="${pluriel(n, 'carte')}" aria-label="${nb(e, e % 1 ? 1 : 0)} étoiles"><span class="etoiles">★</span>${nb(e, e % 1 ? 1 : 0)}</button>`).join('')}</div>`;
+  const nbFiltres = [vue.poste, vue.etoiles != null, vue.journee, vue.collection].filter(Boolean).length; // filtres qui restreignent la liste (téléphone : pastille)
+  const resumeFiltres = [vue.poste && telephone() ? vue.poste : '', vue.etoiles != null && telephone() ? `★ ${nb(vue.etoiles, vue.etoiles % 1 ? 1 : 0)}` : '', vue.journee ? libelleJournee(s, vue.journee) : '', vue.collection ?? '', s === 'nba' ? (vue.toutesMinutes ? 'toutes minutes' : `${seuilMinutes()}${nbsp}min et plus`) : vue.toutesChances ? 'toutes chances' : `${Math.round(seuil() * 100)}${nbsp}% et plus`, vue.dispo ? 'disponibles' : ''].filter(Boolean).join(' · ');
+  $('vue-cartes').innerHTML = `<div class="entete"><div class="titres"><h1>Mes cartes · ${SPORTS[s]}</h1><p class="doux petit">${pluriel(lignes.filter((l) => l.c.sport === s).length, 'carte')}${J.size ? ` · ${pluriel(J.size, 'déjà utilisée', 'déjà utilisées')}` : ''}</p></div></div>
     <div class="tel-seul">${alertePalier(s) ? `<div style="margin-bottom:var(--e3)">${alertePalier(s)}</div>` : ''}</div>
-    <div class="barre-filtres">
-      <div class="seg" role="group" aria-label="Poste">${[null, ...POSTES[s]].map((x) => `<button type="button" data-act="poste" data-v="${x ?? ''}" aria-pressed="${x === vue.poste}">${x ?? 'Tous'}</button>`).join('')}</div>
-      <div class="seg" role="group" aria-label="Étoiles"><button type="button" data-act="etoiles" data-v="" aria-pressed="${vue.etoiles == null}">Toutes ★</button>${[...parNiveau.entries()].sort((a, b) => a[0] - b[0]).map(([e, n]) =>
-        `<button type="button" data-act="etoiles" data-v="${e}" aria-pressed="${e === vue.etoiles}"><span class="etoiles">★</span>${nb(e, e % 1 ? 1 : 0)} <small>(${n})</small></button>`).join('')}</div>
-      <div class="seg" role="group" aria-label="Type de carte"><button type="button" data-act="collection" data-v="" aria-pressed="${!vue.collection}">Toutes les cartes</button>${[...parCollection.entries()].sort((a, b) => (bonusCollection.get(a[0]) - bonusCollection.get(b[0])) || a[0].localeCompare(b[0])).map(([k, n]) =>
-        `<button type="button" data-act="collection" data-v="${esc(k)}" aria-pressed="${k === vue.collection}">${esc(k)} <small>(${n})</small></button>`).join('')}</div>
-      <span class="compte" id="compte-cartes"></span>
-      <details class="filtres"${filtresOuverts ? ' open' : ''}><summary>${esc(resume)}</summary><div class="filtres-corps">
-        <select class="choix" data-act="journee" aria-label="Journée Sorare"><option value="">Toutes les journées</option>${[...journees.entries()].sort((a, b) => a[0].localeCompare(b[0]))
-          .map(([k, n]) => `<option value="${k}" ${k === vue.journee ? 'selected' : ''}>${esc(libelleJournee(s, k))} (${n})</option>`).join('')}</select>
-        <select class="choix" data-act="tri" aria-label="Trier par">${TRIS.filter(([, , sp]) => !sp || sp === vue.sport).map(([k, t]) => `<option value="${k}" ${k === vue.tri ? 'selected' : ''}>Tri : ${t}</option>`).join('')}${TRIS.some(([k, , sp]) => k === vue.tri && (!sp || sp === vue.sport)) ? '' : '<option selected>Tri : colonne du tableau</option>'}</select>
+    <div class="barre-filtres une-barre" data-sport="${s}">
+      ${segPostes}${segEtoiles}
+      <details class="menu" data-menu="filtres"${vue.menuCartes === 'filtres' ? ' open' : ''}><summary class="btn" aria-label="Filtres : ${esc(resumeFiltres)}">${ico('reglages')}<span class="mot">Filtres</span>${nbFiltres ? `<b class="pastille-nb tel-menu" title="${pluriel(nbFiltres, 'filtre actif', 'filtres actifs')}">${nbFiltres}</b>` : ''}<small>${esc(resumeFiltres)}</small></summary><div class="menu-corps">
+        <div class="reglage tel-menu"><span>Poste</span>${segPostes}</div>
+        <div class="reglage tel-menu"><span>Étoiles</span>${segEtoiles}</div>
+        <label class="champ"><span>Journée</span><select class="choix" data-act="journee" aria-label="Journée Sorare"><option value="">Toutes les journées</option>${[...journees.entries()].sort((a, b) => a[0].localeCompare(b[0]))
+          .map(([k, n]) => `<option value="${k}" ${k === vue.journee ? 'selected' : ''}>${esc(libelleJournee(s, k))} (${n})</option>`).join('')}</select></label>
+        <label class="champ"><span>Type de carte</span><select class="choix" data-act="collection" aria-label="Type de carte"><option value="">Tous les types</option>${[...parCollection.entries()].sort((a, b) => (bonusCollection.get(a[0]) - bonusCollection.get(b[0])) || a[0].localeCompare(b[0])).map(([k, n]) => `<option value="${esc(k)}" ${k === vue.collection ? 'selected' : ''}>${esc(k)}${bonusCollection.get(k) ? ` +${nb(bonusCollection.get(k))}${nbsp}%` : ''} (${n})</option>`).join('')}</select></label>
         ${s === 'nba' ? '' : segSeuil(true)}${segMinutes(s, true)}
         <label class="case"><input type="checkbox" data-act="dispo" ${vue.dispo ? 'checked' : ''}> disponibles seulement</label>
+        <button type="button" class="btn principal tel-menu" data-act="fermer-menus" id="compte-menu">Voir les cartes</button>
       </div></details>
+      <details class="menu" data-menu="tri"${vue.menuCartes === 'tri' ? ' open' : ''}><summary class="btn" aria-label="Tri : ${esc(triNom)}">${ico('tri')}<span class="mot">Tri</span><small>${esc(triNom)}</small></summary><div class="menu-corps menu-liste">
+        ${TRIS.filter(([, , sp]) => !sp || sp === vue.sport).map(([k, t]) => `<button type="button" data-act="tri-menu" data-v="${k}" aria-pressed="${k === vue.tri}">${t}</button>`).join('')}
+      </div></details>
+      <span class="compte" id="compte-cartes"></span>
     </div>
     <div id="cartes-liste"></div>`;
   suivreFiltres();
@@ -1283,6 +1294,7 @@ function suivreFiltres() {
 function afficherListeCartes() {
   const s = vue.sport, L = cartesFiltrees(), J = jouees(s), nba = s === 'nba', max = vue.toutVoir ? Infinity : 300;
   $('compte-cartes').textContent = pluriel(L.length, 'carte');
+  if ($('compte-menu')) $('compte-menu').textContent = L.length ? `Voir ${L.length > 1 ? `les ${L.length} cartes` : 'la carte'}` : 'Aucune carte : fermer';
   const el = $('cartes-liste');
   if (!L.length) { el.innerHTML = '<div class="vide-liste">Aucune carte ne correspond. Décoche « disponibles seulement » pour tout voir.</div>'; return; }
   const plus = L.length > max ? `<div class="plus-de-cartes"><button type="button" class="btn" data-act="tout-voir">Afficher les ${L.length} cartes</button></div>` : '';
@@ -1291,36 +1303,14 @@ function afficherListeCartes() {
     el.innerHTML = `<div class="carte tableau">${vis.map((l) => ligne(l, { horsSolo: true, griser: true })).join('')}</div>${plus}`;
     return;
   }
-  // PC, affichage liste : la ligne des compositions, fiche épinglée à droite (dès 1 024 px).
-  if (vue.affichage === 'liste') {
-    const k = `cartes|${s}`;
-    if (!vis.some((l) => l.c.id === vue.epingle[k])) vue.epingle[k] = vis[0].c.id;
-    el.innerHTML = `<div class="cartes-grille">
-      <section class="carte tableau" aria-label="Cartes">${enteteTab(s)}${vis.map((l) => ligne(l, { horsSolo: true, griser: true, epinglable: true })).join('')}${plus}</section>
-      <aside class="col-fiche carte" id="col-fiche" data-des="pc" aria-label="Fiche épinglée"></aside></div>`;
-    afficherColFiche();
-    dessiner(el);
-    return;
-  }
-  // PC : tableau dense triable, en-tête collant, colonne « jouée » à cocher.
-  const th = (k, t, cls = '', w = null) => `<th scope="col" class="${cls}"${w ? ` style="width:${w}px"` : ''} ${vue.tri === k ? `aria-sort="${vue.sens > 0 ? 'ascending' : 'descending'}"` : ''}><button type="button" data-act="tri-col" data-v="${k}">${t}<span class="fl">${vue.tri === k ? (vue.sens > 0 ? '▲' : '▼') : ''}</span></button></th>`;
-  const lignesHtml = vis.map((l) => {
-    const st = statut(l), v = victoirePct(l), jouee = J.has(l.c.id);
-    return `<tr data-fiche="${esc(l.c.id)}" class="${fiche.ouverte === l.c.id ? 'choisie' : ''}${jouee ? ' bloquee' : ''}">
-      <td><input type="checkbox" data-act="cocher" data-v="${esc(l.c.id)}" ${jouee ? 'checked' : ''} ${palierEnCours(s) ? '' : 'disabled'} aria-label="${esc(l.j.nom)} déjà utilisée"></td>
-      <td><div class="cellule-carte">${vignette(l)}${badgeEtoiles(l)}</div></td>
-      <td><span class="nom">${esc(l.j.nom)}</span><span class="sous">${esc(postesL(l).join('/'))} · ${esc(l.j.club?.nom ?? '?')}</span></td>
-      <td>${l.m ? `<span class="nom" style="font-weight:400">${esc(quand(l.m.debutUTC))}</span><span class="sous">${l.lieu === 'ext' ? '@' : l.lieu === 'dom' ? 'vs' : ''} ${esc(l.adv ?? '?')}${v != null ? ` · ${v}${nbsp}% vict.` : ''}</span>` : '<span class="doux">pas de match</span>'}</td>
-      ${nba ? `<td><div class="cellule-p"><b>${l.pr.score?.minutes == null ? '–' : nb(l.pr.score.minutes)}</b>${G.barreMin(l.pr.score, seuilMinutes(), 56)}${l.pr.score?.minutesEnHausse ? '<span class="ok-txt" title="minutes en hausse">▲</span>' : ''}</div></td>` : ''}
-      ${nba ? '' : `<td><div class="cellule-p"><b class="${confirme(l) ? 'ok-txt' : ''}">${txtChances(l)}</b>${G.barreP(l.pr.p, seuil(), 56)}</div></td>`}
-      <td>${nba ? `<div class="cellule-p"><b>${nb(l.pr.siJoue)}</b>${G.ival(l, 64)}</div>` : (() => { const f = scoreFoot(l); return `<div class="cellule-tit"><b>${nb(f.v)}</b>${f.sous ? `<small>${esc(f.sous)}</small>` : ''}</div>`; })()}</td>
-      ${nba ? '' : `<td class="r"><b>${nb(l.pr.esperance, 1)}</b></td>`}
-      ${nba ? `<td class="r">${l.j.etoiles && l.pr.siJoue != null ? nb(l.pr.siJoue / l.j.etoiles, 1) : '–'}</td>` : ''}
-      ${nba ? (() => { const p = profilDe(l.j), v = p?.stats.turnovers.points; const t = v == null ? null : rangNba(v, 'turnovers', REF_NBA, D.P.profil); return `<td class="r ${t?.ton === 'faible' ? 'stop-txt' : t?.ton === 'fort' ? 'ok-txt' : ''}" title="points Sorare perdus par match en balles perdues">${v == null ? '–' : `−${nb(Math.abs(v), 1)}`}</td>`; })() : ''}
-      <td>${G.pastilles(formeEquipe(l.equipe.slug)?.derniers)}</td>
-      <td class="statut">${l.c.bonusPct ? `<span class="tag">${esc(l.c.collection)} +${nb(l.c.bonusPct)}${nbsp}%</span> ` : ''}${st === 'probable' ? '' : `<span class="tag ${TON_STATUT[st]}">${LIBELLES[st]}</span> `}${!l.pr.eligibleArcade && l.m ? '<span class="tag stop">hors solo</span> ' : ''}${tagsContexte(l)}${!l.c.bonusPct && st === 'probable' && l.pr.eligibleArcade ? `<span class="doux">${esc(l.c.collection ?? '')}</span>` : ''}</td></tr>`;
-  }).join('');
-  el.innerHTML = `<div class="defile-x"><table class="dense"><thead><tr>${th('j', 'Utilisée', '', 64)}${th('x', 'Carte', '', 84)}${th('n', 'Joueur')}${th('d', 'Match')}${nba ? th('m', 'Minutes', '', 112) : ''}${nba ? '' : th('p', 'Chances', '', 112)}${th('s', nba ? 'Score projeté' : 'Titulaire', '', nba ? 124 : 200)}${nba ? '' : th('e', 'Espérance', 'r', 96)}${nba ? th('r', 'Pts/★', 'r', 72) : ''}${nba ? th('t', 'Pertes', 'r', 76) : ''}${th('q', 'Club', '', 112)}${th('b', 'Bonus · statut', '', 160)}</tr></thead><tbody>${lignesHtml}</tbody></table></div>${plus}`;
+  // PC : la même liste, en-tête triable, fiche épinglée à droite (dès 1 024 px).
+  const k = `cartes|${s}`;
+  if (!vis.some((l) => l.c.id === vue.epingle[k])) vue.epingle[k] = vis[0].c.id;
+  el.innerHTML = `<div class="cartes-grille">
+    <section class="carte tableau" aria-label="Cartes">${enteteTab(s, { tri: true })}${vis.map((l) => ligne(l, { horsSolo: true, griser: true, epinglable: true })).join('')}${plus}</section>
+    <aside class="col-fiche carte" id="col-fiche" data-des="pc" aria-label="Fiche épinglée"></aside></div>`;
+  afficherColFiche();
+  dessiner(el);
 }
 
 // ---------- Fiche joueur ----------
@@ -1881,7 +1871,14 @@ function refocaliser(a, v) {
   const sel = v != null ? `#main [data-act="${a}"][data-v="${CSS.escape(v)}"]` : `#main [data-act="${a}"]`;
   plusTard(() => document.querySelector(sel)?.focus({ preventScroll: true }));
 }
+// Menus de Mes cartes (Filtres, Tri) : un seul ouvert, fermé par un clic ailleurs ou par Échap ; l'état survit au redessin.
+const fermerMenus = (sauf = null) => { document.querySelectorAll('details.menu[open]').forEach((m) => { if (m !== sauf) m.open = false; }); };
+document.addEventListener('toggle', (e) => {
+  const m = e.target; if (!m.matches?.('details.menu')) return;
+  if (m.open) { fermerMenus(m); vue.menuCartes = m.dataset.menu; } else if (vue.menuCartes === m.dataset.menu) vue.menuCartes = null;
+}, true);
 document.addEventListener('click', (e) => {
+  if (!e.target.closest('details.menu')) fermerMenus();
   const b = e.target.closest('[data-act]');
   if (b && !b.matches('input, select')) {
     const a = b.dataset.act, v = b.dataset.v;
@@ -1902,9 +1899,10 @@ document.addEventListener('click', (e) => {
       case 'seuil-min': vue.toutesMinutes = false; etatUtilisateur = { ...etatUtilisateur, seuilMinutes: Number(v) }; stockage.enregistrer(etatUtilisateur); tout(); return;
       case 'jouer': jouerEquipe(b.dataset.sport, v.split(',')); return;
       case 'creneau': vue.creneauOuvert = v; vue.versCreneau = true; soloMemo.creneaux[vue.sport] = v; ecrireSolo(); afficherCreneaux(vue.sport); return;
-      case 'affichage': vue.affichage = v; ecrireAffichage(v); afficherCartes(); return;
       case 'poste': vue.poste = v || null; afficherCartes(); return;
       case 'etoiles': vue.etoiles = v === '' ? null : Number(v); afficherCartes(); return;
+      case 'fermer-menus': fermerMenus(); return;
+      case 'tri-menu': vue.tri = v; vue.sens = CROISSANTS.has(v) ? 1 : -1; vue.menuCartes = null; afficherCartes(); return;
       case 'tri-col': vue.sens = vue.tri === v ? -vue.sens : (CROISSANTS.has(v) ? 1 : -1); vue.tri = v; afficherCartes(); return;
       case 'tout-voir': vue.toutVoir = true; afficherListeCartes(); return;
       case 'fermer-fiche': fermerFiche(); return;
@@ -1925,6 +1923,8 @@ document.addEventListener('change', (e) => {
   const a = e.target.dataset?.act, v = e.target.value;
   if (e.target.closest('#main')) refocaliser(a, e.target.dataset.v);
   if (a === 'journee') { vue.journee = v; afficherCartes(); }
+  else if (a === 'etoiles') { vue.etoiles = v === '' ? null : Number(v); afficherCartes(); }
+  else if (a === 'collection') { vue.collection = v || null; afficherCartes(); }
   else if (a === 'tri') { vue.tri = v; vue.sens = CROISSANTS.has(v) ? 1 : -1; afficherCartes(); }
   else if (a === 'dispo') { vue.dispo = e.target.checked; afficherCartes(); }
   else if (a === 'cocher') { basculer(vue.sport, e.target.dataset.v); rendreNav('cartes'); afficherCartes(); }
@@ -1932,6 +1932,7 @@ document.addEventListener('change', (e) => {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     if (!$('voile').hidden) { fermerFenetre(); return; }
+    if (document.querySelector('details.menu[open]')) { const m = document.querySelector('details.menu[open]'); fermerMenus(); m.querySelector('summary').focus(); return; }
     if (fiche.ouverte) { fermerFiche(); return; }
   }
   if (e.key === 'Tab' && !$('voile').hidden) { pieger(e, $('voile').querySelector('.fenetre')); return; }

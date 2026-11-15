@@ -529,8 +529,8 @@ img.vig { border: 0; }
 .entete-tab { display: none; }
 @container (min-width: 720px) {
   .ligne {
-    grid-template-columns: 32px minmax(120px, 1.3fr) minmax(96px, 1fr) 96px 100px minmax(112px, 128px); column-gap: 10px;
-    grid-template-areas: "img nom match forme p s" "img tags match forme p s" "img action match forme p s" "img extra extra extra extra extra";
+    grid-template-columns: 32px minmax(150px, 1.4fr) minmax(130px, 1fr) 104px minmax(112px, 150px); column-gap: 14px;
+    grid-template-areas: "img nom match p s" "img tags match p s" "img action match p s" "img extra extra extra extra";
     min-height: 56px; padding: 6px var(--e4); align-items: start; row-gap: 2px;
   }
   .c-tags { padding-top: 4px; }
@@ -554,7 +554,7 @@ img.vig { border: 0; }
   .c-s .sv { font-size: var(--t4); }
   .c-s .ppe { display: block; font-size: var(--t1); }
   .entete-tab {
-    display: grid; grid-template-columns: 32px minmax(120px, 1.3fr) minmax(96px, 1fr) 96px 100px minmax(112px, 128px); column-gap: 10px;
+    display: grid; grid-template-columns: 32px minmax(150px, 1.4fr) minmax(130px, 1fr) 104px minmax(112px, 150px); column-gap: 14px;
     padding: var(--e2) var(--e4); border-top: 1px solid var(--trait); background: var(--surface-2);
   }
   .entete-tab span { white-space: normal; line-height: 1.3; }
@@ -792,3 +792,65 @@ table.dense td.statut .tag { margin: 1px 0; }
   .col-droite[data-onglet="autres"] > .col-fiche, .col-droite[data-onglet="fiche"] > :not(.onglets-droite):not(.col-fiche) { display: none; }
   .col-droite[data-onglet="fiche"] > .col-fiche { display: block; position: sticky; top: calc(var(--e3) + 52px); max-height: calc(100vh - 84px); overflow-y: auto; }
 }
+
+/* Mes cartes sur PC : filtres sur une barre (étoiles, type de carte, journée et tri en menus) */
+.barre-filtres.une-barre { gap: var(--e2) var(--e3); }
+.barre-filtres.une-barre select.choix { max-width: 230px; text-overflow: ellipsis; }
+.barre-filtres.une-barre .reglage > span { display: none; } /* le libellé du seuil est dit par les boutons (70 %, 20 min) */
+/* En-tête de liste triable : les libellés sont des boutons sans cadre */
+.entete-tab.triable button { all: unset; cursor: pointer; white-space: normal; line-height: 1.3; }
+.entete-tab.triable button:hover, .entete-tab.triable button[aria-pressed="true"] { color: var(--encre); }
+.entete-tab.triable button:focus-visible { outline: 2px solid var(--encre); outline-offset: 2px; border-radius: 3px; }
+
+/* Forme de l'équipe : sur téléphone, sa rangée (.c-forme) ; en colonnes, de petites pastilles sous le match */
+.forme-mini { display: none; }
+@container (min-width: 720px) {
+  .ligne > .c-forme { display: none; }
+  .forme-mini { display: flex; margin-top: 1px; }
+  .forme-mini .vnd span { width: 14px; height: 14px; font-size: 10px; border-radius: 3px; }
+  /* le nom seul sur sa ligne, puis poste, étoiles et type de carte, puis le club (comme sur téléphone) */
+  .c-nom .nom-ligne { flex-basis: 100%; }
+  .c-nom { row-gap: 2px; }
+  /* même police pour les chances de jouer (ou les minutes) et le score ; les barres à la même hauteur */
+  .c-p .pv, .c-s .sv { font-size: var(--t4); font-weight: 700; line-height: 1.3; }
+  .c-p, .c-s, .c-s.c-tit { row-gap: 2px; }
+  .c-p > svg, .c-s > svg, .c-min > svg { height: 14px; flex: none; display: block; }
+  .c-s .sc { line-height: 1.3; }
+}
+/* Mes cartes : une ligne de commandes, deux menus */
+.barre-filtres.une-barre { flex-wrap: wrap; }
+.seg-etoiles { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+details.menu { position: relative; }
+details.menu > summary { list-style: none; display: inline-flex; align-items: center; gap: var(--e2); cursor: pointer; min-height: 40px; }
+details.menu > summary::-webkit-details-marker { display: none; }
+details.menu > summary small { font-weight: 400; color: var(--doux); max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+details.menu > summary::after { content: ""; width: 6px; height: 6px; border-right: 2px solid var(--doux); border-bottom: 2px solid var(--doux); transform: rotate(45deg) translateY(-2px); flex: none; }
+details.menu[open] > summary { border-color: var(--encre); }
+.menu-corps { position: absolute; z-index: 30; top: calc(100% + 6px); left: 0; min-width: 300px; max-width: min(420px, 92vw); background: var(--surface); border: 1px solid var(--trait-fort); border-radius: var(--r2); box-shadow: 0 12px 32px rgb(0 0 0 / .18); padding: var(--e4); display: grid; gap: var(--e3); }
+.menu-corps .champ { display: grid; gap: 4px; font-size: var(--t2); color: var(--doux); }
+.menu-corps .champ select { width: 100%; max-width: none; }
+.menu-corps .reglage { display: grid; gap: 4px; }
+.menu-corps .reglage > span { display: block !important; font-size: var(--t2); color: var(--doux); }
+.menu-liste { padding: var(--e2); gap: 2px; min-width: 260px; }
+.menu-liste button { all: unset; cursor: pointer; padding: 10px var(--e3); border-radius: 6px; font-size: var(--t2); }
+.menu-liste button:hover { background: var(--surface-2); }
+.menu-liste button[aria-pressed="true"] { background: var(--encre); color: var(--surface); font-weight: 600; }
+.menu-liste button:focus-visible { outline: 2px solid var(--encre); outline-offset: -2px; }
+@media (max-width: 719.98px) {
+  details.menu { position: static; }
+  .menu-corps { left: var(--e3); right: var(--e3); top: auto; max-width: none; min-width: 0; margin-top: 6px; }
+  details.menu > summary small { display: none; }
+  /* téléphone : deux blocs à parts égales, « Filtres » (tout y est, postes et étoiles compris) et « Tri » */
+  .barre-filtres.une-barre { flex-wrap: nowrap; }
+  .barre-filtres.une-barre > .seg, .barre-filtres.une-barre .compte { display: none; }
+  .barre-filtres.une-barre > details.menu { flex: 1 1 0; min-width: 0; }
+  .barre-filtres.une-barre > details.menu > summary { display: flex; width: 100%; min-height: 48px; justify-content: center; box-sizing: border-box; }
+  .menu-corps .tel-menu .seg { flex-wrap: wrap; }
+  /* le menu s'ouvre en feuille, au-dessus des onglets du bas, et défile s'il est plus haut que l'écran */
+  .menu-corps { position: fixed; left: var(--e3); right: var(--e3); top: auto; bottom: calc(72px + env(safe-area-inset-bottom, 0px)); margin: 0; max-height: calc(100dvh - 150px); overflow-y: auto; }
+}
+@media (min-width: 720px) { .menu-corps .tel-menu, summary .tel-menu { display: none; }
+}
+
+.pastille-nb { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 10px; background: var(--encre); color: var(--surface); font-size: var(--t1); font-weight: 700; }
+.menu-corps > .btn.tel-menu { justify-content: center; min-height: 48px; position: sticky; bottom: 0; }

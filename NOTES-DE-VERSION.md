@@ -1,5 +1,49 @@
 # Notes de version
 
+## 1.1 (15 novembre 2026)
+
+Suite de la revue critique de la version 1.0 : corrections, puis refonte des écrans les plus utilisés. Le calcul ne change pas.
+
+### Cartes « déjà utilisées » (remplace le marquage des cartes jouées)
+- Règle corrigée : une carte jouée redevient disponible **au même palier** dès que sa composition est terminée.
+- Un bouton **« Déjà utilisée »** sur chaque joueur de l'équipe proposée, des autres choix et dans la fiche : la carte est écartée du Solo jusqu'à la fin estimée de son match, puis revient toute seule.
+- **« J'ai joué cette équipe »** écarte les cinq cartes jusqu'à la fin du dernier de leurs matchs.
+- Un bloc « Déjà utilisées » liste les cartes écartées, avec « Remettre ».
+
+### Solo
+- **Bandeau du coup d'envoi** : orange à moins de 90 min du verrouillage ; rouge, à toute heure, si un joueur de l'équipe est remplaçant annoncé, absent de la feuille de match ou blessé. Rouge aussi sur l'accueil.
+- **Sélecteur d'équipe** : « Prudente · Équilibrée · Créneau unique » au même endroit, avec les chances de passer sous chaque nom (dont la meilleure chance d'un créneau unique).
+- **Téléphone, l'équipe d'abord** : palier sur une ligne, trois tuiles (chances, score, verrou), l'équipe, le bouton, puis le détail (autres chiffres et graphiques).
+- **PC, de 1 420 à 1 899 px** : la fiche du joueur s'ouvre dans la colonne de droite (onglets « Autres choix » / « Fiche joueur »), l'équipe reste visible. Pareil en Squad.
+- Le mode et le créneau choisis sont gardés après une mise à jour.
+- Équipes NBA triées par score projeté.
+
+### Ligne joueur, la même partout
+- **Téléphone** : une rangée par information (nom ; poste, étoiles, type de carte ; date et adversaire ; score et chances de jouer ou minutes ; forme de l'équipe).
+- **PC** : quatre colonnes ; la forme de l'équipe passe en petites pastilles sous le match.
+- Même police pour les chances de jouer (ou les minutes) et le score ; chaque barre sous son chiffre, de même largeur ; barre de fourchette du score aussi en football.
+- Forme du joueur (« en forme », « en baisse ») à côté de son score ; capitaine sur le coin de la vignette ; type de carte après les étoiles.
+- « Qui porte l'équipe » : la part des bonus (capitaine, type de carte) est hachurée.
+
+### Fiche joueur
+- **Quatre tuiles**, aux mêmes places en football et en NBA : chances de jouer, score de titulaire, score projeté, cote du match (minutes, disponibilité, score projeté, points par étoile en NBA).
+- La cote du match dit son effet sur le score ; la victoire est en vert.
+- Pendant une trêve internationale, la forme affichée est celle de la **sélection** du joueur.
+
+### Mes cartes
+- **Un seul affichage** : la liste, avec la fiche à droite sur PC. La vue Tableau disparaît ; on trie d'un clic sur un en-tête de colonne.
+- **Une seule ligne de commandes** : sur PC, postes, étoiles, puis deux menus, « Filtres » (journée, type de carte, seuil, disponibles) et « Tri ». Sur téléphone, deux boutons, « Filtres » (tout y est) et « Tri ».
+
+### Squad
+- Quand aucune équipe n'est possible, l'écran dit pourquoi (poste sans joueur, pas assez de joueurs, plafond d'étoiles) et montre le compte par poste.
+
+### Corrections
+- Barre rouge sous le seuil de nouveau visible ; plus de défilement de côté en NBA sur téléphone ; adversaire affiché en entier.
+- Colonnes des listes resserrées sur PC ; score aligné d'une ligne à l'autre.
+- Contrastes, repère du seuil, focus au clavier ; commandes d'au moins 44 px sur téléphone.
+- Récupération : coupe-circuit si l'historique échoue plusieurs fois de suite (les données sont rendues quand même, avec un avertissement) ; fin des fausses alertes pour les matchs de sélection.
+- Publication GitLab : le dossier des données est exclu en entier.
+
 ## 1.0 (14 novembre 2026)
 
 Première version complète, utilisée au quotidien en football et en NBA, en ligne et en local.

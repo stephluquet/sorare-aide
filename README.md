@@ -3,7 +3,7 @@
 Aide à la composition pour **Sorare**, en **football** et en **NBA**, pour les modes **Solo (Arcade)** et **Squad**.
 L'outil propose, l'utilisateur décide : il ne joue jamais à sa place et ne fait aucune action sur le marché.
 
-**Version 1.0** du 14 novembre 2026. Les changements sont dans [`NOTES-DE-VERSION.md`](NOTES-DE-VERSION.md).
+**Version 1.1** du 15 novembre 2026. Les changements sont dans [`NOTES-DE-VERSION.md`](NOTES-DE-VERSION.md).
 
 ## Ce que fait l'appli
 
