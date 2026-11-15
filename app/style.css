@@ -247,7 +247,7 @@ main { display: block; min-width: 0; padding: var(--e4) max(16px, env(safe-area-
 .utilisees li:first-child { border-top: 0; }
 .utilisees .lien { all: unset; cursor: pointer; font-weight: 600; text-decoration: underline; overflow-wrap: anywhere; }
 .utilisees .lien:focus-visible { outline: 2px solid var(--encre); outline-offset: 2px; }
-.solo-grille > .pile + .pile { align-content: start; }
+.solo-grille > .pile + .pile, .col-droite > .pile { align-content: start; }
 /* Action sur une ligne joueur : une icône et un texte souligné, sans cadre, pour ne pas la confondre avec une étiquette */
 .action-ligne { all: unset; box-sizing: border-box; display: inline-flex; align-items: center; gap: 4px; min-height: 24px; margin-left: 2px; cursor: pointer; font-size: var(--t1); font-weight: 600; color: var(--doux); text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; }
 .action-ligne svg { width: 14px; height: 14px; flex: none; }
@@ -754,8 +754,6 @@ table.dense td.statut .tag { margin: 1px 0; }
 .cellule-tit { display: grid; gap: 2px; }
 
 /* Solo : sélecteur prudente / équilibrée / ambitieuse dans l'en-tête du résumé */
-.tete-propositions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--e3); }
-.tete-propositions .seg small { opacity: .75; font-weight: 400; }
 
 /* Colonnes (PC) : même règle que sur téléphone, chaque barre sous son chiffre et calée sur son bord gauche
    (score de football, minutes NBA : la barre ne touche plus « 35 min »). En fin de feuille pour l'emporter. */
@@ -775,3 +773,22 @@ table.dense td.statut .tag { margin: 1px 0; }
 .rangee-solo { display: flex; flex-wrap: nowrap; width: 100%; }
 .rangee-solo button { flex: 1 1 0; min-width: 0; min-height: 48px; padding: 4px 6px; flex-direction: column; gap: 0; white-space: normal; line-height: 1.2; text-align: center; }
 .carte.proposition > .corps.detail-equipe { border-top: 1px solid var(--trait); margin-top: var(--e4); padding-top: var(--e5); }
+
+/* Sélecteur d'équipe du Solo sur PC : dans l'en-tête de la carte, à droite du titre, le pourcentage sous le nom */
+@media (min-width: 720px) {
+  #rangee-solo { flex: 0 1 auto; }
+  .rangee-solo { width: auto; }
+  .rangee-solo button { flex: 0 0 auto; padding: 4px var(--e4); min-height: 44px; }
+  .tete-propositions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--e3); }
+}
+/* Colonne de droite du Solo et du Squad. Hors de la plage 1 420–1 899 px, l'enveloppe ne compte pas (ses enfants sont
+   des cases de la grille) et les onglets sont masqués. Dans la plage : onglets « Autres choix » / « Fiche joueur ». */
+.col-droite { display: contents; }
+.onglets-droite { display: none; }
+@media (min-width: 1420px) and (max-width: 1899.98px) {
+  .solo-grille.avec-fiche > .col-droite { display: grid; gap: var(--e3); align-self: stretch; align-content: start; min-width: 0; }
+  .onglets-droite { display: flex; flex-wrap: nowrap; width: 100%; position: sticky; top: var(--e3); z-index: 2; }
+  .onglets-droite button { flex: 1 1 0; min-height: 40px; }
+  .col-droite[data-onglet="autres"] > .col-fiche, .col-droite[data-onglet="fiche"] > :not(.onglets-droite):not(.col-fiche) { display: none; }
+  .col-droite[data-onglet="fiche"] > .col-fiche { display: block; position: sticky; top: calc(var(--e3) + 52px); max-height: calc(100vh - 84px); overflow-y: auto; }
+}

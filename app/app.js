@@ -106,6 +106,7 @@ const nomCourt = (nom) => { const p = nom.split(' '); return p.length > 1 ? p.sl
 const REDUIT = matchMedia('(prefers-reduced-motion: reduce)');
 const largePC = () => innerWidth >= 1024;
 const telephone = () => innerWidth < 720; // Solo : l'équipe d'abord, haut d'écran resserré
+const moyenPC = () => innerWidth >= 1420 && innerWidth < 1900; // Solo, Squad : fiche dans la colonne de droite, en onglet
 const tresLarge = () => innerWidth >= 1900; // fiche épinglée en 3e colonne (Solo, Squad) : même seuil que app/style.css
 // Mes cartes sur PC : liste (comme les compositions, fiche épinglée à droite) ou tableau. Retenu dans le navigateur.
 function lireAffichage() { try { return localStorage.getItem('sorare-aide-affichage-cartes') === 'tableau' ? 'tableau' : 'liste'; } catch { return 'liste'; } }
@@ -766,7 +767,8 @@ function carteProposition(titre, pourquoi, e, sport, cible, o = {}) {
   const tableau = `<div class="tableau">${enteteTab(sport)}${membres.map((l) => ligne(l, { capitaine: e.capitaine, epinglable: o.epinglable, utilisable: true })).join('')}</div>`;
   const actions = `<div class="corps" style="padding-top:var(--e4)"><div class="actions"><button type="button" class="btn principal" data-act="jouer" data-sport="${sport}" data-v="${esc(e.cartes.join(','))}">J'ai joué cette équipe</button><span class="mini doux">marque les 5 cartes (annulable) · résultat connu après le dernier match, ${esc(quand(dernier))}</span></div></div>`;
   return `<section class="carte proposition" aria-label="${esc(titre)}">
-    ${o.sansTete && tel ? '' : o.selecteur ? `<header class="tete-propositions"><h2>Proposition</h2>${o.selecteur}</header><p class="corps petit doux" style="padding-top:0">${esc(pourquoi)}</p>`
+    ${o.sansTete && tel ? ''
+      : o.selecteur && !tel ? `<header class="tete-propositions"><h2>${o.selecteur === 'unique' ? esc(titre) : 'Proposition'}</h2><div id="rangee-solo">${rangeeSolo(sport)}</div></header><p class="corps petit doux" style="padding-top:0">${esc(pourquoi)}</p>`
       : `<header><h2>${esc(titre)}</h2><span class="doux petit">${esc(pourquoi)}</span></header>`}
     ${tel ? `<div class="corps"${o.sansTete ? ' style="padding-top:var(--e4)"' : ''}>${kpisEquipe(e, sport, membres, { cible, partie: 'tete' })}</div>${tableau}${actions}
       <div class="corps pile detail-equipe">${kpisEquipe(e, sport, membres, { cible, partie: 'reste' })}${dist}${porte}${o.sansTete ? `<p class="petit doux">${esc(pourquoi)}${o.note ? ` ${esc(o.note)}` : ''}</p>` : ''}</div>`
@@ -984,7 +986,7 @@ function rappelUtilisees(sport) {
   return `<section class="carte utilisees" aria-label="Cartes déjà utilisées"><header><h2>Déjà utilisées</h2><span class="doux petit">${pluriel(L.length, 'carte écartée', 'cartes écartées')} jusqu’à la fin de leur match</span></header>
     <ul>${L.map(([l, x]) => `<li><button type="button" class="lien" data-fiche="${esc(l.c.id)}">${esc(l.j.nom)}</button><span class="doux">jusqu’à ${esc(quand(x.jusqua))}</span><button type="button" class="btn mini" data-act="basculer" data-sport="${sport}" data-v="${esc(l.c.id)}" aria-label="Remettre ${esc(l.j.nom)} disponible">Remettre</button></li>`).join('')}</ul></section>`;
 }
-// Téléphone : une seule rangée pour choisir l'équipe montrée (prudente, équilibrée, ambitieuse) ou le créneau unique.
+// Téléphone : en haut de l'écran ; PC : dans l'en-tête de la carte de l'équipe. Une seule rangée pour choisir l'équipe montrée (prudente, équilibrée, ambitieuse) ou le créneau unique.
 // Les chances de chaque proposition s'affichent dès qu'elles sont calculées.
 function rangeeSolo(sport) {
   const r = cache.get(`prop|${cleBase(sport)}`), ok = !!r?.equilibree;
@@ -999,7 +1001,7 @@ function afficherSolo(sport) {
   const ep = p ? etatPalier(p) : null;
   const contexte = p && ep.enCours && !ep.derniere ? 'Une tentative est en cours : ces propositions servent à une autre tentative.' : '';
   el.innerHTML = `<div class="entete"><div class="titres"><h1>Solo · ${SPORTS[sport]}</h1><p class="doux petit">${p ? `Palier ${p.cible} · ${rangPalier(p)} sur ${paliersDe(sport).length} · ${esc(telephone() ? etatCourt(p) : etatTexte(p))}` : 'Plateau terminé'}</p></div>
-      ${telephone() ? `<div id="rangee-solo">${p ? rangeeSolo(sport) : ''}</div>` : ''}<div class="outils reglages"${telephone() ? ' hidden' : ''}><div class="seg" role="group" aria-label="Créneaux"><button type="button" data-act="mode" data-v="plusieurs" aria-pressed="${vue.mode === 'plusieurs'}">Plusieurs créneaux</button><button type="button" data-act="mode" data-v="unique" aria-pressed="${vue.mode === 'unique'}">Créneau unique</button></div></div></div>
+      ${telephone() ? `<div id="rangee-solo">${p ? rangeeSolo(sport) : ''}</div>` : ''}</div>
     <div class="tel-seul">${alertePalier(sport) ? `<div style="margin-bottom:var(--e4)">${alertePalier(sport)}</div>` : ''}</div>
     ${contexte && !(telephone() && vue.mode !== 'unique') ? `<p class="contexte">${esc(contexte)}</p>` : ''}
     ${p && vue.mode === 'unique' ? rappelUtilisees(sport) : ''}
@@ -1018,8 +1020,8 @@ function afficherSolo(sport) {
     if (!dispo.includes(vue.proposition)) vue.proposition = 'prudente';
     const nomProp = vue.proposition, eq = r[nomProp];
     retenirProposition(sport, eq); afficherCoupEnvoi(sport, eq);
-    if ($('rangee-solo')) { $('rangee-solo').innerHTML = rangeeSolo(sport); plusTard(() => parCreneau(sport)).then(() => { if (surSolo(sport) && $('rangee-solo')) $('rangee-solo').innerHTML = rangeeSolo(sport); }); }
-    const selecteur = dispo.length < 2 ? '' : `<div class="seg" role="group" aria-label="Proposition">${dispo.map((k) => `<button type="button" data-act="proposition" data-v="${k}" aria-pressed="${k === nomProp}">${TITRES[k][2]} <small>${pct(r[k].pPasser)}</small></button>`).join('')}</div>`;
+    if ($('rangee-solo')) $('rangee-solo').innerHTML = rangeeSolo(sport);
+    plusTard(() => parCreneau(sport)).then(() => { if (surSolo(sport) && $('rangee-solo')) $('rangee-solo').innerHTML = rangeeSolo(sport); });
     const variantes = dispo.length < 2 ? '<p class="corps petit doux" style="border-top:1px solid var(--trait);padding-top:var(--e3)">Pas d’autre proposition : l’équipe prudente est aussi la plus forte.</p>' : '';
     const ecartees = Object.entries(r.ecartees).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<li>${v} ${esc(k)}</li>`).join('');
     const apres = variantes +
@@ -1028,9 +1030,10 @@ function afficherSolo(sport) {
     // Fiche épinglée (≥ 1 800 px) : le dernier joueur choisi, sinon le 1er joueur de l'équipe.
     if (!parId.has(vue.epingle[`solo|${sport}`])) vue.epingle[`solo|${sport}`] = membresDe(eq)[0].c.id; // le 1er joueur affiché
     $('solo-contenu').innerHTML = `<div class="solo-grille avec-fiche">
-        <div class="pile">${carteProposition(TITRES[nomProp][0], TITRES[nomProp][1], eq, sport, p.cible, { apres, epinglable: true, selecteur, sansTete: telephone(), note: contexte })}</div>
+        <div class="pile">${carteProposition(TITRES[nomProp][0], TITRES[nomProp][1], eq, sport, p.cible, { apres, epinglable: true, selecteur: 'plusieurs', sansTete: telephone(), note: contexte })}</div>
+        <div class="col-droite" data-onglet="${vue.ongletDroit === 'fiche' ? 'fiche' : 'autres'}">${ONGLETS_DROITE(vue.ongletDroit === 'fiche' ? 'fiche' : 'autres')}
         <div class="pile">${rappelUtilisees(sport)}<section class="carte" id="autres-choix" aria-label="Autres choix"><header><h2>Autres choix</h2><span class="doux petit">si tu préfères ajuster cette équipe</span></header><p class="attente">Recherche des autres joueurs…</p></section></div>
-        <aside class="col-fiche carte" id="col-fiche" aria-label="Fiche épinglée"></aside>
+        <aside class="col-fiche carte" id="col-fiche" aria-label="Fiche épinglée"></aside></div>
       </div>`;
     afficherColFiche();
     dessiner($('solo-contenu'));
@@ -1129,7 +1132,7 @@ function afficherCreneaux(sport) {
           <span><span class="heure">${esc(quand(x.creneau))}</span><br><span class="mini doux">${pluriel(x.matchs, 'match')} · compositions ${x.compositionsPubliees ? `publiées (${x.compositionsPubliees}/${x.matchs})` : 'pas encore publiées'} · ${x.admissibles} cartes</span></span>
           <span class="chance">${pct(x.equilibree.pPasser)}<small>chances de passer</small></span></button>`).join('')}</div>
         <p class="corps note" style="padding-top:var(--e3)">${pluriel(r.creneaux.length, 'créneau comparé', 'créneaux comparés')} en ${nb(r.dureeMs / 1000, 1)} s.</p></section>
-      <div class="pile" id="creneau-detail">${carteProposition(`Créneau ${quand(c.creneau)}`, 'La meilleure équipe de ce créneau.', c.equilibree, sport, p.cible)}</div>
+      <div class="pile" id="creneau-detail">${carteProposition(`Créneau ${quand(c.creneau)}`, 'La meilleure équipe de ce créneau.', c.equilibree, sport, p.cible, { selecteur: 'unique' })}</div>
     </div>`;
     dessiner($('solo-contenu'));
     // Après le choix d'un créneau : montrer son équipe quand elle est sous le premier écran (une seule colonne sous 1 360 px).
@@ -1192,8 +1195,9 @@ function afficherSquad() {
           <div style="padding-top:var(--e2)"><span class="libelle long">Qui porte l'équipe · score projeté par joueur · hachuré : part des bonus${e.capitaine ? ' (capitaine, carte)' : ' (carte)'}</span><div style="margin-top:8px">${G.empilee(membres, e, sport)}</div></div></div>
         <div class="tableau">${enteteTab(sport)}${membres.map((l) => ligne(l, { capitaine: e.capitaine, epinglable: true, jouee: Jo.has(l.c.id) ? 'utilisée en solo' : '' })).join('')}</div>
         <p class="corps note" style="padding-top:var(--e3)">${r.admissibles} cartes du jour retenues, ${r.nbEquipes} équipes comparées. Règles de composition supposées identiques au solo (à confirmer).</p></section>
+      <div class="col-droite" data-onglet="${vue.ongletDroit === 'fiche' ? 'fiche' : 'autres'}">${ONGLETS_DROITE(vue.ongletDroit === 'fiche' ? 'fiche' : 'autres')}
       <section class="carte" id="autres-choix" aria-label="Autres choix"><header><h2>Autres choix</h2><span class="doux petit">si tu préfères ajuster l'équipe du jour</span></header><p class="attente">Recherche des autres joueurs…</p></section>
-      <aside class="col-fiche carte" id="col-fiche" aria-label="Fiche épinglée"></aside>
+      <aside class="col-fiche carte" id="col-fiche" aria-label="Fiche épinglée"></aside></div>
     </div>`;
     afficherColFiche();
     dessiner($('squad-contenu'));
@@ -1445,12 +1449,22 @@ function epingleActive() {
   const col = dansVue('col-fiche');
   if (!col || !col.closest('#main') || col.closest('[hidden]')) return false;
   if (vueCourante() === 'solo' && vue.mode !== 'plusieurs') return false;
-  return col.dataset.des === 'pc' ? largePC() : tresLarge();
+  return col.dataset.des === 'pc' ? largePC() : tresLarge() || moyenPC();
 }
 function marquerChoisies() {
-  const ep = epingleActive() ? vue.epingle[cleEpingle()] : null;
+  const ep = epingleActive() && !(moyenPC() && dansVue('col-fiche').dataset.des !== 'pc' && vue.ongletDroit !== 'fiche') ? vue.epingle[cleEpingle()] : null;
   document.querySelectorAll('#main [data-fiche]').forEach((el) => el.classList.toggle('choisie',
     el.dataset.fiche === fiche.ouverte || (ep != null && el.dataset.fiche === ep && !el.closest('#col-fiche'))));
+}
+// Colonne de droite du Solo et du Squad entre 1 420 et 1 899 px : deux onglets, « Autres choix » et « Fiche joueur ».
+const ONGLETS_DROITE = (actif) => `<div class="seg onglets-droite" role="group" aria-label="Colonne de droite">${[['autres', 'Autres choix'], ['fiche', 'Fiche joueur']].map(([k, t]) => `<button type="button" data-act="onglet-droit" data-v="${k}" aria-pressed="${k === actif}">${t}</button>`).join('')}</div>`;
+function ongletDroit(v) {
+  vue.ongletDroit = v;
+  const col = document.querySelector(`#vue-${vueCourante()} .col-droite`); if (!col) return;
+  col.dataset.onglet = v;
+  col.querySelectorAll('[data-act="onglet-droit"]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === v)));
+  if (v === 'fiche') dessiner(col);
+  marquerChoisies();
 }
 function afficherColFiche() {
   const col = dansVue('col-fiche'); if (!col || !epingleActive()) return;
@@ -1461,7 +1475,7 @@ function afficherColFiche() {
 }
 function ouvrirFiche(id) {
   const l = parId.get(id); if (!l) return;
-  if (epingleActive()) { vue.epingle[cleEpingle()] = id; afficherColFiche(); return; }
+  if (epingleActive()) { vue.epingle[cleEpingle()] = id; afficherColFiche(); if (moyenPC() && dansVue('col-fiche').dataset.des !== 'pc') ongletDroit('fiche'); return; }
   if (!fiche.ouverte) fiche.origine = document.activeElement;
   fiche.ouverte = id;
   const v = $('volet');
@@ -1878,6 +1892,7 @@ document.addEventListener('click', (e) => {
       case 'theme': changerTheme(); return;
       case 'aide': ouvrirAide(); return;
       case 'parametres': WEB?.ouvrirParametres(); return;
+      case 'onglet-droit': ongletDroit(v); return;
       case 'mode': vue.mode = v; soloMemo.mode = v === 'unique' ? 'unique' : 'plusieurs'; ecrireSolo(); afficherSolo(vue.sport); return;
       case 'proposition': vue.proposition = v; if (vue.mode !== 'plusieurs') { vue.mode = 'plusieurs'; soloMemo.mode = 'plusieurs'; ecrireSolo(); } afficherSolo(vue.sport); return;
       case 'seuil': vue.toutesChances = false; etatUtilisateur = { ...etatUtilisateur, seuil: Number(v) }; stockage.enregistrer(etatUtilisateur); tout(); return;
@@ -1932,7 +1947,7 @@ let largeurPrec = innerWidth, minuterieRedim = null;
 window.addEventListener('resize', () => {
   clearTimeout(minuterieRedim);
   minuterieRedim = setTimeout(() => {
-    const palier = (w) => (w >= 1900) + (w >= 1024) + (w >= 720);
+    const palier = (w) => (w >= 1900) + (w >= 1420) + (w >= 1024) + (w >= 720);
     if (palier(innerWidth) !== palier(largeurPrec)) { if (fiche.ouverte) fermerFiche(); tout(); } else dessiner();
     largeurPrec = innerWidth;
   }, 150);
