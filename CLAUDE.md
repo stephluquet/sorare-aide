@@ -315,6 +315,13 @@ L'ancien système (cartes marquées jouées jusqu'au changement de palier, alert
 - **« Qui porte l'équipe »** : part due aux bonus (capitaine, type de carte) **hachurée légèrement** à droite de chaque segment, texte au-dessus (`.part-bonus`), détail en info-bulle et dans le libellé.
 - Contrôles passés : écart barre / chiffre 0 px sur toutes les lignes (320, 390, 1 440 px), aucun défaut d'alignement sur 50 listes (320 à 1 920 px), aucun texte coupé. Les scripts de contrôle (alignements, textes coupés, cibles tactiles) sont encore hors dépôt : à ranger dans `outils/` (maquette 6 de la revue).
 
+## Solo sur téléphone : l'équipe d'abord (2026-11-15, maquette 1 de la revue, validée sur prototype)
+**Sous 720 px seulement** (`telephone()` d'app.js ; au-dessus, l'affichage PC est inchangé ; franchir 720 px relance `tout()`). Demande de l'utilisateur : l'équipe doit être visible dès l'ouverture.
+- **Une seule rangée de choix** (`rangeeSolo`, `#rangee-solo`) : « Prudente · Équilibrée · (Ambitieuse) · Créneau unique », les chances de passer sous chaque nom ; sous « Créneau unique », la meilleure chance d'un créneau (calculée après les propositions, `parCreneau`). Elle remplace les deux sélecteurs ; un appui sur une proposition quitte le mode créneau unique. « Plusieurs créneaux » n'existe plus sur téléphone.
+- **Palier sur une ligne** (`etatCourt`) : « Palier 360 · 3 sur 6 · 3 échecs · 1 en cours ».
+- **Carte de proposition** (`carteProposition`, option `sansTete`) : pas d'en-tête ; **trois tuiles égales** (`kpisEquipe` avec `partie: 'tete'`, `.tuiles.trois`) : « Chances » (de passer le palier), « Score » (cible et écart), « Verrou » (heure en grand, jour et premier joueur dessous ; libellés raccourcis car « Verrouillage » ne tient pas dans un tiers d'écran) ; puis l'équipe ; puis « J'ai joué cette équipe » ; puis le détail déplié, sans titre (`.detail-equipe`, `partie: 'reste'`) : les autres chiffres, la distribution, « Qui porte l'équipe », et la phrase d'explication de la proposition.
+- Mesuré à 390 px : premier joueur 150 px sous le haut de la carte (860 avant) ; aucune erreur ni débordement à 390 et 320 px ; carte identique au pixel près à 1 440 px.
+
 ## Étape 3 (à venir) : conseil avant chaque journée
 Vérifier titulaires et blessures avec des sources citées et datées, signaler les pièges, proposer 2 ou 3 compositions. L'utilisateur valide dans l'appli Sorare.
 

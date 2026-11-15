@@ -764,3 +764,14 @@ table.dense td.statut .tag { margin: 1px 0; }
   .c-min { grid-template-columns: auto; }
   .c-min .pv, .c-min svg, .c-min .dispo { grid-column: 1; grid-row: auto; }
 }
+
+/* Solo sur téléphone : trois chiffres en tuiles au-dessus de l'équipe (les deux premiers côte à côte, le verrouillage
+   sur toute la largeur), le détail (autres chiffres, graphiques) sous l'équipe. */
+.tuiles.trois { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.tuiles.trois .tuile { padding: var(--e3) var(--e2); }
+.tuiles.trois .libelle { letter-spacing: .02em; }
+/* Rangée du haut : Prudente / Équilibrée / Créneau unique, à parts égales, les chances sous le nom */
+#rangee-solo { flex: 1 1 100%; }
+.rangee-solo { display: flex; flex-wrap: nowrap; width: 100%; }
+.rangee-solo button { flex: 1 1 0; min-width: 0; min-height: 48px; padding: 4px 6px; flex-direction: column; gap: 0; white-space: normal; line-height: 1.2; text-align: center; }
+.carte.proposition > .corps.detail-equipe { border-top: 1px solid var(--trait); margin-top: var(--e4); padding-top: var(--e5); }
