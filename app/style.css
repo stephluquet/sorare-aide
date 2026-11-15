@@ -584,11 +584,12 @@ details.repli > summary .doux { font-weight: 400; }
 .barre-filtres { position: sticky; top: 56px; z-index: 10; background: var(--fond); padding: var(--e2) 0; display: flex; flex-wrap: wrap; gap: var(--e2); align-items: center; margin-bottom: var(--e2); }
 @media (min-width: 1024px) { .barre-filtres { top: 0; } }
 .barre-filtres .compte { margin-left: auto; font-size: var(--t2); color: var(--doux); }
-details.filtres { flex-basis: 100%; }
+details.filtres { flex-basis: 100%; min-width: 0; }
 details.filtres > summary { cursor: pointer; font-size: var(--t2); color: var(--doux); min-height: 40px; display: flex; align-items: center; gap: var(--e2); list-style: none; }
 details.filtres > summary::-webkit-details-marker { display: none; }
 details.filtres > summary::before { content: ""; width: 7px; height: 7px; border-right: 2px solid var(--doux); border-bottom: 2px solid var(--doux); transform: rotate(-45deg); flex: none; }
 details.filtres[open] > summary::before { transform: rotate(45deg); }
+.filtres-corps select.choix { text-overflow: ellipsis; } /* libellé long (journée NBA) : coupé, il n'élargit plus la page (details.filtres a min-width: 0) */
 .filtres-corps { display: flex; flex-wrap: wrap; gap: var(--e2); align-items: center; padding-bottom: var(--e2); }
 /* largeurs fixes : elles ne dépendent plus des lignes affichées (tri, filtres) */
 table.dense { width: 100%; min-width: 1040px; table-layout: fixed; border-collapse: separate; border-spacing: 0; font-size: var(--t2); }
