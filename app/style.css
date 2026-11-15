@@ -275,7 +275,7 @@ main { display: block; min-width: 0; padding: var(--e4) max(16px, env(safe-area-
 .histo text.val { fill: var(--encre); font-weight: 600; }
 .barre-p .piste, .ival .piste { fill: var(--trait); }
 .barre-p .rempli { fill: var(--encre); }
-.barre-p.bas .rempli { fill: var(--stop); }
+.barre-p.sous .rempli { fill: var(--stop); }
 .barre-p.confirme .rempli { fill: var(--ok); }
 .barre-p .seuil { stroke: var(--attention); stroke-width: 2; }
 .ival .bande { fill: color-mix(in srgb, var(--d-tit) 35%, transparent); }
@@ -666,7 +666,7 @@ table.dense td.statut .tag { margin: 1px 0; }
 /* ===== NBA : minutes projetées (methode.md, section 11) ===== */
 .barre-min .plage { fill: color-mix(in srgb, var(--nba) 30%, var(--surface)); }
 .barre-min .point { fill: var(--nba); stroke: var(--surface); stroke-width: 1.5; }
-.barre-min.bas .point { fill: var(--attention); }
+.barre-min.sous .point { fill: var(--attention); }
 .c-min { display: grid; grid-template-columns: auto auto; column-gap: var(--e2); row-gap: 2px; align-items: center; justify-content: end; }
 .c-min .dispo { grid-column: 1 / -1; text-align: right; font-size: var(--t1); color: var(--doux); white-space: nowrap; }
 .c-min .pv small { font-size: var(--t1); font-weight: 600; color: var(--doux); }

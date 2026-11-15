@@ -361,12 +361,12 @@ const G = {
   barreMin(sc, s, w = 64) {
     const H = 14, x = (v) => (w * Math.max(0, Math.min(48, v)) / 48).toFixed(1);
     if (sc?.minutes == null) return `<svg class="gx barre-p" width="${w}" height="${H}" aria-hidden="true"><rect class="piste" y="3" width="${w}" height="8" rx="2"/></svg>`;
-    const bas = sc.minutes < s ? ' bas' : '';
-    return `<svg class="gx barre-p barre-min${bas}" width="${w}" height="${H}" viewBox="0 0 ${w} ${H}" role="img" aria-label="Minutes projetées ${nb(sc.minutes)}, entre ${nb(sc.minutesBas)} et ${nb(sc.minutesHaut)} ; seuil ${s} min"><rect class="piste" x="0" y="3" width="${w}" height="8" rx="2"/><rect class="plage" x="${x(sc.minutesBas)}" y="3" width="${(x(sc.minutesHaut) - x(sc.minutesBas)).toFixed(1)}" height="8" rx="2"/><circle class="point" cx="${x(sc.minutes)}" cy="7" r="3.5"/><line class="seuil" x1="${x(s)}" x2="${x(s)}" y1="0" y2="${H}"/></svg>`;
+    const sous = sc.minutes < s ? ' sous' : '';
+    return `<svg class="gx barre-p barre-min${sous}" width="${w}" height="${H}" viewBox="0 0 ${w} ${H}" role="img" aria-label="Minutes projetées ${nb(sc.minutes)}, entre ${nb(sc.minutesBas)} et ${nb(sc.minutesHaut)} ; seuil ${s} min"><rect class="piste" x="0" y="3" width="${w}" height="8" rx="2"/><rect class="plage" x="${x(sc.minutesBas)}" y="3" width="${(x(sc.minutesHaut) - x(sc.minutesBas)).toFixed(1)}" height="8" rx="2"/><circle class="point" cx="${x(sc.minutes)}" cy="7" r="3.5"/><line class="seuil" x1="${x(s)}" x2="${x(s)}" y1="0" y2="${H}"/></svg>`;
   },
   barreP(p, s, w = 64, h = 8) {
     if (p == null) return `<svg class="gx barre-p" width="${w}" height="14" aria-hidden="true"><rect class="piste" y="3" width="${w}" height="${h}" rx="2"/></svg>`;
-    const cls = atteint(p, s) ? 'confirme' : 'bas'; // vert à partir de ton seuil, rouge en dessous (demande de l'utilisateur)
+    const cls = atteint(p, s) ? 'confirme' : 'sous'; // vert à partir de ton seuil, rouge en dessous (demande de l'utilisateur)
     const H = 14, y = (H - h) / 2, xs = (w * s).toFixed(1);
     return `<svg class="gx barre-p ${cls}" width="${w}" height="${H}" viewBox="0 0 ${w} ${H}" role="img" aria-label="Chances de jouer ${pct(p)}, seuil ${pct(s)}"><rect class="piste" x="0" y="${y}" width="${w}" height="${h}" rx="2"/><rect class="rempli" x="0" y="${y}" width="${(w * p).toFixed(1)}" height="${h}" rx="2"/><line class="seuil" x1="${xs}" x2="${xs}" y1="0" y2="${H}"/></svg>`;
   },
