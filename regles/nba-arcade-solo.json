@@ -30,7 +30,13 @@
   ],
   "vies_par_niveau": 4,
   "echec_toutes_vies": "retour_niveau_1",
-  "carte_bloquee": "tant_que_meme_niveau",
+  "carte_bloquee": {
+    "valeur": "tant_que_sa_composition_n_est_pas_terminee",
+    "definition": "une carte posée dans une composition est indisponible jusqu'à la fin de cette composition (ses 5 matchs joués, score figé), puis redevient jouable au même palier",
+    "compositions_simultanees": "plusieurs tentatives peuvent être en cours en même temps au même palier ; les cartes de l'une sont interdites dans les autres",
+    "liberation_au_passage_du_palier": true,
+    "source": "utilisateur, 2026-11-15 (corrige « tant qu'on reste sur le même niveau », noté le 2026-11-07)"
+  },
   "bonus_collection": {
     "source": "API, carte par carte",
     "repli": "voir bonus-collections.json"

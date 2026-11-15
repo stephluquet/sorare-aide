@@ -135,11 +135,11 @@ R/cartes.R       ancien script R (liste des cartes + L5/L15 en CSV), antérieur 
 **Arcade solo, commun aux deux sports**
 - plateau de niveaux, chacun avec un score cible ; score compté dès la fin des matchs réels (figé 5 min après) ; niveau réussi si score ≥ cible, on avance aussitôt ;
 - 4 vies par niveau ; échec = 1 vie perdue ; plus de vies = retour au niveau 1 ;
-- **une carte jouée est bloquée tant qu'on reste sur le même niveau** : les tentatives d'un même niveau utilisent des cartes toutes différentes ; tout est libéré quand on passe le niveau ;
+- **une carte jouée est indisponible tant que sa composition n'est pas terminée** (ses 5 matchs joués, score figé), puis elle redevient jouable **au même palier** ; plusieurs tentatives peuvent être en cours en même temps au même palier, et les cartes de l'une sont interdites dans les autres ; tout est libéré quand on passe le niveau (**corrigé par l'utilisateur le 2026-11-15** ; on avait noté à tort, le 2026-11-07, « bloquée tant qu'on reste sur le même niveau ») ;
 - tiers de joueurs : Icon, Star, Impact, Roster, Reserve (noms de l'API : voir le tableau des champs vérifiés) ;
 - bonus de collection : à lire carte par carte dans l'API ; `regles/bonus-collections.json` ne sert que de repli et de contrôle (la projection signale tout écart). Le centre d'aide mentionne aussi un bonus « jusqu'à +5 % » pour plusieurs joueurs d'un même club : à distinguer et à vérifier.
 
-**Équipe verrouillée au premier coup d'envoi** d'un de ses joueurs (utilisateur). Carte bloquée tant qu'on reste sur le même niveau, mais utilisable en Squad.
+**Équipe verrouillée au premier coup d'envoi** d'un de ses joueurs (utilisateur). Carte indisponible en Solo tant que sa composition est en cours, mais utilisable en Squad.
 
 **Football solo** : 5 joueurs (GK, DF, MD, FW + 1 joueur de champ au choix) ; un capitaine, score majoré de 50 % ; cartes common ; seuls comptent les **matchs** des compétitions autorisées (liste dans `regles/`, coupes nationales exclues).
 
@@ -299,6 +299,9 @@ L'utilisateur vérifie les titulaires dans Sorare avant de composer : il ne veut
 - **Orange** à moins de 90 min du verrouillage (`ALERTE_COUP_ENVOI_MIN`). **Rouge** à toute heure si un joueur est remplaçant annoncé, absent de la feuille de match, ou exclu (blessé, suspendu ; NBA : « Out » chez ESPN) (`aRemplacer`). Pas de remplaçant proposé dans le bandeau (la nouvelle proposition et « Autres choix » le font).
 - Vérifié avec l'horloge de la page réglée à H-52 min et une composition officielle **simulée** (Muharemović remplaçant) : orange, rouge « équipe proposée », rouge « équipe validée », accueil, 1 440 et 390 px. Pas encore vu un vrai soir de match ni en NBA.
 - **À REVOIR** : le marquage des cartes jouées repose sur une règle fausse (voir la discussion du 2026-11-15 : une carte redevient disponible après son match).
+
+## Cartes « marquées » : règle corrigée le 2026-11-15, APPLI PAS ENCORE ADAPTÉE
+L'appli (cartes marquées jouées gardées jusqu'au changement de palier, alerte « N tentatives : 5 × N cartes bloquées », fenêtre « Marquer les cartes jouées ») repose sur l'ancienne règle, fausse. Règle confirmée par l'utilisateur : voir « Arcade solo » plus haut et `regles/*.json` (`carte_bloquee`). À faire, après accord de l'utilisateur sur le fonctionnement : compositions en cours gardées avec leur date de fin (dernier coup d'envoi + durée du match), libération automatique, alerte limitée aux compositions en cours. `docs/recap-brief.md` garde l'ancienne formulation (document d'origine, non corrigé).
 
 ## Étape 3 (à venir) : conseil avant chaque journée
 Vérifier titulaires et blessures avec des sources citées et datées, signaler les pièges, proposer 2 ou 3 compositions. L'utilisateur valide dans l'appli Sorare.
