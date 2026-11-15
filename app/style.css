@@ -217,6 +217,16 @@ main { display: block; min-width: 0; padding: var(--e4) max(16px, env(safe-area-
 /* ===== Bandeaux ===== */
 .bandeau, .note-palier { border-radius: var(--r2); padding: var(--e2) var(--e3); font-size: var(--t2); margin-bottom: var(--e4); }
 .bandeau { background: var(--attention-doux); color: var(--attention); font-weight: 600; }
+/* Solo : coup d'envoi proche (orange), joueur à remplacer (rouge) */
+.coup-envoi { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--e2) var(--e4); border-radius: var(--r2); padding: var(--e3) var(--e4); margin-bottom: var(--e4); background: var(--attention-doux); color: var(--attention); font-size: var(--t2); }
+.coup-envoi > div { display: grid; gap: 2px; min-width: 0; flex: 1 1 260px; }
+.coup-envoi b { font-size: var(--t3); }
+.coup-envoi .mini { color: inherit; opacity: .9; }
+.coup-envoi ul { margin: 2px 0; padding-left: 18px; font-weight: 600; }
+.coup-envoi .lien { all: unset; cursor: pointer; text-decoration: underline; font-weight: 700; }
+.coup-envoi .lien:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.coup-envoi .btn { flex: none; }
+.coup-envoi.alerte-rouge { background: var(--stop-doux); color: var(--stop); border: 1px solid var(--stop); }
 .note-palier { background: var(--ok-doux); color: var(--ok); font-weight: 600; }
 .alerte { border-radius: var(--r2); padding: var(--e3); background: var(--attention-doux); color: var(--encre); display: grid; gap: var(--e2); font-size: var(--t2); }
 .alerte b { color: var(--attention); }

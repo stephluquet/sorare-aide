@@ -888,13 +888,15 @@ function panneauSport(s, r) {
 function afficherAccueil(anime) {
   const h = vue.heros ?? vue.sport;
   const r = (s) => (palierEnCours(s) ? cache.get(`prop|${cleBase(s)}`) : null);
-  $('vue-accueil').innerHTML = `<section class="projecteur sans-3d" id="projecteur" data-sport="${h}" aria-label="Palier en cours · ${SPORTS[h]}">
+  $('vue-accueil').innerHTML = `<div id="alertes-accueil" role="status"></div><section class="projecteur sans-3d" id="projecteur" data-sport="${h}" aria-label="Palier en cours · ${SPORTS[h]}">
       <div class="scene-3d" id="scene-3d" aria-hidden="true"></div>
       <div class="pj-contenu" id="pj-contenu">${contenuHeros(h, r(h))}</div></section>
     <div class="entete"><div class="titres"><h1>Où j'en suis</h1><p class="doux petit">${esc(fJourLong.format(new Date()))} · données Sorare de ${fHeure.format(new Date(D.meta.recupereA))}</p></div></div>
     <div class="accueil-grille">${ACTIFS.map((s) => `<div id="panneau-${s}">${panneauSport(s, r(s))}</div>`).join('')}</div>`;
   $('vue-accueil').classList.toggle('anim', anime && !REDUIT.matches);
   dessiner($('vue-accueil'));
+  for (const s of ACTIFS) { const res = r(s); if (res?.prudente) retenirProposition(s, res.prudente); }
+  afficherAlertesAccueil();
   monterScene(h);
   // Calcul des propositions : le sport du bandeau d'abord.
   for (const s of [h, AUTRE[h]]) {
@@ -902,6 +904,8 @@ function afficherAccueil(anime) {
     plusTard(() => propositions(s)).then((res) => {
       if (lireAdresse().ecran !== 'accueil') return;
       const el = $(`panneau-${s}`); if (!el) return;
+      if (res?.prudente) retenirProposition(s, res.prudente);
+      afficherAlertesAccueil();
       el.innerHTML = panneauSport(s, res);
       dessiner(el);
       const hh = $('projecteur')?.dataset.sport;
@@ -944,6 +948,7 @@ function afficherSolo(sport) {
       <div class="outils reglages"><div class="seg" role="group" aria-label="Créneaux"><button type="button" data-act="mode" data-v="plusieurs" aria-pressed="${vue.mode === 'plusieurs'}">Plusieurs créneaux</button><button type="button" data-act="mode" data-v="unique" aria-pressed="${vue.mode === 'unique'}">Créneau unique</button></div></div></div>
     <div class="tel-seul">${alertePalier(sport) ? `<div style="margin-bottom:var(--e4)">${alertePalier(sport)}</div>` : ''}</div>
     ${contexte ? `<p class="contexte">${esc(contexte)}</p>` : ''}
+    <div id="coup-envoi" role="status"></div>
     <div id="solo-contenu"><p class="attente">Simulation des meilleures équipes…</p></div>`;
   if (!p) { $('solo-contenu').innerHTML = '<p class="attente">Tous les paliers de ce plateau sont passés.</p>'; return; }
   if (vue.mode === 'unique') { afficherCreneaux(sport); return; }
@@ -957,6 +962,7 @@ function afficherSolo(sport) {
     const dispo = ['prudente', ...(memes ? [] : ['equilibree']), ...(r.ambitieuse ? ['ambitieuse'] : [])];
     if (!dispo.includes(vue.proposition)) vue.proposition = 'prudente';
     const nomProp = vue.proposition, eq = r[nomProp];
+    retenirProposition(sport, eq); afficherCoupEnvoi(sport, eq);
     const selecteur = dispo.length < 2 ? '' : `<div class="seg" role="group" aria-label="Proposition">${dispo.map((k) => `<button type="button" data-act="proposition" data-v="${k}" aria-pressed="${k === nomProp}">${TITRES[k][2]} <small>${pct(r[k].pPasser)}</small></button>`).join('')}</div>`;
     const variantes = dispo.length < 2 ? '<p class="corps petit doux" style="border-top:1px solid var(--trait);padding-top:var(--e3)">Pas d’autre proposition : l’équipe prudente est aussi la plus forte.</p>' : '';
     const ecartees = Object.entries(r.ecartees).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<li>${v} ${esc(k)}</li>`).join('');
@@ -1058,6 +1064,7 @@ function afficherCreneaux(sport) {
     if (!vue.creneauOuvert) vue.creneauOuvert = soloMemo.creneaux[sport] ?? null; // créneau choisi avant le rechargement
     if (!r.creneaux.some((c) => c.creneau === vue.creneauOuvert)) vue.creneauOuvert = meilleur.creneau;
     const c = r.creneaux.find((x) => x.creneau === vue.creneauOuvert);
+    afficherCoupEnvoi(sport, c.equilibree);
     $('solo-contenu').innerHTML = `<div class="solo-grille creneau-grille">
       <section class="carte" aria-label="Créneaux"><header><h2>Créneaux</h2><span class="doux petit">les 5 matchs commencent à la même heure</span></header>
         <p class="corps petit doux">Compose juste après la publication des compositions officielles (vers H-1), après une mise à jour. Meilleure chance : ${pct(meilleur.equilibree.pPasser)}.</p>
@@ -1431,9 +1438,11 @@ function ficheVoisine(d) {
 }
 
 // ---------- Cartes jouées ----------
-function enregistrerJouees(sport, ensemble) {
+function enregistrerJouees(sport, ensemble, equipe = null) {
   const p = palierEnCours(sport); if (!p) return;
-  etatUtilisateur = { ...etatUtilisateur, [sport]: { cible: p.cible, jouees: [...ensemble], misAJour: new Date().toISOString() } };
+  // L'équipe validée reste tant que ses cartes sont toutes marquées jouées à ce palier.
+  const avant = etatUtilisateur[sport], posee = equipe ?? (avant?.cible === p.cible && avant.posee?.cartes.every((id) => ensemble.has(id)) ? avant.posee : null);
+  etatUtilisateur = { ...etatUtilisateur, [sport]: { cible: p.cible, jouees: [...ensemble], misAJour: new Date().toISOString(), ...(posee ? { posee } : {}) } };
   stockage.enregistrer(etatUtilisateur);
 }
 function basculer(sport, id) {
@@ -1441,11 +1450,73 @@ function basculer(sport, id) {
   ensemble.has(id) ? ensemble.delete(id) : ensemble.add(id);
   enregistrerJouees(sport, ensemble);
 }
+// ---------- Bandeau du coup d'envoi (Solo) ----------
+// Équipe surveillée : celle que tu as validée (« J'ai joué cette équipe ») tant qu'elle n'est pas verrouillée ;
+// sinon l'équipe proposée avant la dernière mise à jour des données (retenue ici, par sport, sans rien demander) ;
+// sinon l'équipe proposée à l'écran. Orange à moins de 90 min du premier coup d'envoi (l'heure où l'équipe se
+// verrouille), rouge dès qu'un de ses joueurs est remplaçant annoncé, absent de la feuille de match, blessé ou suspendu.
+const CLE_PROPOSITIONS = 'sorare-aide-propositions', ALERTE_COUP_ENVOI_MIN = 90;
+function lirePropositions() { try { return JSON.parse(localStorage.getItem(CLE_PROPOSITIONS) || '{}') || {}; } catch { return {}; } }
+function retenirProposition(sport, equipe) {
+  const tout0 = lirePropositions(), s = tout0[sport] ?? {}, donneesDe = D.meta.recupereA;
+  if (s.courante && s.courante.donneesDe !== donneesDe) s.precedente = s.courante; // nouvelles données : l'ancienne proposition sert de repère
+  s.courante = { donneesDe, cartes: equipe.cartes };
+  try { localStorage.setItem(CLE_PROPOSITIONS, JSON.stringify({ ...tout0, [sport]: s })); } catch { /* stockage refusé : pas de repère après la mise à jour */ }
+}
+const debutDe = (l) => (l?.m ? Date.parse(l.m.debutUTC) : NaN);
+function equipeSurveillee(sport, proposee) {
+  const maintenant = Date.now(), lignesDe = (ids) => (ids ?? []).map((id) => parId.get(id)).filter(Boolean);
+  const pasVerrouillee = (L) => L.length > 0 && L.every((l) => debutDe(l) > maintenant);
+  const e = etatUtilisateur[sport], p = palierEnCours(sport);
+  const posee = e && p && e.cible === p.cible ? lignesDe(e.posee?.cartes) : [];
+  if (pasVerrouillee(posee)) return { type: 'posee', lignes: posee };
+  const prec = lirePropositions()[sport]?.precedente, avant = lignesDe(prec?.cartes);
+  if (prec && prec.donneesDe !== D.meta.recupereA && pasVerrouillee(avant)) return { type: 'avant', lignes: avant, de: prec.donneesDe };
+  const ici = lignesDe(proposee?.cartes);
+  return pasVerrouillee(ici) ? { type: 'proposee', lignes: ici } : null;
+}
+function aRemplacer(l) {
+  if (l.pr.situationConfirmee === 'remplacant') return 'remplaçant annoncé (composition officielle)';
+  if (l.pr.situationConfirmee === 'absent') return 'absent de la feuille de match';
+  return l.pr.statut === 'exclu' ? (l.pr.raisons[0] ?? 'blessé ou suspendu') : null;
+}
+const dureeTxt = (min) => (min < 60 ? `${min}${nbsp}min` : `${Math.floor(min / 60)}${nbsp}h${min % 60 ? `${nbsp}${String(min % 60).padStart(2, '0')}` : ''}`);
+function coupEnvoiHtml(sport, proposee, { rougeSeulement = false } = {}) {
+  const eq = equipeSurveillee(sport, proposee);
+  if (!eq) return '';
+  const premier = eq.lignes.slice().sort((a, b) => debutDe(a) - debutDe(b))[0], debut = debutDe(premier);
+  const min = Math.max(1, Math.round((debut - Date.now()) / 60000));
+  const soucis = eq.lignes.map((l) => [l, aRemplacer(l)]).filter(([, r]) => r);
+  if (!soucis.length && (rougeSeulement || min > ALERTE_COUP_ENVOI_MIN)) return '';
+  const a = ageDonnees(), donnees = `données de ${fHeure.format(a.t)}`;
+  const bouton = `<button type="button" class="btn" data-act="maj">${ico('maj')}Actualiser</button>`;
+  const quelle = eq.type === 'posee' ? 'ton équipe validée' : eq.type === 'avant' ? `l’équipe proposée avant la mise à jour de ${fHeure.format(new Date(D.meta.recupereA))}` : 'l’équipe proposée';
+  return soucis.length
+    ? `<div class="coup-envoi alerte-rouge"><div><b>${rougeSeulement ? `${SPORTS[sport]} · à` : 'À'} remplacer avant ${esc(quand(premier.m.debutUTC))} (dans ${dureeTxt(min)})</b>
+        <ul>${soucis.map(([l, r]) => `<li><button type="button" class="lien" data-fiche="${esc(l.c.id)}">${esc(l.j.nom)}</button> : ${esc(r)}</li>`).join('')}</ul>
+        <span class="mini">Dans ${quelle} · ${donnees}. Le coup d’envoi verrouille l’équipe.</span></div>${bouton}</div>`
+    : `<div class="coup-envoi"><div><span><b>Coup d’envoi dans ${dureeTxt(min)}</b> · ${esc(quand(premier.m.debutUTC))} (${esc(nomCourt(premier.j.nom))})</span>
+        <span class="mini">${eq.type === 'posee' ? 'Ton équipe validée' : 'L’équipe proposée'} se verrouille à ce moment-là · ${donnees}.</span></div>${bouton}</div>`;
+}
+let dernierCoupEnvoi = null;
+function afficherCoupEnvoi(sport, proposee) {
+  const el = dansVue('coup-envoi'); if (!el) return;
+  dernierCoupEnvoi = { sport, proposee };
+  el.innerHTML = coupEnvoiHtml(sport, proposee);
+  afficherMaj();
+}
+// Accueil : seulement l'alerte rouge (joueur à remplacer), pour chaque sport dont la proposition est calculée.
+function afficherAlertesAccueil() {
+  const el = $('alertes-accueil'); if (!el) return;
+  el.innerHTML = ACTIFS.map((s) => { const r = palierEnCours(s) ? cache.get(`prop|${cleBase(s)}`) : null; return r?.prudente ? coupEnvoiHtml(s, r.prudente, { rougeSeulement: true }) : ''; }).join('');
+  afficherMaj();
+}
+
 // « J'ai joué cette équipe » : marque les 5 cartes, annulable pendant 8 s.
 function jouerEquipe(sport, ids) {
   const avant = [...jouees(sport)], ensemble = jouees(sport);
   for (const id of ids) ensemble.add(id);
-  enregistrerJouees(sport, ensemble);
+  enregistrerJouees(sport, ensemble, { cartes: ids, poseeA: new Date().toISOString() });
   tout();
   toast(`${pluriel(ids.length, 'carte marquée jouée', 'cartes marquées jouées')} au palier ${palierEnCours(sport)?.cible}.`, () => { enregistrerJouees(sport, new Set(avant)); tout(); });
 }
@@ -1976,5 +2047,9 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => { 
 brancherMaj();
 afficherAge();
 setInterval(afficherAge, 60000);
+setInterval(() => {
+  if (vueCourante() === 'accueil') afficherAlertesAccueil();
+  else if (dernierCoupEnvoi && vueCourante() === 'solo' && vue.sport === dernierCoupEnvoi.sport) afficherCoupEnvoi(dernierCoupEnvoi.sport, dernierCoupEnvoi.proposee);
+}, 60000);
 let premier = true;
 stockage.brancher((v) => { etatUtilisateur = { ...etatVide(), ...v }; tout(premier && lireAdresse().ecran === 'accueil'); premier = false; });
