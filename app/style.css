@@ -450,6 +450,8 @@ main { display: block; min-width: 0; padding: var(--e4) max(16px, env(safe-area-
 .lecture { font-size: var(--t2); }
 .lecture b { font-weight: 700; }
 
+#creneau-detail { scroll-margin-top: 72px; } /* sous la barre collante du téléphone quand on y défile */
+
 /* ===== Ligne joueur : un seul composant, deux mises en page selon la largeur ===== */
 .tableau { container-type: inline-size; min-width: 0; }
 .ligne {

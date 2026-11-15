@@ -107,6 +107,12 @@ const largePC = () => innerWidth >= 1024;
 const tresLarge = () => innerWidth >= 1800;
 // Mes cartes sur PC : liste (comme les compositions, fiche épinglée à droite) ou tableau. Retenu dans le navigateur.
 function lireAffichage() { try { return localStorage.getItem('sorare-aide-affichage-cartes') === 'tableau' ? 'tableau' : 'liste'; } catch { return 'liste'; } }
+// Solo : le mode (plusieurs créneaux / créneau unique) et le créneau ouvert par sport sont gardés pour la visite en cours
+// (sessionStorage) : ils survivent au rechargement qui suit une mise à jour des données, pas à la visite suivante.
+const CLE_SOLO = 'sorare-aide-solo';
+function lireSolo() { try { const v = JSON.parse(sessionStorage.getItem(CLE_SOLO) || 'null'); return { mode: v?.mode === 'unique' ? 'unique' : 'plusieurs', creneaux: v?.creneaux && typeof v.creneaux === 'object' ? v.creneaux : {} }; } catch { return { mode: 'plusieurs', creneaux: {} }; } }
+const soloMemo = lireSolo();
+function ecrireSolo() { try { sessionStorage.setItem(CLE_SOLO, JSON.stringify(soloMemo)); } catch { /* stockage refusé : le choix vaut jusqu'au rechargement */ } }
 function ecrireAffichage(v) { try { localStorage.setItem('sorare-aide-affichage-cartes', v); } catch { /* navigation privée */ } }
 
 // ---------- État de l'utilisateur ----------
@@ -254,7 +260,7 @@ const disponible = (l) => ['probable', 'confirme', 'remplacant'].includes(statut
 
 const vue = {
   sport: ACTIFS[0], heros: null, poste: null, etoiles: null, journee: '', tri: 'e', sens: -1, dispo: true, toutVoir: false, toutesChances: false, toutesMinutes: false, collection: null,
-  mode: 'plusieurs', creneauOuvert: null, squadJour: null, proposition: 'prudente', epingle: {}, affichage: lireAffichage(),
+  mode: soloMemo.mode, creneauOuvert: null, versCreneau: false, squadJour: null, proposition: 'prudente', epingle: {}, affichage: lireAffichage(),
 };
 
 // ---------- Calculs (dans le navigateur, mis en cache, différés pour ne pas bloquer l'affichage) ----------
@@ -1022,6 +1028,7 @@ function afficherCreneaux(sport) {
     const p = palierEnCours(sport);
     if (!r?.creneaux.length) { $('solo-contenu').innerHTML = '<p class="attente">Aucun créneau ne permet de remplir une équipe avec tes cartes disponibles.</p>'; return; }
     const meilleur = r.creneaux.slice().sort((a, b) => b.equilibree.pPasser - a.equilibree.pPasser)[0];
+    if (!vue.creneauOuvert) vue.creneauOuvert = soloMemo.creneaux[sport] ?? null; // créneau choisi avant le rechargement
     if (!r.creneaux.some((c) => c.creneau === vue.creneauOuvert)) vue.creneauOuvert = meilleur.creneau;
     const c = r.creneaux.find((x) => x.creneau === vue.creneauOuvert);
     $('solo-contenu').innerHTML = `<div class="solo-grille creneau-grille">
@@ -1034,6 +1041,12 @@ function afficherCreneaux(sport) {
       <div class="pile" id="creneau-detail">${carteProposition(`Créneau ${quand(c.creneau)}`, 'La meilleure équipe de ce créneau.', c.equilibree, sport, p.cible)}</div>
     </div>`;
     dessiner($('solo-contenu'));
+    // Après le choix d'un créneau : montrer son équipe quand elle est sous le premier écran (une seule colonne sous 1 360 px).
+    if (vue.versCreneau) {
+      vue.versCreneau = false;
+      const d = $('creneau-detail'), haut = d?.getBoundingClientRect().top;
+      if (d && (haut > innerHeight * 0.5 || haut < 0)) d.scrollIntoView({ block: 'start', behavior: REDUIT.matches ? 'auto' : 'smooth' });
+    }
   });
 }
 
@@ -1675,7 +1688,7 @@ document.addEventListener('click', (e) => {
       case 'aide': ouvrirAide(); return;
       case 'parametres': WEB?.ouvrirParametres(); return;
       case 'marquer': ouvrirMarquage(b.dataset.sport); return;
-      case 'mode': vue.mode = v; afficherSolo(vue.sport); return;
+      case 'mode': vue.mode = v; soloMemo.mode = v === 'unique' ? 'unique' : 'plusieurs'; ecrireSolo(); afficherSolo(vue.sport); return;
       case 'proposition': vue.proposition = v; afficherSolo(vue.sport); return;
       case 'seuil': vue.toutesChances = false; etatUtilisateur = { ...etatUtilisateur, seuil: Number(v) }; stockage.enregistrer(etatUtilisateur); tout(); return;
       case 'toutes-chances': vue.toutesChances = true; tout(); return;
@@ -1683,7 +1696,7 @@ document.addEventListener('click', (e) => {
       case 'collection': vue.collection = v || null; afficherCartes(); return;
       case 'seuil-min': vue.toutesMinutes = false; etatUtilisateur = { ...etatUtilisateur, seuilMinutes: Number(v) }; stockage.enregistrer(etatUtilisateur); tout(); return;
       case 'jouer': jouerEquipe(b.dataset.sport, v.split(',')); return;
-      case 'creneau': vue.creneauOuvert = v; afficherCreneaux(vue.sport); return;
+      case 'creneau': vue.creneauOuvert = v; vue.versCreneau = true; soloMemo.creneaux[vue.sport] = v; ecrireSolo(); afficherCreneaux(vue.sport); return;
       case 'affichage': vue.affichage = v; ecrireAffichage(v); afficherCartes(); return;
       case 'poste': vue.poste = v || null; afficherCartes(); return;
       case 'etoiles': vue.etoiles = v === '' ? null : Number(v); afficherCartes(); return;

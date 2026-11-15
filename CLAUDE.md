@@ -261,6 +261,14 @@ Demande de l'utilisateur : design plus uniforme, accueil plus moderne et spectac
 - **Corrections** (`methode.md` 1 ter, 3 bis, 5 bis ; paramètres `calibration_jouer`, `retrait`, `simulation.calibration_passer`) : table de calibrage par tranches des chances de jouer (joueur qui a tout joué : 90 % football, 92 % NBA, au lieu de 93 %) ; **retrait vers la moyenne du poste** du score s'il joue (football k = 20 par poste et situation, NBA k = 8 sur le score par minute ; `node outils/retro-test-retrait.js`) ; **table de calibrage final** des chances de passer par sport (football presque l'identité ; NBA 50 % simulés → 40 %). Après correction, football 50 % → 48 %, 80 % → 78 %. `tirerTotaux` (simulation.js) renvoie les tirages d'une équipe ; `simulerEquipe` renvoie `pPasser` (calibré) et `pPasserBrut`.
 - **Conséquence** : les chances affichées baissent (données du 7 novembre au soir : football prudente 29 %, NBA 8 %) ; elles sont désormais réalistes. 48 tests.
 
+## Corrections de la revue 1.0 (à partir du 2026-11-15)
+Rapport de la revue : https://claude.ai/artifact/9VVxJfD4jgqGfUbyxRPKGz (constats A1 à A5, C-01 à C-04, six maquettes). Corrections faites une à une, validées par l'utilisateur, sur la branche de session (rien sur `main` sans son accord).
+- **C-01** : les barres sous le seuil portent la classe `sous` (et non `bas`, qui est la barre d'onglets : elles étaient masquées). Ne pas réutiliser `bas` pour autre chose.
+- **A3-01** : `outils/publier-gitlab.sh` exclut `data/` en entier et refuse de publier s'il reste un fichier de `data/` ou de `sorties/`.
+- **C-02** : `details.filtres` a `min-width: 0` (un libellé de journée NBA long élargissait la page à 390 px).
+- **A2-01** : ligne joueur empilée = `nom | chances`, puis le match sur toute la largeur, puis `forme | score` ; sous 380 px de conteneur le score passe sous la forme (sinon ils se chevauchent). Le nom passe à la ligne. Contrôle : aucun `.c-match` ni `.c-nom b` avec `scrollWidth > clientWidth`.
+- **A2-03, A2-04** : le mode du Solo et le créneau ouvert par sport sont gardés pour la visite (`sessionStorage`, clé `sorare-aide-solo`) : ils survivent au rechargement qui suit ↻, pas à une nouvelle visite. Après le choix d'un créneau, la page défile jusqu'à son équipe quand elle est sous le premier écran.
+
 ## Étape 3 (à venir) : conseil avant chaque journée
 Vérifier titulaires et blessures avec des sources citées et datées, signaler les pièges, proposer 2 ou 3 compositions. L'utilisateur valide dans l'appli Sorare.
 
