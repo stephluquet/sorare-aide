@@ -203,7 +203,11 @@ const lignes = D.cartes.map((c) => {
   const pr = projeterCarte(c, j, m, D.P, D.regles[c.sport]);
   const club = equipeDuMatch(j, m) ?? j.club?.slug; // club ou sélection
   const lieu = m ? (m.domicile?.slug === club ? 'dom' : m.exterieur?.slug === club ? 'ext' : null) : null;
-  return { c, j, m, pr, lieu, adv: m ? (lieu === 'dom' ? m.exterieur?.nom : lieu === 'ext' ? m.domicile?.nom : `${m.domicile?.nom} – ${m.exterieur?.nom}`) : null,
+  // Équipe du joueur pour ce match : sa sélection quand le prochain match est international, sinon son club.
+  // Sert à la forme affichée (pastilles, fiche) : en trêve internationale, c'est la sélection qui joue.
+  const cote = lieu === 'dom' ? m.domicile : lieu === 'ext' ? m.exterieur : null;
+  const equipe = cote?.slug ? { slug: cote.slug, nom: cote.nom } : { slug: j.club?.slug ?? null, nom: j.club?.nom ?? null };
+  return { c, j, m, pr, lieu, equipe, adv: m ? (lieu === 'dom' ? m.exterieur?.nom : lieu === 'ext' ? m.domicile?.nom : `${m.domicile?.nom} – ${m.exterieur?.nom}`) : null,
     cotes: m?.cotes ? (lieu === 'dom' ? m.cotes.domicile : lieu === 'ext' ? m.cotes.exterieur : null) : null };
 });
 const parId = new Map(lignes.map((l) => [l.c.id, l]));
@@ -624,7 +628,7 @@ function ligne(l, o = {}) {
     <div class="c-img">${vignette(l)}</div>
     <div class="c-nom"><b>${esc(l.j.nom)}</b>${cap ? '<span class="cap" title="Capitaine">C</span>' : ''}<span class="pos">${esc(postesL(l).join('/'))}</span>${badgeEtoiles(l)}<span class="club">${esc(l.j.club?.nom ?? '?')}</span></div>
     <div class="c-match">${match}</div>
-    <div class="c-forme">${G.pastilles(formeEquipe(l.j.club?.slug)?.derniers)}${tendance(formeDe(l.j))}</div>
+    <div class="c-forme">${G.pastilles(formeEquipe(l.equipe.slug)?.derniers)}${tendance(formeDe(l.j))}</div>
     ${l.c.sport === 'nba' ? celluleMinutes(l) : `<div class="c-p"><span class="pv${confirme(l) ? ' ok-txt' : ''}"${confirme(l) ? ' title="Titulaire dans la composition officielle"' : ''}>${txtChances(l)}</span>${G.barreP(l.pr.p, seuilAffiche(), 60)}</div>`}
     ${l.c.sport === 'football' ? (() => { const f = scoreFoot(l); return `<div class="c-s c-tit"><span><span class="sv">${nb(f.v)}</span> pts</span>${f.sous ? `<span class="sous">${esc(f.sous)}</span>` : ''}</div>`; })() : `<div class="c-s"><span><span class="sv">${nb(l.pr.siJoue)}</span> pts</span>${G.ival(l, 72)}${ppe}</div>`}
     ${tags ? `<div class="c-tags">${tags}</div>` : ''}
@@ -636,7 +640,7 @@ function celluleMinutes(l) {
   const sc = l.pr.score;
   return `<div class="c-p c-min"><span class="pv">${sc?.minutes == null ? '–' : nb(sc.minutes)}<small>${nbsp}min</small></span>${G.barreMin(sc, seuilMinutesAffiche(), 60)}<span class="dispo">${sc?.minutesEnHausse ? '<b class="ok-txt" title="2 derniers matchs bien au-dessus de sa moyenne">▲ en hausse</b> · ' : ''}</span></div>`;
 }
-const enteteTab = (sport = 'football') => `<div class="entete-tab libelle" aria-hidden="true"><span></span><span>Joueur</span><span>Match · victoire</span><span>Club · 5 derniers</span><span>${sport === 'nba' ? 'Minutes projetées' : 'Chances de jouer'}</span><span>${sport === 'nba' ? 'Score projeté · 10–90 %' : 'Titulaire · s’il entre'}</span></div>`;
+const enteteTab = (sport = 'football') => `<div class="entete-tab libelle" aria-hidden="true"><span></span><span>Joueur</span><span>Match · victoire</span><span>Équipe · 5 derniers</span><span>${sport === 'nba' ? 'Minutes projetées' : 'Chances de jouer'}</span><span>${sport === 'nba' ? 'Score projeté · 10–90 %' : 'Titulaire · s’il entre'}</span></div>`;
 
 // Chemin des paliers du plateau, le palier en cours mis en avant.
 function chemin(sport) {
@@ -1117,7 +1121,7 @@ function cartesFiltrees() {
   const J = jouees(s), esp = (l) => valeurCarte(l) ?? -1;
   const cles = {
     e: esp, s: (l) => (l.c.sport === 'football' ? scoreFoot(l).v : l.pr.siJoue) ?? -1, p: (l) => l.pr.p ?? -1, f: (l) => formeDe(l.j)?.ecart ?? -9,
-    q: (l) => formeEquipe(l.j.club?.slug)?.pctVictoires ?? -1, d: (l) => (l.m ? Date.parse(l.m.debutUTC) : 9e15),
+    q: (l) => formeEquipe(l.equipe.slug)?.pctVictoires ?? -1, d: (l) => (l.m ? Date.parse(l.m.debutUTC) : 9e15),
     n: (l) => sansAccents(l.j.nom), x: (l) => niveauEtoiles(l) ?? -1, r: (l) => (l.j.etoiles && l.pr.siJoue != null ? l.pr.siJoue / l.j.etoiles : -1),
     b: (l) => l.c.bonusPct ?? 0, j: (l) => (J.has(l.c.id) ? 1 : 0),
     // points perdus en balles perdues, le plus proche de 0 d'abord ; les joueurs sous 20 min (écartés de toute façon) à la fin
@@ -1217,7 +1221,7 @@ function afficherListeCartes() {
       ${nba ? '' : `<td class="r"><b>${nb(l.pr.esperance, 1)}</b></td>`}
       ${nba ? `<td class="r">${l.j.etoiles && l.pr.siJoue != null ? nb(l.pr.siJoue / l.j.etoiles, 1) : '–'}</td>` : ''}
       ${nba ? (() => { const p = profilDe(l.j), v = p?.stats.turnovers.points; const t = v == null ? null : rangNba(v, 'turnovers', REF_NBA, D.P.profil); return `<td class="r ${t?.ton === 'faible' ? 'stop-txt' : t?.ton === 'fort' ? 'ok-txt' : ''}" title="points Sorare perdus par match en balles perdues">${v == null ? '–' : `−${nb(Math.abs(v), 1)}`}</td>`; })() : ''}
-      <td>${G.pastilles(formeEquipe(l.j.club?.slug)?.derniers)}</td>
+      <td>${G.pastilles(formeEquipe(l.equipe.slug)?.derniers)}</td>
       <td class="statut">${l.c.bonusPct ? `<span class="tag">${esc(l.c.collection)} +${nb(l.c.bonusPct)}${nbsp}%</span> ` : ''}${st === 'probable' ? '' : `<span class="tag ${TON_STATUT[st]}">${LIBELLES[st]}</span> `}${!l.pr.eligibleArcade && l.m ? '<span class="tag stop">hors solo</span> ' : ''}${tagsContexte(l)}${!l.c.bonusPct && st === 'probable' && l.pr.eligibleArcade ? `<span class="doux">${esc(l.c.collection ?? '')}</span>` : ''}</td></tr>`;
   }).join('');
   el.innerHTML = `<div class="defile-x"><table class="dense"><thead><tr>${th('j', 'Jouée', '', 64)}${th('x', 'Carte', '', 84)}${th('n', 'Joueur')}${th('d', 'Match')}${nba ? th('m', 'Minutes', '', 112) : ''}${nba ? '' : th('p', 'Chances', '', 112)}${th('s', nba ? 'Score projeté' : 'Titulaire', '', nba ? 124 : 200)}${nba ? '' : th('e', 'Espérance', 'r', 96)}${nba ? th('r', 'Pts/★', 'r', 72) : ''}${nba ? th('t', 'Pertes', 'r', 76) : ''}${th('q', 'Club', '', 112)}${th('b', 'Bonus · statut', '', 160)}</tr></thead><tbody>${lignesHtml}</tbody></table></div>${plus}`;
@@ -1323,8 +1327,8 @@ function ficheHtml(l) {
         ${c.sport === 'nba' ? blocProfil(l) : ''}
       </div>
       <div class="bloc">
-        <header><h3>Forme des clubs</h3><span class="droite mini doux">plus récent à droite</span></header>
-        ${blocClub('Son équipe', j.club?.nom, j.club?.slug, c.sport)}
+        <header><h3>Forme des équipes</h3><span class="droite mini doux">plus récent à droite</span></header>
+        ${blocClub(l.equipe.slug && l.equipe.slug !== j.club?.slug ? 'Sa sélection' : 'Son équipe', l.equipe.nom, l.equipe.slug, c.sport)}
         ${m ? blocClub('Adversaire', l.adv, slugAdversaire(l), c.sport) : ''}
         <p class="note">Affiché pour information : la forme de l'équipe ne change pas les chances calculées (elle n'apportait rien de plus que la cote du match sur ton historique).</p>
       </div>
