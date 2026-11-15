@@ -33,7 +33,9 @@ export function creerAppel({ url, entetes = {}, essais = 4, parMinute = REQUETES
         rep = await fetch(url, { method: 'POST', headers: { 'content-type': 'application/json', ...entetes }, body: JSON.stringify({ query, variables }), signal });
       } catch (e) {
         if (essai < essais && !signal?.aborted) { await pause(2000 * 2 ** (essai - 1)); continue; }
-        throw new Error(`Réseau : ${e.message}`);
+        const err = new Error(`Réseau : ${e.message}`);
+        err.reseau = true;
+        throw err;
       }
       if ((rep.status === 429 || rep.status >= 500) && essai < essais) { await pause(2000 * 2 ** (essai - 1)); continue; }
       if (!rep.ok) {

@@ -34,7 +34,7 @@ export function preparerDonneesApp({ donnees, P, regles, journees, visuels = fal
 
   return {
     format: FORMAT_APP,
-    meta: { recupereA: donnees.meta.recupereA, slug: donnees.meta.slug, construitA: new Date().toISOString() },
+    meta: { recupereA: donnees.meta.recupereA, slug: donnees.meta.slug, construitA: new Date().toISOString(), ...(donnees.meta.historiqueIncomplet ? { historiqueIncomplet: donnees.meta.historiqueIncomplet } : {}) },
     P,
     regles,
     paliers: donnees.paliers,

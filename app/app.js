@@ -781,8 +781,14 @@ function boutonsOutils() {
 
 function afficherAge() {
   const a = ageDonnees();
-  $('bandeau').hidden = !a.vieux;
-  $('bandeau').textContent = `Données Sorare de plus de 3 h (${fHeure.format(a.t)}) : appuie sur ↻ ou écris « actualise » à Claude avant de composer.`;
+  // Historique incomplet (coupe-circuit de la récupération) : les projections des joueurs concernés reposent sur 15 matchs.
+  const incomplet = Object.entries(D.meta.historiqueIncomplet ?? {}).map(([s, h]) => `${SPORTS[s] ?? s} : historique incomplet pour ${pluriel(h.restants, 'joueur')}, ${/clé/.test(h.raison) ? 'Sorare a refusé la clé API' : 'Sorare ne répondait plus'} pendant la mise à jour`);
+  const messages = [
+    a.vieux ? `Données Sorare de plus de 3 h (${fHeure.format(a.t)}) : appuie sur ↻ ou écris « actualise » à Claude avant de composer.` : '',
+    incomplet.length ? `${incomplet.join(' ; ')}. Leurs projections sont moins sûres : relance une mise à jour, elle reprendra où elle s’est arrêtée.` : '',
+  ].filter(Boolean);
+  $('bandeau').hidden = !messages.length;
+  $('bandeau').textContent = messages.join(' ');
   afficherMaj();
 }
 

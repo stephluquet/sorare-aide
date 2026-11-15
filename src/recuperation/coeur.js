@@ -18,6 +18,10 @@ import { archivePerimee, besoinHistoriqueComplet, fusionner, trou } from './fusi
 export const TAILLE_PAGE = 50;
 export const NB_MATCHS_HISTORIQUE = 40;
 export const FORMAT_DONNEES = 1;
+// Coupe-circuit de l'historique : après ce nombre d'échecs de suite (ou dès un refus de la clé), on arrête de
+// demander les joueurs un par un. Ce qui est chargé est gardé ; le reste est repris à la récupération suivante.
+export const ECHECS_DE_SUITE_MAX = 3;
+const cleRefusee = (e) => e?.status === 401 || e?.status === 403;
 
 export async function recupererSport(slug, sport, deps, { sansHistorique = false, refaireHistorique = false, anomalies = [] } = {}) {
   const { appel, magasin, P, tableBonus = {}, lireEspn = null } = deps;
@@ -109,18 +113,29 @@ export async function recupererSport(slug, sport, deps, { sansHistorique = false
   };
   const parId = new Map(joueurs.map((j) => [j.id, j]));
   const faits = new Set();
+  let historiqueIncomplet = null;
   if (sansHistorique) {
     if (aCompleter.length) suivi({ sport, etape: 'historique', fait: 0, total: 0, texte: `Historique complet sauté pour ${aCompleter.length} joueurs` });
   } else {
-    let i = 0;
+    let i = 0, echecsDeSuite = 0;
     for (const s of aCompleter) {
       let complet = null;
       try {
         const d = await appel(HISTORIQUE, { slug: s, first: NB_MATCHS_HISTORIQUE });
         complet = (d.anyPlayer?.allPlayerGameScores?.nodes ?? []).filter(Boolean).map((g) => matchHistorique(g, sport)).filter((m) => m.matchId);
+        echecsDeSuite = 0;
       } catch (e) {
         if (deps.signal?.aborted) throw e;
         anomalies.push(`${tag} historique complet impossible pour ${s} : ${e.message}`);
+        echecsDeSuite++;
+        if (cleRefusee(e) || echecsDeSuite >= ECHECS_DE_SUITE_MAX) {
+          const total = aCompleter.length, restants = total - faits.size;
+          const raison = cleRefusee(e) ? 'Sorare refuse la clé API' : 'Sorare ne répond plus';
+          historiqueIncomplet = { restants, total, raison, detail: e.message };
+          anomalies.push(`${tag} historique interrompu : ${raison} (${e.message}). ${faits.size} joueurs sur ${total} chargés ; les ${restants} autres seront repris à la prochaine mise à jour.`);
+          suivi({ sport, etape: 'historique', fait: total, total, interrompu: true, texte: `Historique interrompu : ${raison}. ${faits.size} joueurs sur ${total} chargés, le reste sera repris à la prochaine mise à jour.` });
+          break;
+        }
       }
       if (complet) { await enregistrer(parId.get(s), complet); faits.add(s); }
       i++;
@@ -144,7 +159,7 @@ export async function recupererSport(slug, sport, deps, { sansHistorique = false
   let bareme = null;
   if (sport === 'nba') {
     const temoin = joueurs.find((j) => j.historique?.some((m) => m.situation === 'joue' && m.statut === 'FINAL'));
-    if (temoin) {
+    if (temoin && !historiqueIncomplet) { // Sorare ne répond plus : inutile d'insister, le barème précédent est repris
       try {
         const d = await appel(BAREME_NBA, { slug: temoin.id });
         const n = (d.anyPlayer?.allPlayerGameScores?.nodes ?? []).find((x) => x?.detailedScore?.length);
@@ -156,7 +171,7 @@ export async function recupererSport(slug, sport, deps, { sansHistorique = false
     if (!bareme) anomalies.push(`${tag} barème NBA non lu`);
   }
 
-  return { cartes, joueurs, matchs: [...matchs.values()], paliers, totalCartes: total, bareme };
+  return { cartes, joueurs, matchs: [...matchs.values()], paliers, totalCartes: total, bareme, historiqueIncomplet };
 }
 
 /**
@@ -169,10 +184,12 @@ export async function recupererTout(slug, sports, deps, options = {}, precedent 
   const anomalies = [];
   const tout = { cartes: [], joueurs: [], matchs: [], paliers: [] };
   const baremes = {};
+  const historiqueIncomplet = {}; // par sport : { restants, total, raison, detail } quand le coupe-circuit a joué
   for (const sport of sports) {
     const r = await recupererSport(slug, sport, deps, { ...options, anomalies });
     for (const k of Object.keys(tout)) tout[k].push(...r[k]);
     if (r.bareme) baremes[sport] = r.bareme;
+    if (r.historiqueIncomplet) historiqueIncomplet[sport] = r.historiqueIncomplet;
   }
   if (precedent?.baremes) for (const [s, b] of Object.entries(precedent.baremes)) baremes[s] ??= b;
   // Un sport non récupéré cette fois-ci est repris tel quel de la récupération précédente (même manager).
@@ -182,6 +199,7 @@ export async function recupererTout(slug, sports, deps, options = {}, precedent 
       if (!precedent.cartes?.some((c) => c.sport === s)) continue;
       for (const k of Object.keys(tout)) tout[k].push(...precedent[k].filter((x) => x.sport === s));
       recupereParSport[s] = precedent.meta.recupereParSport?.[s] ?? precedent.meta.recupereA;
+      if (precedent.meta.historiqueIncomplet?.[s]) historiqueIncomplet[s] = precedent.meta.historiqueIncomplet[s];
     }
   }
   const meta = {
@@ -195,6 +213,7 @@ export async function recupererTout(slug, sports, deps, options = {}, precedent 
     source: 'https://api.sorare.com/graphql',
     nb: Object.fromEntries(Object.entries(tout).map(([k, v]) => [k, v.length])),
     anomalies,
+    ...(Object.keys(historiqueIncomplet).length ? { historiqueIncomplet } : {}),
   };
   return { meta, ...tout, baremes };
 }

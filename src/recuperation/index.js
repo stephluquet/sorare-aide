@@ -66,6 +66,9 @@ async function principal() {
   writeFileSync(join(RACINE, 'data', 'dernier.json'), JSON.stringify({ meta, ...tout }) + '\n');
   process.stderr.write(`Terminé : ${meta.nb.cartes} cartes, ${meta.nb.joueurs} joueurs, ${meta.nb.matchs} matchs, ` +
     `${meta.nbRequetes} requêtes en ${meta.dureeS} s, ${anomalies.length} anomalies → ${dossier}, data/dernier.json\n`);
+  for (const [s, h] of Object.entries(meta.historiqueIncomplet ?? {})) {
+    process.stderr.write(`ATTENTION [${s}] historique incomplet pour ${h.restants} joueurs sur ${h.total} : ${h.raison} (${h.detail}). Relance la récupération plus tard : elle reprendra où elle s'est arrêtée.\n`);
+  }
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
