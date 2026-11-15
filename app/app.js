@@ -703,11 +703,12 @@ const TITRES = {
   ambitieuse: ['Proposition ambitieuse', 'Encore plus de chances de passer, en acceptant des joueurs moins sûrs de jouer.', 'Ambitieuse'],
 };
 // Ordre d'affichage d'une équipe. Football : celui du jeu (gardien, défenseur, milieu, attaquant, puis le joker) ;
-// NBA : par coup d'envoi.
+// NBA (pas de poste imposé) : par score projeté décroissant, l'ordre de la barre « Qui porte l'équipe »
+// (demande de l'utilisateur, 2026-11-15 ; avant : par coup d'envoi, illisible).
 const ORDRE_FOOT = ['GK', 'DF', 'MD', 'FW'];
 function membresDe(e) {
   const L = e.cartes.map((id) => parId.get(id)).sort((a, b) => (a.m?.debutUTC ?? '').localeCompare(b.m?.debutUTC ?? ''));
-  if (L[0]?.c.sport !== 'football') return L;
+  if (L[0]?.c.sport !== 'football') return L.sort((a, b) => (b.pr.siJoue ?? -1) - (a.pr.siJoue ?? -1));
   const reste = [...L], ordre = [];
   for (const poste of ORDRE_FOOT) {
     const i = reste.findIndex((l) => postesL(l).includes(poste));
