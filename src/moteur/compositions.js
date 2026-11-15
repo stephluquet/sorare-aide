@@ -24,7 +24,7 @@ export function cartesAdmissibles(lignes, P, o) {
       && (o.sport !== 'nba' || pr.score?.minutes == null || pr.score.minutes >= (o.seuilMinutes ?? P.nba.minutes?.seuil ?? 0) || ecarter('minutes projetées sous le seuil'))
       && (pr.eligibleArcade || ecarter('match hors compétitions Arcade'))
       && (!raretes || raretes.includes(l.carte.rarete) || ecarter('rareté non autorisée'))
-      && (!o.jouees.has(l.carte.id) || ecarter('déjà jouées à ce palier'))
+      && (!o.jouees.has(l.carte.id) || ecarter('déjà utilisées'))
       && ((l.match && Date.parse(l.match.debutUTC) > o.maintenant) || ecarter('match déjà commencé'))
       && (!o.creneau || l.match.debutUTC === o.creneau || ecarter('autre créneau'))
       && (!o.jour || jourDeJeu(l.match.debutUTC, o.fuseau) === o.jour || ecarter('autre jour'));

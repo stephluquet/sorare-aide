@@ -73,6 +73,7 @@ const TRAITS = {
   soleil: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>',
   aide: '<circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.4c-.7.3-1 .8-1 1.5v.7"/><path d="M12 17h.01"/>',
   fermer: '<path d="M6 6l12 12M18 6L6 18"/>',
+  ecarter: '<circle cx="12" cy="12" r="8"/><path d="M6.4 6.4l11.2 11.2"/>',
   haut: '<path d="M6 15l6-6 6 6"/>',
   bas: '<path d="M6 9l6 6 6-6"/>',
   suite: '<path d="M9 6l6 6-6 6"/>',
@@ -117,7 +118,7 @@ function ecrireAffichage(v) { try { localStorage.setItem('sorare-aide-affichage-
 
 // ---------- État de l'utilisateur ----------
 const CLE_LOCALE = 'sorare-aide-etat';
-const etatVide = () => ({ seuil: null, football: { cible: null, jouees: [] }, nba: { cible: null, jouees: [] } });
+const etatVide = () => ({ seuil: null, football: { cible: null, utilisees: [] }, nba: { cible: null, utilisees: [] } });
 
 function creerStockage() {
   let doc = null, mode = 'navigateur', ecriture = Promise.resolve();
@@ -168,10 +169,31 @@ let etatUtilisateur = etatVide();
 const paliersDe = (sport) => D.paliers.filter((p) => p.sport === sport).sort((a, b) => a.niveau - b.niveau);
 const palierEnCours = (sport) => paliersDe(sport).find((p) => !['CLAIMED', 'CLAIMABLE'].includes(p.etat)) ?? null;
 
-// Cartes jouées valables pour le palier en cours (libérées dès que le palier change).
-function jouees(sport) {
+// Cartes déjà utilisées (regles/ : une carte est prise tant que sa composition est en cours). L'appli ne connaît pas
+// la fin de la composition : une carte mise de côté est écartée du Solo jusqu'à la fin estimée du match qu'elle devait
+// jouer, puis redevient disponible toute seule. Tout est libéré au changement de palier.
+const finDuMatch = (id) => {
+  const l = parId.get(id); if (!l?.m) return null;
+  const minutes = D.regles[l.c.sport]?.carte_bloquee?.liberation_estimee_min_apres_coup_envoi ?? 150;
+  return new Date(Date.parse(l.m.debutUTC) + minutes * 60000).toISOString();
+};
+function utiliseesDe(sport) {
   const e = etatUtilisateur[sport], p = palierEnCours(sport);
-  return new Set(e && p && e.cible === p.cible ? e.jouees : []);
+  if (!e || !p || e.cible !== p.cible) return [];
+  const maintenant = Date.now();
+  return (e.utilisees ?? []).filter((x) => Date.parse(x.jusqua) > maintenant);
+}
+function jouees(sport) { return new Set(utiliseesDe(sport).map((x) => x.id)); }
+// Ancien format (cartes « jouées », sans date) : converties une fois, jusqu'à la fin de leur prochain match connu.
+function migrerEtat(v) {
+  let change = false;
+  for (const s of ['football', 'nba']) {
+    if (!v[s] || !Array.isArray(v[s].jouees)) continue;
+    const { jouees: anciennes, ...reste } = v[s];
+    v[s] = { ...reste, utilisees: [...(reste.utilisees ?? []), ...anciennes.map((id) => ({ id, jusqua: finDuMatch(id) })).filter((x) => x.jusqua)] };
+    change = true;
+  }
+  return change;
 }
 
 // Seuils proposés : le plafond réaliste des chances de jouer est d'environ 90 % (calibrage, methode.md 1 ter),
@@ -351,17 +373,14 @@ function etatPalier(p) {
 const etatTexte = (p) => [ETATS[p.etat] ?? p.etat, p.echecs ? pluriel(p.echecs, 'échec') : ''].filter(Boolean).join(' · ');
 const rangPalier = (p) => paliersDe(p.sport).indexOf(p) + 1;
 
-// Alerte du palier : dernière tentative en cours, ou cartes jouées non marquées (les propositions peuvent les contenir).
+// Alerte du palier : dernière tentative en cours.
 function alertePalier(sport) {
   const p = palierEnCours(sport); if (!p) return '';
-  const { utilisees, derniere } = etatPalier(p);
+  const { derniere } = etatPalier(p);
   if (derniere) {
     return `<div class="alerte" role="status"><p><b>Dernière tentative en cours à ce palier.</b> Si elle passe, tu montes au palier suivant ; sinon, retour au palier 1. Dans les deux cas, toutes tes cartes seront libérées : ces propositions ne servent pas pour l'instant.</p></div>`;
   }
-  const n = jouees(sport).size, attendues = 5 * utilisees;
-  if (n >= attendues) return '';
-  return `<div class="alerte" role="status"><p><b>${pluriel(utilisees, 'tentative déjà jouée', 'tentatives déjà jouées')} à ce palier : ${attendues} cartes sont bloquées, ${n ? `${n} seulement marquée${n > 1 ? 's' : ''}` : 'aucune n’est marquée'}.</b> Les propositions peuvent contenir des cartes que tu ne peux plus jouer.</p>` +
-    `<button type="button" class="btn principal" data-act="marquer" data-sport="${sport}">Marquer les cartes jouées</button></div>`;
+  return '';
 }
 
 // ---------- Graphiques (SVG fait main, couleurs en jetons) ----------
@@ -436,11 +455,15 @@ const G = {
   // Qui porte l'équipe : espérance de chaque joueur (capitaine compris), avec la cible.
   empilee(membres, e, sport, cible = null) {
     const regle = D.regles[sport], mult = regle.capitaine?.multiplicateur ?? 1;
-    const parts = membres.map((l) => ({ l, v: (l.pr.score.mu ?? 0) * multiplicateurCarte({ b: l.pr.bonus }, e.capitaine === l.c.id, mult, regle.cumul_bonus?.mode) }))
-      .sort((a, b) => b.v - a.v);
+    const parts = membres.map((l) => {
+      const cap = e.capitaine === l.c.id, base = l.pr.score.mu ?? 0, v = base * multiplicateurCarte({ b: l.pr.bonus }, cap, mult, regle.cumul_bonus?.mode);
+      // Détail des bonus : capitaine, puis type de carte (Shiny, Eclipse…)
+      const bonus = [cap && mult > 1 ? `capitaine +${nb((mult - 1) * 100)}${nbsp}%` : '', l.c.bonusPct ? `${l.c.collection} +${nb(l.c.bonusPct)}${nbsp}%` : ''].filter(Boolean);
+      return { l, v, base, bonus };
+    }).sort((a, b) => b.v - a.v);
     const tot = parts.reduce((a, x) => a + x.v, 0), M = Math.max(tot, cible ?? 0) * 1.04 || 1;
-    return `<div class="empilee" role="img" aria-label="Score projeté par joueur (${nb(tot)} au total)${cible ? ` face à la cible ${cible}` : ''} : ${parts.map((x) => `${esc(x.l.j.nom)} ${nb(x.v)}`).join(', ')}">${parts.map((x, i) =>
-      `<span style="width:${(x.v / M) * 100}%;background:color-mix(in srgb, var(--sport) ${TEINTES[i] ?? 30}%, var(--surface))"${i < 2 ? ' class="plein"' : ''} title="${esc(x.l.j.nom)} : ${nb(x.v, 1)}">${esc(nomCourt(x.l.j.nom))} ${nb(x.v)}</span>`).join('')}` +
+    return `<div class="empilee" role="img" aria-label="Score projeté par joueur (${nb(tot)} au total)${cible ? ` face à la cible ${cible}` : ''} : ${parts.map((x) => `${esc(x.l.j.nom)} ${nb(x.v)}${x.bonus.length ? `, dont ${nb(x.v - x.base, 1)} de bonus (${esc(x.bonus.join(', '))})` : ''}`).join(' ; ')}">${parts.map((x, i) =>
+      `<span style="width:${(x.v / M) * 100}%;background:color-mix(in srgb, var(--sport) ${TEINTES[i] ?? 30}%, var(--surface))"${i < 2 ? ' class="plein"' : ''} title="${esc(x.l.j.nom)} : ${nb(x.v, 1)}${x.bonus.length ? ` dont +${nb(x.v - x.base, 1)} de bonus (${esc(x.bonus.join(', '))})` : ' (sans bonus)'}"><b>${esc(nomCourt(x.l.j.nom))} ${nb(x.v)}</b>${x.v > x.base + 0.05 ? `<i class="part-bonus" style="width:${((x.v - x.base) / x.v) * 100}%"></i>` : ''}</span>`).join('')}` +
       `${cible ? `<i class="marque-cible" style="left:${(cible / M) * 100}%"><b>cible ${cible}</b></i>` : ''}</div>`;
   },
   // Distribution du score de l'équipe face à la cible (résumé du moteur : resumerTirages).
@@ -573,7 +596,7 @@ if (D.lotsVignettes) {
 function tagsLigne(l, o = {}) {
   const st = statut(l), out = [];
   if (st !== 'probable' && st !== 'confirme') out.push(`<span class="tag ${TON_STATUT[st]}">${LIBELLES[st]}</span>`);
-  if (l.c.bonusPct) out.push(`<span class="tag">${esc(l.c.collection)} +${nb(l.c.bonusPct)}${nbsp}%</span>`);
+  if (l.c.bonusPct && !o.sansCollection) out.push(`<span class="tag">${esc(l.c.collection)} +${nb(l.c.bonusPct)}${nbsp}%</span>`);
   if (o.horsSolo && !l.pr.eligibleArcade && l.m) out.push('<span class="tag stop" title="Compétition non autorisée en solo">hors solo</span>');
   if (o.jouee) out.push(`<span class="tag">${o.jouee}</span>`);
   out.push(tagsContexte(l));
@@ -624,23 +647,24 @@ function ligne(l, o = {}) {
   const lieu = l.lieu === 'ext' ? '@' : l.lieu === 'dom' ? 'vs' : '';
   const match = l.m ? `<span class="l1">${esc(quand(l.m.debutUTC))} </span><span class="l2">${lieu} ${esc(l.adv ?? '?')}<span class="cote-txt">${v != null ? ` · ${v}${nbsp}% vict.` : ''}</span></span>${v != null ? `<span class="cotebarre" title="Probabilité de victoire de son équipe">${G.coteMini(v)}${v}${nbsp}% vict.</span>` : ''}` : '<span class="l1">pas de match connu</span>';
   const ppe = l.c.sport === 'nba' && l.j.etoiles && l.pr.siJoue != null ? `<span class="ppe">${nb(l.pr.siJoue / l.j.etoiles, 1)} pts/★</span>` : '';
-  const tags = tagsLigne(l, { ...o, jouee: o.jouee ?? (J.has(l.c.id) ? 'jouée à ce palier' : '') });
+  const tags = tagsLigne(l, { ...o, sansCollection: true, jouee: o.jouee ?? (J.has(l.c.id) ? 'déjà utilisée' : '') });
   const choisie = (fiche.ouverte === l.c.id || (epingleActive() && vue.epingle[cleEpingle()] === l.c.id)) ? ' choisie' : '';
   return `<div class="ligne${choisie}${o.griser && J.has(l.c.id) ? ' bloquee' : ''}" role="button" tabindex="0" data-fiche="${esc(l.c.id)}" aria-label="Voir la fiche de ${esc(l.j.nom)}">
-    <div class="c-img">${vignette(l)}</div>
-    <div class="c-nom"><b>${esc(l.j.nom)}</b>${cap ? '<span class="cap" title="Capitaine">C</span>' : ''}<span class="pos">${esc(postesL(l).join('/'))}</span>${badgeEtoiles(l)}<span class="club">${esc(l.j.club?.nom ?? '?')}</span></div>
+    <div class="c-img">${vignette(l)}${cap ? '<span class="cap" title="Capitaine">C</span>' : ''}</div>
+    <div class="c-nom"><span class="nom-ligne"><b>${esc(l.j.nom)}</b></span><span class="pos">${esc(postesL(l).join('/'))}</span>${badgeEtoiles(l)}${l.c.bonusPct ? `<span class="tag">${esc(l.c.collection)} +${nb(l.c.bonusPct)}${nbsp}%</span>` : ''}<span class="club">${esc(l.j.club?.nom ?? '?')}</span></div>
     <div class="c-match">${match}</div>
-    <div class="c-forme">${G.pastilles(formeEquipe(l.equipe.slug)?.derniers)}${tendance(formeDe(l.j))}</div>
+    <div class="c-forme">${G.pastilles(formeEquipe(l.equipe.slug)?.derniers)}</div>
     ${l.c.sport === 'nba' ? celluleMinutes(l) : `<div class="c-p"><span class="pv${confirme(l) ? ' ok-txt' : ''}"${confirme(l) ? ' title="Titulaire dans la composition officielle"' : ''}>${txtChances(l)}</span>${G.barreP(l.pr.p, seuilAffiche(), 60)}</div>`}
-    ${l.c.sport === 'football' ? (() => { const f = scoreFoot(l); return `<div class="c-s c-tit"><span><span class="sv">${nb(f.v)}</span> pts</span>${f.sous ? `<span class="sous">${esc(f.sous)}</span>` : ''}</div>`; })() : `<div class="c-s"><span><span class="sv">${nb(l.pr.siJoue)}</span> pts</span>${G.ival(l, 72)}${ppe}</div>`}
+    ${l.c.sport === 'football' ? (() => { const f = scoreFoot(l); return `<div class="c-s c-tit"><span class="sc"><span class="sv">${nb(f.v)}</span> pts ${tendance(formeDe(l.j))}</span>${G.ival(l, 72)}${f.sous ? `<span class="sous${f.sous === 'toujours titulaire' ? ' defaut' : ''}">${esc(f.sous)}</span>` : ''}</div>`; })() : `<div class="c-s"><span class="sc"><span class="sv">${nb(l.pr.siJoue)}</span> pts ${tendance(formeDe(l.j))}</span>${G.ival(l, 72)}${ppe}</div>`}
     ${tags ? `<div class="c-tags">${tags}</div>` : ''}
+    ${o.utilisable && l.m ? `<div class="c-action"><button type="button" class="action-ligne" data-act="basculer" data-sport="${l.c.sport}" data-v="${esc(l.c.id)}" title="Cette carte est déjà prise dans une composition en cours : l’écarter jusqu’à la fin de son match">${ico('ecarter')}<span>Déjà utilisée</span></button></div>` : ''}
     ${o.extra ? `<div class="c-extra">${o.extra}</div>` : ''}
   </div>`;
 }
 // NBA : les minutes projetées remplacent les chances de jouer dans la ligne (disponibilité en petit dessous).
 function celluleMinutes(l) {
   const sc = l.pr.score;
-  return `<div class="c-p c-min"><span class="pv">${sc?.minutes == null ? '–' : nb(sc.minutes)}<small>${nbsp}min</small></span>${G.barreMin(sc, seuilMinutesAffiche(), 60)}<span class="dispo">${sc?.minutesEnHausse ? '<b class="ok-txt" title="2 derniers matchs bien au-dessus de sa moyenne">▲ en hausse</b> · ' : ''}</span></div>`;
+  return `<div class="c-p c-min"><span class="pv">${sc?.minutes == null ? '–' : nb(sc.minutes)}<small>${nbsp}min</small></span>${G.barreMin(sc, seuilMinutesAffiche(), 60)}${sc?.minutesEnHausse ? '<span class="dispo"><b class="ok-txt" title="2 derniers matchs bien au-dessus de sa moyenne">▲ en hausse</b></span>' : ''}</div>`;
 }
 const enteteTab = (sport = 'football') => `<div class="entete-tab libelle" aria-hidden="true"><span></span><span>Joueur</span><span>Match · victoire</span><span>Équipe · 5 derniers</span><span>${sport === 'nba' ? 'Minutes projetées' : 'Chances de jouer'}</span><span>${sport === 'nba' ? 'Score projeté · 10–90 %' : 'Titulaire · s’il entre'}</span></div>`;
 
@@ -728,9 +752,9 @@ function carteProposition(titre, pourquoi, e, sport, cible, o = {}) {
     <div class="corps pile">
       ${kpisEquipe(e, sport, membres, { cible })}
       ${r ? `<div>${graphe((w) => G.dist(w, r, cible, sport, o.hauteur ?? 170))}${legendeDist(r, e, cible)}</div>` : ''}
-      <div style="padding-top:var(--e5)"><span class="libelle long">Qui porte l'équipe · score projeté par joueur${e.capitaine ? ', capitaine compris' : ''}</span><div style="margin-top:22px">${G.empilee(membres, e, sport, cible)}</div></div>
+      <div style="padding-top:var(--e5)"><span class="libelle long">Qui porte l'équipe · score projeté par joueur · hachuré : part des bonus${e.capitaine ? ' (capitaine, carte)' : ' (carte)'}</span><div style="margin-top:22px">${G.empilee(membres, e, sport, cible)}</div></div>
     </div>
-    <div class="tableau">${enteteTab(sport)}${membres.map((l) => ligne(l, { capitaine: e.capitaine, epinglable: o.epinglable })).join('')}</div>
+    <div class="tableau">${enteteTab(sport)}${membres.map((l) => ligne(l, { capitaine: e.capitaine, epinglable: o.epinglable, utilisable: true })).join('')}</div>
     <div class="corps" style="padding-top:var(--e4)"><div class="actions"><button type="button" class="btn principal" data-act="jouer" data-sport="${sport}" data-v="${esc(e.cartes.join(','))}">J'ai joué cette équipe</button><span class="mini doux">marque les 5 cartes (annulable) · résultat connu après le dernier match, ${esc(quand(dernier))}</span></div></div>
     ${o.apres ?? ''}
   </section>`;
@@ -768,13 +792,12 @@ function rendreNavHtml(ecran) {
   const p = palierEnCours(s);
   let etat = '';
   if (p) {
-    const ep = etatPalier(p), n = jouees(s).size, attendues = 5 * ep.utilisees;
+    const ep = etatPalier(p), n = jouees(s).size;
     etat = `<div class="etat-palier" data-sport="${s}">
       <div class="tete-etat"><span class="pts-sport"></span><b>Palier ${p.cible}</b><span class="doux" style="margin-left:auto">${rangPalier(p)} / ${paliersDe(s).length}</span></div>
       <span class="doux">${esc(etatTexte(p))}</span>
       ${ep.derniere ? '<span class="attention-txt">Dernière tentative en cours</span>' : ''}
-      ${n < attendues ? `<span class="attention-txt">${n} carte${n > 1 ? 's' : ''} marquée${n > 1 ? 's' : ''} sur ${attendues} déjà jouées</span>` : attendues ? `<span class="ok-txt">${attendues} cartes jouées, toutes marquées</span>` : `<span class="doux">${n ? pluriel(n, 'carte marquée', 'cartes marquées') : 'Aucune carte jouée à ce palier'}</span>`}
-      <button type="button" class="btn" data-act="marquer" data-sport="${s}">Marquer les cartes jouées</button></div>`;
+      ${n ? `<span class="doux">${pluriel(n, 'carte déjà utilisée', 'cartes déjà utilisées')}</span>` : ''}</div>`;
   }
   $('laterale').innerHTML = `
     <a class="marque" href="#accueil">${LOGO}<b>Sorar<span class="apostrophe">'</span>help</b></a>
@@ -865,7 +888,7 @@ function panneauSport(s, r) {
   const tete = (droite) => `<div class="tete">${ballon(s, true)}<h2>${SPORTS[s]}</h2><span class="doux petit">${p ? `Solo · palier ${rangPalier(p)} sur ${ps.length}` : 'Solo'}</span>${droite}</div>`;
   if (!p) return `<section class="carte panneau-sport" data-sport="${s}" aria-label="${SPORTS[s]}">${tete('')}${chemin(s)}<p>Tous les paliers de ce plateau sont passés.</p>${liens}</section>`;
   const ep = etatPalier(p);
-  const etat = `<span class="droite tag ${ep.derniere ? 'attention' : ''}">${esc(etatTexte(p))}${n ? ` · ${pluriel(n, 'carte marquée', 'cartes marquées')}` : ''}</span>`;
+  const etat = `<span class="droite tag ${ep.derniere ? 'attention' : ''}">${esc(etatTexte(p))}${n ? ` · ${pluriel(n, 'carte déjà utilisée', 'cartes déjà utilisées')}` : ''}</span>`;
   const e = r?.prudente;
   let corps;
   if (!r) corps = '<p class="attente" style="padding:0">Calcul de la meilleure équipe…</p>';
@@ -939,16 +962,22 @@ function basculerHeros(s) {
 }
 
 // ---------- Solo ----------
+// Cartes déjà utilisées du sport : rappel en tête du Solo, avec la fin prévue et « Remettre ».
+function rappelUtilisees(sport) {
+  const L = utiliseesDe(sport).map((x) => [parId.get(x.id), x]).filter(([l]) => l).sort((a, b) => a[1].jusqua.localeCompare(b[1].jusqua) || a[0].j.nom.localeCompare(b[0].j.nom));
+  if (!L.length) return '';
+  return `<section class="carte utilisees" aria-label="Cartes déjà utilisées"><header><h2>Déjà utilisées</h2><span class="doux petit">${pluriel(L.length, 'carte écartée', 'cartes écartées')} jusqu’à la fin de leur match</span></header>
+    <ul>${L.map(([l, x]) => `<li><button type="button" class="lien" data-fiche="${esc(l.c.id)}">${esc(l.j.nom)}</button><span class="doux">jusqu’à ${esc(quand(x.jusqua))}</span><button type="button" class="btn mini" data-act="basculer" data-sport="${sport}" data-v="${esc(l.c.id)}" aria-label="Remettre ${esc(l.j.nom)} disponible">Remettre</button></li>`).join('')}</ul></section>`;
+}
 function afficherSolo(sport) {
   const p = palierEnCours(sport), el = $('vue-solo');
-  const n = jouees(sport).size;
   const ep = p ? etatPalier(p) : null;
-  const contexte = p ? [ep.enCours && !ep.derniere ? 'Une tentative est en cours : ces propositions servent à la suivante si elle échoue.' : '',
-    n ? `${pluriel(n, 'carte marquée jouée', 'cartes marquées jouées')} à ce palier, écartée${n > 1 ? 's' : ''} des propositions.` : ''].filter(Boolean).join(' ') : '';
+  const contexte = p && ep.enCours && !ep.derniere ? 'Une tentative est en cours : ces propositions servent à une autre tentative.' : '';
   el.innerHTML = `<div class="entete"><div class="titres"><h1>Solo · ${SPORTS[sport]}</h1><p class="doux petit">${p ? `Palier ${p.cible} · ${rangPalier(p)} sur ${paliersDe(sport).length} · ${esc(etatTexte(p))}` : 'Plateau terminé'}</p></div>
       <div class="outils reglages"><div class="seg" role="group" aria-label="Créneaux"><button type="button" data-act="mode" data-v="plusieurs" aria-pressed="${vue.mode === 'plusieurs'}">Plusieurs créneaux</button><button type="button" data-act="mode" data-v="unique" aria-pressed="${vue.mode === 'unique'}">Créneau unique</button></div></div></div>
     <div class="tel-seul">${alertePalier(sport) ? `<div style="margin-bottom:var(--e4)">${alertePalier(sport)}</div>` : ''}</div>
     ${contexte ? `<p class="contexte">${esc(contexte)}</p>` : ''}
+    ${p && vue.mode === 'unique' ? rappelUtilisees(sport) : ''}
     <div id="coup-envoi" role="status"></div>
     <div id="solo-contenu"><p class="attente">Simulation des meilleures équipes…</p></div>`;
   if (!p) { $('solo-contenu').innerHTML = '<p class="attente">Tous les paliers de ce plateau sont passés.</p>'; return; }
@@ -974,7 +1003,7 @@ function afficherSolo(sport) {
     if (!parId.has(vue.epingle[`solo|${sport}`])) vue.epingle[`solo|${sport}`] = membresDe(eq)[0].c.id; // le 1er joueur affiché
     $('solo-contenu').innerHTML = `<div class="solo-grille avec-fiche">
         <div class="pile">${carteProposition(TITRES[nomProp][0], TITRES[nomProp][1], eq, sport, p.cible, { apres, epinglable: true, selecteur })}</div>
-        <section class="carte" id="autres-choix" aria-label="Autres choix"><header><h2>Autres choix</h2><span class="doux petit">si tu préfères ajuster cette équipe</span></header><p class="attente">Recherche des autres joueurs…</p></section>
+        <div class="pile">${rappelUtilisees(sport)}<section class="carte" id="autres-choix" aria-label="Autres choix"><header><h2>Autres choix</h2><span class="doux petit">si tu préfères ajuster cette équipe</span></header><p class="attente">Recherche des autres joueurs…</p></section></div>
         <aside class="col-fiche carte" id="col-fiche" aria-label="Fiche épinglée"></aside>
       </div>`;
     afficherColFiche();
@@ -1037,7 +1066,7 @@ function afficherAutres(sport, equipe, a, o = {}) {
       if ((l.pr.score?.sigma ?? 0) < (rem.pr.score?.sigma ?? 0) - 0.5) raisons.push('plus régulier');
       pourquoi = `<span class="mini attention-txt" title="L'équipe proposée maximise les chances d'atteindre la cible : un joueur moins sûr de jouer, ou plus régulier quand l'équipe est sous la cible, les fait baisser.">score plus haut, mais moins de chances de passer${raisons.length ? ` : ${raisons.join(', ')}` : ''}</span>`;
     }
-    return ligne(l, { capitaine: c.capitaine, epinglable: true, tags: tard, jouee: o.squad ? (jouees(sport).has(l.c.id) ? 'jouée en solo' : '') : undefined,
+    return ligne(l, { capitaine: c.capitaine, epinglable: true, utilisable: !o.squad, tags: tard, jouee: o.squad ? (jouees(sport).has(l.c.id) ? 'utilisée en solo' : '') : undefined,
       extra: `<span class="delta ${classe}">${avant}${unite} → ${apres}${unite}</span><span class="mini doux">${quoi}${c.capitaine === c.carteId ? ', avec le brassard' : ''}${o.parEtoiles ? ` · à la place de ${esc(nomCourt(parId.get(c.remplace).j.nom))}` : ''}</span>${pourquoi}` });
   };
   const explication = sport === 'nba'
@@ -1133,8 +1162,8 @@ function afficherSquad() {
     $('squad-contenu').innerHTML = `<div class="solo-grille avec-fiche">
       <section class="carte" aria-label="Équipe du jour"><header><h2>Équipe du jour</h2><span class="doux petit">le meilleur score projeté de la journée</span></header>
         <div class="corps pile">${kpisEquipe(e, sport, membres, { squad: true })}
-          <div style="padding-top:var(--e2)"><span class="libelle long">Qui porte l'équipe · score projeté par joueur${e.capitaine ? ', capitaine compris' : ''}</span><div style="margin-top:8px">${G.empilee(membres, e, sport)}</div></div></div>
-        <div class="tableau">${enteteTab(sport)}${membres.map((l) => ligne(l, { capitaine: e.capitaine, epinglable: true, jouee: Jo.has(l.c.id) ? 'jouée en solo' : '' })).join('')}</div>
+          <div style="padding-top:var(--e2)"><span class="libelle long">Qui porte l'équipe · score projeté par joueur · hachuré : part des bonus${e.capitaine ? ' (capitaine, carte)' : ' (carte)'}</span><div style="margin-top:8px">${G.empilee(membres, e, sport)}</div></div></div>
+        <div class="tableau">${enteteTab(sport)}${membres.map((l) => ligne(l, { capitaine: e.capitaine, epinglable: true, jouee: Jo.has(l.c.id) ? 'utilisée en solo' : '' })).join('')}</div>
         <p class="corps note" style="padding-top:var(--e3)">${r.admissibles} cartes du jour retenues, ${r.nbEquipes} équipes comparées. Règles de composition supposées identiques au solo (à confirmer).</p></section>
       <section class="carte" id="autres-choix" aria-label="Autres choix"><header><h2>Autres choix</h2><span class="doux petit">si tu préfères ajuster l'équipe du jour</span></header><p class="attente">Recherche des autres joueurs…</p></section>
       <aside class="col-fiche carte" id="col-fiche" aria-label="Fiche épinglée"></aside>
@@ -1183,11 +1212,10 @@ function afficherCartes() {
   if (vue.etoiles != null && !parNiveau.has(vue.etoiles)) vue.etoiles = null;
   if (vue.collection && !parCollection.has(vue.collection)) vue.collection = null;
   if (s === 'nba' && (vue.tri === 'e' || vue.tri === 'p')) { vue.tri = 's'; vue.sens = -1; }
-  const p = palierEnCours(s), attendues = p ? 5 * etatPalier(p).utilisees : 0;
   const triNom = TRIS.find(([k, , sp]) => k === vue.tri && (!sp || sp === s))?.[1] ?? 'colonne';
   const resume = `Filtres : ${vue.journee ? libelleJournee(s, vue.journee) : 'toutes les journées'} · tri ${triNom.toLowerCase()} · ${s === 'nba' ? (vue.toutesMinutes ? 'toutes minutes' : `${seuilMinutes()}${nbsp}min et plus`) : vue.toutesChances ? 'toutes chances' : `${Math.round(seuil() * 100)}${nbsp}%`}${vue.collection ? ` · ${vue.collection}` : ''}${vue.dispo ? ' · disponibles' : ''}`;
   const filtresOuverts = $('vue-cartes').querySelector('details.filtres')?.open ?? largePC();
-  $('vue-cartes').innerHTML = `<div class="entete"><div class="titres"><h1>Mes cartes · ${SPORTS[s]}</h1><p class="doux petit">${pluriel(lignes.filter((l) => l.c.sport === s).length, 'carte')} · ${J.size} jouée${J.size > 1 ? 's' : ''}${attendues ? ` sur ${attendues}` : ''} à ce palier${largePC() ? (vue.affichage === 'tableau' ? ' · coche la colonne « Jouée » pour marquer une carte' : ' · marque une carte depuis sa fiche') : ''}</p></div>${largePC() ? `<div class="outils"><div class="seg" role="group" aria-label="Affichage"><button type="button" data-act="affichage" data-v="liste" aria-pressed="${vue.affichage === 'liste'}">Liste</button><button type="button" data-act="affichage" data-v="tableau" aria-pressed="${vue.affichage === 'tableau'}">Tableau</button></div></div>` : ''}</div>
+  $('vue-cartes').innerHTML = `<div class="entete"><div class="titres"><h1>Mes cartes · ${SPORTS[s]}</h1><p class="doux petit">${pluriel(lignes.filter((l) => l.c.sport === s).length, 'carte')}${J.size ? ` · ${pluriel(J.size, 'déjà utilisée', 'déjà utilisées')}` : ''}</p></div>${largePC() ? `<div class="outils"><div class="seg" role="group" aria-label="Affichage"><button type="button" data-act="affichage" data-v="liste" aria-pressed="${vue.affichage === 'liste'}">Liste</button><button type="button" data-act="affichage" data-v="tableau" aria-pressed="${vue.affichage === 'tableau'}">Tableau</button></div></div>` : ''}</div>
     <div class="tel-seul">${alertePalier(s) ? `<div style="margin-bottom:var(--e3)">${alertePalier(s)}</div>` : ''}</div>
     <div class="barre-filtres">
       <div class="seg" role="group" aria-label="Poste">${[null, ...POSTES[s]].map((x) => `<button type="button" data-act="poste" data-v="${x ?? ''}" aria-pressed="${x === vue.poste}">${x ?? 'Tous'}</button>`).join('')}</div>
@@ -1248,7 +1276,7 @@ function afficherListeCartes() {
   const lignesHtml = vis.map((l) => {
     const st = statut(l), v = victoirePct(l), jouee = J.has(l.c.id);
     return `<tr data-fiche="${esc(l.c.id)}" class="${fiche.ouverte === l.c.id ? 'choisie' : ''}${jouee ? ' bloquee' : ''}">
-      <td><input type="checkbox" data-act="cocher" data-v="${esc(l.c.id)}" ${jouee ? 'checked' : ''} ${palierEnCours(s) ? '' : 'disabled'} aria-label="${esc(l.j.nom)} jouée à ce palier"></td>
+      <td><input type="checkbox" data-act="cocher" data-v="${esc(l.c.id)}" ${jouee ? 'checked' : ''} ${palierEnCours(s) ? '' : 'disabled'} aria-label="${esc(l.j.nom)} déjà utilisée"></td>
       <td><div class="cellule-carte">${vignette(l)}${badgeEtoiles(l)}</div></td>
       <td><span class="nom">${esc(l.j.nom)}</span><span class="sous">${esc(postesL(l).join('/'))} · ${esc(l.j.club?.nom ?? '?')}</span></td>
       <td>${l.m ? `<span class="nom" style="font-weight:400">${esc(quand(l.m.debutUTC))}</span><span class="sous">${l.lieu === 'ext' ? '@' : l.lieu === 'dom' ? 'vs' : ''} ${esc(l.adv ?? '?')}${v != null ? ` · ${v}${nbsp}% vict.` : ''}</span>` : '<span class="doux">pas de match</span>'}</td>
@@ -1261,7 +1289,7 @@ function afficherListeCartes() {
       <td>${G.pastilles(formeEquipe(l.equipe.slug)?.derniers)}</td>
       <td class="statut">${l.c.bonusPct ? `<span class="tag">${esc(l.c.collection)} +${nb(l.c.bonusPct)}${nbsp}%</span> ` : ''}${st === 'probable' ? '' : `<span class="tag ${TON_STATUT[st]}">${LIBELLES[st]}</span> `}${!l.pr.eligibleArcade && l.m ? '<span class="tag stop">hors solo</span> ' : ''}${tagsContexte(l)}${!l.c.bonusPct && st === 'probable' && l.pr.eligibleArcade ? `<span class="doux">${esc(l.c.collection ?? '')}</span>` : ''}</td></tr>`;
   }).join('');
-  el.innerHTML = `<div class="defile-x"><table class="dense"><thead><tr>${th('j', 'Jouée', '', 64)}${th('x', 'Carte', '', 84)}${th('n', 'Joueur')}${th('d', 'Match')}${nba ? th('m', 'Minutes', '', 112) : ''}${nba ? '' : th('p', 'Chances', '', 112)}${th('s', nba ? 'Score projeté' : 'Titulaire', '', nba ? 124 : 200)}${nba ? '' : th('e', 'Espérance', 'r', 96)}${nba ? th('r', 'Pts/★', 'r', 72) : ''}${nba ? th('t', 'Pertes', 'r', 76) : ''}${th('q', 'Club', '', 112)}${th('b', 'Bonus · statut', '', 160)}</tr></thead><tbody>${lignesHtml}</tbody></table></div>${plus}`;
+  el.innerHTML = `<div class="defile-x"><table class="dense"><thead><tr>${th('j', 'Utilisée', '', 64)}${th('x', 'Carte', '', 84)}${th('n', 'Joueur')}${th('d', 'Match')}${nba ? th('m', 'Minutes', '', 112) : ''}${nba ? '' : th('p', 'Chances', '', 112)}${th('s', nba ? 'Score projeté' : 'Titulaire', '', nba ? 124 : 200)}${nba ? '' : th('e', 'Espérance', 'r', 96)}${nba ? th('r', 'Pts/★', 'r', 72) : ''}${nba ? th('t', 'Pertes', 'r', 76) : ''}${th('q', 'Club', '', 112)}${th('b', 'Bonus · statut', '', 160)}</tr></thead><tbody>${lignesHtml}</tbody></table></div>${plus}`;
 }
 
 // ---------- Fiche joueur ----------
@@ -1334,7 +1362,7 @@ function ficheHtml(l) {
     c.bonusPct ? `<span class="tag">${esc(c.collection)} +${nb(c.bonusPct)}${nbsp}%</span>` : `<span class="tag">${esc(c.collection ?? '')}</span>`,
     j.statutSorare ? `<span class="tag">Sorare${nbsp}: ${esc(j.statutSorare)}</span>` : '',
     !pr.eligibleArcade && m ? '<span class="tag stop">hors solo</span>' : '',
-    J.has(c.id) ? '<span class="tag">jouée à ce palier</span>' : '', tagsContexte(l)].join('');
+    J.has(c.id) ? `<span class="tag">déjà utilisée, jusqu’à ${esc(quand(utiliseesDe(c.sport).find((x) => x.id === c.id).jusqua))}</span>` : '', tagsContexte(l)].join('');
   return `<div class="fiche" data-sport="${c.sport}">
     <div class="fiche-tete">${vignette(l)}
       <div style="min-width:0;display:grid;gap:4px"><h2>${esc(j.nom)}</h2>
@@ -1374,7 +1402,7 @@ function ficheHtml(l) {
       </div>
     </div>
     ${(() => { const rs = pr.raisons.filter((x) => !(effetCote(pr) && /chances de gagner/.test(x))); return rs.length ? `<div class="bloc"><h3>Ce que le calcul a retenu</h3><ul class="raisons">${rs.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''; })()}
-    ${palier ? `<div class="actions"><button type="button" class="btn ${J.has(c.id) ? '' : 'principal'}" data-act="basculer" data-sport="${c.sport}" data-v="${esc(c.id)}">${J.has(c.id) ? 'Remettre disponible' : `Marquer comme jouée (palier ${palier.cible})`}</button></div>` : ''}
+    ${palier ? `<div class="actions"><button type="button" class="btn ${J.has(c.id) ? '' : 'principal'}" data-act="basculer" data-sport="${c.sport}" data-v="${esc(c.id)}">${J.has(c.id) ? 'Remettre disponible' : 'Déjà utilisée'}</button>${J.has(c.id) ? '' : `<span class="mini doux">${m ? `Écarte cette carte du Solo jusqu’à la fin de son match (${esc(quand(finDuMatch(c.id)))}).` : 'Pas de match connu.'}</span>`}</div>` : ''}
   </div>`;
 }
 
@@ -1439,17 +1467,21 @@ function ficheVoisine(d) {
 }
 
 // ---------- Cartes jouées ----------
-function enregistrerJouees(sport, ensemble, equipe = null) {
+// Écrit la liste des cartes déjà utilisées du palier en cours. L'équipe validée (« J'ai joué cette équipe ») est gardée
+// tant que ses cartes y figurent toutes.
+function ecrireUtilisees(sport, liste, posee = undefined) {
   const p = palierEnCours(sport); if (!p) return;
-  // L'équipe validée reste tant que ses cartes sont toutes marquées jouées à ce palier.
-  const avant = etatUtilisateur[sport], posee = equipe ?? (avant?.cible === p.cible && avant.posee?.cartes.every((id) => ensemble.has(id)) ? avant.posee : null);
-  etatUtilisateur = { ...etatUtilisateur, [sport]: { cible: p.cible, jouees: [...ensemble], misAJour: new Date().toISOString(), ...(posee ? { posee } : {}) } };
+  const avant = etatUtilisateur[sport], ids = new Set(liste.map((x) => x.id));
+  const garde = posee !== undefined ? posee : (avant?.cible === p.cible && avant.posee?.cartes.every((id) => ids.has(id)) ? avant.posee : null);
+  etatUtilisateur = { ...etatUtilisateur, [sport]: { cible: p.cible, utilisees: liste, misAJour: new Date().toISOString(), ...(garde ? { posee: garde } : {}) } };
   stockage.enregistrer(etatUtilisateur);
 }
+// Une carte : mise de côté jusqu'à la fin de son prochain match, ou remise disponible.
 function basculer(sport, id) {
-  const ensemble = jouees(sport);
-  ensemble.has(id) ? ensemble.delete(id) : ensemble.add(id);
-  enregistrerJouees(sport, ensemble);
+  const liste = utiliseesDe(sport);
+  if (liste.some((x) => x.id === id)) { ecrireUtilisees(sport, liste.filter((x) => x.id !== id)); return; }
+  const jusqua = finDuMatch(id);
+  if (jusqua) ecrireUtilisees(sport, [...liste, { id, jusqua }]);
 }
 // ---------- Bandeau du coup d'envoi (Solo) ----------
 // Équipe surveillée : celle que tu as validée (« J'ai joué cette équipe ») tant qu'elle n'est pas verrouillée ;
@@ -1513,13 +1545,15 @@ function afficherAlertesAccueil() {
   afficherMaj();
 }
 
-// « J'ai joué cette équipe » : marque les 5 cartes, annulable pendant 8 s.
+// « J'ai joué cette équipe » : les 5 cartes sont déjà utilisées jusqu'à la fin du dernier de leurs matchs (la fin de
+// la composition, connue dans ce cas). Annulable pendant 8 s.
 function jouerEquipe(sport, ids) {
-  const avant = [...jouees(sport)], ensemble = jouees(sport);
-  for (const id of ids) ensemble.add(id);
-  enregistrerJouees(sport, ensemble, { cartes: ids, poseeA: new Date().toISOString() });
+  const avant = utiliseesDe(sport), poseeAvant = etatUtilisateur[sport]?.posee ?? null;
+  const jusqua = ids.map(finDuMatch).filter(Boolean).sort().at(-1);
+  if (!jusqua) return;
+  ecrireUtilisees(sport, [...avant.filter((x) => !ids.includes(x.id)), ...ids.map((id) => ({ id, jusqua }))], { cartes: ids, poseeA: new Date().toISOString() });
   tout();
-  toast(`${pluriel(ids.length, 'carte marquée jouée', 'cartes marquées jouées')} au palier ${palierEnCours(sport)?.cible}.`, () => { enregistrerJouees(sport, new Set(avant)); tout(); });
+  toast(`Équipe enregistrée : ses ${ids.length} cartes sont déjà utilisées jusqu’à ${quand(jusqua)}.`, () => { ecrireUtilisees(sport, avant, poseeAvant); tout(); });
 }
 
 let minuterieToast = null;
@@ -1564,31 +1598,6 @@ function fermerFenetre() {
   for (const x of document.querySelectorAll('#app, #bas')) x.inert = false;
   if (f) f();
   rendreFocus(origineFenetre); origineFenetre = null;
-}
-// Recherche par nom ; une case coche ou décoche. Les propositions ne sont recalculées qu'à la fermeture.
-function ouvrirMarquage(sport) {
-  const p = palierEnCours(sport); if (!p) return;
-  const attendues = 5 * etatPalier(p).utilisees;
-  ouvrirFenetre(`Cartes jouées · ${SPORTS[sport]} · palier ${p.cible}`,
-    `<p class="petit doux" id="compte-marquage"></p>
-     <input type="search" class="recherche" id="recherche-marquage" placeholder="Chercher un joueur" autocomplete="off" aria-label="Chercher un joueur">
-     <div class="liste-marquage" id="liste-marquage" data-sport="${sport}"></div>
-     <div class="actions"><button type="button" class="btn principal" data-act="fermer-fenetre">Terminé</button></div>`, () => tout());
-  const cartes = lignes.filter((l) => l.c.sport === sport);
-  const dessinerListe = () => {
-    const J = jouees(sport), q = sansAccents($('recherche-marquage').value.trim());
-    $('compte-marquage').textContent = `${J.size} marquée${J.size > 1 ? 's' : ''}${attendues ? ` sur ${attendues} jouées à ce palier (${etatPalier(p).utilisees} × 5)` : ''}. Les cartes cochées ne seront plus proposées en solo.`;
-    const L = cartes.filter((l) => !q || sansAccents(l.j.nom).includes(q))
-      .sort((a, b) => (J.has(b.c.id) - J.has(a.c.id)) || ((valeurCarte(b) ?? -1) - (valeurCarte(a) ?? -1)));
-    $('liste-marquage').innerHTML = L.slice(0, 40).map((l) => `<label class="marque-carte"><input type="checkbox" data-act="marque" data-v="${esc(l.c.id)}" ${J.has(l.c.id) ? 'checked' : ''}>
-        <span style="min-width:0"><span class="nom">${esc(l.j.nom)}</span> ${badgeEtoiles(l)}<br><span class="doux">${esc(postesL(l).join('/'))} · ${esc(l.j.club?.nom ?? '?')} · ${esc(l.c.collection ?? '')}${l.c.bonusPct ? ` +${nb(l.c.bonusPct)}${nbsp}%` : ''}</span></span>
-        <span class="doux">${nb(valeurCarte(l))}</span></label>`).join('') +
-      (L.length > 40 ? `<p class="petit doux">${L.length - 40} autres cartes : affine la recherche.</p>` : '') +
-      (!L.length ? '<p class="petit doux">Aucune carte à ce nom.</p>' : '');
-  };
-  ouvrirMarquage.dessiner = dessinerListe;
-  dessinerListe();
-  $('recherche-marquage').oninput = dessinerListe;
 }
 function ouvrirAide() {
   ouvrirFenetre('Aide', '<p class="doux">L’aide de l’appli arrive bientôt.</p><div class="actions"><button type="button" class="btn principal" data-act="fermer-fenetre">Fermer</button></div>');
@@ -1842,7 +1851,6 @@ document.addEventListener('click', (e) => {
       case 'theme': changerTheme(); return;
       case 'aide': ouvrirAide(); return;
       case 'parametres': WEB?.ouvrirParametres(); return;
-      case 'marquer': ouvrirMarquage(b.dataset.sport); return;
       case 'mode': vue.mode = v; soloMemo.mode = v === 'unique' ? 'unique' : 'plusieurs'; ecrireSolo(); afficherSolo(vue.sport); return;
       case 'proposition': vue.proposition = v; afficherSolo(vue.sport); return;
       case 'seuil': vue.toutesChances = false; etatUtilisateur = { ...etatUtilisateur, seuil: Number(v) }; stockage.enregistrer(etatUtilisateur); tout(); return;
@@ -1878,7 +1886,6 @@ document.addEventListener('change', (e) => {
   else if (a === 'tri') { vue.tri = v; vue.sens = CROISSANTS.has(v) ? 1 : -1; afficherCartes(); }
   else if (a === 'dispo') { vue.dispo = e.target.checked; afficherCartes(); }
   else if (a === 'cocher') { basculer(vue.sport, e.target.dataset.v); rendreNav('cartes'); afficherCartes(); }
-  else if (a === 'marque') { basculer($('liste-marquage').dataset.sport, e.target.dataset.v); ouvrirMarquage.dessiner?.(); }
 });
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
@@ -2053,4 +2060,4 @@ setInterval(() => {
   else if (dernierCoupEnvoi && vueCourante() === 'solo' && vue.sport === dernierCoupEnvoi.sport) afficherCoupEnvoi(dernierCoupEnvoi.sport, dernierCoupEnvoi.proposee);
 }, 60000);
 let premier = true;
-stockage.brancher((v) => { etatUtilisateur = { ...etatVide(), ...v }; tout(premier && lireAdresse().ecran === 'accueil'); premier = false; });
+stockage.brancher((v) => { etatUtilisateur = { ...etatVide(), ...v }; if (migrerEtat(etatUtilisateur)) stockage.enregistrer(etatUtilisateur); tout(premier && lireAdresse().ecran === 'accueil'); premier = false; });

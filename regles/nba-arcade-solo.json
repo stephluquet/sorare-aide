@@ -35,6 +35,8 @@
     "definition": "une carte posée dans une composition est indisponible jusqu'à la fin de cette composition (ses 5 matchs joués, score figé), puis redevient jouable au même palier",
     "compositions_simultanees": "plusieurs tentatives peuvent être en cours en même temps au même palier ; les cartes de l'une sont interdites dans les autres",
     "liberation_au_passage_du_palier": true,
+    "liberation_estimee_min_apres_coup_envoi": 180,
+    "liberation_estimee_source": "estimation de la fin du match (coup d'envoi + durée), faute de connaître la fin réelle de la composition ; utilisateur, 2026-11-15 : « on n'aura pas mieux »",
     "source": "utilisateur, 2026-11-15 (corrige « tant qu'on reste sur le même niveau », noté le 2026-11-07)"
   },
   "bonus_collection": {
