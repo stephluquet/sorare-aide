@@ -14,6 +14,7 @@ import { BAREME_NBA, CARTES, COMPOSITIONS, HISTORIQUE, PALIERS } from './requete
 import { matchHistorique, normaliserCarte, normaliserCompositions, normaliserJoueur, normaliserMatch, normaliserPaliers } from './normaliser.js';
 import { rapprocherBlessures } from './espn.js';
 import { archivePerimee, besoinHistoriqueComplet, fusionner, trou } from './fusion.js';
+import { equipeDuMatch } from '../moteur/jouer.js';
 
 export const TAILLE_PAGE = 50;
 export const NB_MATCHS_HISTORIQUE = 40;
@@ -61,14 +62,13 @@ export async function recupererSport(slug, sport, deps, { sansHistorique = false
   for (const c of cartesBrutes) if (c.anyPlayer && !joueursBruts.has(c.anyPlayer.slug)) joueursBruts.set(c.anyPlayer.slug, c.anyPlayer);
   const matchs = new Map();
   const joueurs = [];
+  const horsClub = []; // joueurs dont le club n'est pas dans le prochain match : jugés après l'historique (sélection ?)
   for (const p of joueursBruts.values()) {
     const j = normaliserJoueur(p, sport);
     joueurs.push(j);
     if (p.nextGame && !matchs.has(p.nextGame.id)) matchs.set(p.nextGame.id, normaliserMatch(p.nextGame, sport));
     if (!p.nextGame) anomalies.push(`${tag} pas de prochain match connu : ${j.nom}`);
-    else if (j.club && ![p.nextGame.homeTeam?.slug, p.nextGame.awayTeam?.slug].includes(j.club.slug)) {
-      anomalies.push(`${tag} club absent du prochain match (sélection ?) : ${j.nom}, ${p.nextGame.homeTeam?.name} – ${p.nextGame.awayTeam?.name}`);
-    }
+    else if (j.club && ![p.nextGame.homeTeam?.slug, p.nextGame.awayTeam?.slug].includes(j.club.slug)) horsClub.push([j, p.nextGame]);
   }
 
   // 3 bis. Compositions officielles des matchs de football proches (publiées vers H-1)
@@ -143,6 +143,14 @@ export async function recupererSport(slug, sport, deps, { sansHistorique = false
     }
   }
   for (const j of joueurs) if (!faits.has(j.id)) await enregistrer(j, null);
+
+  // Club absent du prochain match : ce n'est une anomalie que si le moteur ne retrouve pas non plus l'équipe du
+  // joueur dans son historique (même règle que les propositions : il y sera « douteux »). Un match de sélection
+  // d'un joueur qui a déjà joué avec sa sélection n'est pas signalé.
+  for (const [j, g] of horsClub) {
+    if (equipeDuMatch(j, matchs.get(g.id))) continue;
+    anomalies.push(`${tag} équipe du joueur introuvable dans son prochain match (douteux dans les propositions) : ${j.nom}, ${g.homeTeam?.name} – ${g.awayTeam?.name}`);
+  }
 
   // Blessures annoncées par ESPN (NBA, methode.md section 9) : une requête, hors API Sorare.
   if (sport === 'nba' && lireEspn) {
