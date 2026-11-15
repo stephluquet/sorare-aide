@@ -455,7 +455,8 @@ main { display: block; min-width: 0; padding: var(--e4) max(16px, env(safe-area-
 .ligne {
   display: grid; align-items: center; column-gap: var(--e3); row-gap: 2px;
   grid-template-columns: 40px minmax(0, 1fr) auto;
-  grid-template-areas: "img nom p" "img match s" "img forme forme" "img tags tags" "img extra extra";
+  /* empilée : le match a sa propre ligne, sur toute la largeur (adversaire et cote lisibles sur téléphone) */
+  grid-template-areas: "img nom p" "img match match" "img forme s" "img tags tags" "img extra extra";
   padding: var(--e2) var(--e4); border-top: 1px solid var(--trait); cursor: pointer; min-height: 64px; width: 100%; text-align: left;
   background: transparent; border-left: 0; border-right: 0; border-bottom: 0;
 }
@@ -467,10 +468,11 @@ main { display: block; min-width: 0; padding: var(--e4) max(16px, env(safe-area-
 .vig { width: 40px; height: 64px; object-fit: cover; border-radius: var(--r1); display: grid; place-items: center; background: var(--surface-2); color: var(--doux); font-size: var(--t1); font-weight: 700; border: 1px solid var(--trait); }
 img.vig { border: 0; }
 .c-nom { grid-area: nom; display: flex; flex-wrap: wrap; align-items: center; gap: 0 6px; }
-.c-nom b { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; max-width: 100%; }
+.c-nom b { font-weight: 600; overflow-wrap: anywhere; min-width: 0; max-width: 100%; } /* empilée : un nom long passe à la ligne au lieu d'être coupé */
 .c-nom .pos { font-size: var(--t1); color: var(--doux); font-weight: 600; white-space: nowrap; }
 .c-nom .club { font-size: var(--t1); color: var(--doux); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: none; }
-.c-match { grid-area: match; font-size: var(--t2); color: var(--doux); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.c-match { grid-area: match; font-size: var(--t2); color: var(--doux); overflow-wrap: anywhere; }
+.c-match .l1, .c-match .cote-txt { white-space: nowrap; }
 .c-match .cotebarre { display: none; }
 .c-forme { grid-area: forme; display: flex; align-items: center; gap: var(--e2); flex-wrap: wrap; }
 .c-tags { grid-area: tags; display: flex; flex-wrap: wrap; gap: 4px; padding-top: 2px; }
@@ -481,6 +483,11 @@ img.vig { border: 0; }
 .c-s .ppe { display: none; }
 .c-extra { grid-area: extra; font-size: var(--t2); display: flex; flex-wrap: wrap; gap: var(--e2); align-items: center; padding-top: 4px; }
 .entete-tab { display: none; }
+/* étroit (téléphone jusqu'à 412 px, colonne de 350 px à côté de la fiche) : le score passe sous la forme du club, sinon ils se chevauchent */
+@container (max-width: 379px) {
+  .ligne { grid-template-areas: "img nom p" "img match match" "img forme forme" "img s s" "img tags tags" "img extra extra"; }
+  .c-s { justify-content: start; }
+}
 @container (min-width: 720px) {
   .ligne {
     grid-template-columns: 32px minmax(120px, 1.3fr) minmax(96px, 1fr) 96px 100px minmax(112px, 128px); column-gap: 10px;
@@ -490,6 +497,7 @@ img.vig { border: 0; }
   .c-tags { padding-top: 4px; }
   .vig { width: 32px; height: 50px; }
   .c-img { align-self: start; grid-row: 1 / span 2; }
+  .c-nom b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .c-nom .club { display: block; flex-basis: 100%; }
   .c-match { display: grid; white-space: normal; gap: 2px; }
   .c-match .l1, .c-match .l2 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -679,6 +687,8 @@ table.dense td.statut .tag { margin: 1px 0; }
 .c-tit .sous, .cellule-tit small { font-size: var(--t1); color: var(--doux); text-align: right; line-height: 1.25; }
 .c-tit .sv { font-size: var(--t4); font-weight: 700; }
 .c-tit { min-width: 0; }
+/* étroit : score et mention sur une ligne, alignés à gauche sous la forme du club */
+@container (max-width: 379px) { .c-s.c-tit { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: start; gap: 0 var(--e2); } .c-tit .sous { text-align: left; } }
 .cellule-tit { display: grid; gap: 2px; }
 
 /* Solo : sélecteur prudente / équilibrée / ambitieuse dans l'en-tête du résumé */
